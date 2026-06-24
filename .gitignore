@@ -1,0 +1,9 @@
+*.bak
+.php_cs.cache
+.phpunit.result.cache
+coverage
+composer.lock
+vendor
+
+#Ignore vscode AI rules
+.github/instructions/codacy.instructions.md
