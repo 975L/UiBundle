@@ -1,9 +1,9 @@
 {
-    "name": "c975l/config-bundle",
+    "name": "c975l/ui-bundle",
     "type": "symfony-bundle",
-    "description": "Used to get/set the config params for a Symfony app",
-    "keywords": ["symfony", "bundle", "config"],
-    "homepage": "https://github.com/975L/ConfigBundle",
+    "description": "Used to get/set the UI params for a Symfony app",
+    "keywords": ["symfony", "bundle", "ui"],
+    "homepage": "https://github.com/975L/UiBundle",
     "license": "MIT",
     "authors": [
         {
@@ -36,8 +36,8 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "c975L\\ConfigBundle\\": "src/",
-            "c975L\\ConfigBundle\\Migrations\\": "migrations/"
+            "c975L\\UiBundle\\": "src/",
+            "c975L\\UiBundle\\Migrations\\": "migrations/"
         }
     },
     "config": {
@@ -45,7 +45,7 @@
     },
     "support": {
         "email": "contact@975l.com",
-        "source": "https://github.com/975L/ConfigBundle",
-        "issues": "https://github.com/975L/ConfigBundle/issues"
+        "source": "https://github.com/975L/UiBundle",
+        "issues": "https://github.com/975L/UiBundle/issues"
     }
 }
