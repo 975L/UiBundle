@@ -1,0 +1,14 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    c975L\UiBundle\Repository\:
+        resource: '../src/Repository/*'
+
+    c975L\UiBundle\Service\:
+        resource: '../src/Service/*'
+
+    c975L\UiBundle\Twig\:
+        resource: '../src/Twig/*'
