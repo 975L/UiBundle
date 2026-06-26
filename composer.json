@@ -23,7 +23,8 @@
         "easycorp/easyadmin-bundle": "*",
         "sensiolabs/minify-bundle": "*",
         "symfony/form": "*",
-        "symfony/yaml": "*"
+        "symfony/yaml": "*",
+        "vich/uploader-bundle": "*"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "*",

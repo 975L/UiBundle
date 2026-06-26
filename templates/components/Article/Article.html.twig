@@ -1,0 +1,19 @@
+{# Static usage  : <twig:c975LUi:Article:Article article="{{ article }}"/> #}
+{# Dynamic usage : {{ render_block(block) }} — data keys: slug, title, content, detail #}
+
+{% set title = title|default(article.title|default('')) %}
+{% set content = content|default(article.content|default('')) %}
+{% set detail = detail|default(article.detail|default('')) %}
+{% set mediaList = (block is defined and block.media is defined) ? block.media : (article is defined ? article.medias|default([]) : []) %}
+
+<article class="site-article">
+    <h2>{{ title }}</h2>
+    {% if mediaList|length > 0 %}
+        {% set slides = [] %}
+        {% for _ in mediaList %}
+            {% set slides = slides|merge([{}]) %}
+        {% endfor %}
+        <twig:c975LUi:Slider:Slider slides="{{ slides }}" id="article-{{ slug }}" duration="3500" media="{{ mediaList }}"/>
+    {% endif %}
+    {{ content|raw|nl2br }}
+</article>
