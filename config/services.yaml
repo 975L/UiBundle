@@ -4,11 +4,141 @@ services:
         autoconfigure: true
         public: true
 
-    c975L\UiBundle\Repository\:
-        resource: '../src/Repository/*'
+    c975L\UiBundle\:
+        resource: '../src/'
+        exclude: '../src/{DependencyInjection,Entity}'
 
-    c975L\UiBundle\Service\:
-        resource: '../src/Service/*'
+    ui.block.article:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: article
+              label: "Article"
+              form: c975L\UiBundle\Form\Block\ArticleType
+              template: '@c975LUi/components/Article/Article.html.twig'
+              category: 'Elements'
+              media_types: 'image/*'
 
-    c975L\UiBundle\Twig\:
-        resource: '../src/Twig/*'
+    ui.block.alert:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: alert
+              label: "Alert"
+              form: c975L\UiBundle\Form\Block\AlertType
+              template: '@c975LUi/components/Alert/Alert.html.twig'
+              category: 'Elements'
+
+    ui.block.audio:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: audio
+              label: "Audio"
+              form: c975L\UiBundle\Form\Block\AudioType
+              template: '@c975LUi/components/Audio/Audio.html.twig'
+              category: 'Media'
+              media_types: 'audio/*'
+
+    ui.block.button:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: button
+              label: "Bouton"
+              form: c975L\UiBundle\Form\Block\ButtonType
+              template: '@c975LUi/components/Button/Button.html.twig'
+              category: 'Elements'
+
+    ui.block.card:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: card
+              label: "Carte"
+              form: c975L\UiBundle\Form\Block\CardType
+              template: '@c975LUi/components/Card/Card.html.twig'
+              category: 'Elements'
+
+    ui.block.image:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: image
+              label: "Image"
+              form: c975L\UiBundle\Form\Block\ImageType
+              template: '@c975LUi/components/Image/Image.html.twig'
+              category: 'Media'
+              media_types: 'image/*'
+
+    ui.block.progress_bar:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: progress_bar
+              label: "Barre de progression"
+              form: c975L\UiBundle\Form\Block\ProgressBarType
+              template: '@c975LUi/components/Progress/Bar.html.twig'
+              category: 'Elements'
+
+    ui.block.rich_snippet:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: rich_snippet
+              label: "Rich Snippet SEO"
+              form: c975L\UiBundle\Form\Block\RichSnippetType
+              template: '@c975LUi/components/General/RichSnippet.html.twig'
+              category: 'SEO'
+
+    ui.block.slider:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: slider
+              label: "Slider d'images"
+              form: c975L\UiBundle\Form\Block\SliderType
+              template: '@c975LUi/components/Slider/Slider.html.twig'
+              category: 'Media'
+              media_types: 'image/*'
+
+    ui.block.text_readmore:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: text_readmore
+              label: "Texte avec Lire plus"
+              form: c975L\UiBundle\Form\Block\ReadmoreType
+              template: '@c975LUi/components/Text/Readmore.html.twig'
+              category: 'Text'
+
+    ui.block.text_section:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: text_section
+              label: "Section texte"
+              form: c975L\UiBundle\Form\Block\TextSectionType
+              template: '@c975LUi/components/Text/Section.html.twig'
+              category: 'Text'
+
+    ui.block.video:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: video
+              label: "Vidéo"
+              form: c975L\UiBundle\Form\Block\VideoType
+              template: '@c975LUi/components/Video/Video.html.twig'
+              category: 'Media'
+              media_types: 'video/*'
+
+    ui.block.video_iframe:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: video_iframe
+              label: "Vidéo externe (iframe)"
+              form: c975L\UiBundle\Form\Block\VideoIframeType
+              template: '@c975LUi/components/Video/Iframe.html.twig'
+              category: 'Media'

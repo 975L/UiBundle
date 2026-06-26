@@ -1,7 +1,7 @@
 <?php
 /*
- * (c) 2018: 975L <contact@975l.com>
- * (c) 2018: Laurent Marquet <laurent.marquet@laposte.net>
+ * (c) 2026: 975L <contact@975l.com>
+ * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
  *
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
@@ -15,13 +15,13 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 /**
  * DI Configuration Class
  * @author Laurent Marquet <laurent.marquet@laposte.net>
- * @copyright 2018 975L <contact@975l.com>
+ * @copyright 2026 975L <contact@975l.com>
  */
 class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder('c975_l_config');
+        $treeBuilder = new TreeBuilder('c975_l_ui');
 
         return $treeBuilder;
     }

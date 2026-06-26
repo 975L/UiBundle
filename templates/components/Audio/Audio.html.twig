@@ -1,0 +1,9 @@
+{# Static usage  : <twig:c975LUi:Audio:Audio src="your-path/file.ext" type="audio/mpeg"/> #}
+{# Dynamic usage : {{ render_block(block) }} — data keys: type; src from block.media|first #}
+
+{% set src = src|default(block is defined and block.media is defined and block.media|length > 0 ? vich_uploader_asset(block.media|first) : '') %}
+
+<audio controls>
+    <source src="{{ src }}" type="{{ type|default('audio/mpeg') }}">
+    <p>{{ 'label.audio_not_supported'|trans({}, "site") }} <a href="{{ src }}">{{ 'label.download'|trans({}, "site") }}</a></p>
+</audio>
