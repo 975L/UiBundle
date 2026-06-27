@@ -12,6 +12,6 @@
         <{{ level|default('h2') }} class="card-header">{{ title }}</{{ level|default('h2') }}>
     {% endif %}
     <div class="card-body">
-        {% block content %}{{ content|default('')|raw }}{% endblock %}
+        {% block content %}{{ content|raw|nl2br }}{% endblock %}
     </div>
 </div>

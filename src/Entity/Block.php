@@ -8,7 +8,6 @@
  */
 namespace c975L\UiBundle\Entity;
 
-use c975L\SiteBundle\Entity\Page;
 use App\Entity\User;
 use c975L\UiBundle\Repository\BlockRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -24,10 +23,6 @@ class Block
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
-    #[ORM\ManyToOne(targetEntity: Page::class, inversedBy: 'blocks')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Page $page = null;
 
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $kind = null;
@@ -58,18 +53,6 @@ class Block
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getPage(): ?Page
-    {
-        return $this->page;
-    }
-
-    public function setPage(?Page $page): self
-    {
-        $this->page = $page;
-
-        return $this;
     }
 
     public function getKind(): ?string

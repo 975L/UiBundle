@@ -9,7 +9,7 @@
 namespace c975L\UiBundle\Form\Block;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use c975L\UiBundle\Form\TrixEditorType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -22,11 +22,8 @@ class ReadmoreType extends AbstractType
             ->add('id', TextType::class, [
                 'label' => 'label.identifier',
             ])
-            ->add('text', TextareaType::class, [
+            ->add('text', TrixEditorType::class, [
                 'label' => 'label.text',
-                'attr'  => [
-                    'rows' => 8,
-                ],
             ]);
     }
 

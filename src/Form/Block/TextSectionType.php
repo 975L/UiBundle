@@ -9,7 +9,7 @@
 namespace c975L\UiBundle\Form\Block;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use c975L\UiBundle\Form\TrixEditorType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -28,11 +28,8 @@ class TextSectionType extends AbstractType
                     'placeholder' => 'my-section',
                 ],
             ])
-            ->add('content', TextareaType::class, [
+            ->add('content', TrixEditorType::class, [
                 'label' => 'label.content',
-                'attr'  => [
-                    'rows' => 8,
-                ],
             ])
             ->add('image', TextType::class, [
                 'label'    => 'label.image',

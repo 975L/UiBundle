@@ -8,6 +8,11 @@ services:
         resource: '../src/'
         exclude: '../src/{DependencyInjection,Entity}'
 
+    c975L\UiBundle\Service\StylesheetProvider:
+        tags:
+            - { name: 'ui.stylesheet', priority: 100 }
+
+    # Ui Blocks
     ui.block.article:
         class: stdClass
         tags:

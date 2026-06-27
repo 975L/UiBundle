@@ -14,6 +14,8 @@ use Doctrine\Common\Collections\Collection;
 // Provides $blocks collection methods for entities that own blocks (see Readme)
 trait HasBlocksTrait
 {
+    private array $pendingBlockRemovals = [];
+
     public function getBlocks(): Collection
     {
         return $this->blocks;
@@ -23,12 +25,6 @@ trait HasBlocksTrait
     {
         if (!$this->blocks->contains($block)) {
             $this->blocks->add($block);
-            // Set the owning-side FK (e.g. setPage, setProduct…) so Doctrine writes the correct FK column
-            $parts = explode('\\', get_class($this));
-            $setter = 'set' . end($parts);
-            if (method_exists($block, $setter)) {
-                $block->{$setter}($this);
-            }
         }
 
         return $this;
@@ -36,9 +32,19 @@ trait HasBlocksTrait
 
     public function removeBlock(Block $block): static
     {
-        $this->blocks->removeElement($block);
+        if ($this->blocks->removeElement($block)) {
+            $this->pendingBlockRemovals[] = $block;
+        }
 
         return $this;
+    }
+
+    public function popPendingBlockRemovals(): array
+    {
+        $blocks = $this->pendingBlockRemovals;
+        $this->pendingBlockRemovals = [];
+
+        return $blocks;
     }
 
     public function reorderBlocks(): void

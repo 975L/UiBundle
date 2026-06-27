@@ -8,9 +8,9 @@
  */
 namespace c975L\UiBundle\Form\Block;
 
+use c975L\UiBundle\Form\TrixEditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -29,12 +29,9 @@ class AlertType extends AbstractType
                     'label.danger' => 'danger',
                 ],
             ])
-            ->add('content', TextareaType::class, [
-                'label' => 'label.content',
+            ->add('content', TrixEditorType::class, [
+                'label'    => 'label.content',
                 'required' => true,
-                'attr'  => [
-                    'rows' => 3
-                ],
             ]);
     }
 

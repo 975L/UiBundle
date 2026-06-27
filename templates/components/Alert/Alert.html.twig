@@ -6,5 +6,5 @@
 
 <div class="alert alert-{{ type }} text-center">
     <twig:c975LUi:Image:Icon src="bundles/c975lsite/images/alert-{{ type }}.svg" width="16" height="16"/>
-    {% block content %}{{ content }}{% endblock %}
+    {% block content %}{{ content|raw|nl2br }}{% endblock %}
 </div>

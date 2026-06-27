@@ -173,11 +173,6 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
             return 'medias/site/block';
         }
 
-        $page = $block->getPage();
-        if (null !== $page && method_exists($page, 'getSlug')) {
-            return 'medias/site/' . $page->getSlug() . '-' . $block->getKind() . '-' . ($block->getId() ?? uniqid());
-        }
-
         return 'medias/site/block-' . ($block->getKind() ?? 'unknown') . '-' . ($block->getId() ?? uniqid());
     }
 }

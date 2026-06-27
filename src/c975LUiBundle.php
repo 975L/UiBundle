@@ -10,6 +10,7 @@
 namespace c975L\UiBundle;
 
 use c975L\UiBundle\DependencyInjection\Compiler\BlockRegistryPass;
+use c975L\UiBundle\DependencyInjection\Compiler\StylesheetRegistryPass;
 use c975L\UiBundle\Namer\UiMediaNamer;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -20,6 +21,7 @@ class c975LUiBundle extends AbstractBundle
     public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new BlockRegistryPass());
+        $container->addCompilerPass(new StylesheetRegistryPass());
     }
 
     public function prependExtension(ContainerConfigurator $configurator, ContainerBuilder $container): void
@@ -33,7 +35,10 @@ class c975LUiBundle extends AbstractBundle
         ]);
 
         $container->prependExtensionConfig('twig', [
-            'form_themes' => ['@c975LUi/form/icon_picker_theme.html.twig'],
+            'form_themes' => [
+                '@c975LUi/form/block_theme.html.twig',
+                '@c975LUi/form/icon_picker_theme.html.twig',
+            ],
         ]);
 
         if ($container->hasExtension('vich_uploader')) {

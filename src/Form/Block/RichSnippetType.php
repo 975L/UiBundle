@@ -10,7 +10,7 @@ namespace c975L\UiBundle\Form\Block;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use c975L\UiBundle\Form\TrixEditorType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -31,7 +31,7 @@ class RichSnippetType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'label.name',
             ])
-            ->add('description', TextareaType::class, [
+            ->add('description', TrixEditorType::class, [
                 'label' => 'label.description',
             ])
             ->add('telephone', TextType::class, [

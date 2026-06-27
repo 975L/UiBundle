@@ -4,5 +4,5 @@
     {% if image is defined %}
         <twig:c975LUi:Image:Image src="{{ image }}" class="img-rounded img-responsive"/>
     {% endif %}
-    {{ content|raw }}
+    {{ content|raw|nl2br }}
 </section>

@@ -11,7 +11,7 @@ namespace c975L\UiBundle\Form\Block;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use c975L\UiBundle\Form\TrixEditorType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,10 +26,9 @@ class SlideType extends AbstractType
                 'label'    => 'label.title',
                 'required' => false,
             ])
-            ->add('text', TextareaType::class, [
+            ->add('text', TrixEditorType::class, [
                 'label'    => 'label.content',
                 'required' => false,
-                'attr'     => ['rows' => 2],
             ])
             ->add('url', UrlType::class, [
                 'label'         => 'label.url',

@@ -39,7 +39,9 @@ class BlockType extends AbstractType
                 'choices' => $this->registry->groupedByCategory(),
                 'placeholder' => 'label.choose_block_kind',
                 'attr' => [
-                    'data-block-kind-url-value' => $this->router->generate('ui_block_data_form'),
+                    'data-controller'            => 'block',
+                    'data-block-kind-url-value'  => $this->router->generate('ui_block_data_form'),
+                    'data-action'                => 'change->block#loadData',
                 ],
                 'row_attr' => ['data-kind-row' => ''],
             ])

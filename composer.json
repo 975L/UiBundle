@@ -1,9 +1,8 @@
 {
     "name": "c975l/ui-bundle",
     "type": "symfony-bundle",
-    "description": "Used to get/set the UI params for a Symfony app",
+    "description": "Symfony bundle providing a dynamic block system for pages and content entities, managed through EasyAdmin with drag-and-drop reordering.",
     "keywords": ["symfony", "bundle", "ui"],
-    "homepage": "https://github.com/975L/UiBundle",
     "license": "MIT",
     "authors": [
         {

@@ -9,7 +9,7 @@
 namespace c975L\UiBundle\Form\Block;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use c975L\UiBundle\Form\TrixEditorType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -23,12 +23,9 @@ class ArticleType extends AbstractType
                 'label' => 'label.title',
                 'required' => true,
             ])
-            ->add('content', TextareaType::class, [
-                'label' => 'label.content',
+            ->add('content', TrixEditorType::class, [
+                'label'    => 'label.content',
                 'required' => true,
-                'attr'  => [
-                    'rows' => 3
-                ],
             ])
         ;
     }

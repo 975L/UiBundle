@@ -10,7 +10,7 @@ namespace c975L\UiBundle\Form\Block;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use c975L\UiBundle\Form\TrixEditorType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -36,11 +36,8 @@ class CardType extends AbstractType
                     'h4' => 'h4'
                 ],
             ])
-            ->add('content', TextareaType::class, [
+            ->add('content', TrixEditorType::class, [
                 'label' => 'label.content',
-                'attr'  => [
-                    'rows' => 5
-                ],
             ])
             ->add('class', TextType::class, [
                 'label' => 'label.css_classes',
