@@ -26,7 +26,9 @@ class c975LUiBundle extends AbstractBundle
     {
         $container->prependExtensionConfig('framework', [
             'asset_mapper' => [
-                'paths' => [__DIR__ . '/../assets' => '@c975l/ui-bundle'],
+                'paths' => [
+                    __DIR__ . '/../assets' => '@c975l/ui-bundle'
+                ],
             ],
         ]);
 

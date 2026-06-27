@@ -1,10 +1,12 @@
-# c975L UiBundle
+# UiBundle
 
-A Symfony bundle providing a dynamic block system for pages and content entities. Each block has a `kind` (e.g. `slider`, `button`, `text_section`) with its own form and template, managed through EasyAdmin with drag-and-drop reordering.
+Symfony bundle providing a dynamic block system for pages and content entities, managed through EasyAdmin with drag-and-drop reordering.
 
 [![GitHub](https://img.shields.io/github/license/975L/UiBundle)](https://github.com/975L/UiBundle/blob/master/LICENSE)
 [![Packagist Version](https://img.shields.io/packagist/v/c975l/ui-bundle)](https://packagist.org/packages/c975l/ui-bundle)
 [![PHP Version](https://img.shields.io/packagist/php-v/c975l/ui-bundle)](https://packagist.org/packages/c975l/ui-bundle)
+
+---
 
 ## Features
 
@@ -13,19 +15,55 @@ A Symfony bundle providing a dynamic block system for pages and content entities
 - Drag-and-drop position ordering for blocks and media
 - AJAX kind-switcher in EasyAdmin
 - Extensible: register your own block kinds via a service tag
+- Reusable drag-and-drop sortable script for any EasyAdmin `CollectionField`
+
+---
+
+## Requirements
+
+- PHP >= 8.0
+- Doctrine ORM
+- EasyAdmin
+- VichUploader Bundle
+
+---
 
 ## Installation
+
+### Download
 
 ```bash
 composer require c975l/ui-bundle
 ```
 
-Run the database migration to create the `site_block` and `site_media` tables:
+### Run migrations
 
 ```bash
 php bin/console doctrine:migrations:diff
 php bin/console doctrine:migrations:migrate
 ```
+
+### Register Stimulus controllers
+
+**Add one entry to `importmap.php`** (one-time, at installation):
+
+```php
+'@c975l/ui-bundle/controllers.js' => [
+    'path' => './vendor/c975l/ui-bundle/assets/controllers.js',
+],
+```
+
+**Add two lines to `assets/bootstrap.js`** (or `assets/stimulus_bootstrap.js`):
+
+```js
+import { startStimulusApp } from '@symfony/stimulus-bundle';
+import { register as registerc975lUi } from '@c975l/ui-bundle/controllers.js';
+
+const app = startStimulusApp();
+registerc975lUi(app);
+```
+
+---
 
 ## Attaching blocks to an entity
 
@@ -49,6 +87,8 @@ class Page implements HasBlocksInterface
     }
 }
 ```
+
+---
 
 ## EasyAdmin integration
 
@@ -80,17 +120,13 @@ class PageCrudController extends AbstractCrudController
 }
 ```
 
-## Reusable drag-and-drop sortable
+---
 
-`sortable.js` is a standalone, zero-dependency script that adds drag-and-drop reordering to any EasyAdmin `CollectionField`. It is included automatically when you load `blocks.js`, but can also be imported on its own in any other CRUD controller.
+## Drag-and-drop sortable for other collections
 
-**Requirement:** each collection item must contain a hidden `position` field whose `name` ends with `[position]` (e.g. `product_images[0][position]`). The script detects it automatically and enables sorting only for those collections.
+`sortable.js` adds drag-and-drop reordering to any EasyAdmin `CollectionField`. It is included when you load `blocks.js`, but can also be imported standalone in any other CRUD controller.
 
-**Safe with nested collections:** when a collection item contains another sortable sub-collection (e.g. a Block containing Media), each level is handled independently without interfering with the other.
-
-### Using in another bundle
-
-Import `blocks.js` in your CRUD controller — the kind-selector section is inert if no `[data-block-kind-url-value]` element is present on the page:
+**Requirement:** each collection item must contain a hidden `position` field whose `name` ends with `[position]`. The script detects it automatically.
 
 ```php
 public function configureAssets(Assets $assets): Assets
@@ -99,47 +135,9 @@ public function configureAssets(Assets $assets): Assets
 }
 ```
 
-Then expose a hidden `position` field in your collection entry type:
+Expose a hidden `position` field in your collection entry type and order the collection by position on the entity side — the grip handle and drag behaviour are added automatically.
 
-```php
-class ProductImageType extends AbstractType
-{
-    public function buildForm(FormBuilderInterface $builder, array $options): void
-    {
-        $builder
-            ->add('position', HiddenType::class);
-        // ...
-    }
-}
-```
-
-Order your collection by position on the entity side:
-
-```php
-#[ORM\OneToMany(targetEntity: ProductImage::class, mappedBy: 'product', cascade: ['persist', 'remove'], orphanRemoval: true)]
-#[ORM\OrderBy(['position' => 'ASC'])]
-private Collection $images;
-```
-
-That is all — the grip handle and drag behaviour are added automatically on page load.
-
-## Built-in block kinds
-
-| Kind | Description |
-| --- | --- |
-| `alert` | Bootstrap alert box |
-| `article` | Article with image and rich text |
-| `audio` | Audio player |
-| `button` | Call-to-action button |
-| `card` | Bootstrap card |
-| `image` | Single image with optional caption |
-| `progress_bar` | Animated progress bar |
-| `readmore` | Collapsible read-more section |
-| `rich_snippet` | Structured data / JSON-LD snippet |
-| `slider` | Image slider (multiple media) |
-| `text_section` | Rich text section |
-| `video` | Uploaded video file |
-| `video_iframe` | Embedded video (YouTube, Vimeo…) |
+---
 
 ## Registering a custom block kind
 
@@ -159,8 +157,8 @@ services:
               template: '@App/blocks/booking.html.twig'
 ```
 
-Create the form type (`BookingType`) to define the `data` sub-fields, and the Twig template to render the block on the front end. The form data is stored as JSON in the `Block::$data` column.
+Create the form type to define the `data` sub-fields, and the Twig template to render the block on the front end. The form data is stored as JSON in the `Block::$data` column.
 
-## License
+---
 
-MIT — see [LICENSE](LICENSE).
+If this project **helps you save development time**, consider sponsoring via the **Sponsor** button at the top of the GitHub page. Thank you!
