@@ -121,19 +121,13 @@ When you call `$page->removeBlock($block)`, the trait queues the block in a `pen
 
 ## EasyAdmin integration
 
-Add a `CollectionField` using `BlockType` as entry type, and include the bundle's JS asset for the AJAX kind-switcher and drag-and-drop:
+Add a `CollectionField` using `BlockType` as entry type. The AJAX kind-switcher and drag-and-drop are handled automatically by the Stimulus controllers registered via `@c975l/ui-bundle/controllers.js` — no manual `configureAssets` call is needed:
 
 ```php
 use c975L\UiBundle\Form\BlockType;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 
 class PageCrudController extends AbstractCrudController
 {
-    public function configureAssets(Assets $assets): Assets
-    {
-        return $assets->addJsFile('@c975l/ui-bundle/js/blocks.js');
-    }
-
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -154,18 +148,9 @@ class PageCrudController extends AbstractCrudController
 
 ## Drag-and-drop sortable for other collections
 
-`sortable.js` adds drag-and-drop reordering to any EasyAdmin `CollectionField`. It is included when you load `blocks.js`, but can also be imported standalone in any other CRUD controller.
+Drag-and-drop reordering is handled automatically by the `eaSortable` Stimulus controller registered via `@c975l/ui-bundle/controllers.js`. No `configureAssets` call is needed.
 
 **Requirement:** each collection item must contain a hidden `position` field whose `name` ends with `[position]`. The script detects it automatically.
-
-```php
-use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
-
-public function configureAssets(Assets $assets): Assets
-{
-    return $assets->addJsFile('@c975l/ui-bundle/js/blocks.js');
-}
-```
 
 Expose a hidden `position` field in your collection entry type and order the collection by position on the entity side — the grip handle and drag behaviour are added automatically.
 

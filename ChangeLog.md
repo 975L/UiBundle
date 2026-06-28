@@ -1,5 +1,9 @@
 # ChangeLog
 
+## v1.3.1
+
+- Converted blocks.js to Stimulus controller (28/06/2026)
+
 ## v1.3
 
 - Added TrixEditor for FormType (27/06/2026)
