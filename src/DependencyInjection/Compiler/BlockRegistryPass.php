@@ -41,6 +41,7 @@ class BlockRegistryPass implements CompilerPassInterface
                     $tag['category'] ?? 'label.category_general',
                     $mediaTypes,
                     $tag['translation_domain'] ?? 'ui',
+                    $tag['description'] ?? '',
                 ]);
             }
         }

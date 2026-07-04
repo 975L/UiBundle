@@ -33,7 +33,7 @@ class Block
     #[ORM\Column(type: Types::JSON)]
     private array $data = [];
 
-    #[ORM\ManyToOne(inversedBy: 'blocks')]
+    #[ORM\ManyToOne]
     private ?User $user = null;
 
     #[ORM\OneToMany(mappedBy: 'block', targetEntity: Media::class, cascade: ['persist', 'remove'], orphanRemoval: true)]

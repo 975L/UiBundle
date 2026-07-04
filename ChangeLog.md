@@ -1,10 +1,18 @@
 # ChangeLog
 
+## v1.4.2
+
+- Added auto-scroll/focus to the newly added block row in the "blocks" collection (04/07/2026)
+- Added an optional translated `description`, shown under the label in the block kind picker (04/07/2026)
+- Added BoolExtension to manage boolean values in twig (04/07/2026)
+- Added description for Blocks (04/07/2026)
+- Corrected deletion of physical file when deleting media in Block (04/07/2026)
+
 ## v1.4.1
 
 - Fixed media files (image, etc.) not being saved when picking a block kind with media on a form not yet multipart (04/07/2026)
-- Fixed Slider display for titel and text (04/07/2026)
-- Added possibility to use prop mesage for Alert (04/07/2026)
+- Fixed Slider display for title and text (04/07/2026)
+- Added possibility to use prop message for Alert (04/07/2026)
 
 ## v1.4
 

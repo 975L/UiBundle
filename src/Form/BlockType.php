@@ -39,6 +39,7 @@ class BlockType extends AbstractType
             ->add('kind', ChoiceType::class, [
                 'label' => 'label.block_kind',
                 'choices' => $this->registry->groupedByCategory(),
+                'choice_translation_domain' => false,
                 'placeholder' => 'label.choose_block_kind',
                 'attr' => [
                     'data-controller'            => 'block',
@@ -92,9 +93,6 @@ class BlockType extends AbstractType
                 if ($kind && $this->registry->has($kind)) {
                     $this->addDataSubForm($event->getForm(), $kind);
                     if ($this->registry->hasMediaTypes($kind)) {
-                        // Removing the very last media also leaves nothing submitted at all under "medias"
-                        // (an HTML form can't represent an empty array, only an absent key), which has to
-                        // be normalized to [] below or Symfony skips add/remove handling for the field.
                         $block = $event->getForm()->getData();
                         if ($block instanceof Block) {
                             CollectionReconciler::pruneRemoved(
@@ -102,12 +100,27 @@ class BlockType extends AbstractType
                                 $submitted['medias'] ?? [],
                                 static fn (Media $media) => $block->removeMedia($media)
                             );
+
+                            // A deleted media can leave a malformed remnant behind in the submission (its
+                            // "delete"/css-class checkboxes resubmitted under the old array key, with no id
+                            // and no actual file) - left as-is, CollectionType treats it as a genuine new
+                            // entry and binds it to null data, which breaks Vich's own conditional "delete"
+                            // checkbox (VichFileType only adds it when the bound object is non-null) and
+                            // fails validation with "This form should not contain extra fields".
+                            $submitted['medias'] = CollectionReconciler::dropOrphaned(
+                                $submitted['medias'] ?? [],
+                                $block->getMedias(),
+                                static fn (array $entry): bool => !empty($entry['file']['file'] ?? null)
+                            );
                         }
 
+                        // Removing the very last media also leaves nothing submitted at all under "medias"
+                        // (an HTML form can't represent an empty array, only an absent key), which has to
+                        // be normalized to [] below or Symfony skips add/remove handling for the field.
                         if (!isset($submitted['medias'])) {
                             $submitted['medias'] = [];
-                            $event->setData($submitted);
                         }
+                        $event->setData($submitted);
                         $this->addMediaSubForm($event->getForm(), $kind);
                     }
                 }

@@ -30,6 +30,32 @@ final class CollectionReconciler
         }
     }
 
+    // Drops submitted entries that neither match a surviving item by ID nor look like a genuine new
+    // entry (per $isNewEntry) - call after pruneRemoved(), passing the now-pruned collection. Guards
+    // against a malformed/partial submission for a just-deleted entry (see BlockType for the concrete
+    // case): left in the submitted array, CollectionType's own diffing (allow_add) would treat it as a
+    // new item and bind it to null data instead of dropping it.
+    public static function dropOrphaned(array $submittedEntries, iterable $survivors, callable $isNewEntry): array
+    {
+        $survivingIds = [];
+        foreach ($survivors as $item) {
+            $survivingIds[] = (string) $item->getId();
+        }
+
+        return array_filter($submittedEntries, static function (mixed $entry) use ($survivingIds, $isNewEntry): bool {
+            if (!is_array($entry)) {
+                return false;
+            }
+
+            $id = $entry['id'] ?? null;
+            if (null !== $id && '' !== $id) {
+                return in_array((string) $id, $survivingIds, true);
+            }
+
+            return $isNewEntry($entry);
+        });
+    }
+
     // Pulls the "id" of each submitted entry, dropping entries that aren't arrays and IDs that are null/empty
     private static function extractIds(array $submittedEntries): array
     {

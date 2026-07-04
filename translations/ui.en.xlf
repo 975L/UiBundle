@@ -270,53 +270,105 @@
                 <source>label.block_article</source>
                 <target>Article</target>
             </trans-unit>
+            <trans-unit id="108">
+                <source>label.block_article_description</source>
+                <target>Rich text with an image, for classic editorial content</target>
+            </trans-unit>
             <trans-unit id="68">
                 <source>label.block_alert</source>
                 <target>Alert</target>
+            </trans-unit>
+            <trans-unit id="109">
+                <source>label.block_alert_description</source>
+                <target>Colored boxed message (info, success, warning, error)</target>
             </trans-unit>
             <trans-unit id="69">
                 <source>label.block_audio</source>
                 <target>Audio</target>
             </trans-unit>
+            <trans-unit id="110">
+                <source>label.block_audio_description</source>
+                <target>Embedded audio player from a file</target>
+            </trans-unit>
             <trans-unit id="70">
                 <source>label.block_button</source>
                 <target>Button</target>
+            </trans-unit>
+            <trans-unit id="111">
+                <source>label.block_button_description</source>
+                <target>Link button with customizable icon, target and style</target>
             </trans-unit>
             <trans-unit id="71">
                 <source>label.block_card</source>
                 <target>Card</target>
             </trans-unit>
+            <trans-unit id="112">
+                <source>label.block_card_description</source>
+                <target>Card with title and content, to highlight information</target>
+            </trans-unit>
             <trans-unit id="72">
                 <source>label.block_image</source>
                 <target>Image</target>
+            </trans-unit>
+            <trans-unit id="113">
+                <source>label.block_image_description</source>
+                <target>Standalone image with caption and credits</target>
             </trans-unit>
             <trans-unit id="73">
                 <source>label.block_progress_bar</source>
                 <target>Progress bar</target>
             </trans-unit>
+            <trans-unit id="114">
+                <source>label.block_progress_bar_description</source>
+                <target>Progress bar showing a percentage</target>
+            </trans-unit>
             <trans-unit id="74">
                 <source>label.block_rich_snippet</source>
                 <target>SEO Rich Snippet</target>
+            </trans-unit>
+            <trans-unit id="115">
+                <source>label.block_rich_snippet_description</source>
+                <target>SEO structured data (address, hours, price...)</target>
             </trans-unit>
             <trans-unit id="75">
                 <source>label.block_slider</source>
                 <target>Image slider</target>
             </trans-unit>
+            <trans-unit id="116">
+                <source>label.block_slider_description</source>
+                <target>Image slideshow with per-slide captions and credits</target>
+            </trans-unit>
             <trans-unit id="76">
                 <source>label.block_text_readmore</source>
                 <target>Text with Read more</target>
+            </trans-unit>
+            <trans-unit id="117">
+                <source>label.block_text_readmore_description</source>
+                <target>Long text with a Read more / Read less link</target>
             </trans-unit>
             <trans-unit id="77">
                 <source>label.block_text_section</source>
                 <target>Text section</target>
             </trans-unit>
+            <trans-unit id="118">
+                <source>label.block_text_section_description</source>
+                <target>Simple rich text section</target>
+            </trans-unit>
             <trans-unit id="78">
                 <source>label.block_video</source>
                 <target>Video</target>
             </trans-unit>
+            <trans-unit id="119">
+                <source>label.block_video_description</source>
+                <target>Embedded video player from a file</target>
+            </trans-unit>
             <trans-unit id="79">
                 <source>label.block_video_iframe</source>
                 <target>External video (iframe)</target>
+            </trans-unit>
+            <trans-unit id="120">
+                <source>label.block_video_iframe_description</source>
+                <target>External video embedded via iframe (YouTube, Vimeo...)</target>
             </trans-unit>
             <trans-unit id="80">
                 <source>label.category_general</source>

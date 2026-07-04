@@ -4,8 +4,8 @@
 {% set type = type | default('primary') %}
 {% set target = target | default('') %}
 {% set icon = icon | default('') %}
-{% set download = download | default(false) %}
-{% set inline = inline | default(false) %}
+{% set download = download | default(false) | to_bool %}
+{% set inline = inline | default(false) | to_bool %}
 
 {% if not inline %}
     <p class="text-center">

@@ -1,7 +1,7 @@
 {# Static usage : <twig:c975LUi:Image:Image src="your-path/file.ext" [label=""] [class=""] [classLabel=""] [alt=""] [width=""] [height=""] [above=false] /> #}
 {# or with an already-resolved URL : <twig:c975LUi:Image:Image imgSrc="{{ vich_uploader_asset(media) }}" .../> #}
 
-{% set above = above|default(false) %}
+{% set above = above|default(false)|to_bool %}
 {% set label = label|default('') %}
 {% set imgResponsive = (height is not defined or height == '') and (width is not defined or width == '') ? 'img-responsive' : '' %}
 {% set imgSrc = imgSrc|default(src is defined ? absolute_url(asset(src)) : '') %}

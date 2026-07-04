@@ -15,6 +15,7 @@ class BlockRegistry
 {
     private array $blocks = [];
     private array $labelCache = [];
+    private array $descriptionCache = [];
     private array $categoryCache = [];
     private ?array $groupedCache = null;
 
@@ -29,15 +30,17 @@ class BlockRegistry
         string $template,
         string $category = 'label.category_general',
         array $mediaTypes = [],
-        string $translationDomain = 'ui'
+        string $translationDomain = 'ui',
+        string $description = ''
     ): void {
         $this->blocks[$kind] = [
-            'label'      => $label,
-            'domain'     => $translationDomain,
-            'form'       => $formClass,
-            'template'   => $template,
-            'category'   => $category,
-            'mediaTypes' => $mediaTypes,
+            'label'       => $label,
+            'domain'      => $translationDomain,
+            'form'        => $formClass,
+            'template'    => $template,
+            'category'    => $category,
+            'mediaTypes'  => $mediaTypes,
+            'description' => $description,
         ];
     }
 
@@ -50,6 +53,19 @@ class BlockRegistry
         }
 
         return $this->labelCache[$kind];
+    }
+
+    // Gets the translated description of a block kind, empty if none was declared
+    public function getDescription(string $kind): string
+    {
+        if (!isset($this->descriptionCache[$kind])) {
+            $block = $this->get($kind);
+            $this->descriptionCache[$kind] = '' === $block['description']
+                ? ''
+                : $this->translator->trans($block['description'], [], $block['domain']);
+        }
+
+        return $this->descriptionCache[$kind];
     }
 
     // Gets the translated category of a block kind, using the same translation domain as its label
@@ -111,7 +127,7 @@ class BlockRegistry
 
         $grouped = [];
         foreach ($this->blocks as $kind => $config) {
-            $grouped[$this->getCategory($kind)][$this->getLabel($kind)] = $kind;
+            $grouped[$this->getCategory($kind)][$this->getChoiceLabel($kind)] = $kind;
         }
 
         ksort($grouped, SORT_FLAG_CASE | SORT_STRING);
@@ -120,5 +136,20 @@ class BlockRegistry
         }
 
         return $this->groupedCache = $grouped;
+    }
+
+    // Builds the "kind" choice label: name, plus a short description in parentheses when declared.
+    // Kept as plain text (no markup) so the "kind" field's <optgroup> categories stay intact -
+    // EasyAdmin's ea-autocomplete widget only preserves grouping on a plain native <select>.
+    private function getChoiceLabel(string $kind): string
+    {
+        $label = $this->getLabel($kind);
+        $description = $this->getDescription($kind);
+
+        if ('' === $description) {
+            return $label;
+        }
+
+        return sprintf('%s (%s)', $label, $description);
     }
 }

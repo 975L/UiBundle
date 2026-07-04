@@ -24,6 +24,7 @@ services:
             - name: ui.block
               kind: article
               label: "label.block_article"
+              description: "label.block_article_description"
               form: c975L\UiBundle\Form\Block\ArticleType
               template: '@c975LUi/blocks/Article.html.twig'
               category: 'label.category_elements'
@@ -35,6 +36,7 @@ services:
             - name: ui.block
               kind: alert
               label: "label.block_alert"
+              description: "label.block_alert_description"
               form: c975L\UiBundle\Form\Block\AlertType
               template: '@c975LUi/blocks/Alert.html.twig'
               category: 'label.category_elements'
@@ -45,6 +47,7 @@ services:
             - name: ui.block
               kind: audio
               label: "label.block_audio"
+              description: "label.block_audio_description"
               form: c975L\UiBundle\Form\Block\AudioType
               template: '@c975LUi/blocks/Audio.html.twig'
               category: 'label.category_media'
@@ -56,6 +59,7 @@ services:
             - name: ui.block
               kind: button
               label: "label.block_button"
+              description: "label.block_button_description"
               form: c975L\UiBundle\Form\Block\ButtonType
               template: '@c975LUi/blocks/Button.html.twig'
               category: 'label.category_elements'
@@ -66,6 +70,7 @@ services:
             - name: ui.block
               kind: card
               label: "label.block_card"
+              description: "label.block_card_description"
               form: c975L\UiBundle\Form\Block\CardType
               template: '@c975LUi/blocks/Card.html.twig'
               category: 'label.category_elements'
@@ -76,6 +81,7 @@ services:
             - name: ui.block
               kind: image
               label: "label.block_image"
+              description: "label.block_image_description"
               form: c975L\UiBundle\Form\Block\ImageType
               template: '@c975LUi/blocks/Image.html.twig'
               category: 'label.category_media'
@@ -87,6 +93,7 @@ services:
             - name: ui.block
               kind: progress_bar
               label: "label.block_progress_bar"
+              description: "label.block_progress_bar_description"
               form: c975L\UiBundle\Form\Block\ProgressBarType
               template: '@c975LUi/blocks/ProgressBar.html.twig'
               category: 'label.category_elements'
@@ -97,6 +104,7 @@ services:
             - name: ui.block
               kind: rich_snippet
               label: "label.block_rich_snippet"
+              description: "label.block_rich_snippet_description"
               form: c975L\UiBundle\Form\Block\RichSnippetType
               template: '@c975LUi/blocks/RichSnippet.html.twig'
               category: 'label.category_seo'
@@ -107,6 +115,7 @@ services:
             - name: ui.block
               kind: slider
               label: "label.block_slider"
+              description: "label.block_slider_description"
               form: c975L\UiBundle\Form\Block\SliderType
               template: '@c975LUi/blocks/Slider.html.twig'
               category: 'label.category_media'
@@ -118,6 +127,7 @@ services:
             - name: ui.block
               kind: text_readmore
               label: "label.block_text_readmore"
+              description: "label.block_text_readmore_description"
               form: c975L\UiBundle\Form\Block\ReadmoreType
               template: '@c975LUi/blocks/TextReadmore.html.twig'
               category: 'label.category_text'
@@ -128,6 +138,7 @@ services:
             - name: ui.block
               kind: text_section
               label: "label.block_text_section"
+              description: "label.block_text_section_description"
               form: c975L\UiBundle\Form\Block\TextSectionType
               template: '@c975LUi/blocks/TextSection.html.twig'
               category: 'label.category_text'
@@ -138,6 +149,7 @@ services:
             - name: ui.block
               kind: video
               label: "label.block_video"
+              description: "label.block_video_description"
               form: c975L\UiBundle\Form\Block\VideoType
               template: '@c975LUi/blocks/Video.html.twig'
               category: 'label.category_media'
@@ -149,6 +161,7 @@ services:
             - name: ui.block
               kind: video_iframe
               label: "label.block_video_iframe"
+              description: "label.block_video_iframe_description"
               form: c975L\UiBundle\Form\Block\VideoIframeType
               template: '@c975LUi/blocks/VideoIframe.html.twig'
               category: 'label.category_media'

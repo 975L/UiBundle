@@ -210,6 +210,7 @@ services:
             - name: ui.block
               kind: booking
               label: Booking
+              description: A short reservation form  # optional, shown under the label in the kind picker
               category: Reservations
               form: App\Form\Block\BookingType
               template: '@App/blocks/booking.html.twig'

@@ -1,6 +1,6 @@
 {# <twig:c975LUimage:Link [label=""] src="your-path/file.ext" url="yourdomain.ext" [class="your-css-classes"] [classLabel="your-css-classes-label"] [alt=""] [width="width"] [height="height"] [target=""] [above="true"]/> #}
 {% set label = label | default("") %}
-{% set above = above | default(false) %}
+{% set above = above | default(false) | to_bool %}
 {% set imgResponsive = "" %}
 {% if height is not defined and width is not defined %}
     {% set imgResponsive = "img-responsive" %}
@@ -12,7 +12,7 @@
             <br>
         {% endif %}
         <img src="{{ absolute_url(asset(src)) }}" class="img {{ imgResponsive }} {{ class|default("") }}" alt="{{ alt|default("") }}" {% if width is defined and width != "" %} width="{{ width }}" {% endif %} {% if height is defined and height != "" %} height="{{ height }}" {% endif %} loading="lazy">
-        {% if false == above and label != '' %}
+        {% if not above and label != '' %}
             <br>
             <span class="img-below {{ classLabel|default("") }}">{{ label|raw }}</span>
         {% endif %}
