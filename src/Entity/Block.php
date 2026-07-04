@@ -40,6 +40,9 @@ class Block
     #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $medias;
 
+    // Translated label of the kind, resolved by BlockLabelListener on postLoad (not persisted)
+    private ?string $label = null;
+
     public function __construct()
     {
         $this->medias = new ArrayCollection();
@@ -47,7 +50,26 @@ class Block
 
     public function __toString(): string
     {
-        return (string) ucfirst($this->kind) . ' (#' . $this->position . ')';
+        $kindLabel = $this->label ?? ucfirst((string) $this->kind);
+
+        $title = $this->data['title'] ?? null;
+        if (is_string($title) && '' !== trim($title)) {
+            return '(#' . $this->position . ') ' . $kindLabel . ' - ' . $title;
+        }
+
+        return '(#' . $this->position . ') ' . $kindLabel;
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(?string $label): self
+    {
+        $this->label = $label;
+
+        return $this;
     }
 
     public function getId(): ?int

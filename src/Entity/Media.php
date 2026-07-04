@@ -13,6 +13,7 @@ use App\Entity\User;
 use c975L\UiBundle\Contract\VichImageResizableInterface;
 use c975L\UiBundle\Contract\VichMediaNamableInterface;
 use c975L\UiBundle\Repository\MediaRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -55,6 +56,30 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
 
     #[ORM\Column(nullable: true)]
     private int $position = 0;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $alt = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $label = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $width = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $height = null;
+
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $cssClasses = null;
+
+    #[ORM\Column(options: ['default' => false])]
+    private bool $above = false;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $credits = null;
+
+    #[ORM\Column(options: ['default' => false])]
+    private bool $rightsReserved = false;
 
     #[ORM\ManyToOne]
     private ?User $user = null;
@@ -157,6 +182,102 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
     public function setPosition(?int $position): self
     {
         $this->position = $position ?? 0;
+
+        return $this;
+    }
+
+    public function getAlt(): ?string
+    {
+        return $this->alt;
+    }
+
+    public function setAlt(?string $alt): self
+    {
+        $this->alt = $alt;
+
+        return $this;
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->label;
+    }
+
+    public function setLabel(?string $label): self
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+
+    public function getWidth(): ?string
+    {
+        return $this->width;
+    }
+
+    public function setWidth(?string $width): self
+    {
+        $this->width = $width;
+
+        return $this;
+    }
+
+    public function getHeight(): ?string
+    {
+        return $this->height;
+    }
+
+    public function setHeight(?string $height): self
+    {
+        $this->height = $height;
+
+        return $this;
+    }
+
+    public function getCssClasses(): array
+    {
+        return $this->cssClasses ?? [];
+    }
+
+    public function setCssClasses(?array $cssClasses): self
+    {
+        $this->cssClasses = $cssClasses;
+
+        return $this;
+    }
+
+    public function isAbove(): bool
+    {
+        return $this->above;
+    }
+
+    public function setAbove(?bool $above): self
+    {
+        $this->above = $above ?? false;
+
+        return $this;
+    }
+
+    public function getCredits(): ?string
+    {
+        return $this->credits;
+    }
+
+    public function setCredits(?string $credits): self
+    {
+        $this->credits = $credits;
+
+        return $this;
+    }
+
+    public function isRightsReserved(): bool
+    {
+        return $this->rightsReserved;
+    }
+
+    public function setRightsReserved(?bool $rightsReserved): self
+    {
+        $this->rightsReserved = $rightsReserved ?? false;
 
         return $this;
     }

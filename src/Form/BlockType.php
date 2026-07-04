@@ -9,7 +9,9 @@
 namespace c975L\UiBundle\Form;
 
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Form\MediaUploadType;
+use c975L\UiBundle\Form\Util\CollectionReconciler;
 use c975L\UiBundle\Registry\BlockRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PreSetDataEvent;
@@ -42,6 +44,7 @@ class BlockType extends AbstractType
                     'data-controller'            => 'block',
                     'data-block-kind-url-value'  => $this->router->generate('ui_block_data_form'),
                     'data-action'                => 'change->block#loadData',
+                    'data-ea-widget'             => 'ea-autocomplete',
                 ],
                 'row_attr' => ['data-kind-row' => ''],
             ])
@@ -54,6 +57,18 @@ class BlockType extends AbstractType
             FormEvents::PRE_SET_DATA,
             function (PreSetDataEvent $event): void {
                 $block = $event->getData();
+
+                // Unmapped, only used server-side to reconcile submitted entries against existing rows by
+                // ID (see PageCrudController::createEditFormBuilder) - positional/identity diffing is
+                // unreliable once nested dynamic sub-forms are involved. Must be added here with "data" set
+                // directly: setting it via setData() after a static add() gets overwritten by the default
+                // mapper for unmapped fields, which falls back to the field's original (empty) "data" option.
+                $event->getForm()->add('id', HiddenType::class, [
+                    'mapped' => false,
+                    'required' => false,
+                    'data' => $block instanceof Block ? $block->getId() : null,
+                ]);
+
                 if (null === $block) {
                     return;
                 }
@@ -77,6 +92,22 @@ class BlockType extends AbstractType
                 if ($kind && $this->registry->has($kind)) {
                     $this->addDataSubForm($event->getForm(), $kind);
                     if ($this->registry->hasMediaTypes($kind)) {
+                        // Removing the very last media also leaves nothing submitted at all under "medias"
+                        // (an HTML form can't represent an empty array, only an absent key), which has to
+                        // be normalized to [] below or Symfony skips add/remove handling for the field.
+                        $block = $event->getForm()->getData();
+                        if ($block instanceof Block) {
+                            CollectionReconciler::pruneRemoved(
+                                $block->getMedias(),
+                                $submitted['medias'] ?? [],
+                                static fn (Media $media) => $block->removeMedia($media)
+                            );
+                        }
+
+                        if (!isset($submitted['medias'])) {
+                            $submitted['medias'] = [];
+                            $event->setData($submitted);
+                        }
                         $this->addMediaSubForm($event->getForm(), $kind);
                     }
                 }
@@ -100,7 +131,7 @@ class BlockType extends AbstractType
             'label' => 'label.media',
             'help' => 'label.media_help',
             'entry_type' => MediaUploadType::class,
-            'entry_options' => ['accept' => $accept],
+            'entry_options' => ['accept' => $accept, 'context' => $kind],
             'allow_add'  => true,
             'allow_delete' => true,
             'by_reference' => false,

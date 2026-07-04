@@ -7,8 +7,7 @@
  */
 import { Controller } from "@hotwired/stimulus";
 
-// Mount on <body> via EasyAdmin layout override:
-// {% block body_attrs %}{{ parent() }} data-controller="c975l-site--ea-sortable"{% endblock %}
+// Mounted automatically on <body> by controllers-admin.js — no layout override needed.
 
 const UI_GRIP = '<svg width="10" height="16" fill="currentColor" viewBox="0 0 10 16">'
     + '<circle cx="3" cy="3" r="1.5"/><circle cx="7" cy="3" r="1.5"/>'
@@ -76,7 +75,7 @@ export default class extends Controller {
     }
 
     itemsContainer(field) {
-        return field.querySelector('.form-widget-compound') || field.querySelector('.ea-form-collection-items');
+        return field.querySelector('.ea-form-collection-items') || field.querySelector('.form-widget-compound');
     }
 
     addHandle(item) {

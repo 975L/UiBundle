@@ -16,6 +16,7 @@ class StylesheetProvider implements BundleStylesheetProviderInterface
     {
         return [
             'bundles/c975lui/css/animations.min.css',
+            'bundles/c975lui/css/styles.min.css',
         ];
     }
 }

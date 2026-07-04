@@ -26,6 +26,7 @@ Symfony bundle providing a dynamic block system for pages and content entities, 
 - Doctrine ORM
 - EasyAdmin
 - VichUploader Bundle
+- [Ghostscript](https://www.ghostscript.com/) (`gs` binary) installed on the server — required for automatic PDF thumbnail generation (see [PDF thumbnails](#pdf-thumbnails)). Optional otherwise: without it, PDF uploads still work, but no `.webp` thumbnail is generated.
 
 ---
 
@@ -64,11 +65,28 @@ const app = startStimulusApp();
 registerc975lUi(app);
 ```
 
+### Making these controllers available in EasyAdmin (blocks editor, sortable, kind-switcher)
+
+Blocks are managed through EasyAdmin at `/management`, provided by `c975l/config-bundle`. Its dashboard does **not** load your site's main `app` AssetMapper entry — that would drag your front-end stylesheet (and unused front-end controllers) into the back-office and break EasyAdmin's own Bootstrap/AdminLTE styling. Instead, it loads a dedicated entry, `@c975l/ui-bundle/admin.js`.
+
+`block`, `eaSortable` and the Trix editor integration are back-office-only, so they live in `controllers-admin.js` (separate from `controllers.js`, which only holds front-end controllers). The bundle ships a ready-to-use entrypoint for them — no file to create in your app.
+
+**Add one entry to `importmap.php`** (one-time, at installation), pointing directly at the bundle's file:
+
+```php
+'@c975l/ui-bundle/admin.js' => [
+    'path' => './vendor/c975l/ui-bundle/assets/admin.js',
+    'entrypoint' => true,
+],
+```
+
+That's it — `eaSortable`, `block`, and Trix are then available on every `/management` page.
+
 ---
 
 ## Attaching blocks to an entity
 
-### How it works
+### How block attachment works
 
 Blocks are linked to their owner via a **ManyToMany join table**. The `Block` entity itself has no FK back to any specific owner — this keeps UiBundle fully decoupled from your domain entities. Each owner entity defines its own join table, and the `BlockOrphanListener` (auto-registered by the bundle) removes detached blocks on flush.
 
@@ -168,7 +186,6 @@ services:
             - name: ui.block
               kind: booking
               label: Booking
-              icon: fa fa-calendar
               category: Reservations
               form: App\Form\Block\BookingType
               template: '@App/blocks/booking.html.twig'
@@ -178,11 +195,23 @@ Create the form type to define the `data` sub-fields, and the Twig template to r
 
 ---
 
+## PDF thumbnails
+
+When a `.pdf` file is uploaded through VichUploader on **any entity** (no interface required), the bundle automatically generates a `.webp` thumbnail of the first page next to it (`document.pdf` → `document.pdf.webp`), via Ghostscript + Imagine/GD.
+
+- **Requires Ghostscript** (`gs`) installed on the server. If missing, the thumbnail generation silently fails — the PDF upload itself is unaffected.
+- **Skipped for private files** — entities implementing `VichPrivateFileInterface` (e.g. a paid download in a shop) are not thumbnailed, since there's no public preview use case for them.
+- **Thumbnail width** defaults to `400px`, or reuses `getImageWidth()` if the entity also implements `VichImageResizableInterface`.
+
+No configuration needed — handled by `VichPdfThumbnailListener`, auto-registered like the rest of the bundle's services.
+
+---
+
 ## Automatic CSS injection
 
 UiBundle provides a mechanism for bundles to declare their stylesheets automatically, without requiring manual `@import` or `<link>` additions in each application.
 
-### How it works
+### How CSS injection works
 
 1. Each bundle that provides CSS implements `BundleStylesheetProviderInterface` and registers itself with the `ui.stylesheet` service tag.
 2. UiBundle collects all tagged providers at compile time (ordered by `priority`, highest first).
@@ -200,8 +229,8 @@ class StylesheetProvider implements BundleStylesheetProviderInterface
     public function getStylesheets(): array
     {
         return [
-            'bundles/mybundle/css/styles.min.css',                          // local public asset
-            'https://cdn.example.com/lib/styles.min.css',                   // CDN URL, passed through as-is
+            'bundles/mybundle/css/styles.min.css', // local public asset
+            'https://cdn.example.com/lib/styles.min.css', // CDN URL, passed through as-is
         ];
     }
 }

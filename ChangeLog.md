@@ -1,5 +1,16 @@
 # ChangeLog
 
+## v1.4
+
+- Taken sass from c975L/SiteBundle (01/07/2026)
+- Separated Blocks system from components as to be used in other bundles (01/07/2026)
+- Corrected bug when adding more than one block (02/07/2026)
+- Added kind of autoload for js controllers (02/07/2026)
+- Added field on Media entity (02/07/2026) [Needs db update]
+- Restored per-slide `credits`/`rightsReserved` on Slider (02/07/2026)
+- Added a display `ratio` choice (free or fixed) on the Slider block (02/07/2026)
+- Added translation for blocks label and category, using bundle defined translation domain (04/07/2026)
+
 ## v1.3.1
 
 - Converted blocks.js to Stimulus controller (28/06/2026)

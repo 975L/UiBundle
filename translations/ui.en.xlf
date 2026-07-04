@@ -136,7 +136,7 @@
             </trans-unit>
             <trans-unit id="34">
                 <source>label.css_classes_help</source>
-                <target>Separate classes with spaces</target>
+                <target>Select the styles to apply to the image</target>
             </trans-unit>
             <trans-unit id="35">
                 <source>label.slug</source>
@@ -265,6 +265,170 @@
             <trans-unit id="66">
                 <source>label.loop</source>
                 <target>Loop</target>
+            </trans-unit>
+            <trans-unit id="67">
+                <source>label.block_article</source>
+                <target>Article</target>
+            </trans-unit>
+            <trans-unit id="68">
+                <source>label.block_alert</source>
+                <target>Alert</target>
+            </trans-unit>
+            <trans-unit id="69">
+                <source>label.block_audio</source>
+                <target>Audio</target>
+            </trans-unit>
+            <trans-unit id="70">
+                <source>label.block_button</source>
+                <target>Button</target>
+            </trans-unit>
+            <trans-unit id="71">
+                <source>label.block_card</source>
+                <target>Card</target>
+            </trans-unit>
+            <trans-unit id="72">
+                <source>label.block_image</source>
+                <target>Image</target>
+            </trans-unit>
+            <trans-unit id="73">
+                <source>label.block_progress_bar</source>
+                <target>Progress bar</target>
+            </trans-unit>
+            <trans-unit id="74">
+                <source>label.block_rich_snippet</source>
+                <target>SEO Rich Snippet</target>
+            </trans-unit>
+            <trans-unit id="75">
+                <source>label.block_slider</source>
+                <target>Image slider</target>
+            </trans-unit>
+            <trans-unit id="76">
+                <source>label.block_text_readmore</source>
+                <target>Text with Read more</target>
+            </trans-unit>
+            <trans-unit id="77">
+                <source>label.block_text_section</source>
+                <target>Text section</target>
+            </trans-unit>
+            <trans-unit id="78">
+                <source>label.block_video</source>
+                <target>Video</target>
+            </trans-unit>
+            <trans-unit id="79">
+                <source>label.block_video_iframe</source>
+                <target>External video (iframe)</target>
+            </trans-unit>
+            <trans-unit id="80">
+                <source>label.category_general</source>
+                <target>General</target>
+            </trans-unit>
+            <trans-unit id="81">
+                <source>label.category_elements</source>
+                <target>Elements</target>
+            </trans-unit>
+            <trans-unit id="82">
+                <source>label.category_media</source>
+                <target>Media</target>
+            </trans-unit>
+            <trans-unit id="83">
+                <source>label.category_seo</source>
+                <target>SEO</target>
+            </trans-unit>
+            <trans-unit id="84">
+                <source>label.category_text</source>
+                <target>Text</target>
+            </trans-unit>
+            <trans-unit id="85">
+                <source>label.search_block_kind</source>
+                <target>Search a block kind...</target>
+            </trans-unit>
+            <trans-unit id="86">
+                <source>label.css_class_rounded</source>
+                <target>Rounded corners</target>
+            </trans-unit>
+            <trans-unit id="87">
+                <source>label.css_class_thumbnail</source>
+                <target>Thumbnail (border)</target>
+            </trans-unit>
+            <trans-unit id="88">
+                <source>label.css_class_circle</source>
+                <target>Circle</target>
+            </trans-unit>
+            <trans-unit id="89">
+                <source>label.css_class_square</source>
+                <target>Square (cropped)</target>
+            </trans-unit>
+            <trans-unit id="90">
+                <source>label.css_class_shadow</source>
+                <target>Shadow</target>
+            </trans-unit>
+            <trans-unit id="91">
+                <source>label.caption_help</source>
+                <target>Leave empty if not used</target>
+            </trans-unit>
+            <trans-unit id="92">
+                <source>label.identifier_help</source>
+                <target>No spaces, no special characters, no accents, no capital letters</target>
+            </trans-unit>
+            <trans-unit id="93">
+                <source>label.ratio</source>
+                <target>Ratio</target>
+            </trans-unit>
+            <trans-unit id="94">
+                <source>label.ratio_help</source>
+                <target>Free keeps each image's natural ratio; a fixed ratio crops images to fit</target>
+            </trans-unit>
+            <trans-unit id="95">
+                <source>label.ratio_free</source>
+                <target>Free</target>
+            </trans-unit>
+            <trans-unit id="96">
+                <source>label.ratio_1_1</source>
+                <target>1:1 (square)</target>
+            </trans-unit>
+            <trans-unit id="97">
+                <source>label.ratio_4_3</source>
+                <target>4:3</target>
+            </trans-unit>
+            <trans-unit id="98">
+                <source>label.ratio_3_2</source>
+                <target>3:2</target>
+            </trans-unit>
+            <trans-unit id="99">
+                <source>label.ratio_16_9</source>
+                <target>16:9</target>
+            </trans-unit>
+            <trans-unit id="100">
+                <source>label.ratio_21_9</source>
+                <target>21:9 (wide)</target>
+            </trans-unit>
+            <trans-unit id="101">
+                <source>label.credits</source>
+                <target>Credits</target>
+            </trans-unit>
+            <trans-unit id="102">
+                <source>label.credits_help</source>
+                <target>Leave empty if not used</target>
+            </trans-unit>
+            <trans-unit id="103">
+                <source>label.rights_reserved</source>
+                <target>All rights reserved</target>
+            </trans-unit>
+            <trans-unit id="104">
+                <source>label.all_rights_reserved</source>
+                <target>© All rights reserved</target>
+            </trans-unit>
+            <trans-unit id="105">
+                <source>label.ratio_2_3</source>
+                <target>2:3 (portrait)</target>
+            </trans-unit>
+            <trans-unit id="106">
+                <source>label.ratio_3_4</source>
+                <target>3:4 (portrait)</target>
+            </trans-unit>
+            <trans-unit id="107">
+                <source>label.ratio_9_16</source>
+                <target>9:16 (story)</target>
             </trans-unit>
         </body>
     </file>

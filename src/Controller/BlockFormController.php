@@ -34,14 +34,14 @@ class BlockFormController extends AbstractController
         }
 
         $builder = $this->formFactory
-            ->createNamedBuilder('_block_', FormType::class)
+            ->createNamedBuilder('_block_', FormType::class, null, ['translation_domain' => 'ui'])
             ->add('data', $this->registry->getFormClass($kind), ['label' => false]);
 
         if ($this->registry->hasMediaTypes($kind)) {
             $builder->add('medias', CollectionType::class, [
                 'label'         => 'label.media',
                 'entry_type'    => MediaUploadType::class,
-                'entry_options' => ['accept' => implode(',', $this->registry->getMediaTypes($kind))],
+                'entry_options' => ['accept' => implode(',', $this->registry->getMediaTypes($kind)), 'context' => $kind],
                 'allow_add'     => true,
                 'allow_delete'  => true,
                 'by_reference'  => false,

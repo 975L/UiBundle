@@ -9,30 +9,65 @@
 namespace c975L\UiBundle\Form\Block;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Event\PreSetDataEvent;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SliderType extends AbstractType
 {
+    // Values double as the CSS modifier suffix (slider-ratio-{value}), except "free" which applies none
+    public const RATIO_CHOICES = [
+        'label.ratio_free' => 'free',
+        'label.ratio_2_3'  => '2-3',
+        'label.ratio_3_4'  => '3-4',
+        'label.ratio_9_16'  => '9-16',
+        'label.ratio_1_1'  => '1-1',
+        'label.ratio_3_2'  => '3-2',
+        'label.ratio_4_3'  => '4-3',
+        'label.ratio_16_9' => '16-9',
+        'label.ratio_21_9' => '21-9',
+    ];
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('id', TextType::class, [
-                'label' => 'label.identifier',
-                'attr'  => [
-                    'placeholder' => 'slider-home'
-                ],
-            ])
+            // Auto-generated unique HTML id (used for the section id/data-slider-id), not user-editable:
+            // avoids collisions/typos that a free-text identifier would allow, see PRE_SET_DATA below
+            ->add('id', HiddenType::class)
             ->add('duration', IntegerType::class, [
                 'label' => 'label.slide_duration',
                 'data'  => 5000,
+            ])
+            ->add('ratio', ChoiceType::class, [
+                'label'   => 'label.ratio',
+                'help'    => 'label.ratio_help',
+                'choices' => self::RATIO_CHOICES,
+                'data'    => 'free',
             ])
             ->add('class', TextType::class, [
                 'label'    => 'label.css_classes',
                 'required' => false,
             ]);
+
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (PreSetDataEvent $event): void {
+                $data = $event->getData();
+                if (!is_array($data)) {
+                    $data = [];
+                }
+
+                if (!isset($data['id']) || '' === $data['id']) {
+                    $data['id'] = 'slider-' . bin2hex(random_bytes(4));
+                    $event->setData($data);
+                }
+            }
+        );
     }
 
     public function configureOptions(OptionsResolver $resolver): void

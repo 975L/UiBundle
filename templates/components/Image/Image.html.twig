@@ -1,16 +1,10 @@
-{# Static usage  : <twig:c975LUi:Image:Image src="your-path/file.ext" [label=""] [class=""] [classLabel=""] [alt=""] [width=""] [height=""] [above=false] /> #}
-{# Dynamic usage : {{ render_block(block) }}  — block.media|first provides the file, data keys provide metadata #}
+{# Static usage : <twig:c975LUi:Image:Image src="your-path/file.ext" [label=""] [class=""] [classLabel=""] [alt=""] [width=""] [height=""] [above=false] /> #}
+{# or with an already-resolved URL : <twig:c975LUi:Image:Image imgSrc="{{ vich_uploader_asset(media) }}" .../> #}
 
 {% set above = above|default(false) %}
 {% set label = label|default('') %}
 {% set imgResponsive = (height is not defined or height == '') and (width is not defined or width == '') ? 'img-responsive' : '' %}
-
-{# Resolve image URL: Media entity (dynamic) or static src string #}
-{% if block is defined and block.media is defined and block.media|length > 0 %}
-    {% set imgSrc = vich_uploader_asset(block.media|first) %}
-{% else %}
-    {% set imgSrc = src is defined ? absolute_url(asset(src)) : '' %}
-{% endif %}
+{% set imgSrc = imgSrc|default(src is defined ? absolute_url(asset(src)) : '') %}
 
 {% if imgSrc %}
 <p class="text-center">

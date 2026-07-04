@@ -8,28 +8,59 @@
  */
 namespace c975L\UiBundle\Registry;
 
+use Symfony\Contracts\Translation\TranslatorInterface;
+
 // Check readme for use
 class BlockRegistry
 {
     private array $blocks = [];
+    private array $labelCache = [];
+    private array $categoryCache = [];
+    private ?array $groupedCache = null;
+
+    public function __construct(private TranslatorInterface $translator)
+    {
+    }
 
     public function register(
         string $kind,
         string $label,
         string $formClass,
         string $template,
-        string $icon = '📦',
-        string $category = 'Général',
-        array $mediaTypes = []
+        string $category = 'label.category_general',
+        array $mediaTypes = [],
+        string $translationDomain = 'ui'
     ): void {
         $this->blocks[$kind] = [
             'label'      => $label,
+            'domain'     => $translationDomain,
             'form'       => $formClass,
             'template'   => $template,
-            'icon'       => $icon,
             'category'   => $category,
             'mediaTypes' => $mediaTypes,
         ];
+    }
+
+    // Gets the translated label of a block kind (falls back to the raw label if untranslated)
+    public function getLabel(string $kind): string
+    {
+        if (!isset($this->labelCache[$kind])) {
+            $block = $this->get($kind);
+            $this->labelCache[$kind] = $this->translator->trans($block['label'], [], $block['domain']);
+        }
+
+        return $this->labelCache[$kind];
+    }
+
+    // Gets the translated category of a block kind, using the same translation domain as its label
+    public function getCategory(string $kind): string
+    {
+        if (!isset($this->categoryCache[$kind])) {
+            $block = $this->get($kind);
+            $this->categoryCache[$kind] = $this->translator->trans($block['category'], [], $block['domain']);
+        }
+
+        return $this->categoryCache[$kind];
     }
 
     public function get(string $kind): array
@@ -71,13 +102,23 @@ class BlockRegistry
         return !empty($this->get($kind)['mediaTypes']);
     }
 
+    // Result only depends on the static block registrations, cached after the first call
     public function groupedByCategory(): array
     {
-        $grouped = [];
-        foreach ($this->blocks as $kind => $config) {
-            $grouped[$config['category']][$config['label']] = $kind;
+        if (null !== $this->groupedCache) {
+            return $this->groupedCache;
         }
 
-        return $grouped;
+        $grouped = [];
+        foreach ($this->blocks as $kind => $config) {
+            $grouped[$this->getCategory($kind)][$this->getLabel($kind)] = $kind;
+        }
+
+        ksort($grouped, SORT_FLAG_CASE | SORT_STRING);
+        foreach (array_keys($grouped) as $category) {
+            ksort($grouped[$category], SORT_FLAG_CASE | SORT_STRING);
+        }
+
+        return $this->groupedCache = $grouped;
     }
 }

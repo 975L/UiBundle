@@ -9,43 +9,14 @@
 namespace c975L\UiBundle\Form\Block;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+// No fields: display metadata (alt, caption, size, css classes) now lives on the Media entity itself, via MediaUploadType
 class ImageType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder
-            ->add('alt', TextType::class, [
-                'label' => 'label.alt_text',
-                'required' => false,
-            ])
-            ->add('label', TextType::class, [
-                'label' => 'label.caption',
-                'required' => false,
-            ])
-            ->add('width', TextType::class, [
-                'label' => 'label.width',
-                'help' => 'label.width_help',
-                'required' => false,
-            ])
-            ->add('height', TextType::class, [
-                'label' => 'label.height',
-                'help' => 'label.height_help',
-                'required' => false,
-            ])
-            ->add('class', TextType::class, [
-                'label' => 'label.css_classes',
-                'help' => 'label.css_classes_help',
-                'required' => false,
-            ])
-            ->add('above', CheckboxType::class, [
-                'label' => 'label.caption_above',
-                'required' => false,
-            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

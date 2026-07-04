@@ -176,6 +176,14 @@ export default class extends Controller {
             return;
         }
 
+        // A fixed ratio (CSS aspect-ratio, via a "slider-ratio-*" class) already sizes the slider.
+        // This JS height fallback is only needed in free/natural ratio mode, where slides are
+        // absolutely positioned and stacked, so the container can't size itself from content alone.
+        const hasFixedRatio = Array.from(slider.classList).some((c) => c.startsWith("slider-ratio-"));
+        if (hasFixedRatio) {
+            return;
+        }
+
         // Gets img height and width to set slider height
         slides.forEach((slide) => {
             const img = slide.querySelector("img");

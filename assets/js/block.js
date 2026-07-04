@@ -13,6 +13,7 @@ export default class extends Controller {
     loadData(event) {
         const kind     = event.target.value;
         const prefix   = this.element.name.replace(/\[kind\]$/, '');
+        const idPrefix = this.element.id.replace(/_kind$/, '');
         const kindRow  = this.element.closest('[data-kind-row]');
         const compound = kindRow && kindRow.parentElement;
         if (!compound) return;
@@ -32,8 +33,15 @@ export default class extends Controller {
         fetch(this.kindUrlValue + '?k=' + encodeURIComponent(kind))
             .then(r => r.text())
             .then(html => {
-                container.innerHTML = html.replaceAll('_block_[', prefix + '[');
-                document.dispatchEvent(new CustomEvent('ea.collection.item-added', { detail: {} }));
+                container.innerHTML = html
+                    .replaceAll('_block_[', prefix + '[')
+                    // Scoped to attribute-value/anchor starts (id="block_…", for="block_…", href="#block_…")
+                    // rather than a blind replace, so it can't corrupt an unrelated class or text containing "block_".
+                    .replace(/(["'#])block_/g, `$1${idPrefix}_`);
+                document.dispatchEvent(new CustomEvent('c975l:block-data-loaded'));
+                // Wires up EasyAdmin's "add" button for the freshly-injected medias collection —
+                // its field-collection.js only scans for unprocessed collections on this event / DOMContentLoaded
+                document.dispatchEvent(new CustomEvent('ea.collection.item-added'));
             });
     }
 }

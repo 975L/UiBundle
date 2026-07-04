@@ -23,4 +23,4 @@ function initTrixEditors() {
 
 window.addEventListener('DOMContentLoaded', initTrixEditors);
 document.addEventListener('turbo:load', initTrixEditors);
-document.addEventListener('ea.collection.item-added', initTrixEditors);
+document.addEventListener('c975l:block-data-loaded', initTrixEditors);

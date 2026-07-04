@@ -1,19 +1,17 @@
-{# Static usage  : <twig:c975LUi:Article:Article article="{{ article }}"/> #}
-{# Dynamic usage : {{ render_block(block) }} — data keys: slug, title, content, detail #}
+{# Static usage : <twig:c975LUi:Article:Article article="{{ article }}"/> #}
+{# or explicit props : title="" content="" [detail=""] [mediaList=[]] [id=""] #}
 
 {% set title = title|default(article.title|default('')) %}
+{% set slug = slug|default(article.slug|default('')) %}
 {% set content = content|default(article.content|default('')) %}
 {% set detail = detail|default(article.detail|default('')) %}
-{% set mediaList = (block is defined and block.media is defined) ? block.media : (article is defined ? article.medias|default([]) : []) %}
+{% set mediaList = mediaList|default(article is defined ? article.medias|default([]) : []) %}
+{% set id = id|default('') %}
 
-<article class="site-article">
+<article class="site-article"{% if id %} id="{{ id }}"{% endif %}>
     <h2>{{ title }}</h2>
     {% if mediaList|length > 0 %}
-        {% set slides = [] %}
-        {% for _ in mediaList %}
-            {% set slides = slides|merge([{}]) %}
-        {% endfor %}
-        <twig:c975LUi:Slider:Slider slides="{{ slides }}" id="article-{{ slug }}" duration="3500" media="{{ mediaList }}"/>
+        <twig:c975LUi:Slider:Slider media="{{ mediaList }}" id="{{ (id is defined and id) ? id ~ '-slider' : 'article-' ~ slug }}" duration="3500"/>
     {% endif %}
     {{ content|raw|nl2br }}
 </article>
