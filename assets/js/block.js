@@ -38,6 +38,15 @@ export default class extends Controller {
                     // Scoped to attribute-value/anchor starts (id="block_…", for="block_…", href="#block_…")
                     // rather than a blind replace, so it can't corrupt an unrelated class or text containing "block_".
                     .replace(/(["'#])block_/g, `$1${idPrefix}_`);
+
+                // The outer <form>'s enctype is fixed by Symfony at initial render, based on which fields
+                // existed server-side at that time. A newly picked kind can inject a file input here that
+                // didn't exist yet then, so the form would still submit as urlencoded and silently drop it.
+                if (container.querySelector('input[type="file"]')) {
+                    const form = this.element.closest('form');
+                    if (form) form.enctype = 'multipart/form-data';
+                }
+
                 document.dispatchEvent(new CustomEvent('c975l:block-data-loaded'));
                 // Wires up EasyAdmin's "add" button for the freshly-injected medias collection —
                 // its field-collection.js only scans for unprocessed collections on this event / DOMContentLoaded

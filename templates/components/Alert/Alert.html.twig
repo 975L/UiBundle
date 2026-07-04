@@ -1,8 +1,11 @@
 {# Static usage : <twig:c975LUi:Alert:Alert type="info">Your content</twig:c975LUi:Alert:Alert> #}
+{# Static usage (prop) : <twig:c975LUi:Alert:Alert type="info" message="Your message"/> or content="Your content" #}
 {# Dynamic usage (Block system) : see templates/blocks/Alert.html.twig #}
 
 {% set type = type | default('info') %}
+{% set message = message | default('') %}
 {% set content = content | default('') %}
+{% set content = message != '' ? message : content %}
 
 <div class="alert alert-{{ type }} text-center">
     <twig:c975LUi:Image:Icon src="bundles/c975lsite/icons/alert-{{ type }}.svg" width="16" height="16"/>

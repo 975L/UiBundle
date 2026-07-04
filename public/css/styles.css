@@ -543,6 +543,10 @@ nav img {
   margin: 1em auto 3em;
 }
 
+.slider-single {
+  position: relative;
+}
+
 .slider-list {
   list-style: none;
   margin: 0;
@@ -659,6 +663,7 @@ nav img {
   top: 0;
   left: 0;
   right: 0;
+  margin: 0;
   background: rgba(0, 0, 0, 0.7);
   color: #fff;
   padding: 8px 10px;
@@ -673,6 +678,7 @@ nav img {
   bottom: 0;
   left: 0;
   right: 0;
+  margin: 0;
   background: rgba(0, 0, 0, 0.7);
   color: #fff;
   padding: 8px 10px;
@@ -700,6 +706,7 @@ nav img {
   position: absolute;
   width: 100%;
   left: 50%;
+  margin: 0;
   transform: translateX(-50%);
   background: var(--primary-light);
   color: #fff;
@@ -710,12 +717,12 @@ nav img {
 }
 
 .slider-credits {
-  bottom: -14px;
+  bottom: 0;
   border-radius: 0 0 15px 15px;
 }
 
 .slider-rights-reserved {
-  top: -14px;
+  top: 0;
   border-radius: 15px 15px 0 0;
 }
 
@@ -879,4 +886,4 @@ nav img {
 .rich-snippet span[itemprop=description] {
   font-style: italic;
   color: var(--primary);
-}/*# sourceMappingURL=styles.css.map */
+}

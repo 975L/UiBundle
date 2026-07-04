@@ -1,5 +1,11 @@
 # ChangeLog
 
+## v1.4.1
+
+- Fixed media files (image, etc.) not being saved when picking a block kind with media on a form not yet multipart (04/07/2026)
+- Fixed Slider display for titel and text (04/07/2026)
+- Added possibility to use prop mesage for Alert (04/07/2026)
+
 ## v1.4
 
 - Taken sass from c975L/SiteBundle (01/07/2026)

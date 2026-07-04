@@ -174,6 +174,30 @@ Expose a hidden `position` field in your collection entry type and order the col
 
 ---
 
+## Built-in block kinds
+
+The bundle ships the following kinds out of the box (see `config/services.yaml` for the exact service definitions):
+
+| Kind | Category | Form type | Template |
+| --- | --- | --- | --- |
+| `alert` | Elements | `AlertType` | `blocks/Alert.html.twig` |
+| `article` | Elements | `ArticleType` | `blocks/Article.html.twig` |
+| `audio` | Media | `AudioType` | `blocks/Audio.html.twig` |
+| `button` | Elements | `ButtonType` | `blocks/Button.html.twig` |
+| `card` | Elements | `CardType` | `blocks/Card.html.twig` |
+| `image` | Media | `ImageType` | `blocks/Image.html.twig` |
+| `progress_bar` | Elements | `ProgressBarType` | `blocks/ProgressBar.html.twig` |
+| `rich_snippet` | SEO | `RichSnippetType` | `blocks/RichSnippet.html.twig` |
+| `slider` | Media | `SliderType` | `blocks/Slider.html.twig` |
+| `text_readmore` | Text | `ReadmoreType` | `blocks/TextReadmore.html.twig` |
+| `text_section` | Text | `TextSectionType` | `blocks/TextSection.html.twig` |
+| `video` | Media | `VideoType` | `blocks/Video.html.twig` |
+| `video_iframe` | Media | `VideoIframeType` | `blocks/VideoIframe.html.twig` |
+
+> **Maintenance note:** update this table whenever a kind is added, renamed, or removed in `config/services.yaml`.
+
+---
+
 ## Registering a custom block kind
 
 Declare a service with the `ui.block` tag in your bundle's `services.yaml`:
@@ -192,6 +216,40 @@ services:
 ```
 
 Create the form type to define the `data` sub-fields, and the Twig template to render the block on the front end. The form data is stored as JSON in the `Block::$data` column.
+
+---
+
+## Reusable Twig components
+
+Block templates are thin adapters around a set of Symfony UX Twig components living in `templates/components/`, callable directly in your own templates as `<twig:c975LUi:Group:Name .../>`.
+
+| Component | Purpose |
+| --- | --- |
+| `<twig:c975LUi:Alert:Alert>` | Bootstrap-style alert box |
+| `<twig:c975LUi:Article:Article>` | Single article (title/content/media) |
+| `<twig:c975LUi:Article:Articles>` | Loops `Article` over a collection |
+| `<twig:c975LUi:Audio:Audio>` | HTML5 audio player |
+| `<twig:c975LUi:Blocks:Block>` | Renders one `Block` entity via its registered kind template |
+| `<twig:c975LUi:Blocks:Blocks>` | Loops `Block` over a collection |
+| `<twig:c975LUi:Button:Button>` | Styled button/link |
+| `<twig:c975LUi:Card:Card>` | Bootstrap card |
+| `<twig:c975LUi:General:RichSnippet>` | JSON-LD structured data snippet |
+| `<twig:c975LUi:Image:Icon>` | Small icon image |
+| `<twig:c975LUi:Image:Image>` | Responsive image |
+| `<twig:c975LUi:Image:Link>` | Image wrapped in a link |
+| `<twig:c975LUi:Menu:Menu>` | Site navigation menu |
+| `<twig:c975LUi:Menu:MenuItem>` | Single menu link with active-state detection |
+| `<twig:c975LUi:Pagination:Pagination>` | Pagination links |
+| `<twig:c975LUi:Progress:Bar>` | Progress bar |
+| `<twig:c975LUi:Slider:Slider>` | Image/media slider |
+| `<twig:c975LUi:Text:Readmore>` | Collapsible "read more" text block |
+| `<twig:c975LUi:Text:Section>` | Text section with optional image |
+| `<twig:c975LUi:Video:Iframe>` | Embedded video iframe (YouTube etc.) |
+| `<twig:c975LUi:Video:Video>` | HTML5 video player |
+
+Props match the Twig variables used inside each template — see `templates/components/<Group>/<Name>.html.twig` for the exact list.
+
+> **Maintenance note:** update this table whenever a component is added, renamed, or removed in `templates/components/`.
 
 ---
 
