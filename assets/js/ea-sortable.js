@@ -6,13 +6,18 @@
  * with this source code in the file LICENSE.
  */
 import { Controller } from "@hotwired/stimulus";
+import { addToolbarButton } from "./block-toolbar.js";
 
 // Mounted automatically on <body> by controllers-admin.js — no layout override needed.
 
-const UI_GRIP = '<svg width="10" height="16" fill="currentColor" viewBox="0 0 10 16">'
-    + '<circle cx="3" cy="3" r="1.5"/><circle cx="7" cy="3" r="1.5"/>'
-    + '<circle cx="3" cy="8" r="1.5"/><circle cx="7" cy="8" r="1.5"/>'
-    + '<circle cx="3" cy="13" r="1.5"/><circle cx="7" cy="13" r="1.5"/>'
+// No width/height here, deliberately - EasyAdmin's own icons (e.g. the delete button's) don't set
+// them either, relying entirely on its global ".icon svg" CSS to size every icon consistently.
+// Hard-coding a size here would make this one the odd one out instead of matching the others.
+const UI_MOVE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" '
+    + 'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+    + '<polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/>'
+    + '<polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/>'
+    + '<line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/>'
     + '</svg>';
 
 export default class extends Controller {
@@ -81,17 +86,19 @@ export default class extends Controller {
     addHandle(item) {
         if (item.dataset.uiHandle) return;
         item.dataset.uiHandle = '1';
-        const header = item.querySelector('.accordion-header');
-        if (!header) return;
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'btn btn-link p-2 ui-sort-handle';
-        btn.title = 'Déplacer';
-        btn.style.cssText = 'cursor:grab;flex-shrink:0;color:var(--bs-secondary-color,#6c757d);line-height:1;border:none;background:none';
-        btn.innerHTML = UI_GRIP;
+
+        const btn = addToolbarButton(item, {
+            title: 'Déplacer',
+            icon: UI_MOVE_ICON,
+            order: 1,
+            onClick: () => {},
+        });
+        if (!btn) return;
+
+        btn.classList.add('ui-sort-handle');
+        btn.style.cursor = 'grab';
         btn.addEventListener('mousedown', () => item.setAttribute('draggable', 'true'));
         btn.addEventListener('mouseup', () => item.removeAttribute('draggable'));
-        header.prepend(btn);
     }
 
     dragAfter(field, y) {

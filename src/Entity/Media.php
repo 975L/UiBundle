@@ -25,14 +25,25 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
 {
     private const IMAGE_WIDTH = 800;
 
+    // Site-wide graphics, not attached to a Block - fixed filename at the root of public/ (see getVichMediaPath)
+    public const ROLE_FAVICON = 'favicon';
+    public const ROLE_APPLE_TOUCH_ICON = 'apple-touch-icon';
+    public const ROLE_OG_IMAGE = 'og-image';
+    public const ROLE_LOGO = 'logo';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Block::class, inversedBy: 'medias')]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?Block $block = null;
+
+    // Nullable + unique: block medias all share role=null (MySQL/MariaDB allow multiple NULLs in a
+    // unique index), while site-wide graphics get one row per role enforced at the DB level
+    #[ORM\Column(length: 20, nullable: true, unique: true)]
+    private ?string $role = null;
 
     #[Vich\UploadableField(
         mapping: 'block_media',
@@ -92,6 +103,18 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
     public function getBlock(): ?Block
     {
         return $this->block;
+    }
+
+    public function getRole(): ?string
+    {
+        return $this->role;
+    }
+
+    public function setRole(?string $role): self
+    {
+        $this->role = $role;
+
+        return $this;
     }
 
     public function setBlock(?Block $block): self
@@ -289,9 +312,15 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
 
     public function getVichMediaPath(): string
     {
+        // Site-wide graphics live at the root of public/ under their own fixed name (see UiMediaNamer)
+        if (null !== $this->role) {
+            return $this->role;
+        }
+
+        // Not attached to a Block either (e.g. a Page's own og-image): still gets a unique, non-role name
         $block = $this->getBlock();
         if (null === $block) {
-            return 'medias/site/block';
+            return 'medias/site/media';
         }
 
         return 'medias/site/block-' . ($block->getKind() ?? 'unknown') . '-' . ($block->getId() ?? uniqid());

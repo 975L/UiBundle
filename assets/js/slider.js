@@ -18,6 +18,7 @@ export default class extends Controller {
             this.initializeSlider(sliderId);
             this.resizeSlider(sliderId);
             this.setupAccessibility(sliderId);
+            this.setupTouchGestures(sliderId);
             this.startAutoPlay(sliderId);
         }
     }
@@ -93,6 +94,75 @@ export default class extends Controller {
         if (playPauseBtn) {
             playPauseBtn.addEventListener("click", () => this.togglePlayPause(sliderId, playPauseBtn));
         }
+    }
+
+    // Touch gestures: swipe left/right to navigate, press-and-hold to pause.
+    // A plain tap (released quickly, without moving) falls through to the existing
+    // "click on slide" listener set up in initializeSlider(), which advances to the next slide.
+    setupTouchGestures(sliderId) {
+        const longPressDelay = 500;
+        const swipeThreshold = 50;
+        const items = document.querySelectorAll(`#${sliderId} .slider-item`);
+
+        items.forEach((item) => {
+            let startX = 0;
+            let startY = 0;
+            let longPressTimer = null;
+            let isLongPress = false;
+            let isSwipe = false;
+
+            item.addEventListener("touchstart", (e) => {
+                const touch = e.touches[0];
+                startX = touch.clientX;
+                startY = touch.clientY;
+                isLongPress = false;
+                isSwipe = false;
+
+                longPressTimer = setTimeout(() => {
+                    isLongPress = true;
+                    this.suspendAnimation();
+                }, longPressDelay);
+            }, { passive: true });
+
+            item.addEventListener("touchmove", (e) => {
+                const touch = e.touches[0];
+                const deltaX = touch.clientX - startX;
+                const deltaY = touch.clientY - startY;
+
+                if (!isSwipe && Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > Math.abs(deltaY)) {
+                    isSwipe = true;
+                    clearTimeout(longPressTimer);
+                }
+
+                if (isSwipe) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            item.addEventListener("touchend", (e) => {
+                clearTimeout(longPressTimer);
+
+                if (isSwipe) {
+                    e.preventDefault();
+                    const deltaX = e.changedTouches[0].clientX - startX;
+                    if (deltaX < 0) {
+                        this.displaySlide(sliderId, ++this.slideIndex, "next");
+                    } else {
+                        this.displaySlide(sliderId, --this.slideIndex, "prev");
+                    }
+                } else if (isLongPress) {
+                    e.preventDefault();
+                    this.resumeAnimation(sliderId);
+                }
+            }, { passive: false });
+
+            item.addEventListener("touchcancel", () => {
+                clearTimeout(longPressTimer);
+                if (isLongPress) {
+                    this.resumeAnimation(sliderId);
+                }
+            });
+        });
     }
 
     suspendAnimation() {
@@ -184,29 +254,46 @@ export default class extends Controller {
             return;
         }
 
-        // Gets img height and width to set slider height
-        slides.forEach((slide) => {
-            const img = slide.querySelector("img");
-            if (img && img.clientHeight > slider.clientHeight) {
-                slider.style.height = `${img.clientHeight}px`;
+        const images = Array.from(slides)
+            .map((slide) => slide.querySelector("img"))
+            .filter((img) => img !== null);
+
+        // Sets the slider height to the tallest image scaled to the slider's width, using the
+        // width/height HTML attributes (Media entity dimensions) which are known synchronously -
+        // no waiting on image load events, which used to grow the slider after the fact and shift
+        // bottom-anchored text/credits down. "slider-sized" then lets every slide - including
+        // smaller images - fill that height and get cropped via object-fit: cover.
+        const applyMaxHeight = () => {
+            const width = slider.clientWidth;
+            const maxHeight = images.reduce((max, img) => {
+                const naturalWidth = img.naturalWidth || img.width;
+                const naturalHeight = img.naturalHeight || img.height;
+                if (!naturalWidth || !naturalHeight) {
+                    return max;
+                }
+                return Math.max(max, naturalHeight * (width / naturalWidth));
+            }, 0);
+
+            if (maxHeight > 0) {
+                slider.style.height = `${maxHeight}px`;
+                slider.classList.add("slider-sized");
+            }
+        };
+
+        applyMaxHeight();
+
+        // Fallback for medias missing stored width/height: refine once the real image loads
+        images.forEach((img) => {
+            if (!img.getAttribute("width") || !img.getAttribute("height")) {
+                img.addEventListener("load", applyMaxHeight, { once: true });
             }
         });
 
         // Recalculates height in case of resizing the window, waits that resize is finished to avoid multiple calculations
-        let resizeTimeout = 1000;
+        let resizeTimeout;
         window.addEventListener("resize", () => {
             clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                const slide = Array.from(slides).find((slide) => slide.style.display === "block");
-                const img = slide.querySelector("img");
-                if (img) {
-                    if (img.clientHeight > slider.clientHeight) {
-                        slider.style.height = `${img.clientHeight}px`;
-                    } else {
-                        slider.style.height = "";
-                    }
-                }
-            }, resizeTimeout);
+            resizeTimeout = setTimeout(applyMaxHeight, 300);
         });
     }
 

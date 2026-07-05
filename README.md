@@ -13,6 +13,9 @@ Symfony bundle providing a dynamic block system for pages and content entities, 
 - Dynamic block system with per-kind forms and templates
 - Media uploads per block via VichUploader (auto-configured)
 - Drag-and-drop position ordering for blocks and media
+- One-click duplication of a block or a media row in EasyAdmin, including its files
+- Live preview of a newly picked image in EasyAdmin, before saving
+- Site-wide media roles (favicon, apple-touch-icon, og-image, logo) retrievable anywhere via `site_media()`
 - AJAX kind-switcher in EasyAdmin
 - Extensible: register your own block kinds via a service tag
 - Automatic CSS injection: bundles declare their stylesheets via a service tag, rendered by `bundle_stylesheets()` in Twig
@@ -238,8 +241,6 @@ Block templates are thin adapters around a set of Symfony UX Twig components liv
 | `<twig:c975LUi:Image:Icon>` | Small icon image |
 | `<twig:c975LUi:Image:Image>` | Responsive image |
 | `<twig:c975LUi:Image:Link>` | Image wrapped in a link |
-| `<twig:c975LUi:Menu:Menu>` | Site navigation menu |
-| `<twig:c975LUi:Menu:MenuItem>` | Single menu link with active-state detection |
 | `<twig:c975LUi:Pagination:Pagination>` | Pagination links |
 | `<twig:c975LUi:Progress:Bar>` | Progress bar |
 | `<twig:c975LUi:Slider:Slider>` | Image/media slider |
@@ -263,6 +264,32 @@ When a `.pdf` file is uploaded through VichUploader on **any entity** (no interf
 - **Thumbnail width** defaults to `400px`, or reuses `getImageWidth()` if the entity also implements `VichImageResizableInterface`.
 
 No configuration needed — handled by `VichPdfThumbnailListener`, auto-registered like the rest of the bundle's services.
+
+---
+
+## Site-wide media (favicon, logo, og-image)
+
+A `Media` row isn't necessarily attached to a `Block` — it can instead hold one of a fixed set of site-wide graphics, identified by a `role`:
+
+```php
+use c975L\UiBundle\Entity\Media;
+
+Media::ROLE_FAVICON;          // 'favicon'
+Media::ROLE_APPLE_TOUCH_ICON; // 'apple-touch-icon'
+Media::ROLE_OG_IMAGE;         // 'og-image'
+Media::ROLE_LOGO;             // 'logo'
+```
+
+`role` is unique per value, so there is at most one `Media` for each. Create/replace one the same way as any other `Media` (e.g. from your own app's settings form or a fixture), setting `setRole(Media::ROLE_FAVICON)` — `UiMediaNamer` then stores it under a fixed, predictable filename at the root of `public/` instead of the usual per-block path.
+
+Retrieve it anywhere in Twig with the `site_media()` function, which returns `null` if none was uploaded yet:
+
+```twig
+{% set favicon = site_media('favicon') %}
+{% if favicon %}
+    <link rel="icon" href="{{ vich_uploader_asset(favicon) }}">
+{% endif %}
+```
 
 ---
 

@@ -24,7 +24,7 @@
         {% for slideMedia in mediaList %}
             {% set slide = slides[loop.index0]|default(null) %}
             <li class="slider-item"{% if not loop.first %} aria-hidden="true"{% endif %}>
-                <img src="{{ vich_uploader_asset(slideMedia) }}" alt="{{ slideMedia.alt }}" class="slider-img img img-responsive img-rounded box-shadow {{ slideMedia.cssClasses|join(' ') }}" loading="{{ loop.first ? "eager" : "lazy" }}">
+                <img src="{{ vich_uploader_asset(slideMedia) }}" alt="{{ slideMedia.alt }}" class="slider-img img img-responsive img-rounded box-shadow {{ slideMedia.cssClasses|join(' ') }}" width="{{ slideMedia.width }}" height="{{ slideMedia.height }}" loading="{{ loop.first ? "eager" : "lazy" }}">
                 {% if slide and slide.title %}
                     <p class="slider-title">{% if slide.url %}<a href="{{ slide.url }}">{{ slide.title }}</a>{% else %}{{ slide.title }}{% endif %}</p>
                 {% endif %}

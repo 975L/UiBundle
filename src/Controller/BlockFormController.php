@@ -25,7 +25,7 @@ class BlockFormController extends AbstractController
         private FormFactoryInterface $formFactory
     ) {}
 
-    #[Route('/ui/block/data-form', name: 'ui_block_data_form', methods: ['GET'])]
+    #[Route('/ui/block/data-form', name: 'ui_block_data_form', methods: ['GET', 'POST'])]
     public function dataForm(Request $request): Response
     {
         $kind = (string) $request->query->get('k', '');
@@ -33,8 +33,20 @@ class BlockFormController extends AbstractController
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
+        // Duplicating a block (see block-duplicate.js) posts its current "data" field values here, so
+        // the sub-form comes back pre-filled instead of empty. Deliberately NOT extended to "medias":
+        // MediaUploadType has `data_class: Media`, and Symfony's form component requires a form's view
+        // data to be an actual instance of that class (or null) when one is set - passing it a plain
+        // array throws ("the form's view data is expected to be an instance of Media, but is an
+        // array"). That only works for "data" because kind-specific form types (SliderType etc.) have
+        // `data_class: null`. Media duplication is instead handled entirely client-side.
+        $initialData = null;
+        if ($request->isMethod('POST') && $request->request->has('data')) {
+            $initialData = ['data' => $request->request->all('data')];
+        }
+
         $builder = $this->formFactory
-            ->createNamedBuilder('_block_', FormType::class, null, ['translation_domain' => 'ui'])
+            ->createNamedBuilder('_block_', FormType::class, $initialData, ['translation_domain' => 'ui'])
             ->add('data', $this->registry->getFormClass($kind), ['label' => false]);
 
         if ($this->registry->hasMediaTypes($kind)) {

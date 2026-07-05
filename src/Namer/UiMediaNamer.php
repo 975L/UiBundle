@@ -11,6 +11,7 @@ namespace c975L\UiBundle\Namer;
 
 use RuntimeException;
 use c975L\UiBundle\Contract\VichMediaNamableInterface;
+use c975L\UiBundle\Entity\Media;
 use Symfony\Component\Filesystem\Filesystem;
 use Vich\UploaderBundle\Naming\NamerInterface;
 use Symfony\Component\HttpFoundation\File\File;
@@ -37,12 +38,20 @@ class UiMediaNamer implements NamerInterface
         }
 
         $file = $mapping->getFile($entity);
+
+        // Site-wide graphics (favicon, apple-touch-icon...) need a fixed, predictable filename at the
+        // root of public/ - no uniqid (would break the well-known URL) and no forced webp conversion
+        // (favicon/apple-touch-icon must keep their real format, unlike in-content block images)
+        if ($entity instanceof Media && null !== $entity->getRole()) {
+            return $entity->getVichMediaPath() . '.' . $this->determineExtension($file, convertToWebp: false);
+        }
+
         $extension = $this->determineExtension($file);
 
         return $entity->getVichMediaPath() . '-' . uniqid() . '.' . $extension;
     }
 
-    private function determineExtension(File $file): string
+    private function determineExtension(File $file, bool $convertToWebp = true): string
     {
         $mimeType = $file->getMimeType();
         $extension = $file->getExtension();
@@ -55,9 +64,11 @@ class UiMediaNamer implements NamerInterface
             $extension = 'gif';
         } elseif ('image/webp' === $mimeType) {
             $extension = 'webp';
+        } elseif ('image/vnd.microsoft.icon' === $mimeType || 'image/x-icon' === $mimeType) {
+            $extension = 'ico';
         }
 
-        if (in_array($extension, ['jpg', 'png', 'gif', 'webp'])) {
+        if ($convertToWebp && in_array($extension, ['jpg', 'png', 'gif', 'webp'])) {
             return 'webp';
         }
 

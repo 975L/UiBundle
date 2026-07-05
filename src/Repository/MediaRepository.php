@@ -22,4 +22,9 @@ class MediaRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Media::class);
     }
+
+    public function findOneByRole(string $role): ?Media
+    {
+        return $this->findOneBy(['role' => $role]);
+    }
 }

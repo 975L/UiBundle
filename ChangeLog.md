@@ -1,5 +1,15 @@
 # ChangeLog
 
+## v1.4.3
+
+- Added duplication of Media (04/07/2026)
+- Added duplication of Block (04/07/2026)
+- Added a What's new file that will appear on main dashboard + menu (04/07/2026)
+- Added live preview of a newly picked image in EasyAdmin, before saving (05/07/2026)
+- Added site-wide media roles (favicon, apple-touch-icon, og-image, logo) on `Media`, retrievable via the `site_media()` Twig function (05/07/2026) [Needs db update]
+- Added touch gestures (swipe to navigate, press-and-hold to pause) to the Slider block (05/07/2026)
+- Moved Menu/MenuItem + sass related to c975L/SiteBundle (05/07/2026)
+
 ## v1.4.2
 
 - Added auto-scroll/focus to the newly added block row in the "blocks" collection (04/07/2026)

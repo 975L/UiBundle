@@ -13,6 +13,7 @@ use c975L\UiBundle\DependencyInjection\Compiler\BlockRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\ScriptAdminRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\ScriptRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\StylesheetRegistryPass;
+use c975L\UiBundle\DependencyInjection\Compiler\WhatsNewProviderPass;
 use c975L\UiBundle\Namer\UiMediaNamer;
 use c975L\UiBundle\Storage\NestedFileSystemStorage;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -27,6 +28,7 @@ class c975LUiBundle extends AbstractBundle
         $container->addCompilerPass(new StylesheetRegistryPass());
         $container->addCompilerPass(new ScriptRegistryPass());
         $container->addCompilerPass(new ScriptAdminRegistryPass());
+        $container->addCompilerPass(new WhatsNewProviderPass());
     }
 
     public function prependExtension(ContainerConfigurator $configurator, ContainerBuilder $container): void

@@ -1,0 +1,28 @@
+[
+    {
+        "version": "1.4.3",
+        "date": "2026-07-05",
+        "description": [
+            {
+                "en": "Added duplication of Block/media",
+                "fr": "Ajout de la duplication du Block/media",
+                "es": "Añadida la duplicación del Block/media"
+            },
+            {
+                "en": "Added live preview of a newly picked image, before saving",
+                "fr": "Ajout d'un aperçu instantané d'une image tout juste sélectionnée, avant l'enregistrement",
+                "es": "Añadida la vista previa instantánea de una imagen recién seleccionada, antes de guardar"
+            },
+            {
+                "en": "Added touch gestures (swipe to navigate, press-and-hold to pause) to the Slider",
+                "fr": "Ajout de gestes tactiles (balayer pour naviguer, appui long pour mettre en pause) sur le Slider",
+                "es": "Añadidos gestos táctiles (deslizar para navegar, mantener pulsado para pausar) en el Slider"
+            },
+            {
+                "en": "Added site-wide media roles (favicon, apple-touch-icon, og-image, logo)",
+                "fr": "Ajout de rôles de media pour tout le site (favicon, apple-touch-icon, og-image, logo)",
+                "es": "Añadidos roles de medios para todo el sitio (favicon, apple-touch-icon, og-image, logo)"
+            }
+        ]
+    }
+]
