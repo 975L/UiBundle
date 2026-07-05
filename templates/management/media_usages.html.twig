@@ -1,0 +1,17 @@
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{% set usages = field.formattedValue %}
+{% if usages is empty %}
+    <span class="text-muted">{{ 'label.not_used_anywhere'|trans({}, 'ui') }}</span>
+{% else %}
+    <ul class="list-unstyled mb-0">
+        {% for usage in usages %}
+            <li>
+                {% if usage.url %}
+                    <a href="{{ usage.url }}">{{ usage.label }}</a>
+                {% else %}
+                    {{ usage.label }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}

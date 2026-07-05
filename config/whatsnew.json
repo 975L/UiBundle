@@ -1,5 +1,16 @@
 [
     {
+        "version": "1.4.4",
+        "date": "2026-07-05",
+        "description": [
+            {
+                "en": "Added a Media Library in the dashboard, showing every media and where it is used",
+                "fr": "Ajout d'une Bibliothèque de médias dans le tableau de bord, affichant tous les médias et où ils sont utilisés",
+                "es": "Añadida una Biblioteca de medios en el panel, mostrando todos los medios y dónde se usan"
+            }
+        ]
+    },
+    {
         "version": "1.4.3",
         "date": "2026-07-05",
         "description": [
@@ -22,6 +33,11 @@
                 "en": "Added site-wide media roles (favicon, apple-touch-icon, og-image, logo)",
                 "fr": "Ajout de rôles de media pour tout le site (favicon, apple-touch-icon, og-image, logo)",
                 "es": "Añadidos roles de medios para todo el sitio (favicon, apple-touch-icon, og-image, logo)"
+            },
+            {
+                "en": "Added a Media Library in the dashboard, showing every media and where it is used",
+                "fr": "Ajout d'une Bibliothèque de médias dans le tableau de bord, affichant tous les médias et où ils sont utilisés",
+                "es": "Añadida una Biblioteca de medios en el panel, mostrando todos los medios y dónde se usan"
             }
         ]
     }

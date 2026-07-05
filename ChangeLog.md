@@ -1,5 +1,10 @@
 # ChangeLog
 
+## v1.4.4
+
+- Added a cross-bundle Media Library in EasyAdmin: browse every `Media` regardless of how it's attached (Block, Page og-image, site-wide role...), see where it's used via a new `MediaUsageProviderInterface` extension point, and edit its metadata (05/07/2026)
+- Restyled the Slider navigation dots (ring style with an `active` state) and fixed slide transitions extending the page's scrollable area by clipping `.slider` overflow (05/07/2026)
+
 ## v1.4.3
 
 - Added duplication of Media (04/07/2026)

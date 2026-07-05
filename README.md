@@ -16,6 +16,7 @@ Symfony bundle providing a dynamic block system for pages and content entities, 
 - One-click duplication of a block or a media row in EasyAdmin, including its files
 - Live preview of a newly picked image in EasyAdmin, before saving
 - Site-wide media roles (favicon, apple-touch-icon, og-image, logo) retrievable anywhere via `site_media()`
+- Media Library in EasyAdmin: browse every `Media` regardless of how it's attached, and see where it's used
 - AJAX kind-switcher in EasyAdmin
 - Extensible: register your own block kinds via a service tag
 - Automatic CSS injection: bundles declare their stylesheets via a service tag, rendered by `bundle_stylesheets()` in Twig
@@ -290,6 +291,37 @@ Retrieve it anywhere in Twig with the `site_media()` function, which returns `nu
     <link rel="icon" href="{{ vich_uploader_asset(favicon) }}">
 {% endif %}
 ```
+
+---
+
+## Media Library
+
+A `Media` row can be attached in several ways depending on the consuming bundle: to a `Block`, directly to another entity (e.g. a Page's og-image), or as a site-wide `role`. `MediaCrudController` provides a single EasyAdmin gallery browsing every `Media` regardless of how it's attached, with a click-through to edit its metadata (alt, caption, credits, CSS classes...). Site-wide role graphics stay read-only there — they keep being managed wherever the consuming bundle handles roles (e.g. `SiteGraphicCrudController` in c975L/SiteBundle).
+
+UiBundle does **not** register a menu entry for it: `c975l/config-bundle` (which owns the menu registration mechanism, see below) already depends on `c975l/ui-bundle`, so the reverse would be a circular dependency. A bundle that depends on both - e.g. c975L/SiteBundle - should add an entry pointing to `MediaCrudController::class` in its own `MenuProviderInterface` implementation.
+
+### Declaring where a Media is used
+
+UiBundle only knows about `Media`/`Block`; it has no visibility into which entity of a consuming bundle owns that Block, or holds a direct reference to a Media (like a Page's og-image). Each bundle that knows this can contribute that information:
+
+1. Implement `MediaUsageProviderInterface` in your bundle - no tag needed, it's auto-discovered like `BundleWhatsNewProviderInterface`.
+2. Return, for a given batch of already-loaded `Media` rows, the places they're used.
+
+```php
+use c975L\UiBundle\Contract\MediaUsageProviderInterface;
+use c975L\UiBundle\Entity\Media;
+
+class MyMediaUsageProvider implements MediaUsageProviderInterface
+{
+    public function getUsages(array $medias): array
+    {
+        // [mediaId => [['label' => string, 'url' => ?string], ...], ...]
+        return [...];
+    }
+}
+```
+
+`url` can be `null` for a purely descriptive entry (no admin page to link to). Every registered provider's results are merged and shown in the "Used in" field of the Media Library's edit page.
 
 ---
 

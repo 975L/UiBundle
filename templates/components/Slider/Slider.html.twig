@@ -57,7 +57,7 @@
         <ul class="slider-dots" aria-label="{{ "label.slide_navigation"|trans({}, "site") }}">
             {% for slideMedia in mediaList %}
                 <li>
-                    <button type="button" class="slider-dot{% if loop.first %} current{% endif %}" data-slide="{{ loop.index0 }}" aria-label="{{ "label.slide"|trans({}, "site") }} {{ loop.index }}{% if loop.first %} ({{ "label.current"|trans({}, "site") }}){% endif %}">
+                    <button type="button" class="slider-dot{% if loop.first %} current active{% endif %}" data-slide="{{ loop.index0 }}" aria-label="{{ "label.slide"|trans({}, "site") }} {{ loop.index }}{% if loop.first %} ({{ "label.current"|trans({}, "site") }}){% endif %}">
                         <span aria-hidden="true">{{ loop.index }}</span>
                     </button>
                 </li>

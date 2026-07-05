@@ -482,6 +482,26 @@
                 <source>label.ratio_9_16</source>
                 <target>9:16 (story)</target>
             </trans-unit>
+            <trans-unit id="121">
+                <source>label.media_library</source>
+                <target>Media Library</target>
+            </trans-unit>
+            <trans-unit id="122">
+                <source>label.used_in</source>
+                <target>Used in</target>
+            </trans-unit>
+            <trans-unit id="123">
+                <source>label.attached_to_block</source>
+                <target>Attached to block #%id% (%kind%)</target>
+            </trans-unit>
+            <trans-unit id="124">
+                <source>label.not_used_anywhere</source>
+                <target>Not used anywhere yet</target>
+            </trans-unit>
+            <trans-unit id="125">
+                <source>label.file</source>
+                <target>File</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

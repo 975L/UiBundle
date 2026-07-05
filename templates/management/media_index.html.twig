@@ -1,0 +1,31 @@
+{% extends '@EasyAdmin/crud/index.html.twig' %}
+
+{# Flat flex gallery instead of the default table - a media library reads better as thumbnails than
+   as rows. Each thumbnail links to entity.defaultActionUrl (Edit when allowed, Detail otherwise - e.g.
+   for read-only site-wide role graphics, see MediaCrudController's displayIf on Action::EDIT). #}
+{% block main %}
+    <div style="display: flex !important; flex-wrap: wrap; flex-direction: row; gap: 1em;">
+        {% for entity in entities %}
+            {% if entity.isAccessible %}
+                {% set media = entity.instance %}
+                <a href="{{ entity.defaultActionUrl }}" style="display: block; width: 150px; text-decoration: none; color: inherit;">
+                    {% if media.filename and media.mimeType starts with 'image/' %}
+                        <img src="{{ vich_uploader_asset(media) }}" alt="{{ media.alt }}" width="150" height="150" style="width: 150px !important; height: 150px !important; object-fit: contain; border: 1px solid var(--border-color, #ddd); border-radius: 4px;">
+                    {% else %}
+                        <div style="width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color, #ddd); border-radius: 4px; font-size: .75rem; text-align: center; padding: .25rem; overflow-wrap: anywhere;">
+                            {{ media.filename }}
+                        </div>
+                    {% endif %}
+                </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    {% if entities|length > 0 %}
+        <div class="content-panel-footer without-padding without-border">
+            {{ include(ea.templatePath('crud/paginator'), {render_detailed_pagination: true}) }}
+        </div>
+    {% endif %}
+
+    {{ include('@EasyAdmin/crud/includes/_action_confirmation_modal.html.twig', with_context: false) }}
+{% endblock main %}

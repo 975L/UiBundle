@@ -10,6 +10,7 @@
 namespace c975L\UiBundle;
 
 use c975L\UiBundle\DependencyInjection\Compiler\BlockRegistryPass;
+use c975L\UiBundle\DependencyInjection\Compiler\MediaUsageProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\ScriptAdminRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\ScriptRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\StylesheetRegistryPass;
@@ -29,6 +30,7 @@ class c975LUiBundle extends AbstractBundle
         $container->addCompilerPass(new ScriptRegistryPass());
         $container->addCompilerPass(new ScriptAdminRegistryPass());
         $container->addCompilerPass(new WhatsNewProviderPass());
+        $container->addCompilerPass(new MediaUsageProviderPass());
     }
 
     public function prependExtension(ContainerConfigurator $configurator, ContainerBuilder $container): void
