@@ -13,6 +13,7 @@ use c975L\UiBundle\DependencyInjection\Compiler\BlockRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\MediaUsageProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\ScriptAdminRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\ScriptRegistryPass;
+use c975L\UiBundle\DependencyInjection\Compiler\StylesheetManagementRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\StylesheetRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\WhatsNewProviderPass;
 use c975L\UiBundle\Namer\UiMediaNamer;
@@ -27,6 +28,7 @@ class c975LUiBundle extends AbstractBundle
     {
         $container->addCompilerPass(new BlockRegistryPass());
         $container->addCompilerPass(new StylesheetRegistryPass());
+        $container->addCompilerPass(new StylesheetManagementRegistryPass());
         $container->addCompilerPass(new ScriptRegistryPass());
         $container->addCompilerPass(new ScriptAdminRegistryPass());
         $container->addCompilerPass(new WhatsNewProviderPass());

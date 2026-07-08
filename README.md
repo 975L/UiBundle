@@ -381,4 +381,68 @@ Local paths are resolved to absolute versioned URLs via Symfony's asset package.
 
 ---
 
+## Automatic CSS injection for EasyAdmin management pages
+
+Same idea as above, but for CSS that should only load on the EasyAdmin dashboard (e.g. `/management`), not on the public site. Keep using plain `style="..."` attributes for one-off, low-value cases (a single `margin: 0` isn't worth an extra HTTP request) — reach for this mechanism when a management template accumulates real, reusable CSS (see `templates/management/media_index.html.twig` for an example).
+
+### How it works
+
+1. Each bundle that provides management-only CSS implements `BundleStylesheetManagementProviderInterface` and registers itself with the `ui.management_stylesheet` service tag.
+2. UiBundle collects all tagged providers at compile time (ordered by `priority`, highest first) into `StylesheetManagementRegistry`.
+3. The EasyAdmin `DashboardController::configureAssets()` method (in the app or in the bundle that owns the dashboard, e.g. `c975l/config-bundle`) injects `StylesheetManagementRegistry` and calls `addCssFile()` for each entry.
+
+### Adding management CSS from your bundle
+
+**Create a provider class** in your bundle:
+
+```php
+use c975L\UiBundle\Contract\BundleStylesheetManagementProviderInterface;
+
+class StylesheetProvider implements BundleStylesheetManagementProviderInterface
+{
+    public function getManagementStylesheets(): array
+    {
+        return [
+            'bundles/mybundle/css/management.min.css',
+        ];
+    }
+}
+```
+
+**Register it with the tag** in `config/services.yaml`:
+
+```yaml
+services:
+    MyBundle\Service\StylesheetProvider:
+        tags:
+            - { name: 'ui.management_stylesheet', priority: 10 }
+```
+
+The `priority` attribute is optional (default `0`). Higher priority providers are injected first — use a high value (e.g. `100`) for reset/base styles that must load before others.
+
+### Consuming it in the dashboard controller
+
+```php
+use c975L\UiBundle\Registry\StylesheetManagementRegistry;
+
+public function __construct(
+    private readonly StylesheetManagementRegistry $stylesheetManagementRegistry,
+) {}
+
+public function configureAssets(): Assets
+{
+    $assets = Assets::new();
+
+    foreach ($this->stylesheetManagementRegistry->all() as $stylesheet) {
+        $assets->addCssFile($stylesheet);
+    }
+
+    return $assets;
+}
+```
+
+Unlike the JS admin mechanism (`BundleScriptAdminProviderInterface`), no AssetMapper/importmap entry is needed — `addCssFile()` resolves plain public paths via Symfony's asset package, same as `getStylesheets()` above.
+
+---
+
 If this project **helps you save development time**, consider sponsoring via the **Sponsor** button at the top of the GitHub page. Thank you!

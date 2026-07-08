@@ -8,15 +8,23 @@
  */
 namespace c975L\UiBundle\Service;
 
+use c975L\UiBundle\Contract\BundleStylesheetManagementProviderInterface;
 use c975L\UiBundle\Contract\BundleStylesheetProviderInterface;
 
-class StylesheetProvider implements BundleStylesheetProviderInterface
+class StylesheetProvider implements BundleStylesheetProviderInterface, BundleStylesheetManagementProviderInterface
 {
     public function getStylesheets(): array
     {
         return [
             'bundles/c975lui/css/animations.min.css',
             'bundles/c975lui/css/styles.min.css',
+        ];
+    }
+
+    public function getManagementStylesheets(): array
+    {
+        return [
+            'bundles/c975lui/css/management.min.css',
         ];
     }
 }

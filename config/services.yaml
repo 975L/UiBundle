@@ -11,6 +11,7 @@ services:
     c975L\UiBundle\Service\StylesheetProvider:
         tags:
             - { name: 'ui.stylesheet', priority: 100 }
+            - { name: 'ui.management_stylesheet', priority: 100 }
 
     c975L\UiBundle\Service\ScriptProvider:
         tags:

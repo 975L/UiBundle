@@ -25,11 +25,22 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
 {
     private const IMAGE_WIDTH = 800;
 
-    // Site-wide graphics, not attached to a Block - fixed filename at the root of public/ (see getVichMediaPath)
+    // Site-wide graphics, not attached to a Block - fixed filename at the root of public/ (see getVichMediaPath),
+    // one row per role enforced at the application level (see isSingletonRole)
     public const ROLE_FAVICON = 'favicon';
     public const ROLE_APPLE_TOUCH_ICON = 'apple-touch-icon';
     public const ROLE_OG_IMAGE = 'og-image';
     public const ROLE_LOGO = 'logo';
+
+    // Site-wide but repeatable role: several rows share it (e.g. a pool of images picked at random), each gets its own filename
+    public const ROLE_ERROR_IMAGE = 'error-image';
+
+    private const SINGLETON_ROLES = [
+        self::ROLE_FAVICON,
+        self::ROLE_APPLE_TOUCH_ICON,
+        self::ROLE_OG_IMAGE,
+        self::ROLE_LOGO,
+    ];
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -40,9 +51,10 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
     #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?Block $block = null;
 
-    // Nullable + unique: block medias all share role=null (MySQL/MariaDB allow multiple NULLs in a
-    // unique index), while site-wide graphics get one row per role enforced at the DB level
-    #[ORM\Column(length: 20, nullable: true, unique: true)]
+    // Block medias all share role=null. Singleton roles (favicon, logo...) are kept to one row each,
+    // enforced at the application level (see SiteGraphicCrudController) since repeatable roles (error-image)
+    // need several rows sharing the same role - no DB-level unique constraint here
+    #[ORM\Column(length: 20, nullable: true)]
     private ?string $role = null;
 
     #[Vich\UploadableField(
@@ -310,11 +322,22 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
         return self::IMAGE_WIDTH;
     }
 
+    // Singleton roles (favicon, logo...) only, repeatable roles (error-image) share filename naming with block medias
+    public function isSingletonRole(): bool
+    {
+        return in_array($this->role, self::SINGLETON_ROLES, true);
+    }
+
     public function getVichMediaPath(): string
     {
-        // Site-wide graphics live at the root of public/ under their own fixed name (see UiMediaNamer)
-        if (null !== $this->role) {
+        // Singleton site-wide graphics live at the root of public/ under their own fixed name (see UiMediaNamer)
+        if ($this->isSingletonRole()) {
             return $this->role;
+        }
+
+        // Repeatable site-wide role (e.g. error-image): several rows, each needs its own unique filename
+        if (null !== $this->role) {
+            return 'medias/site/' . $this->role;
         }
 
         // Not attached to a Block either (e.g. a Page's own og-image): still gets a unique, non-role name

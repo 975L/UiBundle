@@ -24,11 +24,17 @@ class MediaExtension extends AbstractExtension
     {
         return [
             new TwigFunction('site_media', [$this, 'getSiteMedia']),
+            new TwigFunction('site_random_media', [$this, 'getRandomSiteMedia']),
         ];
     }
 
     public function getSiteMedia(string $role): ?Media
     {
         return $this->mediaRepository->findOneByRole($role);
+    }
+
+    public function getRandomSiteMedia(string $role): ?Media
+    {
+        return $this->mediaRepository->findRandomByRole($role);
     }
 }

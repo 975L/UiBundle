@@ -1,5 +1,10 @@
 # ChangeLog
 
+## v1.4.5
+
+- Added automatic CSS injection for EasyAdmin management pages (08/07/2026)
+- Added possibility to upload user defined error images (08/07/2026)
+
 ## v1.4.4.1
 
 - Fixed CompilerPass (05/07/2026)

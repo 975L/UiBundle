@@ -27,8 +27,8 @@ use function Symfony\Component\Translation\t;
 // Cross-bundle media library: browses every c975L\UiBundle\Entity\Media row regardless of how it is
 // attached (Block, Page og-image, site-wide role...) and shows where each one is used, via
 // MediaUsageRegistry (fed by any bundle implementing MediaUsageProviderInterface). Site-wide role
-// graphics (favicon, logo...) stay read-only here - they keep being managed in SiteGraphicCrudController,
-// which enforces the one-row-per-role rule and its own alerts.
+// graphics (favicon, logo, error-image...) stay read-only here - they keep being managed in
+// SiteGraphicCrudController, which enforces the one-row-per-singleton-role rule and its own alerts.
 class MediaCrudController extends AbstractCrudController
 {
     // No ConfigBundle dependency here (ConfigBundle already depends on UiBundle, so UiBundle must stay

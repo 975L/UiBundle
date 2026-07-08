@@ -39,10 +39,10 @@ class UiMediaNamer implements NamerInterface
 
         $file = $mapping->getFile($entity);
 
-        // Site-wide graphics (favicon, apple-touch-icon...) need a fixed, predictable filename at the
+        // Singleton site-wide graphics (favicon, apple-touch-icon...) need a fixed, predictable filename at the
         // root of public/ - no uniqid (would break the well-known URL) and no forced webp conversion
         // (favicon/apple-touch-icon must keep their real format, unlike in-content block images)
-        if ($entity instanceof Media && null !== $entity->getRole()) {
+        if ($entity instanceof Media && $entity->isSingletonRole()) {
             return $entity->getVichMediaPath() . '.' . $this->determineExtension($file, convertToWebp: false);
         }
 

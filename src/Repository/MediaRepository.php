@@ -27,4 +27,22 @@ class MediaRepository extends ServiceEntityRepository
     {
         return $this->findOneBy(['role' => $role]);
     }
+
+    // Picks one row at random among all sharing a repeatable role (e.g. a pool of error images)
+    public function findRandomByRole(string $role): ?Media
+    {
+        $ids = $this->createQueryBuilder('m')
+            ->select('m.id')
+            ->where('m.role = :role')
+            ->setParameter('role', $role)
+            ->getQuery()
+            ->getSingleColumnResult()
+        ;
+
+        if ([] === $ids) {
+            return null;
+        }
+
+        return $this->find($ids[array_rand($ids)]);
+    }
 }
