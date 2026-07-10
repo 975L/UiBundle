@@ -39,11 +39,17 @@ class UiMediaNamer implements NamerInterface
 
         $file = $mapping->getFile($entity);
 
-        // Singleton site-wide graphics (favicon, apple-touch-icon...) need a fixed, predictable filename at the
-        // root of public/ - no uniqid (would break the well-known URL) and no forced webp conversion
-        // (favicon/apple-touch-icon must keep their real format, unlike in-content block images)
+        // Singleton site-wide graphics (favicon, apple-touch-icon, og-image, logo) need a fixed, predictable
+        // filename at the root of public/ - no uniqid (would break the well-known URL)
         if ($entity instanceof Media && $entity->isSingletonRole()) {
-            return $entity->getVichMediaPath() . '.' . $this->determineExtension($file, convertToWebp: false);
+            // Roles with a fixed icon spec (favicon, apple-touch-icon) always end up in that exact format,
+            // whatever the uploaded file was - see VichImageResizeListener, which converts it after upload.
+            // Other singleton roles (og-image, logo) are resized and forced to webp just like in-content
+            // block images (see VichImageResizeListener::processImage), so the extension must match that
+            $spec = $entity->getFixedIconSpec();
+            $extension = null !== $spec ? $spec['format'] : $this->determineExtension($file);
+
+            return $entity->getVichMediaPath() . '.' . $extension;
         }
 
         $extension = $this->determineExtension($file);

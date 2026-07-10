@@ -1,5 +1,16 @@
 # ChangeLog
 
+## v1.4.6
+
+- Modified Block Image (09/07/2026)
+- Added icon-picker.js (09/07/2026)
+- Renamed css classes img-xxx to .width-xxx (09/07/2026)
+- Re-ordered xlf files (10/07/2026)
+- Added hook to article (10/07/2026)
+- Added trix tools to center text (10/07/2026)
+- Added media to Card Block (10/07/2026)
+- Added resize/namig for favicon.ico and apple-touch-icon.png (10/07/2026)
+
 ## v1.4.5
 
 - Added automatic CSS injection for EasyAdmin management pages (08/07/2026)

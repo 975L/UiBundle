@@ -218,10 +218,13 @@ export default class extends Controller {
             this.displaySlide(sliderId, ++this.slideIndex, "next");
         });
 
-        // Click on slide to go next
+        // Click on slide to go next, unless the click is on a link (title/text/image linking to slide.url)
         const slides = document.querySelectorAll(`#${sliderId} .slider-item`);
         slides.forEach((slide) => {
-            slide.addEventListener("click", () => {
+            slide.addEventListener("click", (e) => {
+                if (e.target.closest("a")) {
+                    return;
+                }
                 this.displaySlide(sliderId, ++this.slideIndex, "next");
             });
         });

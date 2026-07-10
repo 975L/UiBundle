@@ -27,6 +27,7 @@ class MediaUploadType extends AbstractType
     {
         $isImage = null !== $options['accept'] && str_starts_with($options['accept'], 'image');
         $isSlider = 'slider' === $options['context'];
+        $isCards = 'cards' === $options['context'];
         $builder
             ->add('file', $isImage ? VichImageType::class : VichFileType::class, [
                 'label' => false,
@@ -40,8 +41,10 @@ class MediaUploadType extends AbstractType
                 'attr' => ['class' => 'ui-sort-position'],
             ]);
 
-        // Per-image display metadata, only relevant when the uploaded file is an image
-        if ($isImage) {
+        // Per-image display metadata, only relevant when the uploaded file is an image - none of it
+        // applies to a Cards card image either: Cards.html.twig only ever reads the file itself (alt
+        // comes from the card's own title, there's no caption/sizing/rights markup for a card teaser)
+        if ($isImage && !$isCards) {
             $builder
                 ->add('alt', TextType::class, [
                     'label' => 'label.alt_text',

@@ -9,6 +9,7 @@
 namespace c975L\UiBundle\Form\Block;
 
 use Symfony\Component\Form\AbstractType;
+use c975L\UiBundle\Form\BlockClassChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -30,10 +31,7 @@ class VideoIframeType extends AbstractType
                 'label'    => 'label.height',
                 'required' => false,
             ])
-            ->add('class', TextType::class, [
-                'label'    => 'label.css_classes',
-                'required' => false,
-            ]);
+            ->add('class', BlockClassChoiceType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -41,4 +41,59 @@
   text-align: center;
   padding: 0.25rem;
   overflow-wrap: anywhere;
+}
+
+/* ICON PICKER (form/icon_picker_theme.html.twig + assets/js/icon-picker.js) */
+.ui-icon-picker {
+  position: relative;
+}
+
+.ui-icon-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  padding: 8px;
+  background: #fff;
+  position: absolute;
+  z-index: 1050;
+  min-width: 100%;
+}
+
+.ui-icon-item {
+  border: none;
+  background: none;
+  padding: 6px;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+  max-width: 64px;
+  line-height: 1.2;
+}
+.ui-icon-item:hover {
+  background: #e9ecef;
+}
+.ui-icon-item img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+.ui-icon-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 60px;
+}
+
+/* TRIX ALIGNMENT TOOLBAR (assets/js/trix-editor.js) */
+.trix-button-group--text-align .trix-button {
+  font-weight: bold;
+  min-width: 2.2em;
 }/*# sourceMappingURL=management.css.map */

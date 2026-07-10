@@ -1,0 +1,12 @@
+{# <twig:c975LUi:Card:Cards items="{{ [{id: '', title: '', description: '', image: '', url: '', target: '_blank', buttonLabel: ''}, ...] }}" [level="h2"] [class=""] /> #}
+<div class="cards {{ class|default("") }}">
+    {% for item in items %}
+        <twig:c975LUi:Card:Card id="{{ item.id }}" title="{{ item.title }}" level="{{ level|default('h2') }}">
+            <twig:c975LUi:Image:Link src="{{ item.image }}" url="{{ item.url }}" target="{{ item.target|default('') }}" alt="{{ item.title }}"/>
+            <div class="card-data">
+                <p class="text-center">{{ item.description }}</p>
+                <twig:c975LUi:Button:Button label="{{ item.buttonLabel|default(item.url) }}" url="{{ item.url }}" target="{{ item.target|default('') }}"/>
+            </div>
+        </twig:c975LUi:Card:Card>
+    {% endfor %}
+</div>

@@ -1,2 +1,17 @@
-{# Adapter for the dynamic Block system — maps Block data to the Card component #}
-<twig:c975LUi:Card:Card id="{{ id }}" title="{{ title }}" level="{{ level }}" content="{{ content }}" class="{{ class }}"/>
+{# Adapter for the dynamic Block system — maps Block data to the Card component.
+   With a media (see media_types on this block's tag) and/or a url set, renders an image + button
+   teaser instead of the plain content box - same "media travels with its own block" mechanism as
+   Article, just one image per card instead of a gallery. #}
+{% if block.media|length > 0 or url %}
+    <twig:c975LUi:Card:Card id="{{ id }}" title="{{ title }}" level="{{ level }}" class="{{ class|default([])|join(' ') }}">
+        {% if block.media|length > 0 %}
+            <twig:c975LUi:Image:Link src="{{ vich_uploader_asset(block.media|first) }}" class="{{ block.media|first.cssClasses|join(' ') }}" url="{{ url }}" target="{{ target|default('') }}" alt="{{ title }}"/>
+        {% endif %}
+        <div class="card-data">
+            {% if content %}<p class="text-center">{{ content|raw|nl2br }}</p>{% endif %}
+            {% if url %}<twig:c975LUi:Button:Button label="{{ buttonLabel|default(url) }}" url="{{ url }}" target="{{ target|default('') }}"/>{% endif %}
+        </div>
+    </twig:c975LUi:Card:Card>
+{% else %}
+    <twig:c975LUi:Card:Card id="{{ id }}" title="{{ title }}" level="{{ level }}" content="{{ content }}" class="{{ class|default([])|join(' ') }}"/>
+{% endif %}

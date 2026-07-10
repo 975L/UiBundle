@@ -13,7 +13,9 @@ namespace c975L\UiBundle\Listener;
 use SplFileInfo;
 use Imagine\Image\Box;
 use Imagine\Gd\Imagine;
+use Imagine\Image\ImageInterface;
 use Vich\UploaderBundle\Event\Event;
+use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Contract\VichPrivateFileInterface;
 use c975L\UiBundle\Contract\VichImageResizableInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -43,6 +45,12 @@ class VichImageResizeListener
         }
 
         if ($entity instanceof VichImageResizableInterface) {
+            if ($entity instanceof Media && null !== ($spec = $entity->getFixedIconSpec())) {
+                $this->processFixedIcon($entity, $absolutePath, $spec);
+
+                return;
+            }
+
             $extension = $entity->getFile()->getExtension();
 
             if (in_array($extension, ['jpg', 'png', 'gif', 'webp'])) {
@@ -75,6 +83,37 @@ class VichImageResizeListener
         if (method_exists($entity, 'setSize')) {
             $entity->setSize((new SplFileInfo($absolutePath))->getSize());
         }
+    }
+
+    // Crops/resizes to the exact target size (fixed icon roles never keep the uploaded aspect ratio) and
+    // converts to the target format - .ico has no native GD/Imagine writer, so it's hand-wrapped around a PNG payload
+    private function processFixedIcon(Media $entity, string $absolutePath, array $spec): void
+    {
+        $imagine = new Imagine();
+        $thumbnail = $imagine->open($absolutePath)->thumbnail(
+            new Box($spec['width'], $spec['height']),
+            ImageInterface::THUMBNAIL_OUTBOUND
+        );
+
+        if ('ico' === $spec['format']) {
+            file_put_contents($absolutePath, $this->wrapPngAsIco($thumbnail->get('png'), $spec['width'], $spec['height']));
+        } else {
+            $thumbnail->save($absolutePath, ['format' => $spec['format']]);
+        }
+
+        if (method_exists($entity, 'setSize')) {
+            $entity->setSize((new SplFileInfo($absolutePath))->getSize());
+        }
+    }
+
+    // Wraps a single PNG image in a minimal ICO container - valid since Windows Vista and supported by all
+    // current browsers, avoids pulling in a dedicated ICO encoder just for a 48x48 favicon
+    private function wrapPngAsIco(string $pngData, int $width, int $height): string
+    {
+        $header = pack('vvv', 0, 1, 1);
+        $entry = pack('CCCCvvVV', $width, $height, 0, 0, 1, 32, strlen($pngData), 6 + 16);
+
+        return $header . $entry . $pngData;
     }
 
     private function moveFileToPrivate(VichPrivateFileInterface $entity, string $filename, string $publicPath): void

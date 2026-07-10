@@ -1,3 +1,11 @@
+{# Consecutive "card" blocks are wrapped in a ".cards" flex row (see sass/_cards.scss) - blocks
+   otherwise render one after another, not side by side. #}
+{% set kinds = blocks|map(b => b.kind) %}
 {% for block in blocks %}
+    {% set isCard = block.kind == 'card' %}
+    {% set prevIsCard = loop.index0 > 0 and kinds[loop.index0 - 1] == 'card' %}
+    {% set nextIsCard = not loop.last and kinds[loop.index0 + 1] == 'card' %}
+    {% if isCard and not prevIsCard %}<div class="cards">{% endif %}
     <twig:c975LUi:Blocks:Block block="{{ block }}"/>
+    {% if isCard and not nextIsCard %}</div>{% endif %}
 {% endfor %}

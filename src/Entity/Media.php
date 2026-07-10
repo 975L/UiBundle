@@ -42,6 +42,18 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
         self::ROLE_LOGO,
     ];
 
+    // Roles needing a fixed target size/format regardless of the uploaded file (see UiMediaNamer/VichImageResizeListener).
+    // Favicon stays .ico (48x48 is the historical browser/OS expectation), apple-touch-icon stays .png (iOS ignores other formats)
+    private const FIXED_ICON_SPECS = [
+        self::ROLE_FAVICON => ['width' => 48, 'height' => 48, 'format' => 'ico'],
+        self::ROLE_APPLE_TOUCH_ICON => ['width' => 114, 'height' => 114, 'format' => 'png'],
+    ];
+
+    // Roles resized to a max width (aspect ratio kept, unlike FIXED_ICON_SPECS) instead of the default IMAGE_WIDTH
+    private const MAX_WIDTHS = [
+        self::ROLE_LOGO => 600,
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -319,7 +331,26 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
 
     public function getImageWidth(): int
     {
-        return self::IMAGE_WIDTH;
+        // The site-wide og-image (role=og-image) and a Page's own og-image override (role=null, no Block)
+        // share the same target width - kept lighter than the 1200px social platforms often suggest,
+        // well above their minimum (~200px)
+        if ($this->isOgImage()) {
+            return 600;
+        }
+
+        return self::MAX_WIDTHS[$this->role] ?? self::IMAGE_WIDTH;
+    }
+
+    // Non-null only for roles needing a fixed target size/format (see FIXED_ICON_SPECS)
+    public function getFixedIconSpec(): ?array
+    {
+        return self::FIXED_ICON_SPECS[$this->role] ?? null;
+    }
+
+    // True for the site-wide default og-image and for a Page's own og-image override (see getVichMediaPath)
+    public function isOgImage(): bool
+    {
+        return self::ROLE_OG_IMAGE === $this->role || (null === $this->role && null === $this->block);
     }
 
     // Singleton roles (favicon, logo...) only, repeatable roles (error-image) share filename naming with block medias

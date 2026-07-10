@@ -1,16 +1,22 @@
 {# Static usage : <twig:c975LUi:Slider:Slider media="{{ mediaList }}" id="id" duration="5000" [ratio="free"] [class=""] [label=""] /> #}
 {# Rich usage (clickable title/text per slide) : <twig:c975LUi:Slider:Slider slides="{{ [{image: media, title: '', text: '', url: ''}, ...] }}" id="id" duration="5000" /> #}
+{# Add imageLinksToUrl="true" to also make the image itself link to slide.url instead of advancing to the next slide #}
 {% set label = label|default("label.pages_gallery"|trans({}, "site")) %}
-{% set class = class|default("") %}
+{% set class = class|default([])|join(' ') %}
 {% set ratio = ratio|default("free") %}
 {% set slides = slides|default([]) %}
+{% set imageLinksToUrl = imageLinksToUrl|default(false) %}
 {% set mediaList = slides|length > 0 ? slides|map(slide => slide.image) : media|default([]) %}
 {% if mediaList|length == 1 %}
     {% set media = mediaList[0] %}
     {% set slide = slides[0]|default(null) %}
     {% if slide and (slide.title or slide.text) %}
         <div class="slider-single {{ class }}">
-            <twig:c975LUi:Image:Image imgSrc="{{ vich_uploader_asset(media) }}" alt="{{ media.alt }}" label="{{ media.label }}" width="{{ media.width }}" height="{{ media.height }}" above="{{ media.above }}" />
+            {% if imageLinksToUrl and slide.url %}
+                <a href="{{ slide.url }}" class="slider-img-link"><twig:c975LUi:Image:Image imgSrc="{{ vich_uploader_asset(media) }}" alt="{{ media.alt }}" label="{{ media.label }}" width="{{ media.width }}" height="{{ media.height }}" above="{{ media.above }}" /></a>
+            {% else %}
+                <twig:c975LUi:Image:Image imgSrc="{{ vich_uploader_asset(media) }}" alt="{{ media.alt }}" label="{{ media.label }}" width="{{ media.width }}" height="{{ media.height }}" above="{{ media.above }}" />
+            {% endif %}
             {% if slide.title %}<p class="slider-title">{% if slide.url %}<a href="{{ slide.url }}">{{ slide.title }}</a>{% else %}{{ slide.title }}{% endif %}</p>{% endif %}
             {% if slide.text %}<p class="slider-text">{% if slide.url %}<a href="{{ slide.url }}">{{ slide.text }}</a>{% else %}{{ slide.text }}{% endif %}</p>{% endif %}
         </div>
@@ -24,7 +30,8 @@
         {% for slideMedia in mediaList %}
             {% set slide = slides[loop.index0]|default(null) %}
             <li class="slider-item"{% if not loop.first %} aria-hidden="true"{% endif %}>
-                <img src="{{ vich_uploader_asset(slideMedia) }}" alt="{{ slideMedia.alt }}" class="slider-img img img-responsive img-rounded box-shadow {{ slideMedia.cssClasses|join(' ') }}" width="{{ slideMedia.width }}" height="{{ slideMedia.height }}" loading="{{ loop.first ? "eager" : "lazy" }}">
+                {% set img %}<img src="{{ vich_uploader_asset(slideMedia) }}" alt="{{ slideMedia.alt }}" class="slider-img img img-responsive img-rounded box-shadow {{ slideMedia.cssClasses|join(' ') }}" width="{{ slideMedia.width }}" height="{{ slideMedia.height }}" loading="{{ loop.first ? "eager" : "lazy" }}">{% endset %}
+                {% if imageLinksToUrl and slide and slide.url %}<a href="{{ slide.url }}" class="slider-img-link">{{ img|raw }}</a>{% else %}{{ img|raw }}{% endif %}
                 {% if slide and slide.title %}
                     <p class="slider-title">{% if slide.url %}<a href="{{ slide.url }}">{{ slide.title }}</a>{% else %}{{ slide.title }}{% endif %}</p>
                 {% endif %}

@@ -235,9 +235,10 @@ Block templates are thin adapters around a set of Symfony UX Twig components liv
 | `<twig:c975LUi:Article:Articles>` | Loops `Article` over a collection |
 | `<twig:c975LUi:Audio:Audio>` | HTML5 audio player |
 | `<twig:c975LUi:Blocks:Block>` | Renders one `Block` entity via its registered kind template |
-| `<twig:c975LUi:Blocks:Blocks>` | Loops `Block` over a collection |
+| `<twig:c975LUi:Blocks:Blocks>` | Loops `Block` over a collection, auto-wraps consecutive `card` blocks in a `.cards` flex row |
 | `<twig:c975LUi:Button:Button>` | Styled button/link |
 | `<twig:c975LUi:Card:Card>` | Bootstrap card |
+| `<twig:c975LUi:Card:Cards>` | Loops `Card` over an externally-supplied collection (no `Block` involved) |
 | `<twig:c975LUi:General:RichSnippet>` | JSON-LD structured data snippet |
 | `<twig:c975LUi:Image:Icon>` | Small icon image |
 | `<twig:c975LUi:Image:Image>` | Responsive image |
@@ -253,6 +254,44 @@ Block templates are thin adapters around a set of Symfony UX Twig components liv
 Props match the Twig variables used inside each template — see `templates/components/<Group>/<Name>.html.twig` for the exact list.
 
 > **Maintenance note:** update this table whenever a component is added, renamed, or removed in `templates/components/`.
+
+### Cards: a grid of teaser cards
+
+Two independent ways to get a row of image + title + description + button cards, matching two
+different sources:
+
+**1. Entered by hand in EasyAdmin — several `card` blocks.** The `card` block kind carries its own
+`vich_uploader`-managed image (`media_types: 'image/*'`, same mechanism as `article` — the media
+belongs to that one block, no pairing with anything else) plus optional `url`/`target`/`buttonLabel`
+fields. When a media and/or a `url` is set, `blocks/Card.html.twig` renders an image + button teaser
+instead of the plain content box. There is no dedicated "collection" kind: a "collection of cards" is
+just several `card` blocks placed next to each other — `<twig:c975LUi:Blocks:Blocks>` automatically
+wraps consecutive `card`-kind blocks in a `.cards` flex row (see `templates/components/Blocks/Blocks.html.twig`),
+the same way several `article` blocks form a list of articles.
+
+**2. Any bundle calling `<twig:c975LUi:Card:Cards>` directly — no `Block` entity involved.** The
+component doesn't know or care where `items` comes from; each entry must expose:
+
+| Key | Required | Notes |
+| --- | --- | --- |
+| `id` | no | HTML `id` of the `.card` element |
+| `title` | no | Card header |
+| `description` | no | Plain text, shown under the image |
+| `image` | no | Full URL or path resolvable by `asset()` |
+| `url` | no | Link target for the image and the button |
+| `target` | no | `''` (default, same window) or `_blank` |
+| `buttonLabel` | no | Defaults to `url` when empty |
+
+```twig
+{# e.g. from BookBundle, mapping its own query result #}
+<twig:c975LUi:Card:Cards items="{{ books|map(book => {
+    id: 'book-' ~ book.slug,
+    title: book.title,
+    description: book.summary,
+    image: book.coverUrl,
+    url: path('book_show', {slug: book.slug}),
+}) }}" />
+```
 
 ---
 

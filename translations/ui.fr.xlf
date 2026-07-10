@@ -4,504 +4,548 @@
     <file source-language="en" target-language="fr" datatype="plaintext" original="ui.en.xlf">
         <body>
             <trans-unit id="1">
-                <source>label.blocks</source>
-                <target>Blocs</target>
-            </trans-unit>
-            <trans-unit id="2">
-                <source>label.block_kind</source>
-                <target>Type de bloc</target>
-            </trans-unit>
-            <trans-unit id="3">
-                <source>label.choose_block_kind</source>
-                <target>Choisir le type de bloc</target>
-            </trans-unit>
-            <trans-unit id="4">
-                <source>label.position</source>
-                <target>Position</target>
-            </trans-unit>
-            <trans-unit id="5">
-                <source>label.information</source>
-                <target>Information</target>
-            </trans-unit>
-            <trans-unit id="6">
-                <source>label.success</source>
-                <target>Succès</target>
-            </trans-unit>
-            <trans-unit id="7">
-                <source>label.warning</source>
-                <target>Avertissement</target>
-            </trans-unit>
-            <trans-unit id="8">
-                <source>label.danger</source>
-                <target>Danger</target>
-            </trans-unit>
-            <trans-unit id="9">
-                <source>label.kind</source>
-                <target>Type</target>
-            </trans-unit>
-            <trans-unit id="10">
-                <source>label.target</source>
-                <target>Cible</target>
-            </trans-unit>
-            <trans-unit id="11">
-                <source>label.same_window</source>
-                <target>Même Fenêtre</target>
-            </trans-unit>
-            <trans-unit id="12">
-                <source>label.new_tab</source>
-                <target>Nouvel Onglet</target>
-            </trans-unit>
-            <trans-unit id="13">
-                <source>label.icon_path</source>
-                <target>Chemin de l'icône (optionnel)</target>
-            </trans-unit>
-            <trans-unit id="14">
-                <source>label.force_download</source>
-                <target>Forcer le téléchargement</target>
-            </trans-unit>
-            <trans-unit id="15">
-                <source>label.inline</source>
-                <target>Afficher en ligne (sans balise p)</target>
-            </trans-unit>
-            <trans-unit id="16">
-                <source>label.content</source>
-                <target>Contenu</target>
-            </trans-unit>
-            <trans-unit id="17">
-                <source>label.style</source>
-                <target>Style</target>
-            </trans-unit>
-            <trans-unit id="18">
-                <source>label.primary</source>
-                <target>Primaire</target>
-            </trans-unit>
-            <trans-unit id="19">
-                <source>label.secondary</source>
-                <target>Secondaire</target>
-            </trans-unit>
-            <trans-unit id="20">
-                <source>label.alt_text</source>
-                <target>Texte Alternatif</target>
-            </trans-unit>
-            <trans-unit id="21">
-                <source>label.caption</source>
-                <target>Légende</target>
-            </trans-unit>
-            <trans-unit id="22">
-                <source>label.width</source>
-                <target>Largeur</target>
-            </trans-unit>
-            <trans-unit id="23">
-                <source>label.height</source>
-                <target>Hauteur</target>
-            </trans-unit>
-            <trans-unit id="24">
-                <source>label.css_classes</source>
-                <target>Classes CSS</target>
-            </trans-unit>
-            <trans-unit id="25">
-                <source>label.media</source>
-                <target>Media</target>
-            </trans-unit>
-            <trans-unit id="26">
-                <source>label.caption_above</source>
-                <target>Légende au-dessus</target>
-            </trans-unit>
-            <trans-unit id="27">
-                <source>label.media_help</source>
-                <target>En cas de fichier unique (Image/Video/Audio) seul le premier sera pris en compte</target>
-            </trans-unit>
-            <trans-unit id="28">
-                <source>label.icon</source>
-                <target>Icône</target>
-            </trans-unit>
-            <trans-unit id="29">
-                <source>label.search_icon</source>
-                <target>Rechercher une icône...</target>
-            </trans-unit>
-            <trans-unit id="30">
                 <source>label.alert_kind</source>
                 <target>Type d'alerte</target>
             </trans-unit>
-            <trans-unit id="31">
-                <source>label.title</source>
-                <target>Titre</target>
-            </trans-unit>
-            <trans-unit id="32">
-                <source>label.identifier</source>
-                <target>Identifiant</target>
-            </trans-unit>
-            <trans-unit id="33">
-                <source>label.title_level</source>
-                <target>Niveau de titre</target>
-            </trans-unit>
-            <trans-unit id="34">
-                <source>label.css_classes_help</source>
-                <target>Sélectionnez les styles à appliquer à l'image</target>
-            </trans-unit>
-            <trans-unit id="35">
-                <source>label.slug</source>
-                <target>Slug</target>
-            </trans-unit>
-            <trans-unit id="36">
-                <source>label.detail</source>
-                <target>Détail</target>
-            </trans-unit>
-            <trans-unit id="37">
-                <source>label.url</source>
-                <target>URL</target>
-            </trans-unit>
-            <trans-unit id="38">
-                <source>label.link</source>
-                <target>Lien</target>
-            </trans-unit>
-            <trans-unit id="39">
-                <source>label.width_help</source>
-                <target>ex. : 100px, 50%</target>
-            </trans-unit>
-            <trans-unit id="40">
-                <source>label.height_help</source>
-                <target>ex. : 100px, 50%</target>
-            </trans-unit>
-            <trans-unit id="41">
-                <source>label.credits</source>
-                <target>Crédits</target>
-            </trans-unit>
-            <trans-unit id="42">
-                <source>label.rights_reserved</source>
-                <target>Droits réservés</target>
-            </trans-unit>
-            <trans-unit id="43">
-                <source>label.format</source>
-                <target>Format</target>
-            </trans-unit>
-            <trans-unit id="44">
-                <source>label.progress_percent</source>
-                <target>Pourcentage (0-100)</target>
-            </trans-unit>
-            <trans-unit id="45">
-                <source>label.show_percent</source>
-                <target>Afficher le pourcentage</target>
-            </trans-unit>
-            <trans-unit id="46">
-                <source>label.text</source>
-                <target>Texte</target>
-            </trans-unit>
-            <trans-unit id="47">
-                <source>label.schema_type</source>
-                <target>Type Schema.org</target>
-            </trans-unit>
-            <trans-unit id="48">
-                <source>label.name</source>
-                <target>Nom</target>
-            </trans-unit>
-            <trans-unit id="49">
-                <source>label.description</source>
-                <target>Description</target>
-            </trans-unit>
-            <trans-unit id="50">
-                <source>label.phone</source>
-                <target>Téléphone</target>
-            </trans-unit>
-            <trans-unit id="51">
-                <source>label.image</source>
-                <target>Image</target>
-            </trans-unit>
-            <trans-unit id="52">
-                <source>label.opening_hours</source>
-                <target>Horaires</target>
-            </trans-unit>
-            <trans-unit id="53">
-                <source>label.price_range</source>
-                <target>Fourchette de prix</target>
-            </trans-unit>
-            <trans-unit id="54">
-                <source>label.street_address</source>
-                <target>Rue</target>
-            </trans-unit>
-            <trans-unit id="55">
-                <source>label.postal_code</source>
-                <target>Code postal</target>
-            </trans-unit>
-            <trans-unit id="56">
-                <source>label.city</source>
-                <target>Ville</target>
-            </trans-unit>
-            <trans-unit id="57">
-                <source>label.country_code</source>
-                <target>Code pays (ex. : FR)</target>
-            </trans-unit>
-            <trans-unit id="58">
-                <source>label.country</source>
-                <target>Pays</target>
-            </trans-unit>
-            <trans-unit id="59">
-                <source>label.slide_duration</source>
-                <target>Durée entre slides en ms (0 = manuel)</target>
-            </trans-unit>
-            <trans-unit id="60">
-                <source>label.slides</source>
-                <target>Diapositives</target>
-            </trans-unit>
-            <trans-unit id="61">
-                <source>label.video_url</source>
-                <target>URL de la vidéo (YouTube, Vimeo...)</target>
-            </trans-unit>
-            <trans-unit id="62">
-                <source>label.video_src</source>
-                <target>Chemin du fichier vidéo</target>
-            </trans-unit>
-            <trans-unit id="63">
-                <source>label.poster</source>
-                <target>Image de couverture</target>
-            </trans-unit>
-            <trans-unit id="64">
-                <source>label.autoplay</source>
-                <target>Lecture automatique</target>
-            </trans-unit>
-            <trans-unit id="65">
-                <source>label.muted</source>
-                <target>Muet</target>
-            </trans-unit>
-            <trans-unit id="66">
-                <source>label.loop</source>
-                <target>Boucle</target>
-            </trans-unit>
-            <trans-unit id="67">
-                <source>label.block_article</source>
-                <target>Article</target>
-            </trans-unit>
-            <trans-unit id="108">
-                <source>label.block_article_description</source>
-                <target>Texte enrichi avec image, pour un contenu éditorial classique</target>
-            </trans-unit>
-            <trans-unit id="68">
-                <source>label.block_alert</source>
-                <target>Alerte</target>
-            </trans-unit>
-            <trans-unit id="109">
-                <source>label.block_alert_description</source>
-                <target>Message encadré coloré (info, succès, alerte, erreur)</target>
-            </trans-unit>
-            <trans-unit id="69">
-                <source>label.block_audio</source>
-                <target>Audio</target>
-            </trans-unit>
-            <trans-unit id="110">
-                <source>label.block_audio_description</source>
-                <target>Lecteur audio intégré à partir d'un fichier</target>
-            </trans-unit>
-            <trans-unit id="70">
-                <source>label.block_button</source>
-                <target>Bouton</target>
-            </trans-unit>
-            <trans-unit id="111">
-                <source>label.block_button_description</source>
-                <target>Bouton lien avec icône, cible et style personnalisables</target>
-            </trans-unit>
-            <trans-unit id="71">
-                <source>label.block_card</source>
-                <target>Carte</target>
-            </trans-unit>
-            <trans-unit id="112">
-                <source>label.block_card_description</source>
-                <target>Carte avec titre et contenu, pour mettre en avant une information</target>
-            </trans-unit>
-            <trans-unit id="72">
-                <source>label.block_image</source>
-                <target>Image</target>
-            </trans-unit>
-            <trans-unit id="113">
-                <source>label.block_image_description</source>
-                <target>Image seule avec légende et crédits</target>
-            </trans-unit>
-            <trans-unit id="73">
-                <source>label.block_progress_bar</source>
-                <target>Barre de progression</target>
-            </trans-unit>
-            <trans-unit id="114">
-                <source>label.block_progress_bar_description</source>
-                <target>Barre de progression affichant un pourcentage</target>
-            </trans-unit>
-            <trans-unit id="74">
-                <source>label.block_rich_snippet</source>
-                <target>Rich Snippet SEO</target>
-            </trans-unit>
-            <trans-unit id="115">
-                <source>label.block_rich_snippet_description</source>
-                <target>Données structurées SEO (adresse, horaires, prix...)</target>
-            </trans-unit>
-            <trans-unit id="75">
-                <source>label.block_slider</source>
-                <target>Slider d'images</target>
-            </trans-unit>
-            <trans-unit id="116">
-                <source>label.block_slider_description</source>
-                <target>Diaporama d'images avec légendes et crédits par slide</target>
-            </trans-unit>
-            <trans-unit id="76">
-                <source>label.block_text_readmore</source>
-                <target>Texte avec Lire plus</target>
-            </trans-unit>
-            <trans-unit id="117">
-                <source>label.block_text_readmore_description</source>
-                <target>Texte long avec un lien Lire plus / Lire moins</target>
-            </trans-unit>
-            <trans-unit id="77">
-                <source>label.block_text_section</source>
-                <target>Section texte</target>
-            </trans-unit>
-            <trans-unit id="118">
-                <source>label.block_text_section_description</source>
-                <target>Simple section de texte enrichi</target>
-            </trans-unit>
-            <trans-unit id="78">
-                <source>label.block_video</source>
-                <target>Vidéo</target>
-            </trans-unit>
-            <trans-unit id="119">
-                <source>label.block_video_description</source>
-                <target>Lecteur vidéo intégré à partir d'un fichier</target>
-            </trans-unit>
-            <trans-unit id="79">
-                <source>label.block_video_iframe</source>
-                <target>Vidéo externe (iframe)</target>
-            </trans-unit>
-            <trans-unit id="120">
-                <source>label.block_video_iframe_description</source>
-                <target>Vidéo externe intégrée via iframe (YouTube, Vimeo...)</target>
-            </trans-unit>
-            <trans-unit id="80">
-                <source>label.category_general</source>
-                <target>Général</target>
-            </trans-unit>
-            <trans-unit id="81">
-                <source>label.category_elements</source>
-                <target>Éléments</target>
-            </trans-unit>
-            <trans-unit id="82">
-                <source>label.category_media</source>
-                <target>Média</target>
-            </trans-unit>
-            <trans-unit id="83">
-                <source>label.category_seo</source>
-                <target>SEO</target>
-            </trans-unit>
-            <trans-unit id="84">
-                <source>label.category_text</source>
-                <target>Texte</target>
-            </trans-unit>
-            <trans-unit id="85">
-                <source>label.search_block_kind</source>
-                <target>Rechercher un type de bloc...</target>
-            </trans-unit>
-            <trans-unit id="86">
-                <source>label.css_class_rounded</source>
-                <target>Coins arrondis</target>
-            </trans-unit>
-            <trans-unit id="87">
-                <source>label.css_class_thumbnail</source>
-                <target>Vignette (bordure)</target>
-            </trans-unit>
-            <trans-unit id="88">
-                <source>label.css_class_circle</source>
-                <target>Cercle</target>
-            </trans-unit>
-            <trans-unit id="89">
-                <source>label.css_class_square</source>
-                <target>Carré (recadrée)</target>
-            </trans-unit>
-            <trans-unit id="90">
-                <source>label.css_class_shadow</source>
-                <target>Ombre portée</target>
-            </trans-unit>
-            <trans-unit id="91">
-                <source>label.caption_help</source>
-                <target>Laisser vide si non utilisé</target>
-            </trans-unit>
-            <trans-unit id="92">
-                <source>label.identifier_help</source>
-                <target>Pas d'espaces, pas de caractères spéciaux, pas d'accents, pas de lettres majuscules</target>
-            </trans-unit>
-            <trans-unit id="93">
-                <source>label.ratio</source>
-                <target>Ratio</target>
-            </trans-unit>
-            <trans-unit id="94">
-                <source>label.ratio_help</source>
-                <target>Libre conserve le ratio naturel de chaque image ; un ratio fixe recadre les images pour s'y adapter</target>
-            </trans-unit>
-            <trans-unit id="95">
-                <source>label.ratio_free</source>
-                <target>Libre</target>
-            </trans-unit>
-            <trans-unit id="96">
-                <source>label.ratio_1_1</source>
-                <target>1:1 (carré)</target>
-            </trans-unit>
-            <trans-unit id="97">
-                <source>label.ratio_4_3</source>
-                <target>4:3</target>
-            </trans-unit>
-            <trans-unit id="98">
-                <source>label.ratio_3_2</source>
-                <target>3:2</target>
-            </trans-unit>
-            <trans-unit id="99">
-                <source>label.ratio_16_9</source>
-                <target>16:9</target>
-            </trans-unit>
-            <trans-unit id="100">
-                <source>label.ratio_21_9</source>
-                <target>21:9 (panoramique)</target>
-            </trans-unit>
-            <trans-unit id="101">
-                <source>label.credits</source>
-                <target>Crédits</target>
-            </trans-unit>
-            <trans-unit id="102">
-                <source>label.credits_help</source>
-                <target>Laisser vide si non utilisé</target>
-            </trans-unit>
-            <trans-unit id="103">
-                <source>label.rights_reserved</source>
-                <target>Tous droits réservés</target>
-            </trans-unit>
-            <trans-unit id="104">
+            <trans-unit id="2">
                 <source>label.all_rights_reserved</source>
                 <target>© Tous droits réservés</target>
             </trans-unit>
-            <trans-unit id="105">
-                <source>label.ratio_2_3</source>
-                <target>2:3 (portrait)</target>
+            <trans-unit id="3">
+                <source>label.alt_text</source>
+                <target>Texte Alternatif</target>
             </trans-unit>
-            <trans-unit id="106">
-                <source>label.ratio_3_4</source>
-                <target>3:4 (portrait)</target>
-            </trans-unit>
-            <trans-unit id="107">
-                <source>label.ratio_9_16</source>
-                <target>9:16 (story)</target>
-            </trans-unit>
-            <trans-unit id="121">
-                <source>label.media_library</source>
-                <target>Bibliothèque de médias</target>
-            </trans-unit>
-            <trans-unit id="122">
-                <source>label.used_in</source>
-                <target>Utilisé dans</target>
-            </trans-unit>
-            <trans-unit id="123">
+            <trans-unit id="4">
                 <source>label.attached_to_block</source>
                 <target>Rattaché au bloc #%id% (%kind%)</target>
             </trans-unit>
-            <trans-unit id="124">
+            <trans-unit id="5">
+                <source>label.autoplay</source>
+                <target>Lecture automatique</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>label.block_alert</source>
+                <target>Alerte</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>label.block_alert_description</source>
+                <target>Message encadré coloré (info, succès, alerte, erreur)</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>label.block_article</source>
+                <target>Article</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>label.block_article_description</source>
+                <target>Texte enrichi avec image, pour un contenu éditorial classique</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>label.block_audio</source>
+                <target>Audio</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>label.block_audio_description</source>
+                <target>Lecteur audio intégré à partir d'un fichier</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>label.block_button</source>
+                <target>Bouton</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>label.block_button_description</source>
+                <target>Bouton lien avec icône, cible et style personnalisables</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>label.block_card</source>
+                <target>Carte</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>label.block_card_description</source>
+                <target>Carte avec titre et contenu, image et bouton optionnels</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>label.block_image</source>
+                <target>Image</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>label.block_image_description</source>
+                <target>Image seule avec légende et crédits</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>label.block_kind</source>
+                <target>Type de bloc</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>label.block_progress_bar</source>
+                <target>Barre de progression</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>label.block_progress_bar_description</source>
+                <target>Barre de progression affichant un pourcentage</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>label.block_rich_snippet</source>
+                <target>Rich Snippet SEO</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>label.block_rich_snippet_description</source>
+                <target>Données structurées SEO (adresse, horaires, prix...)</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>label.block_slider</source>
+                <target>Slider d'images</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>label.block_slider_description</source>
+                <target>Diaporama d'images avec légendes et crédits par slide</target>
+            </trans-unit>
+            <trans-unit id="25">
+                <source>label.block_text_readmore</source>
+                <target>Texte avec Lire plus</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>label.block_text_readmore_description</source>
+                <target>Texte long avec un lien Lire plus / Lire moins</target>
+            </trans-unit>
+            <trans-unit id="27">
+                <source>label.block_text_section</source>
+                <target>Section texte</target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>label.block_text_section_description</source>
+                <target>Simple section de texte enrichi</target>
+            </trans-unit>
+            <trans-unit id="29">
+                <source>label.block_video</source>
+                <target>Vidéo</target>
+            </trans-unit>
+            <trans-unit id="30">
+                <source>label.block_video_description</source>
+                <target>Lecteur vidéo intégré à partir d'un fichier</target>
+            </trans-unit>
+            <trans-unit id="31">
+                <source>label.block_video_iframe</source>
+                <target>Vidéo externe (iframe)</target>
+            </trans-unit>
+            <trans-unit id="32">
+                <source>label.block_video_iframe_description</source>
+                <target>Vidéo externe intégrée via iframe (YouTube, Vimeo...)</target>
+            </trans-unit>
+            <trans-unit id="33">
+                <source>label.blocks</source>
+                <target>Blocs</target>
+            </trans-unit>
+            <trans-unit id="34">
+                <source>label.button_label</source>
+                <target>Libellé du bouton</target>
+            </trans-unit>
+            <trans-unit id="35">
+                <source>label.button_label_help</source>
+                <target>Si vide, affiche l'URL</target>
+            </trans-unit>
+            <trans-unit id="36">
+                <source>label.caption</source>
+                <target>Légende</target>
+            </trans-unit>
+            <trans-unit id="37">
+                <source>label.caption_above</source>
+                <target>Légende au-dessus</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>label.caption_help</source>
+                <target>Laisser vide si non utilisé</target>
+            </trans-unit>
+            <trans-unit id="39">
+                <source>label.category_elements</source>
+                <target>Éléments</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>label.category_general</source>
+                <target>Général</target>
+            </trans-unit>
+            <trans-unit id="41">
+                <source>label.category_media</source>
+                <target>Média</target>
+            </trans-unit>
+            <trans-unit id="42">
+                <source>label.category_seo</source>
+                <target>SEO</target>
+            </trans-unit>
+            <trans-unit id="43">
+                <source>label.category_text</source>
+                <target>Texte</target>
+            </trans-unit>
+            <trans-unit id="44">
+                <source>label.choose_block_kind</source>
+                <target>Choisir le type de bloc</target>
+            </trans-unit>
+            <trans-unit id="45">
+                <source>label.city</source>
+                <target>Ville</target>
+            </trans-unit>
+            <trans-unit id="46">
+                <source>label.content</source>
+                <target>Contenu</target>
+            </trans-unit>
+            <trans-unit id="47">
+                <source>label.country</source>
+                <target>Pays</target>
+            </trans-unit>
+            <trans-unit id="48">
+                <source>label.country_code</source>
+                <target>Code pays (ex. : FR)</target>
+            </trans-unit>
+            <trans-unit id="49">
+                <source>label.credits</source>
+                <target>Crédits</target>
+            </trans-unit>
+            <trans-unit id="50">
+                <source>label.credits_help</source>
+                <target>Laisser vide si non utilisé</target>
+            </trans-unit>
+            <trans-unit id="51">
+                <source>label.css_class_circle</source>
+                <target>Cercle</target>
+            </trans-unit>
+            <trans-unit id="52">
+                <source>label.css_class_rounded</source>
+                <target>Coins arrondis</target>
+            </trans-unit>
+            <trans-unit id="53">
+                <source>label.css_class_shadow</source>
+                <target>Ombre portée</target>
+            </trans-unit>
+            <trans-unit id="54">
+                <source>label.css_class_square</source>
+                <target>Carré (recadrée)</target>
+            </trans-unit>
+            <trans-unit id="55">
+                <source>label.css_class_thumbnail</source>
+                <target>Vignette (bordure)</target>
+            </trans-unit>
+            <trans-unit id="56">
+                <source>label.css_class_width_100</source>
+                <target>Largeur 100px</target>
+            </trans-unit>
+            <trans-unit id="57">
+                <source>label.css_class_width_125</source>
+                <target>Largeur 125px</target>
+            </trans-unit>
+            <trans-unit id="58">
+                <source>label.css_class_width_150</source>
+                <target>Largeur 150px</target>
+            </trans-unit>
+            <trans-unit id="59">
+                <source>label.css_class_width_200</source>
+                <target>Largeur 200px</target>
+            </trans-unit>
+            <trans-unit id="60">
+                <source>label.css_class_width_250</source>
+                <target>Largeur 250px</target>
+            </trans-unit>
+            <trans-unit id="61">
+                <source>label.css_class_width_300</source>
+                <target>Largeur 300px</target>
+            </trans-unit>
+            <trans-unit id="62">
+                <source>label.css_class_width_350</source>
+                <target>Largeur 350px</target>
+            </trans-unit>
+            <trans-unit id="63">
+                <source>label.css_class_width_400</source>
+                <target>Largeur 400px</target>
+            </trans-unit>
+            <trans-unit id="64">
+                <source>label.css_class_width_450</source>
+                <target>Largeur 450px</target>
+            </trans-unit>
+            <trans-unit id="65">
+                <source>label.css_class_width_500</source>
+                <target>Largeur 500px</target>
+            </trans-unit>
+            <trans-unit id="66">
+                <source>label.css_classes</source>
+                <target>Classes CSS</target>
+            </trans-unit>
+            <trans-unit id="67">
+                <source>label.css_classes_help</source>
+                <target>Sélectionnez les styles à appliquer</target>
+            </trans-unit>
+            <trans-unit id="68">
+                <source>label.danger</source>
+                <target>Danger</target>
+            </trans-unit>
+            <trans-unit id="69">
+                <source>label.description</source>
+                <target>Description</target>
+            </trans-unit>
+            <trans-unit id="70">
+                <source>label.detail</source>
+                <target>Détail</target>
+            </trans-unit>
+            <trans-unit id="71">
+                <source>label.file</source>
+                <target>Fichier</target>
+            </trans-unit>
+            <trans-unit id="72">
+                <source>label.force_download</source>
+                <target>Forcer le téléchargement</target>
+            </trans-unit>
+            <trans-unit id="73">
+                <source>label.format</source>
+                <target>Format</target>
+            </trans-unit>
+            <trans-unit id="74">
+                <source>label.height</source>
+                <target>Hauteur</target>
+            </trans-unit>
+            <trans-unit id="75">
+                <source>label.height_help</source>
+                <target>ex. : 100px, 50%</target>
+            </trans-unit>
+            <trans-unit id="76">
+                <source>label.hook</source>
+                <target>Phrase d'accroche</target>
+            </trans-unit>
+            <trans-unit id="77">
+                <source>label.icon</source>
+                <target>Icône</target>
+            </trans-unit>
+            <trans-unit id="78">
+                <source>label.icon_path</source>
+                <target>Chemin de l'icône (optionnel)</target>
+            </trans-unit>
+            <trans-unit id="79">
+                <source>label.identifier</source>
+                <target>Identifiant</target>
+            </trans-unit>
+            <trans-unit id="80">
+                <source>label.identifier_help</source>
+                <target>Pas d'espaces, pas de caractères spéciaux, pas d'accents, pas de lettres majuscules</target>
+            </trans-unit>
+            <trans-unit id="81">
+                <source>label.image</source>
+                <target>Image</target>
+            </trans-unit>
+            <trans-unit id="82">
+                <source>label.information</source>
+                <target>Information</target>
+            </trans-unit>
+            <trans-unit id="83">
+                <source>label.inline</source>
+                <target>Afficher en ligne (sans balise p)</target>
+            </trans-unit>
+            <trans-unit id="84">
+                <source>label.kind</source>
+                <target>Type</target>
+            </trans-unit>
+            <trans-unit id="85">
+                <source>label.link</source>
+                <target>Lien</target>
+            </trans-unit>
+            <trans-unit id="86">
+                <source>label.loop</source>
+                <target>Boucle</target>
+            </trans-unit>
+            <trans-unit id="87">
+                <source>label.media</source>
+                <target>Media</target>
+            </trans-unit>
+            <trans-unit id="88">
+                <source>label.media_help</source>
+                <target>En cas de fichier unique (Image/Video/Audio) seul le premier sera pris en compte</target>
+            </trans-unit>
+            <trans-unit id="89">
+                <source>label.media_library</source>
+                <target>Bibliothèque de médias</target>
+            </trans-unit>
+            <trans-unit id="90">
+                <source>label.muted</source>
+                <target>Muet</target>
+            </trans-unit>
+            <trans-unit id="91">
+                <source>label.name</source>
+                <target>Nom</target>
+            </trans-unit>
+            <trans-unit id="92">
+                <source>label.new_tab</source>
+                <target>Nouvel Onglet</target>
+            </trans-unit>
+            <trans-unit id="93">
                 <source>label.not_used_anywhere</source>
                 <target>Pas encore utilisé</target>
             </trans-unit>
+            <trans-unit id="94">
+                <source>label.opening_hours</source>
+                <target>Horaires</target>
+            </trans-unit>
+            <trans-unit id="95">
+                <source>label.phone</source>
+                <target>Téléphone</target>
+            </trans-unit>
+            <trans-unit id="96">
+                <source>label.position</source>
+                <target>Position</target>
+            </trans-unit>
+            <trans-unit id="97">
+                <source>label.postal_code</source>
+                <target>Code postal</target>
+            </trans-unit>
+            <trans-unit id="98">
+                <source>label.poster</source>
+                <target>Image de couverture</target>
+            </trans-unit>
+            <trans-unit id="99">
+                <source>label.price_range</source>
+                <target>Fourchette de prix</target>
+            </trans-unit>
+            <trans-unit id="100">
+                <source>label.primary</source>
+                <target>Primaire</target>
+            </trans-unit>
+            <trans-unit id="101">
+                <source>label.progress_percent</source>
+                <target>Pourcentage (0-100)</target>
+            </trans-unit>
+            <trans-unit id="102">
+                <source>label.ratio</source>
+                <target>Ratio</target>
+            </trans-unit>
+            <trans-unit id="103">
+                <source>label.ratio_16_9</source>
+                <target>16:9</target>
+            </trans-unit>
+            <trans-unit id="104">
+                <source>label.ratio_1_1</source>
+                <target>1:1 (carré)</target>
+            </trans-unit>
+            <trans-unit id="105">
+                <source>label.ratio_21_9</source>
+                <target>21:9 (panoramique)</target>
+            </trans-unit>
+            <trans-unit id="106">
+                <source>label.ratio_2_3</source>
+                <target>2:3 (portrait)</target>
+            </trans-unit>
+            <trans-unit id="107">
+                <source>label.ratio_3_2</source>
+                <target>3:2</target>
+            </trans-unit>
+            <trans-unit id="108">
+                <source>label.ratio_3_4</source>
+                <target>3:4 (portrait)</target>
+            </trans-unit>
+            <trans-unit id="109">
+                <source>label.ratio_4_3</source>
+                <target>4:3</target>
+            </trans-unit>
+            <trans-unit id="110">
+                <source>label.ratio_9_16</source>
+                <target>9:16 (story)</target>
+            </trans-unit>
+            <trans-unit id="111">
+                <source>label.ratio_free</source>
+                <target>Libre</target>
+            </trans-unit>
+            <trans-unit id="112">
+                <source>label.ratio_help</source>
+                <target>Libre conserve le ratio naturel de chaque image ; un ratio fixe recadre les images pour s'y adapter</target>
+            </trans-unit>
+            <trans-unit id="113">
+                <source>label.rights_reserved</source>
+                <target>Droits réservés</target>
+            </trans-unit>
+            <trans-unit id="114">
+                <source>label.same_window</source>
+                <target>Même Fenêtre</target>
+            </trans-unit>
+            <trans-unit id="115">
+                <source>label.schema_type</source>
+                <target>Type Schema.org</target>
+            </trans-unit>
+            <trans-unit id="116">
+                <source>label.search_block_kind</source>
+                <target>Rechercher un type de bloc...</target>
+            </trans-unit>
+            <trans-unit id="117">
+                <source>label.search_icon</source>
+                <target>Rechercher une icône...</target>
+            </trans-unit>
+            <trans-unit id="118">
+                <source>label.secondary</source>
+                <target>Secondaire</target>
+            </trans-unit>
+            <trans-unit id="119">
+                <source>label.show_percent</source>
+                <target>Afficher le pourcentage</target>
+            </trans-unit>
+            <trans-unit id="120">
+                <source>label.slide_duration</source>
+                <target>Durée entre slides en ms (0 = manuel)</target>
+            </trans-unit>
+            <trans-unit id="121">
+                <source>label.slides</source>
+                <target>Diapositives</target>
+            </trans-unit>
+            <trans-unit id="122">
+                <source>label.slug</source>
+                <target>Slug</target>
+            </trans-unit>
+            <trans-unit id="123">
+                <source>label.street_address</source>
+                <target>Rue</target>
+            </trans-unit>
+            <trans-unit id="124">
+                <source>label.style</source>
+                <target>Style</target>
+            </trans-unit>
             <trans-unit id="125">
-                <source>label.file</source>
-                <target>Fichier</target>
+                <source>label.success</source>
+                <target>Succès</target>
+            </trans-unit>
+            <trans-unit id="126">
+                <source>label.target</source>
+                <target>Cible</target>
+            </trans-unit>
+            <trans-unit id="127">
+                <source>label.text</source>
+                <target>Texte</target>
+            </trans-unit>
+            <trans-unit id="128">
+                <source>label.title</source>
+                <target>Titre</target>
+            </trans-unit>
+            <trans-unit id="129">
+                <source>label.title_level</source>
+                <target>Niveau de titre</target>
+            </trans-unit>
+            <trans-unit id="130">
+                <source>label.url</source>
+                <target>URL</target>
+            </trans-unit>
+            <trans-unit id="131">
+                <source>label.used_in</source>
+                <target>Utilisé dans</target>
+            </trans-unit>
+            <trans-unit id="132">
+                <source>label.video_src</source>
+                <target>Chemin du fichier vidéo</target>
+            </trans-unit>
+            <trans-unit id="133">
+                <source>label.video_url</source>
+                <target>URL de la vidéo (YouTube, Vimeo...)</target>
+            </trans-unit>
+            <trans-unit id="134">
+                <source>label.warning</source>
+                <target>Avertissement</target>
+            </trans-unit>
+            <trans-unit id="135">
+                <source>label.width</source>
+                <target>Largeur</target>
+            </trans-unit>
+            <trans-unit id="136">
+                <source>label.width_help</source>
+                <target>ex. : 100px, 50%</target>
             </trans-unit>
         </body>
     </file>

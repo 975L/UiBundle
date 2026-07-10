@@ -12,15 +12,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-// Closed list of classes available in sass/_images.scss, shared by every block form embedding an image
-class ImageClassChoiceType extends AbstractType
+// Closed list of classes available for a block's own wrapper (Card/Slider/VideoIframe...), separate
+// from ImageClassChoiceType which covers the image embedded inside a block - fill in as needed
+class BlockClassChoiceType extends AbstractType
 {
     public const CHOICES = [
-        'label.css_class_rounded' => 'img-rounded',
-        'label.css_class_thumbnail' => 'img-thumbnail',
-        'label.css_class_circle' => 'img-circle',
-        'label.css_class_square' => 'img-square',
-        'label.css_class_shadow' => 'img-shadow',
+        'label.css_class_shadow' => 'box-shadow',
         'label.css_class_width_100' => 'width-100',
         'label.css_class_width_125' => 'width-125',
         'label.css_class_width_150' => 'width-150',
@@ -45,7 +42,6 @@ class ImageClassChoiceType extends AbstractType
             'help' => 'label.css_classes_help',
             'choices' => self::CHOICES,
             'multiple' => true,
-            // Expanded checkboxes were fine for 5 options, too cramped now that width-* brings it to 15
             'expanded' => false,
             'required' => false,
             'translation_domain' => 'ui',

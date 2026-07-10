@@ -32,6 +32,10 @@ class ArticleType extends AbstractType
                 'label' => 'label.title',
                 'required' => true,
             ])
+            ->add('hook', TrixEditorType::class, [
+                'label'    => 'label.hook',
+                'required' => false,
+            ])
             ->add('content', TrixEditorType::class, [
                 'label'    => 'label.content',
                 'required' => true,

@@ -11,9 +11,9 @@ namespace c975L\UiBundle\Form\Block;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use c975L\UiBundle\Form\BlockClassChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -49,10 +49,7 @@ class SliderType extends AbstractType
                 'choices' => self::RATIO_CHOICES,
                 'data'    => 'free',
             ])
-            ->add('class', TextType::class, [
-                'label'    => 'label.css_classes',
-                'required' => false,
-            ]);
+            ->add('class', BlockClassChoiceType::class);
 
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,

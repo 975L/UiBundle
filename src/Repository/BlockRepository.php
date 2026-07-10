@@ -22,4 +22,12 @@ class BlockRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Block::class);
     }
+
+    // First block of a given kind, wherever it lives (attached to a page or not) - used by consumers
+    // that render a single well-known block outside the page-content flow (e.g. SiteBundle's footer
+    // "social links"), without needing a dedicated singleton entity/table for it
+    public function findOneByKind(string $kind): ?Block
+    {
+        return $this->findOneBy(['kind' => $kind]);
+    }
 }

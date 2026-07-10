@@ -10,8 +10,10 @@ namespace c975L\UiBundle\Form\Block;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use c975L\UiBundle\Form\BlockClassChoiceType;
 use c975L\UiBundle\Form\TrixEditorType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -39,11 +41,28 @@ class CardType extends AbstractType
             ->add('content', TrixEditorType::class, [
                 'label' => 'label.content',
             ])
-            ->add('class', TextType::class, [
-                'label' => 'label.css_classes',
-                'help' => 'label.css_classes_help',
+            // Optional teaser fields: when a media (see media_types on this block's tag) and/or a url
+            // is set, blocks/Card.html.twig renders an image + button teaser instead of the plain
+            // content box - several such cards placed next to each other on a page (e.g. a "our sites"
+            // listing) are auto-wrapped in a ".cards" flex row by templates/components/Blocks/Blocks.html.twig
+            ->add('url', UrlType::class, [
+                'label' => 'label.url',
                 'required' => false,
-            ]);
+            ])
+            ->add('target', ChoiceType::class, [
+                'label'    => 'label.target',
+                'required' => false,
+                'choices'  => [
+                    'label.same_window' => '',
+                    'label.new_tab'     => '_blank',
+                ],
+            ])
+            ->add('buttonLabel', TextType::class, [
+                'label'    => 'label.button_label',
+                'help'     => 'label.button_label_help',
+                'required' => false,
+            ])
+            ->add('class', BlockClassChoiceType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

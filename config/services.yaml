@@ -75,6 +75,7 @@ services:
               form: c975L\UiBundle\Form\Block\CardType
               template: '@c975LUi/blocks/Card.html.twig'
               category: 'label.category_elements'
+              media_types: 'image/*'
 
     ui.block.image:
         class: stdClass

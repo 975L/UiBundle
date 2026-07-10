@@ -5,6 +5,7 @@ import BlockDuplicateController from './js/block-duplicate.js';
 import EaSortableController from './js/ea-sortable.js';
 import './js/trix-editor.js';
 import './js/media-preview.js';
+import './js/icon-picker.js';
 
 // Back-office controllers, used only in EasyAdmin
 // Loaded as its own <script type="module"> tag (see importmap.php), starts its own Stimulus app
