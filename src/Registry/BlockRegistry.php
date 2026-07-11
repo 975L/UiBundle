@@ -31,7 +31,9 @@ class BlockRegistry
         string $category = 'label.category_general',
         array $mediaTypes = [],
         string $translationDomain = 'ui',
-        string $description = ''
+        string $description = '',
+        bool $pickable = true,
+        int $priority = 0
     ): void {
         $this->blocks[$kind] = [
             'label'       => $label,
@@ -41,6 +43,8 @@ class BlockRegistry
             'category'    => $category,
             'mediaTypes'  => $mediaTypes,
             'description' => $description,
+            'pickable'    => $pickable,
+            'priority'    => $priority,
         ];
     }
 
@@ -118,7 +122,10 @@ class BlockRegistry
         return !empty($this->get($kind)['mediaTypes']);
     }
 
-    // Result only depends on the static block registrations, cached after the first call
+    // Result only depends on the static block registrations, cached after the first call - excludes
+    // non-pickable kinds (singleton blocks with their own dedicated admin entry, e.g. SocialBundle's
+    // "social_links": offering them here would let editors create duplicate, independently-filled
+    // instances instead of reusing the single site-wide one found via BlockRepository::findOneByKind())
     public function groupedByCategory(): array
     {
         if (null !== $this->groupedCache) {
@@ -127,12 +134,21 @@ class BlockRegistry
 
         $grouped = [];
         foreach ($this->blocks as $kind => $config) {
-            $grouped[$this->getCategory($kind)][$this->getChoiceLabel($kind)] = $kind;
+            if (!$config['pickable']) {
+                continue;
+            }
+            $grouped[$this->getCategory($kind)][] = [
+                'kind'     => $kind,
+                'label'    => $this->getChoiceLabel($kind),
+                'priority' => $config['priority'],
+            ];
         }
 
         ksort($grouped, SORT_FLAG_CASE | SORT_STRING);
-        foreach (array_keys($grouped) as $category) {
-            ksort($grouped[$category], SORT_FLAG_CASE | SORT_STRING);
+        // Highest priority first; alphabetical as tie-breaker so unranked (priority 0) blocks stay predictable
+        foreach ($grouped as $category => $entries) {
+            usort($entries, fn (array $a, array $b) => $b['priority'] <=> $a['priority'] ?: strcasecmp($a['label'], $b['label']));
+            $grouped[$category] = array_column($entries, 'kind', 'label');
         }
 
         return $this->groupedCache = $grouped;

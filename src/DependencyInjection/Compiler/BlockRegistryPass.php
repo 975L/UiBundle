@@ -42,6 +42,8 @@ class BlockRegistryPass implements CompilerPassInterface
                     $mediaTypes,
                     $tag['translation_domain'] ?? 'ui',
                     $tag['description'] ?? '',
+                    !isset($tag['pickable']) || filter_var($tag['pickable'], FILTER_VALIDATE_BOOLEAN),
+                    (int) ($tag['priority'] ?? 0),
                 ]);
             }
         }

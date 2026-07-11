@@ -287,6 +287,10 @@
                 <source>label.file</source>
                 <target>Fichier</target>
             </trans-unit>
+            <trans-unit id="137">
+                <source>label.fixed_icon_invalid_format</source>
+                <target>Le SVG et les autres formats non matriciels ne sont pas supportés pour ce rôle - envoyez une image PNG, JPG, GIF ou WEBP</target>
+            </trans-unit>
             <trans-unit id="72">
                 <source>label.force_download</source>
                 <target>Forcer le téléchargement</target>

@@ -30,6 +30,7 @@ services:
               template: '@c975LUi/blocks/Article.html.twig'
               category: 'label.category_elements'
               media_types: 'image/*'
+              priority: 90
 
     ui.block.alert:
         class: stdClass
@@ -41,6 +42,7 @@ services:
               form: c975L\UiBundle\Form\Block\AlertType
               template: '@c975LUi/blocks/Alert.html.twig'
               category: 'label.category_elements'
+              priority: 70
 
     ui.block.audio:
         class: stdClass
@@ -53,6 +55,7 @@ services:
               template: '@c975LUi/blocks/Audio.html.twig'
               category: 'label.category_media'
               media_types: 'audio/*'
+              priority: 70
 
     ui.block.button:
         class: stdClass
@@ -64,6 +67,7 @@ services:
               form: c975L\UiBundle\Form\Block\ButtonType
               template: '@c975LUi/blocks/Button.html.twig'
               category: 'label.category_elements'
+              priority: 80
 
     ui.block.card:
         class: stdClass
@@ -76,6 +80,7 @@ services:
               template: '@c975LUi/blocks/Card.html.twig'
               category: 'label.category_elements'
               media_types: 'image/*'
+              priority: 100
 
     ui.block.image:
         class: stdClass
@@ -88,6 +93,7 @@ services:
               template: '@c975LUi/blocks/Image.html.twig'
               category: 'label.category_media'
               media_types: 'image/*'
+              priority: 100
 
     ui.block.progress_bar:
         class: stdClass
@@ -99,6 +105,7 @@ services:
               form: c975L\UiBundle\Form\Block\ProgressBarType
               template: '@c975LUi/blocks/ProgressBar.html.twig'
               category: 'label.category_elements'
+              priority: 60
 
     ui.block.rich_snippet:
         class: stdClass
@@ -122,6 +129,7 @@ services:
               template: '@c975LUi/blocks/Slider.html.twig'
               category: 'label.category_media'
               media_types: 'image/*'
+              priority: 90
 
     ui.block.text_readmore:
         class: stdClass
@@ -133,6 +141,7 @@ services:
               form: c975L\UiBundle\Form\Block\ReadmoreType
               template: '@c975LUi/blocks/TextReadmore.html.twig'
               category: 'label.category_text'
+              priority: 90
 
     ui.block.text_section:
         class: stdClass
@@ -144,6 +153,7 @@ services:
               form: c975L\UiBundle\Form\Block\TextSectionType
               template: '@c975LUi/blocks/TextSection.html.twig'
               category: 'label.category_text'
+              priority: 100
 
     ui.block.video:
         class: stdClass
@@ -156,6 +166,7 @@ services:
               template: '@c975LUi/blocks/Video.html.twig'
               category: 'label.category_media'
               media_types: 'video/*'
+              priority: 80
 
     ui.block.video_iframe:
         class: stdClass
@@ -167,3 +178,4 @@ services:
               form: c975L\UiBundle\Form\Block\VideoIframeType
               template: '@c975LUi/blocks/VideoIframe.html.twig'
               category: 'label.category_media'
+              priority: 60

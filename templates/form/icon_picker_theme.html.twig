@@ -6,11 +6,14 @@
 {%- endfor -%}
 <div class="ui-icon-picker" data-icons="{{ icons_data|json_encode|e('html_attr') }}">
     <input type="hidden" id="{{ id }}" name="{{ full_name }}"{% if value is not empty %} value="{{ value }}"{% endif %}>
-    <input type="text"
-           class="form-control ui-icon-search"
-           placeholder="{{ 'label.search_icon'|trans({}, 'ui') }}"
-           autocomplete="off"
-           {% if current_name is not empty %}value="{{ current_name }}"{% endif %}>
+    <div class="ui-icon-search-wrap">
+        <img class="ui-icon-preview" src="{{ value is not empty ? asset(value) : '' }}" alt=""{% if value is empty %} hidden{% endif %}>
+        <input type="text"
+               class="form-control ui-icon-search"
+               placeholder="{{ 'label.search_icon'|trans({}, 'ui') }}"
+               autocomplete="off"
+               {% if current_name is not empty %}value="{{ current_name }}"{% endif %}>
+    </div>
     <div class="ui-icon-grid" hidden></div>
 </div>
 {% endblock %}

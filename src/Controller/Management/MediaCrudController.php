@@ -121,7 +121,8 @@ class MediaCrudController extends AbstractCrudController
             // json-typed column gets auto-promoted to ArrayField, whose default CollectionType options
             // (entry_type, allow_add...) collide with ImageClassChoiceType (a plain ChoiceType).
             // ChoiceField natively supports multi-valued/array-backed choices, so we replicate its
-            // options here instead of reusing the form type directly.
+            // options here instead of reusing the form type directly. Left non-expanded (default) so it
+            // renders as the same removable-tags autocomplete widget used for Serie and for block classes.
             ChoiceField::new('cssClasses')
                 ->setLabel(t('label.css_classes', [], 'ui'))
                 ->setTranslatableChoices(array_combine(
@@ -129,7 +130,6 @@ class MediaCrudController extends AbstractCrudController
                     array_map(static fn (string $labelKey) => t($labelKey, [], 'ui'), array_keys(ImageClassChoiceType::CHOICES))
                 ))
                 ->allowMultipleChoices()
-                ->renderExpanded()
                 ->onlyOnForms(),
 
             TextField::new('credits')

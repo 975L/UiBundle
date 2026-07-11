@@ -48,6 +48,19 @@
   position: relative;
 }
 
+.ui-icon-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ui-icon-preview {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .ui-icon-grid {
   display: flex;
   flex-wrap: wrap;
@@ -90,6 +103,11 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 60px;
+}
+
+.ui-icon-preview {
+  width: 32px;
+  height: 32px;
 }
 
 /* TRIX ALIGNMENT TOOLBAR (assets/js/trix-editor.js) */

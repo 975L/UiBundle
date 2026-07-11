@@ -48,7 +48,10 @@ function render(picker, query) {
 document.addEventListener('input', event => {
     if (!event.target.classList.contains('ui-icon-search')) return;
     const picker = event.target.closest('.ui-icon-picker');
-    if (!event.target.value) picker.querySelector('input[type="hidden"]').value = '';
+    if (!event.target.value) {
+        picker.querySelector('input[type="hidden"]').value = '';
+        picker.querySelector('.ui-icon-preview').hidden = true;
+    }
     render(picker, event.target.value);
 });
 
@@ -64,6 +67,9 @@ document.addEventListener('click', event => {
         picker.querySelector('input[type="hidden"]').value = item.dataset.path;
         picker.querySelector('.ui-icon-search').value = item.title;
         picker.querySelector('.ui-icon-grid').hidden = true;
+        const preview = picker.querySelector('.ui-icon-preview');
+        preview.src = item.querySelector('img').src;
+        preview.hidden = false;
         return;
     }
     if (!event.target.classList.contains('ui-icon-search')) {

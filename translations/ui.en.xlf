@@ -286,6 +286,10 @@
                 <source>label.file</source>
                 <target>File</target>
             </trans-unit>
+            <trans-unit id="137">
+                <source>label.fixed_icon_invalid_format</source>
+                <target>SVG and other non-raster formats are not supported for this role - upload a PNG, JPG, GIF or WEBP image</target>
+            </trans-unit>
             <trans-unit id="72">
                 <source>label.force_download</source>
                 <target>Force Download</target>

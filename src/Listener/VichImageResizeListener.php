@@ -12,6 +12,7 @@ namespace c975L\UiBundle\Listener;
 
 use SplFileInfo;
 use Imagine\Image\Box;
+use Imagine\Image\Point;
 use Imagine\Gd\Imagine;
 use Imagine\Image\ImageInterface;
 use Vich\UploaderBundle\Event\Event;
@@ -86,7 +87,7 @@ class VichImageResizeListener
     }
 
     // Crops/resizes to the exact target size (fixed icon roles never keep the uploaded aspect ratio) and
-    // converts to the target format - .ico has no native GD/Imagine writer, so it's hand-wrapped around a PNG payload
+    // converts to the target format - .ico has no native GD/Imagine writer, so it's hand-wrapped around a raw bitmap
     private function processFixedIcon(Media $entity, string $absolutePath, array $spec): void
     {
         $imagine = new Imagine();
@@ -96,7 +97,7 @@ class VichImageResizeListener
         );
 
         if ('ico' === $spec['format']) {
-            file_put_contents($absolutePath, $this->wrapPngAsIco($thumbnail->get('png'), $spec['width'], $spec['height']));
+            file_put_contents($absolutePath, $this->wrapAsIco($thumbnail, $spec['width'], $spec['height']));
         } else {
             $thumbnail->save($absolutePath, ['format' => $spec['format']]);
         }
@@ -106,14 +107,51 @@ class VichImageResizeListener
         }
     }
 
-    // Wraps a single PNG image in a minimal ICO container - valid since Windows Vista and supported by all
-    // current browsers, avoids pulling in a dedicated ICO encoder just for a 48x48 favicon
-    private function wrapPngAsIco(string $pngData, int $width, int $height): string
+    // Wraps a raw 32bpp bitmap in a minimal ICO container. PNG-compressed ICO entries (valid since
+    // Windows Vista, and readable by browsers/GIMP) are rejected by gdk-pixbuf ("Compressed icons are
+    // not supported"), which breaks thumbnails in Nemo/Nautilus - so the classic uncompressed
+    // BITMAPINFOHEADER payload is used instead for universal compatibility
+    private function wrapAsIco(ImageInterface $image, int $width, int $height): string
     {
+        $dib = $this->buildIcoDib($image, $width, $height);
         $header = pack('vvv', 0, 1, 1);
-        $entry = pack('CCCCvvVV', $width, $height, 0, 0, 1, 32, strlen($pngData), 6 + 16);
+        $entry = pack('CCCCvvVV', $width, $height, 0, 0, 1, 32, strlen($dib), 6 + 16);
 
-        return $header . $entry . $pngData;
+        return $header . $entry . $dib;
+    }
+
+    // Builds the BITMAPINFOHEADER + pixel data (BGRA, bottom-up) + AND mask expected inside an ICO entry
+    private function buildIcoDib(ImageInterface $image, int $width, int $height): string
+    {
+        $pixels = '';
+
+        for ($y = $height - 1; $y >= 0; --$y) {
+            for ($x = 0; $x < $width; ++$x) {
+                $color = $image->getColorAt(new Point($x, $y));
+                $alpha = (int) round($color->getAlpha() * 255 / 100);
+                $pixels .= pack('C4', $color->getBlue(), $color->getGreen(), $color->getRed(), $alpha);
+            }
+        }
+
+        // 1 bit per pixel, rows padded to a 4-byte boundary - unused since alpha carries transparency
+        $andMask = str_repeat("\0", (int) (4 * ceil($width / 32)) * $height);
+
+        $dibHeader = pack(
+            'VVVvvVVVVVV',
+            40,
+            $width,
+            $height * 2,
+            1,
+            32,
+            0,
+            strlen($pixels) + strlen($andMask),
+            0,
+            0,
+            0,
+            0
+        );
+
+        return $dibHeader . $pixels . $andMask;
     }
 
     private function moveFileToPrivate(VichPrivateFileInterface $entity, string $filename, string $publicPath): void

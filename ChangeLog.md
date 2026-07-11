@@ -1,5 +1,11 @@
 # ChangeLog
 
+## v1.4.7
+
+- Corrected Favicon/AplleTouchIcon to disallow svg format (10/07/2026)
+- Added isPickable on Blocks (10/07/2026)
+- Modified iconPicker (11/07/2026)
+
 ## v1.4.6
 
 - Modified Block Image (09/07/2026)

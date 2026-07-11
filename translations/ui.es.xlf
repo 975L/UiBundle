@@ -278,6 +278,10 @@
                 <source>label.file</source>
                 <target>Archivo</target>
             </trans-unit>
+            <trans-unit id="135">
+                <source>label.fixed_icon_invalid_format</source>
+                <target>SVG y otros formatos no rasterizados no son compatibles para este rol - suba una imagen PNG, JPG, GIF o WEBP</target>
+            </trans-unit>
             <trans-unit id="70">
                 <source>label.force_download</source>
                 <target>Forzar Descarga</target>
