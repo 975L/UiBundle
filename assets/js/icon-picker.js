@@ -49,7 +49,9 @@ document.addEventListener('input', event => {
     if (!event.target.classList.contains('ui-icon-search')) return;
     const picker = event.target.closest('.ui-icon-picker');
     if (!event.target.value) {
-        picker.querySelector('input[type="hidden"]').value = '';
+        const hidden = picker.querySelector('input[type="hidden"]');
+        hidden.value = '';
+        hidden.dispatchEvent(new Event('change', { bubbles: true }));
         picker.querySelector('.ui-icon-preview').hidden = true;
     }
     render(picker, event.target.value);
@@ -64,7 +66,11 @@ document.addEventListener('click', event => {
     const item = event.target.closest('.ui-icon-item');
     if (item) {
         const picker = item.closest('.ui-icon-picker');
-        picker.querySelector('input[type="hidden"]').value = item.dataset.path;
+        const hidden = picker.querySelector('input[type="hidden"]');
+        // "name" mode (data-value-field, see IconPickerType's "value_field" option) stores the bare
+        // icon key instead of its asset path - the preview always uses the actual image regardless
+        hidden.value = picker.dataset.valueField === 'name' ? item.title : item.dataset.path;
+        hidden.dispatchEvent(new Event('change', { bubbles: true }));
         picker.querySelector('.ui-icon-search').value = item.title;
         picker.querySelector('.ui-icon-grid').hidden = true;
         const preview = picker.querySelector('.ui-icon-preview');

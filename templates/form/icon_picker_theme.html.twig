@@ -1,13 +1,16 @@
 {% block icon_picker_widget %}
-{%- set current_name = value is not empty ? value|split('/')|last|replace({'.svg': ''}) : '' -%}
 {%- set icons_data = [] -%}
 {%- for name, path in icons -%}
     {%- set icons_data = icons_data|merge([{name: name, path: path, url: asset(path)}]) -%}
 {%- endfor -%}
-<div class="ui-icon-picker" data-icons="{{ icons_data|json_encode|e('html_attr') }}">
-    <input type="hidden" id="{{ id }}" name="{{ full_name }}"{% if value is not empty %} value="{{ value }}"{% endif %}>
+{# In "name" mode, "value" is already the bare key (not a path) - both the search box's initial
+   text and the preview thumbnail (looked up from "icons" instead of asset()'d directly) follow #}
+{%- set current_name = value_field == 'name' ? value : (value is not empty ? value|split('/')|last|replace({'.svg': ''}) : '') -%}
+{%- set preview_path = value_field == 'name' ? icons[value]|default(null) : value -%}
+<div class="ui-icon-picker" data-icons="{{ icons_data|json_encode|e('html_attr') }}" data-value-field="{{ value_field }}">
+    <input type="hidden" id="{{ id }}" name="{{ full_name }}"{% if value is not empty %} value="{{ value }}"{% endif %}{% for attrname, attrvalue in attr %}{% if attrvalue is same as(true) %} {{ attrname }}="{{ attrname }}"{% elseif attrvalue is not same as(false) %} {{ attrname }}="{{ attrvalue }}"{% endif %}{% endfor %}>
     <div class="ui-icon-search-wrap">
-        <img class="ui-icon-preview" src="{{ value is not empty ? asset(value) : '' }}" alt=""{% if value is empty %} hidden{% endif %}>
+        <img class="ui-icon-preview" src="{{ preview_path is not empty ? asset(preview_path) : '' }}" alt=""{% if preview_path is empty %} hidden{% endif %}>
         <input type="text"
                class="form-control ui-icon-search"
                placeholder="{{ 'label.search_icon'|trans({}, 'ui') }}"

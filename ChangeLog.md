@@ -1,5 +1,10 @@
 # ChangeLog
 
+## v1.4.8
+
+- Updated What's new (11/07/2026)
+- Updated iconPicker (11/07/2026)
+
 ## v1.4.7
 
 - Corrected Favicon/AplleTouchIcon to disallow svg format (10/07/2026)

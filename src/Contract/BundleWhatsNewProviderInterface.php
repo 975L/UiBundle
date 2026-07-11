@@ -10,6 +10,6 @@ namespace c975L\UiBundle\Contract;
 
 interface BundleWhatsNewProviderInterface
 {
-    // Each entry: ['bundle' => string, 'version' => string, 'date' => \DateTimeImmutable, 'description' => string]
+    // Each entry: ['date' => \DateTimeImmutable, 'description' => string[]]
     public function getEntries(): array;
 }

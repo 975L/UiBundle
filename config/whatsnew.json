@@ -1,43 +1,66 @@
 [
     {
-        "version": "1.4.4",
-        "date": "2026-07-05",
+        "date": "2026-07-11",
         "description": [
             {
-                "en": "Added a Media Library in the dashboard, showing every media and where it is used",
-                "fr": "Ajout d'une Bibliothèque de médias dans le tableau de bord, affichant tous les médias et où ils sont utilisés",
-                "es": "Añadida una Biblioteca de medios en el panel, mostrando todos los medios y dónde se usan"
+                "en": "Improved the icon picker used across the back office",
+                "fr": "Amélioration du sélecteur d'icônes utilisé dans le back-office",
+                "es": "Mejorado el selector de iconos utilizado en el back-office"
             }
         ]
     },
     {
-        "version": "1.4.3",
+        "date": "2026-07-10",
+        "description": [
+            {
+                "en": "Fixed an issue that allowed invalid favicon/app icon files to be uploaded",
+                "fr": "Correction d'un problème qui permettait de mettre en ligne des fichiers de favicon/icône d'application invalides",
+                "es": "Corregido un problema que permitía subir archivos de favicon/icono de aplicación no válidos"
+            },
+            {
+                "en": "The rich text editor now has a \"center text\" option",
+                "fr": "L'éditeur de texte enrichi propose désormais une option « centrer le texte »",
+                "es": "El editor de texto enriquecido ahora ofrece una opción «centrar texto»"
+            },
+            {
+                "en": "The Card block can now include an image",
+                "fr": "Le bloc Carte peut désormais inclure une image",
+                "es": "El bloque Tarjeta ahora puede incluir una imagen"
+            },
+            {
+                "en": "Favicon and app icon uploads are now automatically resized to the right format",
+                "fr": "Les favicons et icônes d'application mis en ligne sont désormais automatiquement redimensionnés au bon format",
+                "es": "Los favicons e iconos de aplicación subidos ahora se redimensionan automáticamente al formato correcto"
+            }
+        ]
+    },
+    {
         "date": "2026-07-05",
         "description": [
             {
-                "en": "Added duplication of Block/media",
-                "fr": "Ajout de la duplication du Block/media",
-                "es": "Añadida la duplicación del Block/media"
+                "en": "Added a Media Library to the dashboard, showing every image and file, and where each one is used on the site",
+                "fr": "Ajout d'une Bibliothèque de médias dans le tableau de bord, affichant tous les images et fichiers, ainsi que leur utilisation sur le site",
+                "es": "Añadida una Biblioteca de medios en el panel de control, que muestra todas las imágenes y archivos, y dónde se usa cada uno en el sitio"
             },
             {
-                "en": "Added live preview of a newly picked image, before saving",
-                "fr": "Ajout d'un aperçu instantané d'une image tout juste sélectionnée, avant l'enregistrement",
-                "es": "Añadida la vista previa instantánea de una imagen recién seleccionada, antes de guardar"
+                "en": "You can now duplicate an image or media block in one click",
+                "fr": "Vous pouvez désormais dupliquer un bloc image ou média en un clic",
+                "es": "Ahora puede duplicar un bloque de imagen o medio en un clic"
             },
             {
-                "en": "Added touch gestures (swipe to navigate, press-and-hold to pause) to the Slider",
-                "fr": "Ajout de gestes tactiles (balayer pour naviguer, appui long pour mettre en pause) sur le Slider",
-                "es": "Añadidos gestos táctiles (deslizar para navegar, mantener pulsado para pausar) en el Slider"
+                "en": "A newly picked image now shows a live preview before you save",
+                "fr": "Une image tout juste sélectionnée s'affiche désormais en aperçu instantané avant l'enregistrement",
+                "es": "Una imagen recién seleccionada ahora muestra una vista previa instantánea antes de guardar"
             },
             {
-                "en": "Added site-wide media roles (favicon, apple-touch-icon, og-image, logo)",
-                "fr": "Ajout de rôles de media pour tout le site (favicon, apple-touch-icon, og-image, logo)",
-                "es": "Añadidos roles de medios para todo el sitio (favicon, apple-touch-icon, og-image, logo)"
+                "en": "Added swipe navigation and press-and-hold to pause on the image slider",
+                "fr": "Ajout de la navigation par balayage et de la mise en pause par appui long sur le diaporama",
+                "es": "Añadida la navegación por deslizamiento y la pausa mediante pulsación prolongada en el carrusel de imágenes"
             },
             {
-                "en": "Added a Media Library in the dashboard, showing every media and where it is used",
-                "fr": "Ajout d'une Bibliothèque de médias dans le tableau de bord, affichant tous les médias et où ils sont utilisés",
-                "es": "Añadida una Biblioteca de medios en el panel, mostrando todos los medios y dónde se usan"
+                "en": "Site-wide images (favicon, app icon, social-sharing image, logo) are now managed from a single place",
+                "fr": "Les images communes au site (favicon, icône d'application, image de partage, logo) se gèrent désormais depuis un seul et même endroit",
+                "es": "Las imágenes comunes del sitio (favicon, icono de aplicación, imagen de compartición, logo) ahora se gestionan desde un único lugar"
             }
         ]
     }

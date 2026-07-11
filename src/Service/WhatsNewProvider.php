@@ -12,8 +12,6 @@ use c975L\UiBundle\Contract\BundleWhatsNewProviderInterface;
 
 class WhatsNewProvider implements BundleWhatsNewProviderInterface
 {
-    private const BUNDLE_NAME = 'UiBundle';
-
     public function getEntries(): array
     {
         $file = \dirname(__DIR__, 2) . '/config/whatsnew.json';
@@ -26,8 +24,6 @@ class WhatsNewProvider implements BundleWhatsNewProviderInterface
             }
 
             $entries[] = [
-                'bundle' => self::BUNDLE_NAME,
-                'version' => $entry['version'],
                 'date' => new \DateTimeImmutable($entry['date']),
                 'description' => $descriptions,
             ];
