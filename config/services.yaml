@@ -31,6 +31,8 @@ services:
               category: 'label.category_elements'
               media_types: 'image/*'
               priority: 90
+              pickable: true
+              cacheable: true
 
     ui.block.alert:
         class: stdClass
@@ -43,6 +45,8 @@ services:
               template: '@c975LUi/blocks/Alert.html.twig'
               category: 'label.category_elements'
               priority: 70
+              pickable: true
+              cacheable: true
 
     ui.block.audio:
         class: stdClass
@@ -56,6 +60,8 @@ services:
               category: 'label.category_media'
               media_types: 'audio/*'
               priority: 70
+              pickable: true
+              cacheable: true
 
     ui.block.button:
         class: stdClass
@@ -68,6 +74,8 @@ services:
               template: '@c975LUi/blocks/Button.html.twig'
               category: 'label.category_elements'
               priority: 80
+              pickable: true
+              cacheable: true
 
     ui.block.card:
         class: stdClass
@@ -81,6 +89,8 @@ services:
               category: 'label.category_elements'
               media_types: 'image/*'
               priority: 100
+              pickable: true
+              cacheable: true
 
     ui.block.image:
         class: stdClass
@@ -94,6 +104,8 @@ services:
               category: 'label.category_media'
               media_types: 'image/*'
               priority: 100
+              pickable: true
+              cacheable: true
 
     ui.block.progress_bar:
         class: stdClass
@@ -106,6 +118,8 @@ services:
               template: '@c975LUi/blocks/ProgressBar.html.twig'
               category: 'label.category_elements'
               priority: 60
+              pickable: true
+              cacheable: true
 
     ui.block.rich_snippet:
         class: stdClass
@@ -117,6 +131,8 @@ services:
               form: c975L\UiBundle\Form\Block\RichSnippetType
               template: '@c975LUi/blocks/RichSnippet.html.twig'
               category: 'label.category_seo'
+              pickable: true
+              cacheable: true
 
     ui.block.slider:
         class: stdClass
@@ -130,6 +146,8 @@ services:
               category: 'label.category_media'
               media_types: 'image/*'
               priority: 90
+              pickable: true
+              cacheable: true
 
     ui.block.text_readmore:
         class: stdClass
@@ -142,6 +160,8 @@ services:
               template: '@c975LUi/blocks/TextReadmore.html.twig'
               category: 'label.category_text'
               priority: 90
+              pickable: true
+              cacheable: true
 
     ui.block.text_section:
         class: stdClass
@@ -154,6 +174,8 @@ services:
               template: '@c975LUi/blocks/TextSection.html.twig'
               category: 'label.category_text'
               priority: 100
+              pickable: true
+              cacheable: true
 
     ui.block.video:
         class: stdClass
@@ -167,6 +189,8 @@ services:
               category: 'label.category_media'
               media_types: 'video/*'
               priority: 80
+              pickable: true
+              cacheable: true
 
     ui.block.video_iframe:
         class: stdClass
@@ -179,3 +203,5 @@ services:
               template: '@c975LUi/blocks/VideoIframe.html.twig'
               category: 'label.category_media'
               priority: 60
+              pickable: true
+              cacheable: true

@@ -1,5 +1,12 @@
 # ChangeLog
 
+## v1.4.9
+
+- Added pickable on services.yaml (12/07/2026)
+- Added server cache on Blocks (12/07/2026)
+- Added animations on blocks (12/07/2026) [DB-Migration]
+- Re-numbered xlf files (12/07/2026)
+
 ## v1.4.8
 
 - Updated What's new (11/07/2026)

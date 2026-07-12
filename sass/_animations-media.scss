@@ -1,6 +1,28 @@
+/* Block-level entrance wrapper (see Blocks/Block.html.twig) - display:contents makes it
+   transparent to the parent's layout (flex/grid: e.g. .cards needs .card as its direct child,
+   not this wrapper), so the block's real element becomes the actual flex/grid item, exactly as
+   if the wrapper didn't exist. The opacity/animation therefore target that child ("> *"), not
+   the wrapper itself, since a display:contents element generates no box to animate. */
+.block-animation {
+    display: contents;
+}
+
+/* Hidden until animate-scroll.js swaps this for the animation class */
+.block-animation.hidden > * {
+    opacity: 0;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
     .animation {
         animation: none;
+    }
+
+    .block-animation > * {
+        animation: none;
+    }
+
+    .block-animation.hidden > * {
+        opacity: 1;
     }
 }

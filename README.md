@@ -218,15 +218,34 @@ services:
               category: Reservations
               form: App\Form\Block\BookingType
               template: '@App/blocks/booking.html.twig'
-              pickable: false  # optional, defaults to true - see below
+              pickable: true  # required - see below
               priority: 80  # optional, defaults to 0 - see below
+              cacheable: true  # required - see below
 ```
 
 Create the form type to define the `data` sub-fields, and the Twig template to render the block on the front end. The form data is stored as JSON in the `Block::$data` column.
 
-Set `pickable: false` for a **singleton** kind: one meant to be managed through its own dedicated EasyAdmin entry (see `c975L/SocialBundle`'s `SocialLinksCrudController` for an example) and rendered wherever needed via `BlockRepository::findOneByKind()`, rather than attached per-page. This hides it from the generic per-page block picker (`BlockRegistry::groupedByCategory()`), so editors can't accidentally create independent, separately-filled copies of it on individual pages. Regular, repeatable kinds (`card`, `text_section`, `contact_form`...) should leave it at its default `true`.
+`pickable` and `cacheable` don't have a functional default in practice - declare both explicitly on every kind, so the behavior is readable in `services.yaml` without having to check `BlockRegistryPass`'s fallback logic.
+
+Set `pickable: false` for a **singleton** kind: one meant to be managed through its own dedicated EasyAdmin entry (see `c975L/SocialBundle`'s `SocialLinksCrudController` for an example) and rendered wherever needed via `BlockRepository::findOneByKind()`, rather than attached per-page. This hides it from the generic per-page block picker (`BlockRegistry::groupedByCategory()`), so editors can't accidentally create independent, separately-filled copies of it on individual pages. Regular, repeatable kinds (`card`, `text_section`, `contact_form`...) should use `true`.
 
 `priority` controls the kind's position within its category in the picker (higher shows first, same convention as the `ui.stylesheet`/`ui.script` tags); kinds sharing the same priority (default `0`) fall back to alphabetical order.
+
+---
+
+## Block render cache
+
+`BlockExtension::renderBlock()` (called by the `render_block()` Twig function, itself used by the `<twig:c975LUi:Blocks:Block>` component) caches each block's rendered HTML in `cache.app` (via `TagAwareCacheInterface`), keyed by `block_render_{id}_{locale}` with an infinite TTL - no re-render, no DB round trip for the block's own data, on every subsequent hit across every visitor. `BlockCacheInvalidationListener` (`src/Listener/`) invalidates it automatically: it listens to `postUpdate`/`preRemove` on both `Block` and `Media` (an image/audio/video swap doesn't touch the parent `Block`'s own fields, so it has to be watched too) and calls `$cache->invalidateTags(['block_{id}'])`. This fires for *any* origin - EasyAdmin, an importer, another bundle - since it's a Doctrine listener on the entity class itself, not tied to a specific controller.
+
+Locale is part of the cache key because a kind's template can render different content per `app.request.locale` even though `Block::$data` didn't change (e.g. SiteBundle's `legal_model`, which includes a different legal-text template per locale).
+
+**Set `cacheable: false` on a kind whenever its rendered output isn't a pure function of `(Block::$id, Block::$data, locale)`** - i.e. whenever caching it under its own block id could serve stale or wrong-visitor content:
+
+- **Embeds a per-request form** (CSRF token, session state): `ContactFormBundle`'s `contact_form` is the current example. A cached form would hand every visitor the same CSRF token.
+- **Reads another Block's data**: SocialBundle's `social_links_display` is a data-less "pointer" kind that always renders the site-wide `social_links` singleton found via `BlockRepository::findOneByKind()`. Caching it under *its own* id would never see updates to the singleton it points at.
+- **Queries unrelated entities live**: BookBundle's `book_series`/`book_books`/`book_to_be_published`/`book_serie_strips` list `Book`/`Serie`/`Strip` records via `BookBlockExtension`'s Twig functions - entities `BlockCacheInvalidationListener` doesn't watch, so a newly published book wouldn't ever invalidate the cache.
+
+When in doubt, default to `cacheable: false`: the cost is one avoidable render per hit, not a correctness bug.
 
 ---
 

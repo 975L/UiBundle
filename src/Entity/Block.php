@@ -33,6 +33,10 @@ class Block
     #[ORM\Column(type: Types::JSON)]
     private array $data = [];
 
+    // Entrance animation played once the block scrolls into view (see AnimationChoiceType)
+    #[ORM\Column(length: 30, nullable: true)]
+    private ?string $animation = null;
+
     #[ORM\ManyToOne]
     private ?User $user = null;
 
@@ -109,6 +113,18 @@ class Block
     public function setData(array $data): self
     {
         $this->data = $data;
+
+        return $this;
+    }
+
+    public function getAnimation(): ?string
+    {
+        return $this->animation;
+    }
+
+    public function setAnimation(?string $animation): self
+    {
+        $this->animation = $animation;
 
         return $this;
     }

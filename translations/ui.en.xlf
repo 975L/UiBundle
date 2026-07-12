@@ -286,10 +286,6 @@
                 <source>label.file</source>
                 <target>File</target>
             </trans-unit>
-            <trans-unit id="137">
-                <source>label.fixed_icon_invalid_format</source>
-                <target>SVG and other non-raster formats are not supported for this role - upload a PNG, JPG, GIF or WEBP image</target>
-            </trans-unit>
             <trans-unit id="72">
                 <source>label.force_download</source>
                 <target>Force Download</target>
@@ -549,6 +545,54 @@
             <trans-unit id="136">
                 <source>label.width_help</source>
                 <target>e.g.: 100px, 50%</target>
+            </trans-unit>
+            <trans-unit id="137">
+                <source>label.animation</source>
+                <target>Animation</target>
+            </trans-unit>
+            <trans-unit id="138">
+                <source>label.animation_help</source>
+                <target>Entrance effect played once the block scrolls into view</target>
+            </trans-unit>
+            <trans-unit id="139">
+                <source>label.animation_none</source>
+                <target>None</target>
+            </trans-unit>
+            <trans-unit id="140">
+                <source>label.animation_fade_in</source>
+                <target>Fade in</target>
+            </trans-unit>
+            <trans-unit id="141">
+                <source>label.animation_fade_in_bottom</source>
+                <target>Fade in from bottom</target>
+            </trans-unit>
+            <trans-unit id="142">
+                <source>label.animation_fade_in_top</source>
+                <target>Fade in from top</target>
+            </trans-unit>
+            <trans-unit id="143">
+                <source>label.animation_fade_in_left</source>
+                <target>Fade in from left</target>
+            </trans-unit>
+            <trans-unit id="144">
+                <source>label.animation_fade_in_right</source>
+                <target>Fade in from right</target>
+            </trans-unit>
+            <trans-unit id="145">
+                <source>label.animation_slide_in_left</source>
+                <target>Slide in from left</target>
+            </trans-unit>
+            <trans-unit id="146">
+                <source>label.animation_slide_in_right</source>
+                <target>Slide in from right</target>
+            </trans-unit>
+            <trans-unit id="147">
+                <source>label.animation_zoom_in</source>
+                <target>Zoom in</target>
+            </trans-unit>
+            <trans-unit id="148">
+                <source>label.fixed_icon_invalid_format</source>
+                <target>SVG and other non-raster formats are not supported for this role - upload a PNG, JPG, GIF or WEBP image</target>
             </trans-unit>
         </body>
     </file>

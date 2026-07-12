@@ -44,6 +44,7 @@ class BlockRegistryPass implements CompilerPassInterface
                     $tag['description'] ?? '',
                     !isset($tag['pickable']) || filter_var($tag['pickable'], FILTER_VALIDATE_BOOLEAN),
                     (int) ($tag['priority'] ?? 0),
+                    !isset($tag['cacheable']) || filter_var($tag['cacheable'], FILTER_VALIDATE_BOOLEAN),
                 ]);
             }
         }

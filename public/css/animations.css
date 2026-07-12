@@ -142,6 +142,37 @@
     opacity: 1;
   }
 }
+@keyframes fadeInLeft {
+  0% {
+    transform: translateX(-50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes fadeInRight {
+  0% {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+/* Zoom */
+@keyframes zoomIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
 /* Bounces */
 .animation.bounce-horizontal {
   animation: bounceHorizontal 0.5s infinite ease-in-out;
@@ -199,9 +230,78 @@
   animation: fadeInTop 1s ease-in-out both;
 }
 
+.animation.fade-in-left {
+  animation: fadeInLeft 1s ease-in-out both;
+}
+
+.animation.fade-in-right {
+  animation: fadeInRight 1s ease-in-out both;
+}
+
+/* Zoom */
+.animation.zoom-in {
+  animation: zoomIn 1s ease-in-out both;
+}
+
+/* Block-level entrance wrapper (see Blocks/Block.html.twig): .block-animation itself is
+   display:contents (defined in _animations-media.scss) so it never becomes the flex/grid item
+   in place of the block's own element (e.g. .cards relies on .card being a direct child) -
+   the animation is applied to that real child via "> *" instead of to the wrapper. */
+.block-animation.slide-in-left > * {
+  animation: slideInFromLeft 0.5s ease-out both;
+}
+
+.block-animation.slide-in-right > * {
+  animation: slideInFromRight 0.5s ease-out both;
+}
+
+.block-animation.fade-in > * {
+  animation: fadeIn 1s ease-in-out both;
+}
+
+.block-animation.fade-in-bottom > * {
+  animation: fadeInBottom 1s ease-in-out both;
+}
+
+.block-animation.fade-in-top > * {
+  animation: fadeInTop 1s ease-in-out both;
+}
+
+.block-animation.fade-in-left > * {
+  animation: fadeInLeft 1s ease-in-out both;
+}
+
+.block-animation.fade-in-right > * {
+  animation: fadeInRight 1s ease-in-out both;
+}
+
+.block-animation.zoom-in > * {
+  animation: zoomIn 1s ease-in-out both;
+}
+
+/* Block-level entrance wrapper (see Blocks/Block.html.twig) - display:contents makes it
+   transparent to the parent's layout (flex/grid: e.g. .cards needs .card as its direct child,
+   not this wrapper), so the block's real element becomes the actual flex/grid item, exactly as
+   if the wrapper didn't exist. The opacity/animation therefore target that child ("> *"), not
+   the wrapper itself, since a display:contents element generates no box to animate. */
+.block-animation {
+  display: contents;
+}
+
+/* Hidden until animate-scroll.js swaps this for the animation class */
+.block-animation.hidden > * {
+  opacity: 0;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .animation {
     animation: none;
   }
-}/*# sourceMappingURL=animations.css.map */
+  .block-animation > * {
+    animation: none;
+  }
+  .block-animation.hidden > * {
+    opacity: 1;
+  }
+}

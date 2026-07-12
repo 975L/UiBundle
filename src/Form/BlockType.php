@@ -10,6 +10,7 @@ namespace c975L\UiBundle\Form;
 
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
+use c975L\UiBundle\Form\AnimationChoiceType;
 use c975L\UiBundle\Form\MediaUploadType;
 use c975L\UiBundle\Form\Util\CollectionReconciler;
 use c975L\UiBundle\Registry\BlockRegistry;
@@ -49,6 +50,7 @@ class BlockType extends AbstractType
                 ],
                 'row_attr' => ['data-kind-row' => ''],
             ])
+            ->add('animation', AnimationChoiceType::class)
             ->add('position', HiddenType::class, [
                 'attr' => ['class' => 'ui-sort-position'],
             ]);

@@ -3,6 +3,21 @@
         "date": "2026-07-11",
         "description": [
             {
+                "en": "Added animations on blocks",
+                "fr": "Ajout d'animations sur les blocs",
+                "es": "Se añadieron animaciones en los bloques"
+            },
+            {
+                "en": "Added cache system on rendering pages, that's makes web faster",
+                "fr": "Ajout d'un système de cache lors du rendu des pages, ce qui rend le web plus rapide",
+                "es": "Se añadió un sistema de caché al renderizar páginas, lo que hace que la web sea más rápida"
+            }
+        ]
+    },
+    {
+        "date": "2026-07-11",
+        "description": [
+            {
                 "en": "Improved the icon picker used across the back office",
                 "fr": "Amélioration du sélecteur d'icônes utilisé dans le back-office",
                 "es": "Mejorado el selector de iconos utilizado en el back-office"

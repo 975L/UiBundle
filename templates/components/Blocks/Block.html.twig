@@ -1,1 +1,10 @@
-{{ render_block(block) }}
+{% if block.animation %}
+    {# "hidden" is added by animate-scroll.js on connect(), not rendered here - see the controller
+       for why: it must never apply if the script fails to load.
+       block-animation (not the bare "animation" class) is display:contents - see
+       sass/_animations-media.scss for why this wrapper must stay transparent to the parent's
+       layout (e.g. .cards needs .card as its direct child, not this wrapper). #}
+    <div class="block-animation scroll" data-animation="{{ block.animation }}">{{ render_block(block) }}</div>
+{% else %}
+    {{ render_block(block) }}
+{% endif %}

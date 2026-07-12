@@ -33,7 +33,8 @@ class BlockRegistry
         string $translationDomain = 'ui',
         string $description = '',
         bool $pickable = true,
-        int $priority = 0
+        int $priority = 0,
+        bool $cacheable = true
     ): void {
         $this->blocks[$kind] = [
             'label'       => $label,
@@ -45,6 +46,7 @@ class BlockRegistry
             'description' => $description,
             'pickable'    => $pickable,
             'priority'    => $priority,
+            'cacheable'   => $cacheable,
         ];
     }
 
@@ -120,6 +122,13 @@ class BlockRegistry
     public function hasMediaTypes(string $kind): bool
     {
         return !empty($this->get($kind)['mediaTypes']);
+    }
+
+    // False for kinds whose rendered output isn't safe to reuse across requests
+    // (e.g. embeds a Symfony form with its own CSRF token, like "contact_form")
+    public function isCacheable(string $kind): bool
+    {
+        return $this->get($kind)['cacheable'];
     }
 
     // Result only depends on the static block registrations, cached after the first call - excludes
