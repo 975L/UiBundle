@@ -1,5 +1,9 @@
 # ChangeLog
 
+## v1.5.1
+
+- Corrected slider default layout (13/07/2026)
+
 ## v1.5
 
 - Added help text to the Media library CRUD index (13/07/2026)
