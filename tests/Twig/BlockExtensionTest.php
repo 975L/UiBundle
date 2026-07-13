@@ -11,6 +11,7 @@ namespace c975L\UiBundle\Tests\Twig;
 
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Registry\BlockRegistry;
+use c975L\UiBundle\Service\BlockCacheInvalidator;
 use c975L\UiBundle\Twig\BlockExtension;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -74,12 +75,15 @@ class BlockExtensionTest extends TestCase
         $request->setLocale('en');
         $requestStack->push($request);
 
+        $item = $this->createMock(ItemInterface::class);
+        $item->expects($this->once())->method('tag')->with(['block_42', BlockCacheInvalidator::CACHE_TAG_ALL]);
+
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())
             ->method('get')
             ->with('block_render_42_en', $this->isCallable())
-            ->willReturnCallback(function (string $key, callable $callback) {
-                return $callback($this->createStub(ItemInterface::class));
+            ->willReturnCallback(function (string $key, callable $callback) use ($item) {
+                return $callback($item);
             });
 
         $extension = new BlockExtension($registry, $twig, $cache, $requestStack);

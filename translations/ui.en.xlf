@@ -594,6 +594,14 @@
                 <source>label.fixed_icon_invalid_format</source>
                 <target>SVG and other non-raster formats are not supported for this role - upload a PNG, JPG, GIF or WEBP image</target>
             </trans-unit>
+            <trans-unit id="149">
+                <source>label.block_clear_cache</source>
+                <target>Clear blocks cache</target>
+            </trans-unit>
+            <trans-unit id="150">
+                <source>flash.block_cache_cleared</source>
+                <target>Blocks cache cleared</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

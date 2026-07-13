@@ -594,6 +594,14 @@
                 <source>label.fixed_icon_invalid_format</source>
                 <target>SVG y otros formatos no rasterizados no son compatibles para este rol - suba una imagen PNG, JPG, GIF o WEBP</target>
             </trans-unit>
+            <trans-unit id="149">
+                <source>label.block_clear_cache</source>
+                <target>Vaciar la caché de bloques</target>
+            </trans-unit>
+            <trans-unit id="150">
+                <source>flash.block_cache_cleared</source>
+                <target>Caché de bloques vaciada</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

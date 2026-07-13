@@ -9,6 +9,7 @@ namespace c975L\UiBundle\Twig;
 
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Registry\BlockRegistry;
+use c975L\UiBundle\Service\BlockCacheInvalidator;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
@@ -49,7 +50,7 @@ class BlockExtension extends AbstractExtension
             sprintf('block_render_%d_%s', $block->getId(), $locale),
             function (ItemInterface $item) use ($block): string {
                 $item->expiresAfter(null);
-                $item->tag('block_' . $block->getId());
+                $item->tag(['block_' . $block->getId(), BlockCacheInvalidator::CACHE_TAG_ALL]);
 
                 return $this->doRender($block);
             }
