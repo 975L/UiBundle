@@ -1,5 +1,35 @@
 [
-        {
+    {
+        "date": "2026-07-13",
+        "description": [
+            {
+                "en": "You can now add videos to the slider",
+                "fr": "Vous pouvez désormais ajouter des vidéos au diaporama",
+                "es": "Ahora puede agregar videos al deslizador"
+            },
+            {
+                "en": "You can set a freeflow parameter for Slider",
+                "fr": "Vous pouvez désormais définir un paramètre freeflow pour le diaporama",
+                "es": "Ahora puede establecer un parámetro de flujo libre para el deslizador"
+            },
+            {
+                "en": "You can now upload multiple files at the same time (Slider)",
+                "fr": "Vous pouvez désormais télécharger plusieurs fichiers en même temps (Diaporama)",
+                "es": "Ahora puede subir varios archivos al mismo tiempo (Deslizador)"
+            },
+            {
+                "en": "New Block BannerTitle",
+                "fr": "Nouveau bloc TitreBannière",
+                "es": "Nuevo bloque TítuloBanner"
+            },
+            {
+                "en": "You can now preview every available block type with sample content before adding one",
+                "fr": "Vous pouvez désormais prévisualiser tous les types de blocs disponibles avec un exemple de contenu avant d'en ajouter un",
+                "es": "Ahora puede obtener una vista previa de todos los tipos de bloques disponibles con contenido de ejemplo antes de agregar uno"
+            }
+        ]
+    },
+    {
         "date": "2026-07-12",
         "description": [
             {

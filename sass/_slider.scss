@@ -84,6 +84,11 @@
     display: block;
 }
 
+// Black letterbox background while a video slide's metadata/first frame is still loading
+.slider-video {
+    background: #000;
+}
+
 // Wraps .slider-img when imageLinksToUrl is used - must behave like the img itself
 // (block, full width/height) so the ratio/object-fit rules on .slider-img keep working
 .slider-img-link {
@@ -317,3 +322,72 @@
 .slider img.angle {
     height: 60px;
 }
+
+// Freeflow layout (layout="freeflow"): every slide stays visible side by side, breaking out to
+// the viewport edges. Width uses a JS-computed --slider-freeflow-vw, not raw vw, so a desktop
+// scrollbar's own width can't itself create a horizontal scrollbar.
+.slider-freeflow {
+    max-width: none;
+    width: var(--slider-freeflow-vw, 100vw);
+    margin-left: calc(50% - (var(--slider-freeflow-vw, 100vw) / 2));
+    aspect-ratio: auto;
+    // No overflow here, clipping happens on .slider-list below - an overflow-x alone would
+    // force overflow-y to auto, turning the dots/play-pause's own overflow into a scrollbar.
+}
+
+// Scrolls natively (scrollIntoView in slider.js) rather than a JS transform: translateX(), which
+// left newly-revealed slides unpainted in some engines with many slides visible at once.
+.slider-freeflow .slider-list {
+    display: flex;
+    gap: 16px;
+    padding-inline: 5vw;
+    // Without this, padding-inline adds to the width: 100% above instead of being carved out of it
+    box-sizing: border-box;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    // Scrolling is the interaction; the bar itself is redundant next to buttons/dots
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.slider-freeflow .slider-item {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: auto;
+    flex: 0 0 clamp(240px, 55vw, 480px);
+    scroll-snap-align: start;
+    display: block;
+    cursor: pointer;
+    animation: none;
+}
+
+.slider-freeflow .slider-img,
+.slider-freeflow .slider-video {
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+// Mobile-first: 3/4 by default, widens to 16/9 from 768px up (SiteBundle's breakpoint). An
+// explicit ratio="..." below always wins, same as the default (non-freeflow) slider.
+.slider-freeflow .slider-item { aspect-ratio: 3 / 4; }
+
+@media (min-width: 768px) {
+    .slider-freeflow .slider-item { aspect-ratio: 16 / 9; }
+}
+
+.slider-freeflow.slider-ratio-2-3 .slider-item { aspect-ratio: 2 / 3; }
+.slider-freeflow.slider-ratio-3-4 .slider-item { aspect-ratio: 3 / 4; }
+.slider-freeflow.slider-ratio-1-1 .slider-item { aspect-ratio: 1 / 1; }
+.slider-freeflow.slider-ratio-4-3 .slider-item { aspect-ratio: 4 / 3; }
+.slider-freeflow.slider-ratio-3-2 .slider-item { aspect-ratio: 3 / 2; }
+.slider-freeflow.slider-ratio-9-16 .slider-item { aspect-ratio: 9 / 16; }
+.slider-freeflow.slider-ratio-16-9 .slider-item { aspect-ratio: 16 / 9; }
+.slider-freeflow.slider-ratio-21-9 .slider-item { aspect-ratio: 21 / 9; }

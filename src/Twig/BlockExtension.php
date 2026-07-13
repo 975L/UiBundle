@@ -38,7 +38,10 @@ class BlockExtension extends AbstractExtension
     {
         $kind = $block->getKind();
 
-        if (!$this->registry->isCacheable($kind)) {
+        // A never-persisted block (e.g. the in-memory previews built by BlockGalleryController) has no
+        // id - caching it by id would collapse every such block onto the same "block_render_0_..." key,
+        // silently serving one block's rendered HTML for every other one
+        if (null === $block->getId() || !$this->registry->isCacheable($kind)) {
             return $this->doRender($block);
         }
 

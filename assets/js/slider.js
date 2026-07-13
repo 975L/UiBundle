@@ -13,6 +13,11 @@ export default class extends Controller {
         if (sliderId) {
             this.slideIndex = 1;
             this.isPlaying = false;
+            this.isFreeflow = this.element.classList.contains("slider-freeflow");
+            // Slide videos auto-play muted, like an animated image - but not for users who asked
+            // the OS to reduce motion. Native <video controls> stays available either way so they
+            // can still start it manually.
+            this.reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
             this.createLiveRegion(sliderId);
             this.preloadSliderImages(sliderId);
             this.initializeSlider(sliderId);
@@ -100,6 +105,12 @@ export default class extends Controller {
     // A plain tap (released quickly, without moving) falls through to the existing
     // "click on slide" listener set up in initializeSlider(), which advances to the next slide.
     setupTouchGestures(sliderId) {
+        // Freeflow scrolls natively (overflow-x: auto + scroll-snap) - swipe is already handled
+        // by the browser itself, and this handler's preventDefault() on touchmove would fight it.
+        if (this.isFreeflow) {
+            return;
+        }
+
         const longPressDelay = 500;
         const swipeThreshold = 50;
         const items = document.querySelectorAll(`#${sliderId} .slider-item`);
@@ -165,6 +176,23 @@ export default class extends Controller {
         });
     }
 
+    // Plays the <video> inside a slide, if any. Suppressed under prefers-reduced-motion unless
+    // explicit is true (user pressed the play/pause control themselves, which overrides it).
+    playSlideVideo(slide, explicit = false) {
+        const video = slide && slide.querySelector("video");
+        if (video && (explicit || !this.reducedMotion)) {
+            video.play().catch(() => {});
+        }
+    }
+
+    // Pauses the <video> inside a slide, if any
+    pauseSlideVideo(slide) {
+        const video = slide && slide.querySelector("video");
+        if (video) {
+            video.pause();
+        }
+    }
+
     suspendAnimation() {
         if (this.autoPlayInterval) {
             clearInterval(this.autoPlayInterval);
@@ -180,16 +208,21 @@ export default class extends Controller {
 
     togglePlayPause(sliderId, button) {
         const action = button.getAttribute("data-action");
+        const activeSlide = Array.from(document.querySelectorAll(`#${sliderId} .slider-item`))
+            .find((slide) => slide.style.display === "block");
 
         if (action === "stop") {
             this.suspendAnimation();
             this.isPlaying = false;
+            this.pauseSlideVideo(activeSlide);
             button.setAttribute("data-action", "start");
             button.setAttribute("aria-label", button.getAttribute("aria-label").replace("Stop", "Start").replace("Arrêter", "Démarrer").replace("Detener", "Iniciar"));
             button.innerHTML = '<span aria-hidden="true">▶</span>';
         } else {
             this.isPlaying = true;
             this.startAutoPlay(sliderId);
+            // Explicit user action: play the active slide's video even under prefers-reduced-motion
+            this.playSlideVideo(activeSlide, true);
             button.setAttribute("data-action", "stop");
             button.setAttribute("aria-label", button.getAttribute("aria-label").replace("Start", "Stop").replace("Démarrer", "Arrêter").replace("Iniciar", "Detener"));
             button.innerHTML = '<span aria-hidden="true">⏸</span>';
@@ -218,11 +251,12 @@ export default class extends Controller {
             this.displaySlide(sliderId, ++this.slideIndex, "next");
         });
 
-        // Click on slide to go next, unless the click is on a link (title/text/image linking to slide.url)
+        // Click on slide to go next, unless the click is on a link (title/text/image linking to
+        // slide.url) or on a video's native controls (play/pause/volume/seek)
         const slides = document.querySelectorAll(`#${sliderId} .slider-item`);
         slides.forEach((slide) => {
             slide.addEventListener("click", (e) => {
-                if (e.target.closest("a")) {
+                if (e.target.closest("a") || e.target.tagName === "VIDEO") {
                     return;
                 }
                 this.displaySlide(sliderId, ++this.slideIndex, "next");
@@ -249,6 +283,25 @@ export default class extends Controller {
             return;
         }
 
+        // Freeflow slides stay in normal flow (natural height) - only the --slider-freeflow-vw
+        // custom property (drives the full-bleed breakout width; computed via clientWidth rather
+        // than raw vw units so a desktop scrollbar's own width can't create a horizontal scroll)
+        // needs refreshing when the viewport resizes; re-scrolling the current slide into place
+        // keeps it aligned after the row's item widths (clamp(), viewport-based) change.
+        if (this.isFreeflow) {
+            const updateFreeflow = () => {
+                document.documentElement.style.setProperty("--slider-freeflow-vw", `${document.documentElement.clientWidth}px`);
+                this.displaySlideFreeflow(sliderId, this.slideIndex, false);
+            };
+            updateFreeflow();
+            let freeflowResizeTimeout;
+            window.addEventListener("resize", () => {
+                clearTimeout(freeflowResizeTimeout);
+                freeflowResizeTimeout = setTimeout(updateFreeflow, 300);
+            });
+            return;
+        }
+
         // A fixed ratio (CSS aspect-ratio, via a "slider-ratio-*" class) already sizes the slider.
         // This JS height fallback is only needed in free/natural ratio mode, where slides are
         // absolutely positioned and stacked, so the container can't size itself from content alone.
@@ -257,20 +310,23 @@ export default class extends Controller {
             return;
         }
 
-        const images = Array.from(slides)
-            .map((slide) => slide.querySelector("img"))
-            .filter((img) => img !== null);
+        const mediaEls = Array.from(slides)
+            .map((slide) => slide.querySelector("img, video"))
+            .filter((el) => el !== null);
 
-        // Sets the slider height to the tallest image scaled to the slider's width, using the
-        // width/height HTML attributes (Media entity dimensions) which are known synchronously -
-        // no waiting on image load events, which used to grow the slider after the fact and shift
-        // bottom-anchored text/credits down. "slider-sized" then lets every slide - including
-        // smaller images - fill that height and get cropped via object-fit: cover.
+        // Sets the slider height to the tallest media scaled to the slider's width, using the
+        // width/height HTML attributes (Media entity dimensions, images only) which are known
+        // synchronously - no waiting on load events, which used to grow the slider after the fact
+        // and shift bottom-anchored text/credits down. Videos never have stored dimensions (see
+        // MediaUploadType), so their natural size is only known once "loadedmetadata" fires below.
+        // "slider-sized" then lets every slide - including smaller media - fill that height and
+        // get cropped via object-fit: cover.
         const applyMaxHeight = () => {
             const width = slider.clientWidth;
-            const maxHeight = images.reduce((max, img) => {
-                const naturalWidth = img.naturalWidth || img.width;
-                const naturalHeight = img.naturalHeight || img.height;
+            const maxHeight = mediaEls.reduce((max, el) => {
+                const isVideo = el.tagName === "VIDEO";
+                const naturalWidth = isVideo ? el.videoWidth : (el.naturalWidth || el.width);
+                const naturalHeight = isVideo ? el.videoHeight : (el.naturalHeight || el.height);
                 if (!naturalWidth || !naturalHeight) {
                     return max;
                 }
@@ -285,10 +341,14 @@ export default class extends Controller {
 
         applyMaxHeight();
 
-        // Fallback for medias missing stored width/height: refine once the real image loads
-        images.forEach((img) => {
-            if (!img.getAttribute("width") || !img.getAttribute("height")) {
-                img.addEventListener("load", applyMaxHeight, { once: true });
+        // Fallback: refine once the real image loads, or once a video's metadata is known
+        mediaEls.forEach((el) => {
+            if (el.tagName === "VIDEO") {
+                if (!el.videoWidth || !el.videoHeight) {
+                    el.addEventListener("loadedmetadata", applyMaxHeight, { once: true });
+                }
+            } else if (!el.getAttribute("width") || !el.getAttribute("height")) {
+                el.addEventListener("load", applyMaxHeight, { once: true });
             }
         });
 
@@ -302,6 +362,11 @@ export default class extends Controller {
 
     // Display slide with ARIA support
     displaySlide(sliderId, number, direction = "next", announceChange = true) {
+        if (this.isFreeflow) {
+            this.displaySlideFreeflow(sliderId, number, announceChange);
+            return;
+        }
+
         const slides = document.querySelectorAll(`#${sliderId} .slider-item`);
         const dots = document.querySelectorAll(`#${sliderId} .slider-dot`);
 
@@ -361,12 +426,57 @@ export default class extends Controller {
         // Display new slide
         newSlide.style.display = "block";
 
+        // A slide's video only plays while its slide is the active one
+        if (currentSlide && currentSlide !== newSlide) {
+            this.pauseSlideVideo(currentSlide);
+        }
+        this.playSlideVideo(newSlide);
+
         // Announce change
         if (announceChange && direction !== "none") {
             this.announceSlide(sliderId, index, slides.length);
         }
 
         // Update state
+        this.slideIndex = index;
+    }
+
+    // Freeflow layout: every slide stays visible side by side (no display none/block toggling),
+    // .slider-list scrolls natively (overflow-x: auto + scroll-snap, see _slider.scss) - this
+    // just drives that scroll and updates dots/video state, like the default slider's displaySlide
+    displaySlideFreeflow(sliderId, number, announceChange = true) {
+        const slides = document.querySelectorAll(`#${sliderId} .slider-item`);
+        const dots = document.querySelectorAll(`#${sliderId} .slider-dot`);
+
+        if (slides.length === 0) {
+            return;
+        }
+
+        const index = this.calculateIndex(number, slides.length);
+        const currentSlide = slides[this.slideIndex - 1];
+        const newSlide = slides[index - 1];
+
+        newSlide.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+
+        dots.forEach((dot, idx) => {
+            if (idx === index - 1) {
+                dot.classList.add("current", "active");
+                dot.setAttribute("aria-label", dot.getAttribute("aria-label").replace(/\(.*?\)/, "") + " (current)");
+            } else {
+                dot.classList.remove("current", "active");
+                dot.setAttribute("aria-label", dot.getAttribute("aria-label").replace(/\s*\(.*?\)/, ""));
+            }
+        });
+
+        if (currentSlide !== newSlide) {
+            this.pauseSlideVideo(currentSlide);
+        }
+        this.playSlideVideo(newSlide);
+
+        if (announceChange) {
+            this.announceSlide(sliderId, index, slides.length);
+        }
+
         this.slideIndex = index;
     }
 

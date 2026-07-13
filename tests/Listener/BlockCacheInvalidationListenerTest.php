@@ -13,6 +13,7 @@ use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Listener\BlockCacheInvalidationListener;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Event\PreRemoveEventArgs;
 use Doctrine\ORM\UnitOfWork;
@@ -29,6 +30,22 @@ class BlockCacheInvalidationListenerTest extends TestCase
         }
 
         return $em;
+    }
+
+    // A brand new Media attached to an already-cached Block (e.g. adding a slide to an existing
+    // Slider) is an INSERT - postPersist is the only Doctrine event that fires for it, postUpdate
+    // never does, which used to leave the block's cached render silently missing it
+    public function testPostPersistInvalidatesTheOwningBlockTagForANewMedia(): void
+    {
+        $block = $this->createConfiguredStub(Block::class, ['getId' => 9]);
+        $media = new Media();
+        $media->setBlock($block);
+
+        $cache = $this->createMock(TagAwareCacheInterface::class);
+        $cache->expects($this->once())->method('invalidateTags')->with(['block_9']);
+
+        (new BlockCacheInvalidationListener($cache))
+            ->postPersist(new PostPersistEventArgs($media, $this->createEntityManager()));
     }
 
     public function testPostUpdateInvalidatesTheBlockOwnTag(): void

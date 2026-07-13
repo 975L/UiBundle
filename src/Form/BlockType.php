@@ -13,11 +13,13 @@ use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Form\AnimationChoiceType;
 use c975L\UiBundle\Form\MediaUploadType;
 use c975L\UiBundle\Form\Util\CollectionReconciler;
+use c975L\UiBundle\Form\Util\MultiUploadMerger;
 use c975L\UiBundle\Registry\BlockRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -39,7 +41,7 @@ class BlockType extends AbstractType
         $builder
             ->add('kind', ChoiceType::class, [
                 'label' => 'label.block_kind',
-                'choices' => $this->registry->groupedByCategory(),
+                'choices' => $this->registry->groupedByCategory($options['context']),
                 'choice_translation_domain' => false,
                 'placeholder' => 'label.choose_block_kind',
                 'attr' => [
@@ -125,6 +127,7 @@ class BlockType extends AbstractType
                         if (!isset($submitted['medias'])) {
                             $submitted['medias'] = [];
                         }
+                        $submitted = $this->mergeMultiUpload($submitted, $kind);
                         $event->setData($submitted);
                         $this->addMediaSubForm($event->getForm(), $kind);
                     }
@@ -168,6 +171,34 @@ class BlockType extends AbstractType
             'by_reference' => false,
             'prototype' => true,
         ]);
+
+        // Unmapped: consumed directly from the submitted data by mergeMultiUpload() below (spliced
+        // into "medias" as brand new entries), never bound onto the entity itself
+        if ($this->registry->allowsMultiUpload($kind)) {
+            $form->add('mediaUpload', FileType::class, [
+                'label' => 'label.media_multi_upload',
+                'help' => 'label.media_multi_upload_help',
+                'mapped' => false,
+                'required' => false,
+                'multiple' => true,
+                'attr' => array_filter(['accept' => $accept]),
+            ]);
+        }
+    }
+
+    // Consumes the "mediaUpload" multi-file input (if any), splicing its files into "medias" - see
+    // MultiUploadMerger for the actual entry-building logic
+    private function mergeMultiUpload(array $submitted, string $kind): array
+    {
+        $files = $submitted['mediaUpload'] ?? null;
+        unset($submitted['mediaUpload']);
+        if (!$this->registry->allowsMultiUpload($kind) || empty($files) || !is_array($files)) {
+            return $submitted;
+        }
+
+        $submitted['medias'] = MultiUploadMerger::merge($submitted['medias'] ?? [], $files);
+
+        return $submitted;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -175,7 +206,12 @@ class BlockType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Block::class,
             'label' => false,
-            'translation_domain' => 'ui'
+            'translation_domain' => 'ui',
+            // Restricts the "kind" choices to block kinds available in this context (see BlockRegistry::
+            // groupedByCategory()) - e.g. 'page' or 'menu'. Null (default) applies no restriction, so
+            // existing CollectionField usages that don't pass it keep seeing every pickable kind.
+            'context' => null,
         ]);
+        $resolver->setAllowedTypes('context', ['null', 'string']);
     }
 }

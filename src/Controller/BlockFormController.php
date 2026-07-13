@@ -12,6 +12,7 @@ use c975L\UiBundle\Form\MediaUploadType;
 use c975L\UiBundle\Registry\BlockRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,15 +51,29 @@ class BlockFormController extends AbstractController
             ->add('data', $this->registry->getFormClass($kind), ['label' => false]);
 
         if ($this->registry->hasMediaTypes($kind)) {
+            $accept = implode(',', $this->registry->getMediaTypes($kind));
+
             $builder->add('medias', CollectionType::class, [
                 'label'         => 'label.media',
                 'entry_type'    => MediaUploadType::class,
-                'entry_options' => ['accept' => implode(',', $this->registry->getMediaTypes($kind)), 'context' => $kind],
+                'entry_options' => ['accept' => $accept, 'context' => $kind],
                 'allow_add'     => true,
                 'allow_delete'  => true,
                 'by_reference'  => false,
                 'prototype'     => true,
             ]);
+
+            // Mirrors BlockType::addMediaSubForm() - only relevant here so the AJAX-loaded preview
+            // (picking a kind on a brand new block) shows the same multi-upload input right away
+            if ($this->registry->allowsMultiUpload($kind)) {
+                $builder->add('mediaUpload', FileType::class, [
+                    'label'    => 'label.media_multi_upload',
+                    'help'     => 'label.media_multi_upload_help',
+                    'required' => false,
+                    'multiple' => true,
+                    'attr'     => array_filter(['accept' => $accept]),
+                ]);
+            }
         }
 
         return $this->render('@c975LUi/form/block.html.twig', [

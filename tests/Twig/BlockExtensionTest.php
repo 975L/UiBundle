@@ -58,6 +58,31 @@ class BlockExtensionTest extends TestCase
         $this->assertSame('<p>rendered</p>', $extension->renderBlock($block));
     }
 
+    // A never-persisted block (e.g. BlockGalleryController's in-memory previews) has no id - caching it
+    // would collapse onto the same key as every other unpersisted block of a cacheable kind, silently
+    // serving one block's rendered HTML for every other one
+    public function testRenderBlockRendersDirectlyWithoutCachingWhenBlockHasNoId(): void
+    {
+        $block = $this->createBlock('article', null);
+
+        $registry = $this->createMock(BlockRegistry::class);
+        $registry->method('isCacheable')->willReturn(true);
+        $registry->expects($this->once())->method('getTemplate')->with('article')->willReturn('article.html.twig');
+
+        $twig = $this->createMock(Environment::class);
+        $twig->expects($this->once())
+            ->method('render')
+            ->with('article.html.twig', ['block' => $block, 'title' => 'Hello'])
+            ->willReturn('<article>fresh</article>');
+
+        $cache = $this->createMock(TagAwareCacheInterface::class);
+        $cache->expects($this->never())->method('get');
+
+        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack());
+
+        $this->assertSame('<article>fresh</article>', $extension->renderBlock($block));
+    }
+
     // Cacheable kinds go through the cache pool, keyed by block id and current locale
     public function testRenderBlockUsesCacheForCacheableKind(): void
     {

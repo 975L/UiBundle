@@ -1,5 +1,21 @@
 # ChangeLog
 
+## v1.5
+
+- Added help text to the Media library CRUD index (13/07/2026)
+- Fixed `render_block()` caching every never-persisted block (id `null`) under the same cache key (13/07/2026)
+- Fixed `.btn-success`/`.btn-danger`/`.btn-link` styles (13/07/2026)
+- Added block gallery (`/management/ui/block/gallery`), previewing every pickable block kind with sample data (13/07/2026)
+- Added `BlockFixtureProviderInterface`: lets a bundle supply sample data for its own kinds in the block gallery (13/07/2026)
+- Added `GalleryShowcaseProviderInterface`: lets a bundle show non-block content in the block gallery (13/07/2026)
+- Added `GalleryShowcaseProviderInterface`'s `category` override, for a kind-less showcase that still belongs next to a related category (13/07/2026)
+- Added `contexts` block tag flag, restricting a kind to specific `BlockType` usages (e.g. `menu`) (13/07/2026)
+- Added multi upload files feature (13/07/2026)
+- Added Block BannerTitle (13/07/2026)
+- Added `media_required` block tag flag, rejecting a block with no attached media at save time (13/07/2026)
+- Added ability to add videos to the slider (13/07/2026)
+- Added freeflow parameter for Slider (13/07/2026)
+
 ## v1.4.13
 
 - Corrected sass for slider withu unique slide (13/07/2026)

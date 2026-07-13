@@ -4,6 +4,7 @@ import BlockCollectionController from './js/block-collection.js';
 import BlockDuplicateController from './js/block-duplicate.js';
 import BlockFocusController from './js/block-focus.js';
 import EaSortableController from './js/ea-sortable.js';
+import GalleryPreviewController from './js/gallery-preview.js';
 import './js/trix-editor.js';
 import './js/media-preview.js';
 import './js/icon-picker.js';
@@ -16,6 +17,7 @@ app.register('blockCollection', BlockCollectionController);
 app.register('blockDuplicate', BlockDuplicateController);
 app.register('blockFocus', BlockFocusController);
 app.register('eaSortable', EaSortableController);
+app.register('galleryPreview', GalleryPreviewController);
 
 // Mount eaSortable, blockCollection, blockDuplicate and blockFocus on <body> automatically:
 // EasyAdmin's layout never sets data-controller itself, so without this none of the drag-and-drop,

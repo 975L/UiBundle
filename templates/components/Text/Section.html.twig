@@ -4,5 +4,8 @@
     {% if image is defined %}
         <twig:c975LUi:Image:Image src="{{ image }}" class="img-rounded img-responsive"/>
     {% endif %}
-    {{ content|raw|nl2br }}
+    {# content is authored via Trix (TrixEditorType), which already encodes its own line breaks as
+       <div>/<br> - nl2br would additionally convert the insignificant newlines between Trix's <div>
+       tags into extra visible <br>, doubling up line breaks and producing blank lines #}
+    {{ content|raw }}
 </section>

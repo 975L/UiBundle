@@ -25,11 +25,19 @@ class MediaUploadType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $isImage = null !== $options['accept'] && str_starts_with($options['accept'], 'image');
+        $acceptedTypes = null !== $options['accept'] ? explode(',', $options['accept']) : [];
+        $isImage = in_array('image/*', $acceptedTypes, true);
+        $isVideo = in_array('video/*', $acceptedTypes, true);
         $isSlider = 'slider' === $options['context'];
-        $isCards = 'cards' === $options['context'];
+        $isCards = 'card' === $options['context'];
+        $isBannerTitle = 'banner_title' === $options['context'];
+
+        // Placeholder type, always overridden in the PRE_SET_DATA listener below once the entry's real
+        // data (and mimetype, for an existing upload) is known - added here first only so "file" keeps
+        // rendering as the form's first field (re-adding a field under the same name replaces it in
+        // place rather than moving it to the end).
         $builder
-            ->add('file', $isImage ? VichImageType::class : VichFileType::class, [
+            ->add('file', VichFileType::class, [
                 'label' => false,
                 'required' => false,
                 'allow_delete' => true,
@@ -41,9 +49,15 @@ class MediaUploadType extends AbstractType
                 'attr' => ['class' => 'ui-sort-position'],
             ]);
 
-        // Per-image display metadata, only relevant when the uploaded file is an image - none of it
-        // applies to a Cards card image either: Cards.html.twig only ever reads the file itself (alt
-        // comes from the card's own title, there's no caption/sizing/rights markup for a card teaser)
+        // cssClasses applies to a Card's teaser image too (see templates/blocks/Card.html.twig), so it
+        // stays out of the "!$isCards" group below
+        if ($isImage) {
+            $builder->add('cssClasses', ImageClassChoiceType::class);
+        }
+
+        // Per-image display metadata, only relevant when the uploaded file is an image - none of the
+        // rest applies to a Card's teaser image: alt comes from the card's own title, there's no
+        // caption/sizing/rights markup for a card teaser
         // Field order/set kept in parity with MediaCrudController (the Media library's own edit form)
         if ($isImage && !$isCards) {
             $builder->add('alt', TextType::class, [
@@ -51,9 +65,10 @@ class MediaUploadType extends AbstractType
                 'required' => false,
             ]);
 
-            // Caption/positioning fields make sense for a standalone Image block, not for a slide
-            // inside a Slider (no in-page position to control, no "above the caption" layout)
-            if (!$isSlider) {
+            // Caption/positioning/rights fields make sense for a standalone Image block, not for a slide
+            // inside a Slider (no in-page position to control, no "above the caption" layout) nor for a
+            // BannerTitle's background image (it's decoration behind text, not a captioned figure)
+            if (!$isSlider && !$isBannerTitle) {
                 $builder
                     ->add('label', TextType::class, [
                         'label' => 'label.caption',
@@ -80,23 +95,24 @@ class MediaUploadType extends AbstractType
                     ]);
             }
 
-            $builder
-                ->add('cssClasses', ImageClassChoiceType::class)
-                ->add('credits', TextType::class, [
-                    'label' => 'label.credits',
-                    'help' => 'label.credits_help',
-                    'required' => false,
-                ])
-                ->add('rightsReserved', CheckboxType::class, [
-                    'label' => 'label.rights_reserved',
-                    'required' => false,
-                    'label_attr' => ['class' => 'checkbox-switch'],
-                ]);
+            if (!$isBannerTitle) {
+                $builder
+                    ->add('credits', TextType::class, [
+                        'label' => 'label.credits',
+                        'help' => 'label.credits_help',
+                        'required' => false,
+                    ])
+                    ->add('rightsReserved', CheckboxType::class, [
+                        'label' => 'label.rights_reserved',
+                        'required' => false,
+                        'label_attr' => ['class' => 'checkbox-switch'],
+                    ]);
+            }
         }
 
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
-            function (PreSetDataEvent $event): void {
+            function (PreSetDataEvent $event) use ($isImage, $isVideo, $options): void {
                 $media = $event->getData();
 
                 // Unmapped, only used server-side to reconcile submitted entries against existing rows by
@@ -108,6 +124,25 @@ class MediaUploadType extends AbstractType
                     'mapped' => false,
                     'required' => false,
                     'data' => $media instanceof Media ? $media->getId() : null,
+                ]);
+
+                // For an already-uploaded entry, go off its real mimetype rather than the block kind's
+                // static accept list: a Slider (accept "image/*,video/*") always has $isVideo true, which
+                // used to force every slide - image slides included - onto VichFileType and lose their
+                // thumbnail preview. A brand-new empty entry has no mimetype yet, so it falls back to the
+                // accept-based guess; it gets no preview either way until saved & reloaded.
+                $mimeType = $media instanceof Media ? $media->getMimeType() : null;
+                $useImageType = null !== $mimeType
+                    ? str_starts_with($mimeType, 'image/')
+                    : ($isImage && !$isVideo);
+
+                $event->getForm()->add('file', $useImageType ? VichImageType::class : VichFileType::class, [
+                    'label' => false,
+                    'required' => false,
+                    'allow_delete' => true,
+                    'download_label' => false,
+                    'delete_label_translation_domain' => 'messages',
+                    'attr' => array_filter(['accept' => $options['accept']]),
                 ]);
             }
         );

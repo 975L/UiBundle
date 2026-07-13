@@ -1,0 +1,133 @@
+<?php
+/*
+ * (c) 2026: 975L <contact@975l.com>
+ * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
+namespace c975L\UiBundle\Tests\Controller;
+
+use c975L\UiBundle\Controller\BlockFormController;
+use c975L\UiBundle\Registry\BlockRegistry;
+use c975L\UiBundle\Tests\Controller\Management\ControllerContainerTestTrait;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Twig\Environment;
+
+class BlockFormControllerTest extends TestCase
+{
+    use ControllerContainerTestTrait;
+
+    // Records every builder->add() call's field name, so the "mediaUpload" field's presence/absence
+    // can be asserted - createNamedBuilder()->add('data', ...) chains off the same stub
+    private function createFormFactory(array &$added): FormFactoryInterface
+    {
+        $builder = $this->createStub(FormBuilderInterface::class);
+        $builder->method('add')->willReturnCallback(function (string $name) use (&$added, $builder) {
+            $added[] = $name;
+
+            return $builder;
+        });
+
+        $form = $this->createStub(FormInterface::class);
+        $form->method('createView')->willReturn(new FormView());
+        $builder->method('getForm')->willReturn($form);
+
+        $formFactory = $this->createStub(FormFactoryInterface::class);
+        $formFactory->method('createNamedBuilder')->willReturn($builder);
+
+        return $formFactory;
+    }
+
+    private function createContainerWithTwig(): \Symfony\Component\DependencyInjection\Container
+    {
+        $twig = $this->createStub(Environment::class);
+        $twig->method('render')->willReturn('<form></form>');
+
+        return $this->createContainer(['twig' => $twig]);
+    }
+
+    public function testDataFormReturnsNoContentWhenKindIsMissing(): void
+    {
+        $registry = $this->createStub(BlockRegistry::class);
+        $added = [];
+        $controller = new BlockFormController($registry, $this->createFormFactory($added));
+
+        $response = $controller->dataForm(new Request());
+
+        $this->assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+
+    public function testDataFormReturnsNoContentWhenKindIsUnknown(): void
+    {
+        $registry = $this->createStub(BlockRegistry::class);
+        $registry->method('has')->willReturn(false);
+        $added = [];
+        $controller = new BlockFormController($registry, $this->createFormFactory($added));
+
+        $response = $controller->dataForm(new Request(['k' => 'unknown']));
+
+        $this->assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+
+    public function testDataFormSkipsMediaCollectionWhenKindHasNoMediaTypes(): void
+    {
+        $registry = $this->createStub(BlockRegistry::class);
+        $registry->method('has')->willReturn(true);
+        $registry->method('getFormClass')->willReturn(\Symfony\Component\Form\Extension\Core\Type\FormType::class);
+        $registry->method('hasMediaTypes')->willReturn(false);
+        $added = [];
+        $controller = new BlockFormController($registry, $this->createFormFactory($added));
+        $controller->setContainer($this->createContainerWithTwig());
+
+        $controller->dataForm(new Request(['k' => 'text_section']));
+
+        $this->assertNotContains('medias', $added);
+        $this->assertNotContains('mediaUpload', $added);
+    }
+
+    // Mirrors BlockType::addMediaSubForm() - the AJAX-loaded kind preview must offer the same
+    // multi-upload input right away for a kind that allows it (e.g. "slider")
+    public function testDataFormAddsMediaUploadFieldWhenKindAllowsMultiUpload(): void
+    {
+        $registry = $this->createStub(BlockRegistry::class);
+        $registry->method('has')->willReturn(true);
+        $registry->method('getFormClass')->willReturn(\Symfony\Component\Form\Extension\Core\Type\FormType::class);
+        $registry->method('hasMediaTypes')->willReturn(true);
+        $registry->method('getMediaTypes')->willReturn(['image/*', 'video/*']);
+        $registry->method('allowsMultiUpload')->willReturn(true);
+        $added = [];
+        $controller = new BlockFormController($registry, $this->createFormFactory($added));
+        $controller->setContainer($this->createContainerWithTwig());
+
+        $controller->dataForm(new Request(['k' => 'slider']));
+
+        $this->assertContains('medias', $added);
+        $this->assertContains('mediaUpload', $added);
+    }
+
+    public function testDataFormSkipsMediaUploadFieldWhenKindDoesNotAllowMultiUpload(): void
+    {
+        $registry = $this->createStub(BlockRegistry::class);
+        $registry->method('has')->willReturn(true);
+        $registry->method('getFormClass')->willReturn(\Symfony\Component\Form\Extension\Core\Type\FormType::class);
+        $registry->method('hasMediaTypes')->willReturn(true);
+        $registry->method('getMediaTypes')->willReturn(['image/*']);
+        $registry->method('allowsMultiUpload')->willReturn(false);
+        $added = [];
+        $controller = new BlockFormController($registry, $this->createFormFactory($added));
+        $controller->setContainer($this->createContainerWithTwig());
+
+        $controller->dataForm(new Request(['k' => 'image']));
+
+        $this->assertContains('medias', $added);
+        $this->assertNotContains('mediaUpload', $added);
+    }
+}

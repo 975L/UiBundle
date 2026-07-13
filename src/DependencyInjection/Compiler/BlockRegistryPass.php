@@ -33,6 +33,11 @@ class BlockRegistryPass implements CompilerPassInterface
                     $mediaTypes = array_map('trim', explode(',', (string) $tag['media_types']));
                 }
 
+                $contexts = [];
+                if (!empty($tag['contexts'])) {
+                    $contexts = array_map('trim', explode(',', (string) $tag['contexts']));
+                }
+
                 $registry->addMethodCall('register', [
                     $tag['kind'],
                     $tag['label'],
@@ -45,6 +50,9 @@ class BlockRegistryPass implements CompilerPassInterface
                     !isset($tag['pickable']) || filter_var($tag['pickable'], FILTER_VALIDATE_BOOLEAN),
                     (int) ($tag['priority'] ?? 0),
                     !isset($tag['cacheable']) || filter_var($tag['cacheable'], FILTER_VALIDATE_BOOLEAN),
+                    $contexts,
+                    isset($tag['media_required']) && filter_var($tag['media_required'], FILTER_VALIDATE_BOOLEAN),
+                    isset($tag['media_multi_upload']) && filter_var($tag['media_multi_upload'], FILTER_VALIDATE_BOOLEAN),
                 ]);
             }
         }

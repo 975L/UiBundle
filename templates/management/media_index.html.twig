@@ -4,6 +4,8 @@
    as rows. Each thumbnail links to entity.defaultActionUrl (Edit when allowed, Detail otherwise - e.g.
    for read-only site-wide role graphics, see MediaCrudController's displayIf on Action::EDIT). #}
 {% block main %}
+    <p>{{ ('label.info_media'|trans({}, 'ui')) }}</p>
+
     <div class="management-media-grid">
         {% for entity in entities %}
             {% if entity.isAccessible %}

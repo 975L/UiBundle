@@ -1,0 +1,93 @@
+<?php
+/*
+ * (c) 2026: 975L <contact@975l.com>
+ * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
+namespace c975L\UiBundle\Tests\Service;
+
+use c975L\UiBundle\Controller\Management\BlockGalleryController;
+use c975L\UiBundle\Service\BlockFixtureProvider;
+use PHPUnit\Framework\TestCase;
+
+class BlockFixtureProviderTest extends TestCase
+{
+    public function testGetFixturesCoversEveryBuiltInKind(): void
+    {
+        $fixtures = (new BlockFixtureProvider())->getFixtures();
+
+        $this->assertSame(
+            ['alert', 'audio', 'article', 'banner_title', 'button', 'card', 'image', 'progress_bar', 'rich_snippet', 'slider', 'text_readmore', 'text_section', 'video', 'video_iframe'],
+            array_keys($fixtures)
+        );
+    }
+
+    // "audio"'s type must match one of AudioType's real choices - its media is auto-attached generically
+    // by BlockGalleryController (any "audio/*" mediaType), so the fixture only needs the "type" field
+    public function testAudioFixtureUsesARealFormatChoice(): void
+    {
+        $fixtures = (new BlockFixtureProvider())->getFixtures();
+
+        $this->assertSame('audio/mpeg', $fixtures['audio']['']['type']);
+    }
+
+    public function testVideoFixtureUsesTheSharedPlaceholderVideoAsset(): void
+    {
+        $fixtures = (new BlockFixtureProvider())->getFixtures();
+
+        $this->assertSame(BlockGalleryController::PLACEHOLDER_VIDEO, $fixtures['video']['']['src']);
+    }
+
+    // video_iframe just renders any URL in an <iframe> (see Video/Iframe.html.twig), so the same
+    // self-hosted placeholder video works fine here too
+    public function testVideoIframeFixtureReusesTheSharedPlaceholderVideoAsset(): void
+    {
+        $fixtures = (new BlockFixtureProvider())->getFixtures();
+
+        $this->assertSame(BlockGalleryController::PLACEHOLDER_VIDEO, $fixtures['video_iframe']['']['src']);
+    }
+
+    // alert has 4 style choices (info/success/warning/danger) - all shown side by side in the gallery
+    public function testAlertFixtureCoversEveryStyleChoice(): void
+    {
+        $fixtures = (new BlockFixtureProvider())->getFixtures();
+
+        $types = array_column($fixtures['alert'], 'type');
+        sort($types);
+        $this->assertSame(['danger', 'info', 'success', 'warning'], $types);
+    }
+
+    // button has 5 style choices (primary/secondary/success/danger/link) - all shown side by side in the gallery
+    public function testButtonFixtureCoversEveryStyleChoice(): void
+    {
+        $fixtures = (new BlockFixtureProvider())->getFixtures();
+
+        $types = array_column($fixtures['button'], 'type');
+        sort($types);
+        $this->assertSame(['danger', 'link', 'primary', 'secondary', 'success'], $types);
+    }
+
+    // Kinds without a meaningful style variant use '' as their single, unlabelled key
+    public function testKindsWithoutStyleVariantsUseASingleUnlabelledVariant(): void
+    {
+        $fixtures = (new BlockFixtureProvider())->getFixtures();
+
+        foreach (['audio', 'article', 'banner_title', 'card', 'image', 'progress_bar', 'rich_snippet', 'text_readmore', 'text_section', 'video', 'video_iframe'] as $kind) {
+            $this->assertSame([''], array_keys($fixtures[$kind]), "Kind \"{$kind}\" should have a single unlabelled variant");
+        }
+    }
+
+    // slider shows its default (single-slide-at-a-time) layout alongside the freeflow layout
+    // (see Slider.html.twig's layout="" param) so both are visible side by side in the gallery
+    public function testSliderFixtureCoversDefaultAndFreeflowLayouts(): void
+    {
+        $fixtures = (new BlockFixtureProvider())->getFixtures();
+
+        $this->assertSame(['', 'freeflow'], array_keys($fixtures['slider']));
+        $this->assertSame('default', $fixtures['slider']['']['layout']);
+        $this->assertSame('freeflow', $fixtures['slider']['freeflow']['layout']);
+    }
+}

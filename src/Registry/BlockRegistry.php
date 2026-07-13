@@ -17,7 +17,7 @@ class BlockRegistry
     private array $labelCache = [];
     private array $descriptionCache = [];
     private array $categoryCache = [];
-    private ?array $groupedCache = null;
+    private array $groupedCache = [];
 
     public function __construct(private TranslatorInterface $translator)
     {
@@ -34,19 +34,25 @@ class BlockRegistry
         string $description = '',
         bool $pickable = true,
         int $priority = 0,
-        bool $cacheable = true
+        bool $cacheable = true,
+        array $contexts = [],
+        bool $mediaRequired = false,
+        bool $multiUpload = false
     ): void {
         $this->blocks[$kind] = [
-            'label'       => $label,
-            'domain'      => $translationDomain,
-            'form'        => $formClass,
-            'template'    => $template,
-            'category'    => $category,
-            'mediaTypes'  => $mediaTypes,
-            'description' => $description,
-            'pickable'    => $pickable,
-            'priority'    => $priority,
-            'cacheable'   => $cacheable,
+            'label'         => $label,
+            'domain'        => $translationDomain,
+            'form'          => $formClass,
+            'template'      => $template,
+            'category'      => $category,
+            'mediaTypes'    => $mediaTypes,
+            'description'   => $description,
+            'pickable'      => $pickable,
+            'priority'      => $priority,
+            'cacheable'     => $cacheable,
+            'contexts'      => $contexts,
+            'mediaRequired' => $mediaRequired,
+            'multiUpload'   => $multiUpload,
         ];
     }
 
@@ -124,6 +130,21 @@ class BlockRegistry
         return !empty($this->get($kind)['mediaTypes']);
     }
 
+    // True for kinds that can't be saved without at least one attached media (e.g. "banner_title", whose
+    // background image isn't optional decoration but the whole point of the block) - enforced by
+    // RequiredMediaValidator on the Block entity itself
+    public function isMediaRequired(string $kind): bool
+    {
+        return $this->get($kind)['mediaRequired'];
+    }
+
+    // True for kinds whose media collection additionally exposes a "select several files at once"
+    // input (e.g. "slider", "article") instead of the default one-file-per-row Add button
+    public function allowsMultiUpload(string $kind): bool
+    {
+        return $this->get($kind)['multiUpload'];
+    }
+
     // False for kinds whose rendered output isn't safe to reuse across requests
     // (e.g. embeds a Symfony form with its own CSRF token, like "contact_form")
     public function isCacheable(string $kind): bool
@@ -131,19 +152,28 @@ class BlockRegistry
         return $this->get($kind)['cacheable'];
     }
 
-    // Result only depends on the static block registrations, cached after the first call - excludes
-    // non-pickable kinds (singleton blocks with their own dedicated admin entry, e.g. SocialBundle's
-    // "social_links": offering them here would let editors create duplicate, independently-filled
-    // instances instead of reusing the single site-wide one found via BlockRepository::findOneByKind())
-    public function groupedByCategory(): array
+    // Result only depends on the static block registrations, cached per $context after its first call -
+    // excludes non-pickable kinds (singleton blocks with their own dedicated admin entry, e.g.
+    // SocialBundle's "social_links": offering them here would let editors create duplicate,
+    // independently-filled instances instead of reusing the single site-wide one found via
+    // BlockRepository::findOneByKind()), and kinds restricted to other contexts (e.g. SiteBundle's
+    // "menu_link", declared with contexts: ['menu'] so it doesn't leak into a Page's block picker).
+    // A kind declared with no contexts at all is available everywhere, and passing no $context here
+    // skips the contexts filter entirely - both keep existing callers (that don't pass $context yet)
+    // working unchanged.
+    public function groupedByCategory(?string $context = null): array
     {
-        if (null !== $this->groupedCache) {
-            return $this->groupedCache;
+        $cacheKey = $context ?? '';
+        if (isset($this->groupedCache[$cacheKey])) {
+            return $this->groupedCache[$cacheKey];
         }
 
         $grouped = [];
         foreach ($this->blocks as $kind => $config) {
             if (!$config['pickable']) {
+                continue;
+            }
+            if (null !== $context && !empty($config['contexts']) && !in_array($context, $config['contexts'], true)) {
                 continue;
             }
             $grouped[$this->getCategory($kind)][] = [
@@ -160,7 +190,7 @@ class BlockRegistry
             $grouped[$category] = array_column($entries, 'kind', 'label');
         }
 
-        return $this->groupedCache = $grouped;
+        return $this->groupedCache[$cacheKey] = $grouped;
     }
 
     // Builds the "kind" choice label: name, plus a short description in parentheses when declared.

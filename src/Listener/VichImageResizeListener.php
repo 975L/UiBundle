@@ -19,6 +19,7 @@ use Vich\UploaderBundle\Event\Event;
 use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Contract\VichPrivateFileInterface;
 use c975L\UiBundle\Contract\VichImageResizableInterface;
+use c975L\UiBundle\Contract\VichMultiSizeImageInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -68,9 +69,17 @@ class VichImageResizeListener
 
     private function processImage(VichImageResizableInterface $entity, string $absolutePath): void
     {
-        $width = $entity->getImageWidth();
         $imagine = new Imagine();
         $media = $imagine->open($absolutePath);
+
+        // Derivatives are generated from the untouched original first - the entity's own stored
+        // file (below) is a downscale of it, and deriving the highres version from that instead
+        // would upscale a already-shrunk image
+        if ($entity instanceof VichMultiSizeImageInterface) {
+            $this->processMultiSizeDerivatives($entity, $media, $absolutePath);
+        }
+
+        $width = $entity->getImageWidth();
         $size = $media->getSize();
         $height = (int) ($size->getHeight() * $width / $size->getWidth());
 
@@ -84,6 +93,29 @@ class VichImageResizeListener
         if (method_exists($entity, 'setSize')) {
             $entity->setSize((new SplFileInfo($absolutePath))->getSize());
         }
+    }
+
+    // Sibling files next to the entity's own stored (medium) image: a square outbound-cropped
+    // thumbnail for grid displays, and a proportionally-resized highres version for zoom - both
+    // derived from a copy() of the original so the shared $media instance stays untouched for the
+    // medium resize that follows in processImage(). Filenames match what VichMultiSizeImageInterface
+    // consumers derive themselves from their own stored filename (see e.g. GalleryBundle's
+    // GalleryPhoto::getThumbnailFilename()/getHighresFilename()).
+    private function processMultiSizeDerivatives(VichMultiSizeImageInterface $entity, ImageInterface $original, string $absolutePath): void
+    {
+        $base = preg_replace('/\.[^.]+$/', '', $absolutePath);
+        $originalSize = $original->getSize();
+
+        $highresWidth = min($entity->getHighresWidth(), $originalSize->getWidth());
+        $highresHeight = (int) ($originalSize->getHeight() * $highresWidth / $originalSize->getWidth());
+        $original->copy()
+            ->resize(new Box($highresWidth, $highresHeight))
+            ->save($base . '-highres.webp', ['format' => 'webp', 'webp_quality' => 90]);
+
+        $thumbnailSize = $entity->getThumbnailSize();
+        $original->copy()
+            ->thumbnail(new Box($thumbnailSize, $thumbnailSize), ImageInterface::THUMBNAIL_OUTBOUND)
+            ->save($base . '-thumb.webp', ['format' => 'webp', 'webp_quality' => 90]);
     }
 
     // Crops/resizes to the exact target size (fixed icon roles never keep the uploaded aspect ratio) and

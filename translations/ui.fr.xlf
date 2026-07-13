@@ -47,6 +47,14 @@
                 <source>label.block_audio_description</source>
                 <target>Lecteur audio intégré à partir d'un fichier</target>
             </trans-unit>
+            <trans-unit id="156">
+                <source>label.block_banner_title</source>
+                <target>Bannière titre</target>
+            </trans-unit>
+            <trans-unit id="157">
+                <source>label.block_banner_title_description</source>
+                <target>Titre plein écran sur une image de fond</target>
+            </trans-unit>
             <trans-unit id="12">
                 <source>label.block_button</source>
                 <target>Bouton</target>
@@ -75,6 +83,10 @@
                 <source>label.block_kind</source>
                 <target>Type de bloc</target>
             </trans-unit>
+            <trans-unit id="158">
+                <source>label.block_media_required</source>
+                <target>Une image est nécessaire pour ce type de bloc.</target>
+            </trans-unit>
             <trans-unit id="19">
                 <source>label.block_progress_bar</source>
                 <target>Barre de progression</target>
@@ -93,11 +105,11 @@
             </trans-unit>
             <trans-unit id="23">
                 <source>label.block_slider</source>
-                <target>Slider d'images</target>
+                <target>Slider d'images/vidéos</target>
             </trans-unit>
             <trans-unit id="24">
                 <source>label.block_slider_description</source>
-                <target>Diaporama d'images avec légendes et crédits par slide</target>
+                <target>Diaporama d'images et vidéos avec légendes et crédits par slide</target>
             </trans-unit>
             <trans-unit id="25">
                 <source>label.block_text_readmore</source>
@@ -339,6 +351,22 @@
                 <source>label.kind</source>
                 <target>Type</target>
             </trans-unit>
+            <trans-unit id="161">
+                <source>label.layout</source>
+                <target>Disposition</target>
+            </trans-unit>
+            <trans-unit id="162">
+                <source>label.layout_default</source>
+                <target>Standard</target>
+            </trans-unit>
+            <trans-unit id="163">
+                <source>label.layout_freeflow</source>
+                <target>Débordement</target>
+            </trans-unit>
+            <trans-unit id="164">
+                <source>label.layout_help</source>
+                <target>Standard affiche une slide à la fois ; Débordement affiche toutes les slides côte à côte, dépassant les bords de l'écran</target>
+            </trans-unit>
             <trans-unit id="85">
                 <source>label.link</source>
                 <target>Lien</target>
@@ -346,6 +374,14 @@
             <trans-unit id="86">
                 <source>label.loop</source>
                 <target>Boucle</target>
+            </trans-unit>
+            <trans-unit id="159">
+                <source>label.max_height</source>
+                <target>Hauteur maximale</target>
+            </trans-unit>
+            <trans-unit id="160">
+                <source>label.max_height_help</source>
+                <target>En pixels, laisser vide pour une hauteur automatique</target>
             </trans-unit>
             <trans-unit id="87">
                 <source>label.media</source>
@@ -358,6 +394,14 @@
             <trans-unit id="89">
                 <source>label.media_library</source>
                 <target>Bibliothèque de médias</target>
+            </trans-unit>
+            <trans-unit id="165">
+                <source>label.media_multi_upload</source>
+                <target>Ajouter plusieurs fichiers</target>
+            </trans-unit>
+            <trans-unit id="166">
+                <source>label.media_multi_upload_help</source>
+                <target>Sélectionner plusieurs fichiers à la fois pour les ajouter tous d'un coup</target>
             </trans-unit>
             <trans-unit id="90">
                 <source>label.muted</source>
@@ -602,6 +646,26 @@
             <trans-unit id="150">
                 <source>flash.block_cache_cleared</source>
                 <target>Cache des blocks vidé</target>
+            </trans-unit>
+            <trans-unit id="151">
+                <source>label.info_media</source>
+                <target>Bibliothèque de tous les médias téléversés, quel que soit leur usage (pages, blocks, graphismes du site)</target>
+            </trans-unit>
+            <trans-unit id="152">
+                <source>label.block_gallery</source>
+                <target>Galerie des blocks</target>
+            </trans-unit>
+            <trans-unit id="153">
+                <source>label.block_gallery_info</source>
+                <target>Aperçu de chaque type de block avec des données d'exemple, pour choisir celui qui convient avant de l'ajouter à une page.</target>
+            </trans-unit>
+            <trans-unit id="154">
+                <source>label.block_gallery_no_example</source>
+                <target>Pas encore d'exemple pour ce type de block.</target>
+            </trans-unit>
+            <trans-unit id="155">
+                <source>label.block_gallery_other_components</source>
+                <target>Autres composants</target>
             </trans-unit>
         </body>
     </file>

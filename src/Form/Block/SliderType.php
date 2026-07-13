@@ -33,6 +33,12 @@ class SliderType extends AbstractType
         'label.ratio_21_9' => '21-9',
     ];
 
+    // Values match the Slider component's layout="" param (see templates/components/Slider/Slider.html.twig)
+    public const LAYOUT_CHOICES = [
+        'label.layout_default'  => 'default',
+        'label.layout_freeflow' => 'freeflow',
+    ];
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -41,13 +47,16 @@ class SliderType extends AbstractType
             ->add('id', HiddenType::class)
             ->add('duration', IntegerType::class, [
                 'label' => 'label.slide_duration',
-                'data'  => 5000,
             ])
             ->add('ratio', ChoiceType::class, [
                 'label'   => 'label.ratio',
                 'help'    => 'label.ratio_help',
                 'choices' => self::RATIO_CHOICES,
-                'data'    => 'free',
+            ])
+            ->add('layout', ChoiceType::class, [
+                'label'   => 'label.layout',
+                'help'    => 'label.layout_help',
+                'choices' => self::LAYOUT_CHOICES,
             ])
             ->add('class', BlockClassChoiceType::class);
 
@@ -59,10 +68,22 @@ class SliderType extends AbstractType
                     $data = [];
                 }
 
+                // Defaults for a brand new slider only - setting these via the field's own "data" option
+                // instead would force this value on every render, silently discarding the saved value of
+                // an existing slider (Symfony's "data" option always overrides the underlying model data)
                 if (!isset($data['id']) || '' === $data['id']) {
                     $data['id'] = 'slider-' . bin2hex(random_bytes(4));
-                    $event->setData($data);
                 }
+                if (!isset($data['duration'])) {
+                    $data['duration'] = 0;
+                }
+                if (!isset($data['ratio'])) {
+                    $data['ratio'] = 'free';
+                }
+                if (!isset($data['layout'])) {
+                    $data['layout'] = 'default';
+                }
+                $event->setData($data);
             }
         );
     }

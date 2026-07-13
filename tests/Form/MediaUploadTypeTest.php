@@ -1,0 +1,209 @@
+<?php
+/*
+ * (c) 2026: 975L <contact@975l.com>
+ * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
+namespace c975L\UiBundle\Tests\Form;
+
+use c975L\UiBundle\Entity\Media;
+use c975L\UiBundle\Form\ImageClassChoiceType;
+use c975L\UiBundle\Form\MediaUploadType;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\Event\PreSetDataEvent;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Vich\UploaderBundle\Form\Type\VichFileType;
+use Vich\UploaderBundle\Form\Type\VichImageType;
+
+class MediaUploadTypeTest extends TestCase
+{
+    // buildForm() only branches on $options['accept']/$options['context'] - a mocked builder that just
+    // records "add()" calls is enough to assert which fields end up on the form, without having to
+    // resolve VichImageType/VichFileType's own (Vich-bundle) constructor dependencies. "file"'s *final*
+    // type is decided later, in the PRE_SET_DATA listener (see buildFieldNamesForEntry()) - buildForm()
+    // itself only ever adds a VichFileType placeholder, so it keeps rendering as the first field.
+    private function buildFieldNames(?string $accept, ?string $context): array
+    {
+        $added = [];
+        $builder = $this->createStub(FormBuilderInterface::class);
+        $builder->method('add')->willReturnCallback(function (string $name, ?string $type = null) use (&$added, $builder) {
+            $added[$name] = $type;
+
+            return $builder;
+        });
+        $builder->method('addEventListener')->willReturnSelf();
+
+        $type = new MediaUploadType();
+        $type->buildForm($builder, ['accept' => $accept, 'context' => $context]);
+
+        return $added;
+    }
+
+    // Captures the PRE_SET_DATA listener and fires it with $media as the entry's data, simulating what
+    // happens once a real (possibly already-uploaded) Media flows into the form - this is where "file"
+    // gets its real VichImageType/VichFileType decision, based on $media's own mimetype when it has one
+    private function buildFieldNamesForEntry(?string $accept, ?string $context, ?Media $media): array
+    {
+        $added = [];
+        $listener = null;
+        $builder = $this->createStub(FormBuilderInterface::class);
+        $builder->method('add')->willReturnSelf();
+        $builder->method('addEventListener')->willReturnCallback(
+            function (string $eventName, callable $callback) use (&$listener, $builder) {
+                $listener = $callback;
+
+                return $builder;
+            }
+        );
+
+        $type = new MediaUploadType();
+        $type->buildForm($builder, ['accept' => $accept, 'context' => $context]);
+
+        $form = $this->createStub(FormInterface::class);
+        $form->method('add')->willReturnCallback(function (string $name, ?string $type = null) use (&$added, $form) {
+            $added[$name] = $type;
+
+            return $form;
+        });
+        $listener(new PreSetDataEvent($form, $media));
+
+        return $added;
+    }
+
+    public function testBuildFormAlwaysAddsFileAndPositionFields(): void
+    {
+        $added = $this->buildFieldNames(null, null);
+
+        $this->assertArrayHasKey('file', $added);
+        $this->assertArrayHasKey('position', $added);
+    }
+
+    public function testPreSetDataUsesVichImageTypeWhenAcceptIsImageAndEntryIsEmpty(): void
+    {
+        $added = $this->buildFieldNamesForEntry('image/*', null, new Media());
+
+        $this->assertSame(VichImageType::class, $added['file']);
+    }
+
+    public function testPreSetDataUsesVichFileTypeWhenAcceptIsNotImage(): void
+    {
+        $added = $this->buildFieldNamesForEntry('audio/*', null, new Media());
+
+        $this->assertSame(VichFileType::class, $added['file']);
+    }
+
+    // The bug this covers: a Slider's entry_options always advertise "image/*,video/*" (a slide can be
+    // either), which used to force every slide onto VichFileType - image slides included - losing their
+    // thumbnail preview in the admin form. An already-uploaded slide must go off its own real mimetype
+    // instead, so an image slide gets its VichImageType preview back and a video slide still gets VichFileType
+    public function testPreSetDataForSliderPicksTypeFromTheEntrysOwnMimeTypeNotTheSharedAcceptList(): void
+    {
+        $image = new Media();
+        $image->setMimeType('image/jpeg');
+        $addedForImage = $this->buildFieldNamesForEntry('image/*,video/*', 'slider', $image);
+        $this->assertSame(VichImageType::class, $addedForImage['file']);
+
+        $video = new Media();
+        $video->setMimeType('video/mp4');
+        $addedForVideo = $this->buildFieldNamesForEntry('image/*,video/*', 'slider', $video);
+        $this->assertSame(VichFileType::class, $addedForVideo['file']);
+    }
+
+    // A brand-new Slider entry has no file yet, hence no mimetype - falls back to the shared accept
+    // list, which for a Slider always contains "video/*" too, so it defaults to VichFileType
+    public function testPreSetDataForSliderFallsBackToVichFileTypeWhenEntryHasNoMimeTypeYet(): void
+    {
+        $added = $this->buildFieldNamesForEntry('image/*,video/*', 'slider', new Media());
+
+        $this->assertSame(VichFileType::class, $added['file']);
+    }
+
+    public function testBuildFormSkipsAllImageMetadataWhenNotAnImage(): void
+    {
+        $added = $this->buildFieldNames('audio/*', null);
+
+        foreach (['cssClasses', 'alt', 'label', 'width', 'height', 'above', 'credits', 'rightsReserved'] as $field) {
+            $this->assertArrayNotHasKey($field, $added, "\"$field\" should not be added for a non-image upload");
+        }
+    }
+
+    // "card" context (the Card block's teaser image, see templates/blocks/Card.html.twig) only ever
+    // reads the file itself and its cssClasses - none of the other display metadata applies to it
+    public function testBuildFormForCardContextKeepsOnlyCssClasses(): void
+    {
+        $added = $this->buildFieldNames('image/*', 'card');
+
+        $this->assertArrayHasKey('cssClasses', $added);
+        foreach (['alt', 'label', 'width', 'height', 'above', 'credits', 'rightsReserved'] as $field) {
+            $this->assertArrayNotHasKey($field, $added, "\"$field\" should not be added for the \"card\" context");
+        }
+    }
+
+    // A "cards" (plural) context - or any other unrecognized context string - must NOT be treated
+    // as the Card block's context; only the literal "card" kind should trigger the isCards branch
+    public function testBuildFormForUnrecognizedContextBehavesLikePlainImage(): void
+    {
+        $added = $this->buildFieldNames('image/*', 'cards');
+
+        $this->assertArrayHasKey('alt', $added);
+        $this->assertArrayHasKey('credits', $added);
+        $this->assertArrayHasKey('rightsReserved', $added);
+    }
+
+    // Inside a Slider, a slide has no standalone in-page position to control (no caption/sizing/
+    // "above" layout), but still needs alt/credits/rightsReserved - see Slider/Slider.html.twig
+    public function testBuildFormForSliderContextSkipsCaptionPositioningButKeepsAltAndCredits(): void
+    {
+        $added = $this->buildFieldNames('image/*', 'slider');
+
+        $this->assertArrayHasKey('alt', $added);
+        $this->assertArrayHasKey('cssClasses', $added);
+        $this->assertArrayHasKey('credits', $added);
+        $this->assertArrayHasKey('rightsReserved', $added);
+        foreach (['label', 'width', 'height', 'above'] as $field) {
+            $this->assertArrayNotHasKey($field, $added, "\"$field\" should not be added for the \"slider\" context");
+        }
+    }
+
+    // The BannerTitle block's background image is decoration behind the title text, not a captioned
+    // figure - only alt (accessibility) and cssClasses survive, same reduced set as "card"
+    public function testBuildFormForBannerTitleContextKeepsOnlyAltAndCssClasses(): void
+    {
+        $added = $this->buildFieldNames('image/*', 'banner_title');
+
+        $this->assertArrayHasKey('alt', $added);
+        $this->assertArrayHasKey('cssClasses', $added);
+        foreach (['label', 'width', 'height', 'above', 'credits', 'rightsReserved'] as $field) {
+            $this->assertArrayNotHasKey($field, $added, "\"$field\" should not be added for the \"banner_title\" context");
+        }
+    }
+
+    // A standalone Image block (context null, e.g. the "image" kind) gets the full metadata set
+    public function testBuildFormForPlainImageContextAddsEveryMetadataField(): void
+    {
+        $added = $this->buildFieldNames('image/*', null);
+
+        foreach (['cssClasses', 'alt', 'label', 'width', 'height', 'above', 'credits', 'rightsReserved'] as $field) {
+            $this->assertArrayHasKey($field, $added, "\"$field\" should be added for a plain image context");
+        }
+        $this->assertSame(ImageClassChoiceType::class, $added['cssClasses']);
+    }
+
+    public function testConfigureOptionsDefaultsToMediaDataClassAndNullAcceptContext(): void
+    {
+        $type = new MediaUploadType();
+        $resolver = new OptionsResolver();
+        $type->configureOptions($resolver);
+
+        $options = $resolver->resolve();
+
+        $this->assertSame(Media::class, $options['data_class']);
+        $this->assertNull($options['accept']);
+        $this->assertNull($options['context']);
+    }
+}

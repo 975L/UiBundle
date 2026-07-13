@@ -30,6 +30,7 @@ services:
               template: '@c975LUi/blocks/Article.html.twig'
               category: 'label.category_elements'
               media_types: 'image/*'
+              media_multi_upload: true
               priority: 90
               pickable: true
               cacheable: true
@@ -60,6 +61,22 @@ services:
               category: 'label.category_media'
               media_types: 'audio/*'
               priority: 70
+              pickable: true
+              cacheable: true
+
+    ui.block.banner_title:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: banner_title
+              label: "label.block_banner_title"
+              description: "label.block_banner_title_description"
+              form: c975L\UiBundle\Form\Block\BannerTitleType
+              template: '@c975LUi/blocks/BannerTitle.html.twig'
+              category: 'label.category_media'
+              media_types: 'image/*'
+              media_required: true
+              priority: 90
               pickable: true
               cacheable: true
 
@@ -144,7 +161,8 @@ services:
               form: c975L\UiBundle\Form\Block\SliderType
               template: '@c975LUi/blocks/Slider.html.twig'
               category: 'label.category_media'
-              media_types: 'image/*'
+              media_types: 'image/*,video/*'
+              media_multi_upload: true
               priority: 90
               pickable: true
               cacheable: true

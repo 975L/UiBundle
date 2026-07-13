@@ -54,9 +54,50 @@ class BlockRegistryPassTest extends TestCase
                 true,
                 0,
                 true,
+                [],
+                false,
+                false,
             ],
             $calls[0][1]
         );
+    }
+
+    // media_required defaults to false and can be explicitly enabled, same boolean-flag parsing as pickable/cacheable
+    public function testProcessParsesMediaRequiredFlag(): void
+    {
+        $container = new ContainerBuilder();
+        $container->register(BlockRegistry::class);
+        $container->register('block.banner_title')->addTag('ui.block', [
+            'kind' => 'banner_title',
+            'label' => 'label.banner_title',
+            'form' => 'App\\Form\\BannerTitleType',
+            'template' => 'banner_title.html.twig',
+            'media_required' => 'true',
+        ]);
+
+        (new BlockRegistryPass())->process($container);
+
+        $calls = $container->getDefinition(BlockRegistry::class)->getMethodCalls();
+        $this->assertTrue($calls[0][1][12]);
+    }
+
+    // media_multi_upload defaults to false and can be explicitly enabled, same boolean-flag parsing as media_required
+    public function testProcessParsesMediaMultiUploadFlag(): void
+    {
+        $container = new ContainerBuilder();
+        $container->register(BlockRegistry::class);
+        $container->register('block.slider')->addTag('ui.block', [
+            'kind' => 'slider',
+            'label' => 'label.slider',
+            'form' => 'App\\Form\\SliderType',
+            'template' => 'slider.html.twig',
+            'media_multi_upload' => 'true',
+        ]);
+
+        (new BlockRegistryPass())->process($container);
+
+        $calls = $container->getDefinition(BlockRegistry::class)->getMethodCalls();
+        $this->assertTrue($calls[0][1][13]);
     }
 
     // media_types is a comma-separated string in the tag and must be split/trimmed into an array
@@ -97,6 +138,25 @@ class BlockRegistryPassTest extends TestCase
         $calls = $container->getDefinition(BlockRegistry::class)->getMethodCalls();
         $this->assertFalse($calls[0][1][8]);
         $this->assertFalse($calls[0][1][10]);
+    }
+
+    // contexts is a comma-separated string in the tag and must be split/trimmed into an array, same as media_types
+    public function testProcessSplitsAndTrimsContexts(): void
+    {
+        $container = new ContainerBuilder();
+        $container->register(BlockRegistry::class);
+        $container->register('block.link')->addTag('ui.block', [
+            'kind' => 'link',
+            'label' => 'label.link',
+            'form' => 'App\\Form\\LinkType',
+            'template' => 'link.html.twig',
+            'contexts' => 'menu, sidebar',
+        ]);
+
+        (new BlockRegistryPass())->process($container);
+
+        $calls = $container->getDefinition(BlockRegistry::class)->getMethodCalls();
+        $this->assertSame(['menu', 'sidebar'], $calls[0][1][11]);
     }
 
     public function testProcessThrowsWhenARequiredAttributeIsMissing(): void

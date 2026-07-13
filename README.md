@@ -12,6 +12,7 @@ Symfony bundle providing a dynamic block system for pages and content entities, 
 
 - Dynamic block system with per-kind forms and templates
 - Media uploads per block via VichUploader (auto-configured)
+- Multi-file upload for kinds that opt in (`slider`, `article` out of the box) - select several files at once instead of adding them one by one
 - Drag-and-drop position ordering for blocks and media
 - One-click duplication of a block or a media row in EasyAdmin, including its files
 - Live preview of a newly picked image in EasyAdmin, before saving
@@ -187,6 +188,7 @@ The bundle ships the following kinds out of the box (see `config/services.yaml` 
 | `alert` | Elements | `AlertType` | `blocks/Alert.html.twig` |
 | `article` | Elements | `ArticleType` | `blocks/Article.html.twig` |
 | `audio` | Media | `AudioType` | `blocks/Audio.html.twig` |
+| `banner_title` | Media | `BannerTitleType` | `blocks/BannerTitle.html.twig` |
 | `button` | Elements | `ButtonType` | `blocks/Button.html.twig` |
 | `card` | Elements | `CardType` | `blocks/Card.html.twig` |
 | `image` | Media | `ImageType` | `blocks/Image.html.twig` |
@@ -221,6 +223,7 @@ services:
               pickable: true  # required - see below
               priority: 80  # optional, defaults to 0 - see below
               cacheable: true  # required - see below
+              contexts: booking  # optional, comma-separated, defaults to none - see below
 ```
 
 Create the form type to define the `data` sub-fields, and the Twig template to render the block on the front end. The form data is stored as JSON in the `Block::$data` column.
@@ -230,6 +233,90 @@ Create the form type to define the `data` sub-fields, and the Twig template to r
 Set `pickable: false` for a **singleton** kind: one meant to be managed through its own dedicated EasyAdmin entry (see `c975L/SocialBundle`'s `SocialLinksCrudController` for an example) and rendered wherever needed via `BlockRepository::findOneByKind()`, rather than attached per-page. This hides it from the generic per-page block picker (`BlockRegistry::groupedByCategory()`), so editors can't accidentally create independent, separately-filled copies of it on individual pages. Regular, repeatable kinds (`card`, `text_section`, `contact_form`...) should use `true`.
 
 `priority` controls the kind's position within its category in the picker (higher shows first, same convention as the `ui.stylesheet`/`ui.script` tags); kinds sharing the same priority (default `0`) fall back to alphabetical order.
+
+`contexts` restricts a kind to one or more named contexts (e.g. `menu`) instead of it being offered everywhere `BlockType` is used — useful for a kind that only makes sense on one entity, not on every `blocks` collection in the app (e.g. SiteBundle's `menu_link`, restricted to `contexts: menu` so it doesn't show up in a `Page`'s own block picker). Leave it unset (the default) for a kind meant to be usable anywhere, like the built-in kinds above. To make a `BlockType` field filter by context, pass the `context` form option:
+
+```php
+CollectionField::new('blocks')
+    ->setEntryType(BlockType::class)
+    ->setFormTypeOptions(['context' => 'menu'])
+    // ...
+```
+
+A `CollectionField` that doesn't set `context` (the default, `null`) sees every pickable kind regardless of its declared `contexts` — existing integrations keep working unchanged until they opt in.
+
+`media_required: true` rejects saving a block of that kind when it has no attached media at all (enforced by `RequiredMediaValidator` on the `Block` entity itself, not by the form) — use it for a kind whose media isn't optional decoration but the whole point of the block (e.g. `banner_title`'s background image). Defaults to `false`; only meaningful alongside `media_types`.
+
+`media_multi_upload: true` adds a "select several files at once" input next to the usual one-file-per-row media collection, for a kind where editors routinely add many files at a time (e.g. `slider`, `article`) instead of clicking "Add" repeatedly. Each selected file becomes its own media entry, appended after the existing ones. Defaults to `false`; only meaningful alongside `media_types`.
+
+---
+
+## Block gallery
+
+`/management/ui/block/gallery` (EasyAdmin, `ROLE_SUPER_ADMIN`, linked from the sidebar's "Links" section - see `c975L\UiBundle\Management\MenuProvider::getLinks()`) renders every pickable block kind with sample data, grouped by category like the real kind picker. It's meant to help an editor see what a kind actually looks like before choosing one, without first creating and filling in a real block on a page.
+
+The route path is namespaced under the dashboard's own route (`/management`, from `ConfigBundle\Controller\Management\DashboardController`'s `#[AdminDashboard]`) - any `#[AdminRoute]`-attributed controller action gets prefixed the same way, both in its URL and its route name (see `BlockGalleryController::GALLERY_ROUTE`).
+
+Kinds whose `media_types` (see above) start with `image/` or `audio/` automatically get a placeholder attached (three images for `slider`, one otherwise) - no fixture provider needs to handle media itself. A kind with no fixture at all shows a "no example yet" placeholder instead of crashing.
+
+`/management` pages don't load any bundle's front-end stylesheet by default (see [Automatic CSS injection](#automatic-css-injection) below), but a block's real appearance often depends on CSS custom properties defined outside UiBundle (e.g. SiteBundle's `--alert-*` color variables, referenced by UiBundle's own `_alerts.scss` but never defined there). Loading that CSS directly on the gallery page would work for the previews but also bleed into EasyAdmin's own chrome (its whole UI inherits the site's link/text colors). Instead, each variant renders inside its own `<iframe srcdoc="...">` - a fully isolated document loading `bundle_stylesheets()` (every registered bundle's stylesheet, same as a real front-end page) that can't affect, or be affected by, the surrounding EasyAdmin page. A small `galleryPreview` Stimulus controller (`assets/js/gallery-preview.js`) resizes each iframe to its actual content height once loaded. A few small overrides needed only inside these preview documents (resetting body margin, capping oversized media, forcing a breakpoint-gated component like `share_buttons()` visible - see the `wide` flag below) live in `bundles/c975lui/css/gallery-preview.min.css`, loaded as a normal `<link>` - deliberately not an inline `<style>`, which a site enforcing a CSP without `unsafe-inline` on `style-src` would silently drop.
+
+### Providing sample data for your own kinds
+
+Implement `BlockFixtureProviderInterface` (auto-discovered the same way as `BundleWhatsNewProviderInterface` - no tag needed, just register the service). Each kind maps to one or more named **variants** - use `''` as the only key when a single example is enough, or several labelled keys to show every visual style side by side (see `alert`'s info/success/warning/danger or `button`'s primary/secondary/success/danger/link in UiBundle's own `BlockFixtureProvider`):
+
+```php
+use c975L\UiBundle\Contract\BlockFixtureProviderInterface;
+
+class BookingBlockFixtureProvider implements BlockFixtureProviderInterface
+{
+    public function getFixtures(): array
+    {
+        return [
+            'booking' => [
+                '' => ['title' => 'Réserver une table'],
+            ],
+        ];
+    }
+}
+```
+
+A kind with no registered fixture (empty array, or not returned at all) simply shows the "no example yet" placeholder - the gallery never breaks when a bundle hasn't caught up yet.
+
+### Showcasing content that isn't a block kind
+
+Some content is worth showing in the gallery but doesn't fit `BlockFixtureProviderInterface`, typically because rendering it through the real block/kind never reflects the fixture's own data anyway (e.g. SocialBundle's `social_links_display` always renders the site-wide singleton regardless of its own data, and `share_buttons()` isn't a block kind at all) or because the real template only renders something once resolved against live data this provider can't fabricate (e.g. SiteBundle's `articles_slider`/`menu_link`, resolved against a real `Page`/route). For these, implement `GalleryShowcaseProviderInterface` instead (same auto-discovery, no tag needed) and render the underlying component/Twig function directly with made-up sample data, bypassing whatever real lookup it would otherwise do:
+
+```php
+use c975L\UiBundle\Contract\GalleryShowcaseProviderInterface;
+use Twig\Environment;
+
+class BookingGalleryShowcaseProvider implements GalleryShowcaseProviderInterface
+{
+    public function __construct(private Environment $twig) {}
+
+    public function getShowcases(): array
+    {
+        return [
+            'Booking widget' => [
+                'description' => 'Available layouts for the standalone booking widget.',
+                // "kind" ties this to "booking"'s own category and suppresses its own regular preview
+                // card (which would otherwise show up empty right next to this one) - use null if there's
+                // no real block kind at all (e.g. share_buttons()). "category" overrides the category
+                // directly instead (no suppression) - for a kind-less showcase that still belongs next
+                // to a related one, e.g. reusing a sibling kind's own category key.
+                'kind' => 'booking',
+                'variants' => [
+                    'Compact' => $this->twig->render('@App/booking/widget.html.twig', ['layout' => 'compact']),
+                    'Full' => $this->twig->render('@App/booking/widget.html.twig', ['layout' => 'full']),
+                ],
+            ],
+        ];
+    }
+}
+```
+
+Each variant is already-rendered HTML (a plain string) rather than a `Block` - the gallery wraps it in the same isolated `<iframe>` a block preview gets. Set `'wide' => true` on a showcase whose component only applies its real styles above a CSS breakpoint (e.g. `share_buttons()` hides itself entirely below 768px - a normal card is narrower than that) so its card renders wide enough to actually clear it. See UiBundle's own `BlockFixtureProvider`'s class comment, and SocialBundle's/SiteBundle's `GalleryShowcaseProvider` for real examples.
 
 ---
 

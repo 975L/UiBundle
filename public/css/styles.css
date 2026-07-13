@@ -30,6 +30,43 @@
   background-color: var(--alert-warning-background);
 }
 
+/*
+ * (c) 2026: 975L <contact@975l.com>
+ * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+.banner-title {
+  position: relative;
+  left: 50%;
+  right: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  min-height: 200px;
+  overflow: hidden;
+  display: flex;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.banner-title-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 40px 20px;
+  background-color: rgba(0, 0, 0, 0.4);
+  text-align: center;
+}
+
+.banner-title-text {
+  margin: 0;
+  color: #fff;
+}
+
 /* BUTTONS */
 .btn {
   border-radius: 5px;
@@ -71,6 +108,38 @@
 
 .btn-secondary:hover {
   background-color: var(--button-background-secondary-dark);
+}
+
+.btn-success {
+  background-color: var(--button-background-success);
+}
+
+.btn-success:hover {
+  background-color: var(--button-background-success-dark);
+}
+
+.btn-danger {
+  background-color: var(--button-background-danger);
+}
+
+.btn-danger:hover {
+  background-color: var(--button-background-danger-dark);
+}
+
+/* No background/shadow - reads as a plain text link, not a filled button. Overrides "a.btn"'s own
+   color rule below via the higher-specificity "a.btn-link" selector. */
+.btn-link,
+a.btn-link {
+  background-color: transparent;
+  box-shadow: none;
+  color: var(--button-background-primary);
+  text-decoration: underline;
+}
+
+.btn-link:hover,
+a.btn-link:hover {
+  background-color: transparent;
+  color: var(--button-background-primary-dark);
 }
 
 .btn-grey {
@@ -445,6 +514,10 @@ img.white {
   display: block;
 }
 
+.slider-video {
+  background: #000;
+}
+
 .slider-img-link {
   display: block;
   width: 100%;
@@ -691,6 +764,89 @@ img.white {
   height: 60px;
 }
 
+.slider-freeflow {
+  max-width: none;
+  width: var(--slider-freeflow-vw, 100vw);
+  margin-left: calc(50% - var(--slider-freeflow-vw, 100vw) / 2);
+  aspect-ratio: auto;
+}
+
+.slider-freeflow .slider-list {
+  display: flex;
+  gap: 16px;
+  padding-inline: 5vw;
+  box-sizing: border-box;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.slider-freeflow .slider-list::-webkit-scrollbar {
+  display: none;
+}
+
+.slider-freeflow .slider-item {
+  position: relative;
+  top: auto;
+  left: auto;
+  width: auto;
+  flex: 0 0 clamp(240px, 55vw, 480px);
+  scroll-snap-align: start;
+  display: block;
+  cursor: pointer;
+  animation: none;
+}
+
+.slider-freeflow .slider-img,
+.slider-freeflow .slider-video {
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.slider-freeflow .slider-item {
+  aspect-ratio: 3/4;
+}
+
+@media (min-width: 768px) {
+  .slider-freeflow .slider-item {
+    aspect-ratio: 16/9;
+  }
+}
+.slider-freeflow.slider-ratio-2-3 .slider-item {
+  aspect-ratio: 2/3;
+}
+
+.slider-freeflow.slider-ratio-3-4 .slider-item {
+  aspect-ratio: 3/4;
+}
+
+.slider-freeflow.slider-ratio-1-1 .slider-item {
+  aspect-ratio: 1/1;
+}
+
+.slider-freeflow.slider-ratio-4-3 .slider-item {
+  aspect-ratio: 4/3;
+}
+
+.slider-freeflow.slider-ratio-3-2 .slider-item {
+  aspect-ratio: 3/2;
+}
+
+.slider-freeflow.slider-ratio-9-16 .slider-item {
+  aspect-ratio: 9/16;
+}
+
+.slider-freeflow.slider-ratio-16-9 .slider-item {
+  aspect-ratio: 16/9;
+}
+
+.slider-freeflow.slider-ratio-21-9 .slider-item {
+  aspect-ratio: 21/9;
+}
+
 /* PAGINATION */
 .pagination {
   display: flex;
@@ -759,4 +915,4 @@ img.white {
 .rich-snippet span[itemprop=description] {
   font-style: italic;
   color: var(--primary);
-}/*# sourceMappingURL=styles.css.map */
+}

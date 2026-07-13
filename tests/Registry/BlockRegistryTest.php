@@ -99,6 +99,52 @@ class BlockRegistryTest extends TestCase
         $this->assertFalse($registry->hasMediaTypes('article'));
     }
 
+    public function testIsMediaRequiredDefaultsToFalse(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('article', 'label.article', ArticleFormStub::class, 'article.html.twig');
+
+        $this->assertFalse($registry->isMediaRequired('article'));
+    }
+
+    public function testIsMediaRequiredCanBeDeclaredTrue(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register(
+            'banner_title',
+            'label.banner_title',
+            ArticleFormStub::class,
+            'banner_title.html.twig',
+            mediaTypes: ['image/*'],
+            mediaRequired: true
+        );
+
+        $this->assertTrue($registry->isMediaRequired('banner_title'));
+    }
+
+    public function testAllowsMultiUploadDefaultsToFalse(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('article', 'label.article', ArticleFormStub::class, 'article.html.twig');
+
+        $this->assertFalse($registry->allowsMultiUpload('article'));
+    }
+
+    public function testAllowsMultiUploadCanBeDeclaredTrue(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register(
+            'slider',
+            'label.slider',
+            ArticleFormStub::class,
+            'slider.html.twig',
+            mediaTypes: ['image/*', 'video/*'],
+            multiUpload: true
+        );
+
+        $this->assertTrue($registry->allowsMultiUpload('slider'));
+    }
+
     public function testIsCacheableDefaultsToTrue(): void
     {
         $registry = new BlockRegistry($this->createTranslator());
@@ -193,5 +239,57 @@ class BlockRegistryTest extends TestCase
         $second = $registry->groupedByCategory();
 
         $this->assertSame($first, $second);
+    }
+
+    // A kind declared with no "contexts" at all (the default) is available regardless of which
+    // context is asked for - e.g. legal_model, usable both on a Page and (in theory) a Menu
+    public function testGroupedByCategoryIncludesUncontextualizedKindsInAnyContext(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('article', 'label.article', ArticleFormStub::class, 'article.html.twig');
+
+        $forPage = array_merge(...array_values($registry->groupedByCategory('page')));
+        $forMenu = array_merge(...array_values($registry->groupedByCategory('menu')));
+
+        $this->assertArrayHasKey('label.article[ui]', $forPage);
+        $this->assertArrayHasKey('label.article[ui]', $forMenu);
+    }
+
+    // A kind restricted to one or more contexts (e.g. SiteBundle's "menu_link", contexts: ['menu'])
+    // only appears when that matching context is asked for, not in unrelated ones
+    public function testGroupedByCategoryExcludesKindsRestrictedToOtherContexts(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('menu_link', 'label.menu_link', ArticleFormStub::class, 'menu_link.html.twig', contexts: ['menu']);
+
+        $forPage = array_merge(...array_values($registry->groupedByCategory('page')));
+        $forMenu = array_merge(...array_values($registry->groupedByCategory('menu')));
+
+        $this->assertArrayNotHasKey('label.menu_link[ui]', $forPage);
+        $this->assertArrayHasKey('label.menu_link[ui]', $forMenu);
+    }
+
+    // Calling groupedByCategory() with no context at all (the pre-existing call signature) skips the
+    // contexts filter entirely, so callers that haven't started passing a context yet see everything
+    public function testGroupedByCategoryWithoutContextIgnoresContextsRestriction(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('menu_link', 'label.menu_link', ArticleFormStub::class, 'menu_link.html.twig', contexts: ['menu']);
+
+        $grouped = array_merge(...array_values($registry->groupedByCategory()));
+
+        $this->assertArrayHasKey('label.menu_link[ui]', $grouped);
+    }
+
+    // Each distinct $context is cached separately - a lookup for "menu" must not leak into "page"'s cache
+    public function testGroupedByCategoryCachesPerContext(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('menu_link', 'label.menu_link', ArticleFormStub::class, 'menu_link.html.twig', contexts: ['menu']);
+
+        $registry->groupedByCategory('menu');
+        $forPage = array_merge(...array_values($registry->groupedByCategory('page')));
+
+        $this->assertArrayNotHasKey('label.menu_link[ui]', $forPage);
     }
 }

@@ -9,8 +9,10 @@
 
 namespace c975L\UiBundle;
 
+use c975L\UiBundle\DependencyInjection\Compiler\BlockFixtureProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\BlockRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\FormThemeRegistryPass;
+use c975L\UiBundle\DependencyInjection\Compiler\GalleryShowcaseProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\MediaUsageProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\ScriptAdminRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\ScriptRegistryPass;
@@ -28,6 +30,8 @@ class c975LUiBundle extends AbstractBundle
     public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new BlockRegistryPass());
+        $container->addCompilerPass(new BlockFixtureProviderPass());
+        $container->addCompilerPass(new GalleryShowcaseProviderPass());
         $container->addCompilerPass(new StylesheetRegistryPass());
         $container->addCompilerPass(new StylesheetManagementRegistryPass());
         $container->addCompilerPass(new ScriptRegistryPass());

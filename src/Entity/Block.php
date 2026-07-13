@@ -10,6 +10,7 @@ namespace c975L\UiBundle\Entity;
 
 use App\Entity\User;
 use c975L\UiBundle\Repository\BlockRepository;
+use c975L\UiBundle\Validator\RequiredMedia;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -17,6 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BlockRepository::class)]
 #[ORM\Table(name: 'site_block')]
+#[RequiredMedia]
 class Block
 {
     #[ORM\Id]
