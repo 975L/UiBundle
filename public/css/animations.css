@@ -288,6 +288,13 @@
   display: contents;
 }
 
+/* Same reasoning as .block-animation above, one level up: the Blocks/Blocks.html.twig wrapper only
+   exists to host the animateScroll Stimulus controller, and must stay transparent so each block is
+   the parent's direct flex/grid child (e.g. footer/navbar center each menu link individually) */
+.blocks {
+  display: contents;
+}
+
 /* Hidden until animate-scroll.js swaps this for the animation class */
 .block-animation.hidden > * {
   opacity: 0;
@@ -304,4 +311,4 @@
   .block-animation.hidden > * {
     opacity: 1;
   }
-}
+}/*# sourceMappingURL=animations.css.map */

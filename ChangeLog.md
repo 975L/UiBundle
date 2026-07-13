@@ -1,5 +1,10 @@
 # ChangeLog
 
+## v1.4.13
+
+- Corrected sass for slider withu unique slide (13/07/2026)
+- Added Dashoard's shortcut (13/07/2026)
+
 ## v1.4.12
 
 - Added invalidate cache for blocks (13/07/2026)

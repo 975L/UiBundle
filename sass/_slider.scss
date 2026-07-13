@@ -22,8 +22,11 @@
 }
 
 // Wraps a single rich slide (title/text overlay) rendered outside the full slider markup
+// Shares .slider's max-width/margin so a single-article slide isn't wider than a multi-slide one
 .slider-single {
     position: relative;
+    max-width: 800px;
+    margin: 1em auto 3em;
 }
 
 .slider-list {
