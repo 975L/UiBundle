@@ -13,7 +13,7 @@ use c975L\UiBundle\Service\WhatsNewProvider;
 use PHPUnit\Framework\TestCase;
 
 // The provider reads a fixed path (dirname(__DIR__, 2) . '/config/whatsnew.json' relative to
-// src/Service), i.e. this bundle's own real config/whatsnew.json - there is no way to inject a
+// tests/Service), i.e. this bundle's own real config/whatsnew.json - there is no way to inject a
 // fixture file. Assertions below therefore parse that same real file rather than hardcoding its
 // content, so the tests stay valid as entries are appended over time.
 class WhatsNewProviderTest extends TestCase
@@ -32,7 +32,7 @@ class WhatsNewProviderTest extends TestCase
 
     private function decodeRealWhatsNewJson(): array
     {
-        $file = \dirname(__DIR__, 3) . '/config/whatsnew.json';
+        $file = \dirname(__DIR__, 2) . '/config/whatsnew.json';
 
         return json_decode(file_get_contents($file), true) ?? [];
     }

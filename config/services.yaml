@@ -6,7 +6,7 @@ services:
 
     c975L\UiBundle\:
         resource: '../src/'
-        exclude: '../src/{DependencyInjection,Entity,Tests}'
+        exclude: '../src/{DependencyInjection,Entity}'
 
     c975L\UiBundle\Service\StylesheetProvider:
         tags:

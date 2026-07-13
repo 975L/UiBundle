@@ -1,5 +1,9 @@
 # ChangeLog
 
+## v1.4.11
+
+- Moved tests to the right place (13/07/2026)
+
 ## v1.4.10
 
 - Corrected What's new date (12/07/2026)
