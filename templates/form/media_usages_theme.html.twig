@@ -1,0 +1,17 @@
+{% block media_usages_widget %}
+    {% if usages is empty %}
+        <span class="text-muted">{{ 'label.not_used_anywhere'|trans({}, 'ui') }}</span>
+    {% else %}
+        <ul class="list-unstyled mb-0">
+            {% for usage in usages %}
+                <li>
+                    {% if usage.url %}
+                        <a href="{{ usage.url }}" target="_blank" rel="noopener">{{ usage.label }}</a>
+                    {% else %}
+                        {{ usage.label }}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

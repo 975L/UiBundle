@@ -21,7 +21,10 @@ export function loadBlockData(selectElement, kindUrl, kind, body) {
     if (!container) {
         container = document.createElement('div');
         container.className = 'block-data-form';
-        compound.appendChild(container);
+        // Inserted before "animation" (rather than appended at the end) so the kind-specific fields
+        // (e.g. MenuLinkType's "target") always render above it, matching the server-rendered order
+        const animationRow = compound.querySelector('[data-animation-row]');
+        compound.insertBefore(container, animationRow);
     }
 
     if (!kind) {

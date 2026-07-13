@@ -1,4 +1,14 @@
 [
+        {
+        "date": "2026-07-12",
+        "description": [
+            {
+                "en": "You can now modify the media directly from the media library, without having to open each media's edit screen",
+                "fr": "Vous pouvez désormais modifier les médias directement depuis la bibliothèque de médias, sans avoir à ouvrir l'écran d'édition de chaque média",
+                "es": "Ahora puede modificar los medios directamente desde la biblioteca de medios, sin tener que abrir la pantalla de edición de cada medio"
+            }
+        ]
+    },
     {
         "date": "2026-07-12",
         "description": [

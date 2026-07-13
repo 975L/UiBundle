@@ -10,6 +10,7 @@
 namespace c975L\UiBundle;
 
 use c975L\UiBundle\DependencyInjection\Compiler\BlockRegistryPass;
+use c975L\UiBundle\DependencyInjection\Compiler\FormThemeRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\MediaUsageProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\ScriptAdminRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\ScriptRegistryPass;
@@ -33,6 +34,7 @@ class c975LUiBundle extends AbstractBundle
         $container->addCompilerPass(new ScriptAdminRegistryPass());
         $container->addCompilerPass(new WhatsNewProviderPass());
         $container->addCompilerPass(new MediaUsageProviderPass());
+        $container->addCompilerPass(new FormThemeRegistryPass());
     }
 
     public function prependExtension(ContainerConfigurator $configurator, ContainerBuilder $container): void
@@ -45,12 +47,10 @@ class c975LUiBundle extends AbstractBundle
             ],
         ]);
 
-        $container->prependExtensionConfig('twig', [
-            'form_themes' => [
-                '@c975LUi/form/block_theme.html.twig',
-                '@c975LUi/form/icon_picker_theme.html.twig',
-            ],
-        ]);
+        // Not registered via the app-wide twig.form_themes config: EasyAdmin renders every CRUD form
+        // with "... only", which ignores that config entirely (see FormThemeProviderInterface) - these
+        // are instead contributed to FormThemeRegistry via UiFormThemeProvider and picked up by
+        // ConfigBundle's DashboardController::configureCrud()
 
         if ($container->hasExtension('vich_uploader')) {
             $container->prependExtensionConfig('vich_uploader', [

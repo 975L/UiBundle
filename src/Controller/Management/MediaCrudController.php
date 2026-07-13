@@ -11,11 +11,13 @@ namespace c975L\UiBundle\Controller\Management;
 
 use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Form\ImageClassChoiceType;
+use c975L\UiBundle\Form\MediaUsagesType;
 use c975L\UiBundle\Registry\MediaUsageRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -81,14 +83,20 @@ class MediaCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            // Shown on the Edit page (NEW is disabled, so onlyOnForms() means Edit only here) - the
-            // index is now a flat thumbnail gallery (see media_index.html.twig), not a table of fields
+            // Shown on Detail (role-set rows, whose Edit action is hidden below) and Edit (NEW is
+            // disabled, so no NEW page to worry about here) - the index is a flat thumbnail gallery
+            // (see media_index.html.twig), not a table of fields, so this stays off it either way.
+            // Detail uses formatValue()+templatePath (EasyAdmin's normal read-only rendering); Edit
+            // needs setFormType() instead - formatValue()/templatePath are never applied to New/Edit
+            // forms, which otherwise fall back to rendering the raw "id" as an editable number input
             Field::new('id')
                 ->setLabel(t('label.used_in', [], 'ui'))
                 ->formatValue(fn ($value, Media $media): array => $this->mediaUsageRegistry
                     ->getUsages([$media])[$media->getId()] ?? [])
                 ->setTemplatePath('@c975LUi/management/media_usages.html.twig')
-                ->onlyOnForms(),
+                ->setFormType(MediaUsagesType::class)
+                ->setRequired(false)
+                ->hideOnIndex(),
 
             Field::new('file')
                 ->setLabel(t('label.file', [], 'ui'))
@@ -116,6 +124,23 @@ class MediaCrudController extends AbstractCrudController
                 ->setLabel(t('label.caption', [], 'ui'))
                 ->hideOnIndex(),
 
+            // Same fields as the caption/positioning group in MediaUploadType (the Block form), kept
+            // in parity so editing a Media from the library isn't missing anything a Block's own
+            // inline media form offers
+            TextField::new('width')
+                ->setLabel(t('label.width', [], 'ui'))
+                ->setHelp(t('label.width_help', [], 'ui'))
+                ->hideOnIndex(),
+
+            TextField::new('height')
+                ->setLabel(t('label.height', [], 'ui'))
+                ->setHelp(t('label.height_help', [], 'ui'))
+                ->hideOnIndex(),
+
+            BooleanField::new('above')
+                ->setLabel(t('label.caption_above', [], 'ui'))
+                ->hideOnIndex(),
+
             // Native ChoiceField (not Field/TextField): EasyAdmin's TextConfigurator throws on any
             // non-string value regardless of a custom setFormType(), and a plain Field::new() on this
             // json-typed column gets auto-promoted to ArrayField, whose default CollectionType options
@@ -134,6 +159,10 @@ class MediaCrudController extends AbstractCrudController
 
             TextField::new('credits')
                 ->setLabel(t('label.credits', [], 'ui'))
+                ->hideOnIndex(),
+
+            BooleanField::new('rightsReserved')
+                ->setLabel(t('label.rights_reserved', [], 'ui'))
                 ->hideOnIndex(),
         ];
     }

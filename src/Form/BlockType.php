@@ -50,7 +50,6 @@ class BlockType extends AbstractType
                 ],
                 'row_attr' => ['data-kind-row' => ''],
             ])
-            ->add('animation', AnimationChoiceType::class)
             ->add('position', HiddenType::class, [
                 'attr' => ['class' => 'ui-sort-position'],
             ]);
@@ -72,17 +71,21 @@ class BlockType extends AbstractType
                     'data' => $block instanceof Block ? $block->getId() : null,
                 ]);
 
-                if (null === $block) {
-                    return;
-                }
-
-                $kind = is_object($block) ? $block->getKind() : ($block['kind'] ?? null);
-                if ($kind && $this->registry->has($kind)) {
-                    $this->addDataSubForm($event->getForm(), $kind);
-                    if ($this->registry->hasMediaTypes($kind)) {
-                        $this->addMediaSubForm($event->getForm(), $kind);
+                $kind = null;
+                if (null !== $block) {
+                    $kind = is_object($block) ? $block->getKind() : ($block['kind'] ?? null);
+                    if ($kind && $this->registry->has($kind)) {
+                        $this->addDataSubForm($event->getForm(), $kind);
+                        if ($this->registry->hasMediaTypes($kind)) {
+                            $this->addMediaSubForm($event->getForm(), $kind);
+                        }
                     }
                 }
+
+                // Added last (after "data", not statically at the top of buildForm) so it always
+                // renders below the kind-specific fields (e.g. MenuLinkType's "target") instead of
+                // between "kind" and "data"
+                $this->addAnimationField($event->getForm());
             }
         );
 
@@ -125,9 +128,22 @@ class BlockType extends AbstractType
                         $event->setData($submitted);
                         $this->addMediaSubForm($event->getForm(), $kind);
                     }
+
+                    // "data" (and "medias") were just (re)added above - move "animation" back below
+                    // them, in case this is a brand new collection entry whose PRE_SET_DATA fired with
+                    // no kind yet (so "animation" was added there before "data" ever existed)
+                    $event->getForm()->remove('animation');
+                    $this->addAnimationField($event->getForm());
                 }
             }
         );
+    }
+
+    private function addAnimationField(FormInterface $form): void
+    {
+        $form->add('animation', AnimationChoiceType::class, [
+            'row_attr' => ['data-animation-row' => ''],
+        ]);
     }
 
     private function addDataSubForm(FormInterface $form, string $kind): void

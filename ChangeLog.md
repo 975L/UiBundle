@@ -1,5 +1,11 @@
 # ChangeLog
 
+## v1.4.10
+
+- Corrected What's new date (12/07/2026)
+- Added tests (13/07/2026)
+- Modified media library functionalities (12/07/2026)
+
 ## v1.4.9
 
 - Added pickable on services.yaml (12/07/2026)

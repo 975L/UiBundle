@@ -2,8 +2,10 @@
    otherwise render one after another, not side by side. #}
 {% set kinds = blocks|map(b => b.kind) %}
 {# Wrapper needed so the animateScroll Stimulus controller connects once per page - it then
-   watches every ".scroll" element document-wide (see assets/js/animate-scroll.js) #}
-<div data-controller="animateScroll">
+   watches every ".scroll" element document-wide (see assets/js/animate-scroll.js). ".blocks" is
+   display:contents (see sass/_animations-media.scss) so it stays transparent to the parent's own
+   layout (e.g. a flex/grid parent needs each block as its own direct child, not this wrapper). #}
+<div class="blocks" data-controller="animateScroll">
     {% for block in blocks %}
         {% set isCard = block.kind == 'card' %}
         {% set prevIsCard = loop.index0 > 0 and kinds[loop.index0 - 1] == 'card' %}

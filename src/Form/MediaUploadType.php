@@ -44,13 +44,12 @@ class MediaUploadType extends AbstractType
         // Per-image display metadata, only relevant when the uploaded file is an image - none of it
         // applies to a Cards card image either: Cards.html.twig only ever reads the file itself (alt
         // comes from the card's own title, there's no caption/sizing/rights markup for a card teaser)
+        // Field order/set kept in parity with MediaCrudController (the Media library's own edit form)
         if ($isImage && !$isCards) {
-            $builder
-                ->add('alt', TextType::class, [
-                    'label' => 'label.alt_text',
-                    'required' => false,
-                ])
-                ->add('cssClasses', ImageClassChoiceType::class);
+            $builder->add('alt', TextType::class, [
+                'label' => 'label.alt_text',
+                'required' => false,
+            ]);
 
             // Caption/positioning fields make sense for a standalone Image block, not for a slide
             // inside a Slider (no in-page position to control, no "above the caption" layout)
@@ -74,22 +73,25 @@ class MediaUploadType extends AbstractType
                     ->add('above', CheckboxType::class, [
                         'label' => 'label.caption_above',
                         'required' => false,
+                        // Bootstrap 5's native toggle-switch look (see bootstrap_5_layout.html.twig's
+                        // checkbox_widget block) instead of a plain checkbox - same widget EasyAdmin's
+                        // own BooleanField uses (BooleanConfigurator sets this same label_attr class)
+                        'label_attr' => ['class' => 'checkbox-switch'],
                     ]);
             }
 
-            // Per-slide copyright display, only relevant for Slider slides
-            if ($isSlider) {
-                $builder
-                    ->add('credits', TextType::class, [
-                        'label' => 'label.credits',
-                        'help' => 'label.credits_help',
-                        'required' => false,
-                    ])
-                    ->add('rightsReserved', CheckboxType::class, [
-                        'label' => 'label.rights_reserved',
-                        'required' => false,
-                    ]);
-            }
+            $builder
+                ->add('cssClasses', ImageClassChoiceType::class)
+                ->add('credits', TextType::class, [
+                    'label' => 'label.credits',
+                    'help' => 'label.credits_help',
+                    'required' => false,
+                ])
+                ->add('rightsReserved', CheckboxType::class, [
+                    'label' => 'label.rights_reserved',
+                    'required' => false,
+                    'label_attr' => ['class' => 'checkbox-switch'],
+                ]);
         }
 
         $builder->addEventListener(
