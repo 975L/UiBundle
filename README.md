@@ -191,9 +191,16 @@ The bundle ships the following kinds out of the box (see `config/services.yaml` 
 | `banner_title` | Media | `BannerTitleType` | `blocks/BannerTitle.html.twig` |
 | `button` | Elements | `ButtonType` | `blocks/Button.html.twig` |
 | `card` | Elements | `CardType` | `blocks/Card.html.twig` |
+| `cta_band` | Page sections | `CtaBandType` | `blocks/CtaBand.html.twig` |
+| `expertise_banner` | Page sections | `ExpertiseBannerType` | `blocks/ExpertiseBanner.html.twig` |
+| `feature_bar` | Page sections | `FeatureBarType` | `blocks/FeatureBar.html.twig` |
+| `hero` | Page sections | `HeroType` | `blocks/Hero.html.twig` |
 | `image` | Media | `ImageType` | `blocks/Image.html.twig` |
+| `portfolio_grid` | Page sections | `PortfolioGridType` | `blocks/PortfolioGrid.html.twig` |
+| `process_steps` | Page sections | `ProcessStepsType` | `blocks/ProcessSteps.html.twig` |
 | `progress_bar` | Elements | `ProgressBarType` | `blocks/ProgressBar.html.twig` |
 | `rich_snippet` | SEO | `RichSnippetType` | `blocks/RichSnippet.html.twig` |
+| `section_cards` | Page sections | `SectionCardsType` | `blocks/SectionCards.html.twig` |
 | `slider` | Media | `SliderType` | `blocks/Slider.html.twig` |
 | `text_readmore` | Text | `ReadmoreType` | `blocks/TextReadmore.html.twig` |
 | `text_section` | Text | `TextSectionType` | `blocks/TextSection.html.twig` |
@@ -351,12 +358,19 @@ Block templates are thin adapters around a set of Symfony UX Twig components liv
 | `<twig:c975LUi:Button:Button>` | Styled button/link |
 | `<twig:c975LUi:Card:Card>` | Bootstrap card |
 | `<twig:c975LUi:Card:Cards>` | Loops `Card` over an externally-supplied collection (no `Block` involved) |
+| `<twig:c975LUi:Cta:Band>` | Centered call-to-action panel (title/text/button) |
+| `<twig:c975LUi:Expertise:Banner>` | Dark panel with text and a list of tags |
+| `<twig:c975LUi:Feature:Bar>` | Row of short arguments (title + caption) |
 | `<twig:c975LUi:General:RichSnippet>` | JSON-LD structured data snippet |
+| `<twig:c975LUi:Hero:Hero>` | Header banner with title, subtitle, CTA buttons and image |
 | `<twig:c975LUi:Image:Icon>` | Small icon image |
 | `<twig:c975LUi:Image:Image>` | Responsive image |
 | `<twig:c975LUi:Image:Link>` | Image wrapped in a link |
 | `<twig:c975LUi:Pagination:Pagination>` | Pagination links |
+| `<twig:c975LUi:Portfolio:Grid>` | Grid of project cards sourced from a block's own medias |
+| `<twig:c975LUi:Process:Steps>` | Section title followed by numbered steps |
 | `<twig:c975LUi:Progress:Bar>` | Progress bar |
+| `<twig:c975LUi:Section:Cards>` | Section title followed by a grid of cards (icon/title/text) |
 | `<twig:c975LUi:Slider:Slider>` | Image/media slider |
 | `<twig:c975LUi:Text:Readmore>` | Collapsible "read more" text block |
 | `<twig:c975LUi:Text:Section>` | Text section with optional image |
@@ -450,6 +464,8 @@ Retrieve it anywhere in Twig with the `site_media()` function, which returns `nu
 A `Media` row can be attached in several ways depending on the consuming bundle: to a `Block`, directly to another entity (e.g. a Page's og-image), or as a site-wide `role`. `MediaCrudController` provides a single EasyAdmin gallery browsing every `Media` regardless of how it's attached, with a click-through to edit its metadata (alt, caption, credits, CSS classes...). Site-wide role graphics stay read-only there — they keep being managed wherever the consuming bundle handles roles (e.g. `SiteGraphicCrudController` in c975L/SiteBundle).
 
 UiBundle does **not** register a menu entry for it: `c975l/config-bundle` (which owns the menu registration mechanism, see below) already depends on `c975l/ui-bundle`, so the reverse would be a circular dependency. A bundle that depends on both - e.g. c975L/SiteBundle - should add an entry pointing to `MediaCrudController::class` in its own `MenuProviderInterface` implementation.
+
+`Media::$url`/`Media::$description` back the per-project link and text of the `portfolio_grid` kind (see `MediaUploadType`'s `portfolio_grid` context) - a project card's title reuses the existing `$label` field.
 
 ### Declaring where a Media is used
 

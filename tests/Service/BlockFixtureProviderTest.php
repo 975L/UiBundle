@@ -20,7 +20,7 @@ class BlockFixtureProviderTest extends TestCase
         $fixtures = (new BlockFixtureProvider())->getFixtures();
 
         $this->assertSame(
-            ['alert', 'audio', 'article', 'banner_title', 'button', 'card', 'image', 'progress_bar', 'rich_snippet', 'slider', 'text_readmore', 'text_section', 'video', 'video_iframe'],
+            ['alert', 'audio', 'article', 'banner_title', 'button', 'card', 'image', 'progress_bar', 'rich_snippet', 'slider', 'text_readmore', 'text_section', 'video', 'video_iframe', 'hero', 'feature_bar', 'section_cards', 'expertise_banner', 'process_steps', 'portfolio_grid', 'cta_band'],
             array_keys($fixtures)
         );
     }
@@ -75,7 +75,7 @@ class BlockFixtureProviderTest extends TestCase
     {
         $fixtures = (new BlockFixtureProvider())->getFixtures();
 
-        foreach (['audio', 'article', 'banner_title', 'card', 'image', 'progress_bar', 'rich_snippet', 'text_readmore', 'text_section', 'video', 'video_iframe'] as $kind) {
+        foreach (['audio', 'article', 'banner_title', 'card', 'image', 'progress_bar', 'rich_snippet', 'text_readmore', 'text_section', 'video', 'video_iframe', 'hero', 'feature_bar', 'section_cards', 'expertise_banner', 'process_steps', 'portfolio_grid', 'cta_band'] as $kind) {
             $this->assertSame([''], array_keys($fixtures[$kind]), "Kind \"{$kind}\" should have a single unlabelled variant");
         }
     }

@@ -1,0 +1,18 @@
+{# Static usage: <twig:c975LUi:Expertise:Banner title="..." [eyebrow=""] [text=""] [tags="{{ ['Symfony', 'PHP'] }}"]/> #}
+{# Dynamic usage (Block system): see templates/blocks/ExpertiseBanner.html.twig #}
+<section class="expertise-banner">
+    <div class="section-wrap">
+        <div class="expertise-banner__inner">
+            <div>
+                {% if eyebrow %}<p class="section-eyebrow">{{ eyebrow }}</p>{% endif %}
+                <h2 class="expertise-banner__title">{{ title }}</h2>
+                {% if text %}<p class="expertise-banner__text">{{ text|raw }}</p>{% endif %}
+            </div>
+            {% if tags|length > 0 %}
+                <div class="section-tags">
+                    {% for t in tags %}<span class="section-tag">{{ t }}</span>{% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>

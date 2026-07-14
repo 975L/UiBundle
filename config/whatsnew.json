@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-07-14",
+        "description": [
+            {
+                "en": "New blocks (hero, feature_bar, section_cards, expertise_banner, process_steps, portfolio_grid, cta_band) have been added",
+                "fr": "Nouveaux blocs (hero, feature_bar, section_cards, expertise_banner, process_steps, portfolio_grid, cta_band) ont été ajoutés",
+                "es": "Se han añadido nuevos bloques (hero, feature_bar, section_cards, expertise_banner, process_steps, portfolio_grid, cta_band)"
+            },
+            {
+                "en": "New page section blocks: Hero, Feature bar, Card grid, Expertise banner, Process steps, Portfolio grid, Call-to-action band",
+                "fr": "Nouveaux blocs de section de page : Hero, Bande de réassurance, Grille de cartes, Bandeau d'expertise, Étapes de méthode, Grille de réalisations, Bandeau d'appel à l'action",
+                "es": "Nuevos bloques de sección de página: Hero, Barra de argumentos, Cuadrícula de tarjetas, Banner de experiencia, Pasos del proceso, Cuadrícula de proyectos, Banda de llamada a la acción"
+            }
+        ]
+    },
+    {
         "date": "2026-07-13",
         "description": [
             {

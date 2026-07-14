@@ -667,6 +667,130 @@
                 <source>label.block_gallery_other_components</source>
                 <target>Autres composants</target>
             </trans-unit>
+            <trans-unit id="167">
+                <source>label.category_sections</source>
+                <target>Sections de page</target>
+            </trans-unit>
+            <trans-unit id="168">
+                <source>label.block_hero</source>
+                <target>Hero</target>
+            </trans-unit>
+            <trans-unit id="169">
+                <source>label.block_hero_description</source>
+                <target>Bandeau d'accroche avec titre, sous-titre, boutons d'action et image</target>
+            </trans-unit>
+            <trans-unit id="170">
+                <source>label.block_feature_bar</source>
+                <target>Bande de réassurance</target>
+            </trans-unit>
+            <trans-unit id="171">
+                <source>label.block_feature_bar_description</source>
+                <target>Rangée d'arguments courts (titre + légende)</target>
+            </trans-unit>
+            <trans-unit id="172">
+                <source>label.block_section_cards</source>
+                <target>Grille de cartes</target>
+            </trans-unit>
+            <trans-unit id="173">
+                <source>label.block_section_cards_description</source>
+                <target>Titre de section suivi d'une grille de cartes (icône, titre, texte)</target>
+            </trans-unit>
+            <trans-unit id="174">
+                <source>label.block_expertise_banner</source>
+                <target>Bandeau d'expertise</target>
+            </trans-unit>
+            <trans-unit id="175">
+                <source>label.block_expertise_banner_description</source>
+                <target>Panneau sombre avec texte et liste de tags</target>
+            </trans-unit>
+            <trans-unit id="176">
+                <source>label.block_process_steps</source>
+                <target>Étapes de méthode</target>
+            </trans-unit>
+            <trans-unit id="177">
+                <source>label.block_process_steps_description</source>
+                <target>Titre de section suivi d'étapes numérotées</target>
+            </trans-unit>
+            <trans-unit id="178">
+                <source>label.block_cta_band</source>
+                <target>Bandeau d'appel à l'action</target>
+            </trans-unit>
+            <trans-unit id="179">
+                <source>label.block_cta_band_description</source>
+                <target>Panneau centré avec titre, texte et bouton</target>
+            </trans-unit>
+            <trans-unit id="180">
+                <source>label.badge</source>
+                <target>Badge</target>
+            </trans-unit>
+            <trans-unit id="181">
+                <source>label.subtitle</source>
+                <target>Sous-titre</target>
+            </trans-unit>
+            <trans-unit id="182">
+                <source>label.primary_label</source>
+                <target>Libellé du bouton principal</target>
+            </trans-unit>
+            <trans-unit id="183">
+                <source>label.primary_url</source>
+                <target>URL du bouton principal</target>
+            </trans-unit>
+            <trans-unit id="184">
+                <source>label.secondary_label</source>
+                <target>Libellé du bouton secondaire</target>
+            </trans-unit>
+            <trans-unit id="185">
+                <source>label.secondary_url</source>
+                <target>URL du bouton secondaire</target>
+            </trans-unit>
+            <trans-unit id="186">
+                <source>label.stat_value</source>
+                <target>Valeur du chiffre clé</target>
+            </trans-unit>
+            <trans-unit id="187">
+                <source>label.stat_label</source>
+                <target>Légende du chiffre clé</target>
+            </trans-unit>
+            <trans-unit id="188">
+                <source>label.eyebrow</source>
+                <target>Surtitre</target>
+            </trans-unit>
+            <trans-unit id="189">
+                <source>label.items</source>
+                <target>Arguments</target>
+            </trans-unit>
+            <trans-unit id="190">
+                <source>label.cards</source>
+                <target>Cartes</target>
+            </trans-unit>
+            <trans-unit id="191">
+                <source>label.tags</source>
+                <target>Tags</target>
+            </trans-unit>
+            <trans-unit id="192">
+                <source>label.steps</source>
+                <target>Étapes</target>
+            </trans-unit>
+            <trans-unit id="193">
+                <source>label.cta_label</source>
+                <target>Libellé du bouton</target>
+            </trans-unit>
+            <trans-unit id="194">
+                <source>label.step_number</source>
+                <target>Étape %number%</target>
+            </trans-unit>
+            <trans-unit id="195">
+                <source>label.block_portfolio_grid</source>
+                <target>Grille de réalisations</target>
+            </trans-unit>
+            <trans-unit id="196">
+                <source>label.block_portfolio_grid_description</source>
+                <target>Titre de section suivi d'une grille de projets illustrés, cliquables vers l'extérieur</target>
+            </trans-unit>
+            <trans-unit id="197">
+                <source>label.link_label</source>
+                <target>Libellé du lien</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

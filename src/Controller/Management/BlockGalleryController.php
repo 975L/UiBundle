@@ -117,27 +117,35 @@ class BlockGalleryController extends AbstractController
         foreach ($this->fixtures->get($kind) as $variantLabel => $data) {
             $block = (new Block())->setKind($kind)->setData($data);
 
-            foreach ($this->registry->getMediaTypes($kind) as $mediaType) {
-                if (str_starts_with($mediaType, 'image/')) {
-                    // "slider" needs several images to look like one; every other image-typed kind only
-                    // ever reads its first media (see e.g. blocks/Image.html.twig). The slider also mixes
-                    // in one video slide below to showcase its mixed-media support.
-                    $count = 'slider' === $kind ? 2 : 1;
-                    for ($i = 0; $i < $count; ++$i) {
-                        $block->addMedia($this->placeholderImage());
+            // portfolio_grid needs several distinctly-captioned project cards to look like a real grid,
+            // not just extra copies of the generic placeholder (see placeholderPortfolioProjects())
+            if ('portfolio_grid' === $kind) {
+                foreach ($this->placeholderPortfolioProjects() as $project) {
+                    $block->addMedia($project);
+                }
+            } else {
+                foreach ($this->registry->getMediaTypes($kind) as $mediaType) {
+                    if (str_starts_with($mediaType, 'image/')) {
+                        // "slider" needs several images to look like one; every other image-typed kind
+                        // only ever reads its first media (see e.g. blocks/Image.html.twig). The slider
+                        // also mixes in one video slide below to showcase its mixed-media support.
+                        $count = 'slider' === $kind ? 2 : 1;
+                        for ($i = 0; $i < $count; ++$i) {
+                            $block->addMedia($this->placeholderImage());
+                        }
+                        if ('slider' !== $kind) {
+                            break;
+                        }
                     }
-                    if ('slider' !== $kind) {
+
+                    if ('slider' === $kind && str_starts_with($mediaType, 'video/')) {
+                        $block->addMedia($this->placeholderVideo());
+                    }
+
+                    if (str_starts_with($mediaType, 'audio/')) {
+                        $block->addMedia($this->placeholderAudio());
                         break;
                     }
-                }
-
-                if ('slider' === $kind && str_starts_with($mediaType, 'video/')) {
-                    $block->addMedia($this->placeholderVideo());
-                }
-
-                if (str_starts_with($mediaType, 'audio/')) {
-                    $block->addMedia($this->placeholderAudio());
-                    break;
                 }
             }
 
@@ -145,6 +153,26 @@ class BlockGalleryController extends AbstractController
         }
 
         return $variants;
+    }
+
+    // @return Media[]
+    private function placeholderPortfolioProjects(): array
+    {
+        $projects = [
+            ['Papa Câlin', "Des histoires inventées à partir des idées d'enfants."],
+            ['EIPT', 'École informatique pour tous, de la primaire aux seniors.'],
+            ['Éditions Lolant', 'Le catalogue des livres publiés par la maison.'],
+        ];
+
+        return array_map(
+            static fn (array $project): Media => (new Media())
+                ->setFilename(self::PLACEHOLDER_IMAGE)
+                ->setAlt($project[0])
+                ->setLabel($project[0])
+                ->setDescription($project[1])
+                ->setUrl('https://975l.com'),
+            $projects
+        );
     }
 
     private function placeholderImage(): Media

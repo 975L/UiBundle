@@ -164,4 +164,30 @@ class BlockGalleryControllerTest extends TestCase
         $block = $previews['Media']['audio']['variants']['']['content'];
         $this->assertSame(BlockGalleryController::PLACEHOLDER_AUDIO, $block->getMedia()->first()->getFilename());
     }
+
+    // portfolio_grid bypasses the generic per-mediaType placeholder mechanism above: it gets several
+    // distinctly-captioned project cards (see placeholderPortfolioProjects()) instead of N copies of
+    // the same placeholder image
+    public function testPortfolioGridKindGetsSeveralDistinctlyCaptionedPlaceholderProjects(): void
+    {
+        $registry = $this->createRegistry([
+            'portfolio_grid' => ['pickable' => true, 'category' => 'Page sections', 'mediaTypes' => ['image/*']],
+        ]);
+        $fixtures = $this->createStub(BlockFixtureRegistry::class);
+        $fixtures->method('get')->willReturn(['' => ['title' => 'Réalisations']]);
+        $showcases = $this->createStub(GalleryShowcaseRegistry::class);
+        $showcases->method('all')->willReturn([]);
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturnCallback(static fn (string $id) => $id);
+
+        $controller = new BlockGalleryController($registry, $fixtures, $showcases, $translator);
+        $previews = $this->invokeBuildPreviews($controller);
+
+        $block = $previews['Page sections']['portfolio_grid']['variants']['']['content'];
+        $medias = $block->getMedia();
+        $this->assertCount(3, $medias, 'portfolio_grid should get several distinct project cards, not a single placeholder');
+        $this->assertSame('Papa Câlin', $medias->first()->getLabel());
+        $this->assertNotNull($medias->first()->getDescription());
+        $this->assertNotNull($medias->first()->getUrl());
+    }
 }

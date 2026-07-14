@@ -666,6 +666,130 @@
                 <source>label.block_gallery_other_components</source>
                 <target>Other components</target>
             </trans-unit>
+            <trans-unit id="167">
+                <source>label.category_sections</source>
+                <target>Page sections</target>
+            </trans-unit>
+            <trans-unit id="168">
+                <source>label.block_hero</source>
+                <target>Hero</target>
+            </trans-unit>
+            <trans-unit id="169">
+                <source>label.block_hero_description</source>
+                <target>Header banner with title, subtitle, call-to-action buttons and image</target>
+            </trans-unit>
+            <trans-unit id="170">
+                <source>label.block_feature_bar</source>
+                <target>Feature bar</target>
+            </trans-unit>
+            <trans-unit id="171">
+                <source>label.block_feature_bar_description</source>
+                <target>Row of short arguments (title + caption)</target>
+            </trans-unit>
+            <trans-unit id="172">
+                <source>label.block_section_cards</source>
+                <target>Card grid</target>
+            </trans-unit>
+            <trans-unit id="173">
+                <source>label.block_section_cards_description</source>
+                <target>Section title followed by a grid of cards (icon, title, text)</target>
+            </trans-unit>
+            <trans-unit id="174">
+                <source>label.block_expertise_banner</source>
+                <target>Expertise banner</target>
+            </trans-unit>
+            <trans-unit id="175">
+                <source>label.block_expertise_banner_description</source>
+                <target>Dark panel with text and a list of tags</target>
+            </trans-unit>
+            <trans-unit id="176">
+                <source>label.block_process_steps</source>
+                <target>Process steps</target>
+            </trans-unit>
+            <trans-unit id="177">
+                <source>label.block_process_steps_description</source>
+                <target>Section title followed by numbered steps</target>
+            </trans-unit>
+            <trans-unit id="178">
+                <source>label.block_cta_band</source>
+                <target>Call-to-action band</target>
+            </trans-unit>
+            <trans-unit id="179">
+                <source>label.block_cta_band_description</source>
+                <target>Centered panel with title, text and button</target>
+            </trans-unit>
+            <trans-unit id="180">
+                <source>label.badge</source>
+                <target>Badge</target>
+            </trans-unit>
+            <trans-unit id="181">
+                <source>label.subtitle</source>
+                <target>Subtitle</target>
+            </trans-unit>
+            <trans-unit id="182">
+                <source>label.primary_label</source>
+                <target>Primary button label</target>
+            </trans-unit>
+            <trans-unit id="183">
+                <source>label.primary_url</source>
+                <target>Primary button URL</target>
+            </trans-unit>
+            <trans-unit id="184">
+                <source>label.secondary_label</source>
+                <target>Secondary button label</target>
+            </trans-unit>
+            <trans-unit id="185">
+                <source>label.secondary_url</source>
+                <target>Secondary button URL</target>
+            </trans-unit>
+            <trans-unit id="186">
+                <source>label.stat_value</source>
+                <target>Stat value</target>
+            </trans-unit>
+            <trans-unit id="187">
+                <source>label.stat_label</source>
+                <target>Stat caption</target>
+            </trans-unit>
+            <trans-unit id="188">
+                <source>label.eyebrow</source>
+                <target>Eyebrow</target>
+            </trans-unit>
+            <trans-unit id="189">
+                <source>label.items</source>
+                <target>Items</target>
+            </trans-unit>
+            <trans-unit id="190">
+                <source>label.cards</source>
+                <target>Cards</target>
+            </trans-unit>
+            <trans-unit id="191">
+                <source>label.tags</source>
+                <target>Tags</target>
+            </trans-unit>
+            <trans-unit id="192">
+                <source>label.steps</source>
+                <target>Steps</target>
+            </trans-unit>
+            <trans-unit id="193">
+                <source>label.cta_label</source>
+                <target>Button label</target>
+            </trans-unit>
+            <trans-unit id="194">
+                <source>label.step_number</source>
+                <target>Step %number%</target>
+            </trans-unit>
+            <trans-unit id="195">
+                <source>label.block_portfolio_grid</source>
+                <target>Portfolio grid</target>
+            </trans-unit>
+            <trans-unit id="196">
+                <source>label.block_portfolio_grid_description</source>
+                <target>Section title followed by a grid of illustrated projects linking out</target>
+            </trans-unit>
+            <trans-unit id="197">
+                <source>label.link_label</source>
+                <target>Link label</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

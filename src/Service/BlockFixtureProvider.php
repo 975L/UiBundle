@@ -155,6 +155,77 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
                     'class' => [],
                 ],
             ],
+            'hero' => [
+                '' => [
+                    'badge' => 'Agence web indépendante · depuis 2018',
+                    'title' => 'Votre site web, fait main et <em>sur mesure.</em>',
+                    'subtitle' => 'On ne pose pas de template. On code proprement, avec notre propre CMS et Symfony, un site pensé pour vous.',
+                    'primaryLabel' => 'Parlons de votre projet',
+                    'primaryUrl' => 'https://975l.com/contact',
+                    'secondaryLabel' => 'Voir nos réalisations',
+                    'secondaryUrl' => 'https://975l.com/sites',
+                    'statValue' => '12+',
+                    'statLabel' => 'sites en ligne, et le vôtre bientôt',
+                ],
+            ],
+            'feature_bar' => [
+                '' => [
+                    'items' => [
+                        ['title' => 'Code propre', 'text' => 'maintenable dans le temps'],
+                        ['title' => 'Symfony', 'text' => 'socle robuste & éprouvé'],
+                        ['title' => 'Notre CMS', 'text' => 'édition simple, à vous'],
+                        ['title' => 'Suisse', 'text' => 'hébergé chez Infomaniak'],
+                        ['title' => 'Multilingue', 'text' => "prêt pour l'international"],
+                    ],
+                ],
+            ],
+            'section_cards' => [
+                '' => [
+                    'eyebrow' => 'Ce que nous faisons',
+                    'title' => "Des services taillés autour de votre projet, pas l'inverse.",
+                    'cards' => [
+                        ['icon' => '', 'title' => 'Sites sur mesure', 'text' => '<p>Chaque site est conçu et développé pour vos besoins réels.</p>'],
+                        ['icon' => '', 'title' => 'Notre CMS maison', 'text' => '<p>Vous gérez votre contenu vous-même, simplement.</p>'],
+                        ['icon' => '', 'title' => 'Développement Symfony', 'text' => '<p>Un socle technique solide et durable.</p>'],
+                    ],
+                ],
+            ],
+            'expertise_banner' => [
+                '' => [
+                    'eyebrow' => 'Notre expertise',
+                    'title' => 'Une technique que nous maîtrisons de bout en bout.',
+                    'text' => "<p>Pas de sous-traitance, pas de boîte noire. Nous développons, hébergeons et faisons évoluer votre site.</p>",
+                    'tags' => ['Symfony', 'PHP', 'CMS 975L', 'Multilingue', 'Infomaniak · CH', 'Open-source'],
+                ],
+            ],
+            'process_steps' => [
+                '' => [
+                    'eyebrow' => 'Comment ça se passe',
+                    'title' => "Une méthode claire, du premier échange à la mise en ligne.",
+                    'steps' => [
+                        ['title' => "On s'écoute", 'text' => '<p>On étudie votre problématique ensemble.</p>'],
+                        ['title' => 'On conçoit', 'text' => '<p>Structure, design et contenu, validés avec vous.</p>'],
+                        ['title' => 'On développe', 'text' => "<p>Code propre, testé, et votre CMS prêt à l'emploi.</p>"],
+                        ['title' => 'On accompagne', 'text' => '<p>Mise en ligne, hébergement et suivi dans la durée.</p>'],
+                    ],
+                ],
+            ],
+            'portfolio_grid' => [
+                '' => [
+                    'eyebrow' => 'Réalisations',
+                    'title' => 'Des projets en ligne, bien réels.',
+                    'linkLabel' => 'Tout voir',
+                    'linkUrl' => 'https://975l.com/sites',
+                ],
+            ],
+            'cta_band' => [
+                '' => [
+                    'title' => 'Racontez-nous votre projet.',
+                    'text' => '<p>On étudie votre problématique et on voit ensemble comment y répondre au mieux.</p>',
+                    'ctaLabel' => 'Contactez-nous',
+                    'ctaUrl' => 'https://975l.com/contact',
+                ],
+            ],
         ];
     }
 }

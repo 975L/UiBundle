@@ -14,7 +14,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -31,6 +33,7 @@ class MediaUploadType extends AbstractType
         $isSlider = 'slider' === $options['context'];
         $isCards = 'card' === $options['context'];
         $isBannerTitle = 'banner_title' === $options['context'];
+        $isPortfolioGrid = 'portfolio_grid' === $options['context'];
 
         // Placeholder type, always overridden in the PRE_SET_DATA listener below once the entry's real
         // data (and mimetype, for an existing upload) is known - added here first only so "file" keeps
@@ -67,31 +70,50 @@ class MediaUploadType extends AbstractType
 
             // Caption/positioning/rights fields make sense for a standalone Image block, not for a slide
             // inside a Slider (no in-page position to control, no "above the caption" layout) nor for a
-            // BannerTitle's background image (it's decoration behind text, not a captioned figure)
+            // BannerTitle's background image (it's decoration behind text, not a captioned figure). A
+            // portfolio_grid project card reuses "label" too, but as its title, not a figure caption -
+            // width/height/above (inline captioned-figure layout) don't apply to a grid card.
             if (!$isSlider && !$isBannerTitle) {
+                $builder->add('label', TextType::class, array_filter([
+                    'label' => $isPortfolioGrid ? 'label.title' : 'label.caption',
+                    'help' => $isPortfolioGrid ? null : 'label.caption_help',
+                    'required' => false,
+                ], static fn ($v) => null !== $v));
+
+                if (!$isPortfolioGrid) {
+                    $builder
+                        ->add('width', TextType::class, [
+                            'label' => 'label.width',
+                            'help' => 'label.width_help',
+                            'required' => false,
+                        ])
+                        ->add('height', TextType::class, [
+                            'label' => 'label.height',
+                            'help' => 'label.height_help',
+                            'required' => false,
+                        ])
+                        ->add('above', CheckboxType::class, [
+                            'label' => 'label.caption_above',
+                            'required' => false,
+                            // Bootstrap 5's native toggle-switch look (see bootstrap_5_layout.html.twig's
+                            // checkbox_widget block) instead of a plain checkbox - same widget EasyAdmin's
+                            // own BooleanField uses (BooleanConfigurator sets this same label_attr class)
+                            'label_attr' => ['class' => 'checkbox-switch'],
+                        ]);
+                }
+            }
+
+            // A project card's own text and outbound link (see Media::$url/$description, reserved for
+            // this use case)
+            if ($isPortfolioGrid) {
                 $builder
-                    ->add('label', TextType::class, [
-                        'label' => 'label.caption',
-                        'help' => 'label.caption_help',
+                    ->add('description', TextareaType::class, [
+                        'label' => 'label.description',
                         'required' => false,
                     ])
-                    ->add('width', TextType::class, [
-                        'label' => 'label.width',
-                        'help' => 'label.width_help',
+                    ->add('url', UrlType::class, [
+                        'label' => 'label.url',
                         'required' => false,
-                    ])
-                    ->add('height', TextType::class, [
-                        'label' => 'label.height',
-                        'help' => 'label.height_help',
-                        'required' => false,
-                    ])
-                    ->add('above', CheckboxType::class, [
-                        'label' => 'label.caption_above',
-                        'required' => false,
-                        // Bootstrap 5's native toggle-switch look (see bootstrap_5_layout.html.twig's
-                        // checkbox_widget block) instead of a plain checkbox - same widget EasyAdmin's
-                        // own BooleanField uses (BooleanConfigurator sets this same label_attr class)
-                        'label_attr' => ['class' => 'checkbox-switch'],
                     ]);
             }
 

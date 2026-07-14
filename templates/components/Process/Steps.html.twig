@@ -1,0 +1,17 @@
+{# Static usage: <twig:c975LUi:Process:Steps title="..." steps="{{ [{title: '...', text: '...'}] }}" [eyebrow=""]/> #}
+{# Dynamic usage (Block system): see templates/blocks/ProcessSteps.html.twig #}
+<section class="section-block process-steps">
+    <div class="section-wrap">
+        {% if eyebrow %}<p class="section-eyebrow">{{ eyebrow }}</p>{% endif %}
+        <h2 class="section-title">{{ title }}</h2>
+        <div class="section-steps">
+            {% for s in steps %}
+                <div class="section-step {{ loop.first ? 'section-step--first' }}">
+                    <div class="section-step__num">{{ 'label.step_number'|trans({'%number%': '%02d'|format(loop.index)}, 'ui') }}</div>
+                    <h3 class="section-step__title">{{ s.title }}</h3>
+                    <p class="section-step__text">{{ s.text|raw }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

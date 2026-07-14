@@ -1,0 +1,16 @@
+{# Adapter for the dynamic Block system — resolves the media file into the Hero component, same
+   convention as blocks/BannerTitle.html.twig #}
+{% set media = block.media|first %}
+<twig:c975LUi:Hero:Hero
+    badge="{{ badge|default('') }}"
+    title="{{ title }}"
+    subtitle="{{ subtitle|default('') }}"
+    primaryLabel="{{ primaryLabel }}"
+    primaryUrl="{{ primaryUrl }}"
+    secondaryLabel="{{ secondaryLabel|default('') }}"
+    secondaryUrl="{{ secondaryUrl|default('') }}"
+    statValue="{{ statValue|default('') }}"
+    statLabel="{{ statLabel|default('') }}"
+    src="{{ media ? vich_uploader_asset(media) : '' }}"
+    alt="{{ media ? media.alt : '' }}"
+/>

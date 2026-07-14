@@ -223,3 +223,105 @@ services:
               priority: 60
               pickable: true
               cacheable: true
+
+    # Page section blocks (landing-page style sections, see README "Sections de page")
+    ui.block.hero:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: hero
+              label: "label.block_hero"
+              description: "label.block_hero_description"
+              form: c975L\UiBundle\Form\Block\HeroType
+              template: '@c975LUi/blocks/Hero.html.twig'
+              category: 'label.category_sections'
+              media_types: 'image/*'
+              priority: 100
+              pickable: true
+              cacheable: true
+
+    ui.block.feature_bar:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: feature_bar
+              label: "label.block_feature_bar"
+              description: "label.block_feature_bar_description"
+              form: c975L\UiBundle\Form\Block\FeatureBarType
+              template: '@c975LUi/blocks/FeatureBar.html.twig'
+              category: 'label.category_sections'
+              priority: 90
+              pickable: true
+              cacheable: true
+
+    ui.block.section_cards:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: section_cards
+              label: "label.block_section_cards"
+              description: "label.block_section_cards_description"
+              form: c975L\UiBundle\Form\Block\SectionCardsType
+              template: '@c975LUi/blocks/SectionCards.html.twig'
+              category: 'label.category_sections'
+              priority: 80
+              pickable: true
+              cacheable: true
+
+    ui.block.expertise_banner:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: expertise_banner
+              label: "label.block_expertise_banner"
+              description: "label.block_expertise_banner_description"
+              form: c975L\UiBundle\Form\Block\ExpertiseBannerType
+              template: '@c975LUi/blocks/ExpertiseBanner.html.twig'
+              category: 'label.category_sections'
+              priority: 70
+              pickable: true
+              cacheable: true
+
+    ui.block.process_steps:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: process_steps
+              label: "label.block_process_steps"
+              description: "label.block_process_steps_description"
+              form: c975L\UiBundle\Form\Block\ProcessStepsType
+              template: '@c975LUi/blocks/ProcessSteps.html.twig'
+              category: 'label.category_sections'
+              priority: 60
+              pickable: true
+              cacheable: true
+
+    ui.block.portfolio_grid:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: portfolio_grid
+              label: "label.block_portfolio_grid"
+              description: "label.block_portfolio_grid_description"
+              form: c975L\UiBundle\Form\Block\PortfolioGridType
+              template: '@c975LUi/blocks/PortfolioGrid.html.twig'
+              category: 'label.category_sections'
+              media_types: 'image/*'
+              media_multi_upload: true
+              priority: 55
+              pickable: true
+              cacheable: true
+
+    ui.block.cta_band:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: cta_band
+              label: "label.block_cta_band"
+              description: "label.block_cta_band_description"
+              form: c975L\UiBundle\Form\Block\CtaBandType
+              template: '@c975LUi/blocks/CtaBand.html.twig'
+              category: 'label.category_sections'
+              priority: 50
+              pickable: true
+              cacheable: true

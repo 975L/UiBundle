@@ -1,5 +1,10 @@
 # ChangeLog
 
+## v1.5.2
+
+- Added `hero`, `feature_bar`, `section_cards`, `expertise_banner`, `process_steps`, `portfolio_grid`, `cta_band` page section blocks (14/07/2026)
+- Added `Media::$url`/`Media::$description` columns, used by `portfolio_grid` (14/07/2026)
+
 ## v1.5.1
 
 - Corrected slider default layout (13/07/2026)

@@ -183,6 +183,20 @@ class MediaUploadTypeTest extends TestCase
         }
     }
 
+    // A portfolio_grid project card reuses "label" as its title and adds "description"/"url" (see
+    // Media::$description/$url) - but has no in-page position to control, hence no width/height/above
+    public function testBuildFormForPortfolioGridContextAddsTitleDescriptionAndUrlButSkipsPositioning(): void
+    {
+        $added = $this->buildFieldNames('image/*', 'portfolio_grid');
+
+        foreach (['alt', 'label', 'description', 'url', 'credits', 'rightsReserved'] as $field) {
+            $this->assertArrayHasKey($field, $added, "\"$field\" should be added for the \"portfolio_grid\" context");
+        }
+        foreach (['width', 'height', 'above'] as $field) {
+            $this->assertArrayNotHasKey($field, $added, "\"$field\" should not be added for the \"portfolio_grid\" context");
+        }
+    }
+
     // A standalone Image block (context null, e.g. the "image" kind) gets the full metadata set
     public function testBuildFormForPlainImageContextAddsEveryMetadataField(): void
     {
@@ -192,6 +206,9 @@ class MediaUploadTypeTest extends TestCase
             $this->assertArrayHasKey($field, $added, "\"$field\" should be added for a plain image context");
         }
         $this->assertSame(ImageClassChoiceType::class, $added['cssClasses']);
+        foreach (['description', 'url'] as $field) {
+            $this->assertArrayNotHasKey($field, $added, "\"$field\" is only added for the \"portfolio_grid\" context");
+        }
     }
 
     public function testConfigureOptionsDefaultsToMediaDataClassAndNullAcceptContext(): void

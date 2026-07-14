@@ -1,0 +1,28 @@
+{# Static usage: <twig:c975LUi:Portfolio:Grid media="{{ block.media }}" [eyebrow=""] [title=""] [linkLabel=""] [linkUrl=""]/> #}
+{# Dynamic usage (Block system): see templates/blocks/PortfolioGrid.html.twig #}
+{# Per-project title/text/link come straight from each media's own label/description/url (see
+   MediaUploadType's "portfolio_grid" context) - no separate collection to keep in sync with the medias #}
+<section class="section-block portfolio-grid">
+    <div class="section-wrap">
+        <div class="portfolio-grid__head">
+            <div>
+                {% if eyebrow %}<p class="section-eyebrow">{{ eyebrow }}</p>{% endif %}
+                {% if title %}<h2 class="section-title">{{ title }}</h2>{% endif %}
+            </div>
+            {% if linkLabel %}<a class="section-btn section-btn--ghost" href="{{ linkUrl }}">{{ linkLabel }}</a>{% endif %}
+        </div>
+        <div class="portfolio-grid__grid">
+            {% for m in media %}
+                <a class="portfolio-grid__project" href="{{ m.url|default('#') }}">
+                    <div class="portfolio-grid__project-img">
+                        <img src="{{ vich_uploader_asset(m) }}" alt="{{ m.alt|default(m.label) }}">
+                    </div>
+                    <div class="portfolio-grid__project-body">
+                        <h3 class="portfolio-grid__project-title">{{ m.label }}</h3>
+                        {% if m.description %}<p class="portfolio-grid__project-text">{{ m.description }}</p>{% endif %}
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>

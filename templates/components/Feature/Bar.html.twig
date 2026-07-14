@@ -1,0 +1,9 @@
+{# Static usage: <twig:c975LUi:Feature:Bar items="{{ [{title: '...', text: '...'}] }}"/> #}
+{# Dynamic usage (Block system): see templates/blocks/FeatureBar.html.twig #}
+<section class="feature-bar">
+    <div class="feature-bar__grid">
+        {% for item in items %}
+            <div class="feature-bar__item"><b>{{ item.title }}</b>{{ item.text }}</div>
+        {% endfor %}
+    </div>
+</section>

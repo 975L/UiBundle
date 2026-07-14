@@ -123,6 +123,14 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
     #[ORM\Column(options: ['default' => false])]
     private bool $rightsReserved = false;
 
+    // Per-media outbound link/caption pair, exposed by MediaUploadType's "portfolio_grid" context
+    // (see PortfolioGridType) - a project card's title reuses the existing $label field instead
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $url = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
     #[ORM\ManyToOne]
     private ?User $user = null;
 
@@ -332,6 +340,30 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
     public function setRightsReserved(?bool $rightsReserved): self
     {
         $this->rightsReserved = $rightsReserved ?? false;
+
+        return $this;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(?string $url): self
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }

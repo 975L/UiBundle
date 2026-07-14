@@ -1,0 +1,23 @@
+{# Static usage: <twig:c975LUi:Section:Cards cards="{{ [{icon: '', title: '...', text: '...'}] }}" [eyebrow=""] [title=""]/> #}
+{# Dynamic usage (Block system): see templates/blocks/SectionCards.html.twig #}
+<section class="section-block section-cards-section">
+    <div class="section-wrap">
+        {% if eyebrow or title %}
+            <div class="section-head">
+                {% if eyebrow %}<p class="section-eyebrow">{{ eyebrow }}</p>{% endif %}
+                {% if title %}<h2 class="section-title">{{ title }}</h2>{% endif %}
+            </div>
+        {% endif %}
+        <div class="section-cards">
+            {% for c in cards %}
+                <article class="section-card">
+                    {% if c.icon %}
+                        <div class="section-card__icon"><twig:c975LUi:Image:Icon src="{{ c.icon }}" width="22" height="22"/></div>
+                    {% endif %}
+                    <h3 class="section-card__title">{{ c.title }}</h3>
+                    <p class="section-card__text">{{ c.text|raw }}</p>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
