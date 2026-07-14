@@ -1,5 +1,9 @@
 # ChangeLog
 
+## v1.5.4
+
+- Added test to trigger deprecations (14/07/2026)
+
 ## v1.5.3
 
 - Suppressed DependencyInjection/Configuration.php as not needed (14/07/2026)

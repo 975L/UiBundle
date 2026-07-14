@@ -151,6 +151,6 @@ class BlockExtensionTest extends TestCase
 
         $this->assertCount(1, $functions);
         $this->assertSame('render_block', $functions[0]->getName());
-        $this->assertSame(['html'], $functions[0]->getSafe(new \Twig\Node\Node()));
+        $this->assertSame(['html'], $functions[0]->getSafe(new \Twig\Node\TextNode('', 0)));
     }
 }
