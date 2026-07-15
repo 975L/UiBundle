@@ -33,38 +33,51 @@
 {% block main %}
     <p>{{ 'label.block_gallery_info'|trans({}, 'ui') }}</p>
 
-    {% for category, items in previews %}
-        <h2 class="block-gallery-category">{{ category }}</h2>
-        <div class="block-gallery-grid">
+    {# Single pass over "previews": tocItems is collected as a side effect while the cards themselves are
+       captured into cardsHtml, so both the table of contents and the listing come from walking the
+       (category -> kind -> item) structure once, not twice. #}
+    {% set tocItems = [] %}
+    {% set cardsHtml %}
+        {% for category, items in previews %}
+            <h2 class="block-gallery-category">{{ category }}</h2>
             {% for key, item in items %}
-                <div class="block-gallery-item{{ item.wide|default(false) ? ' block-gallery-item--wide' : '' }}" id="block-{{ key }}">
+                {% set tocItems = tocItems|merge([{key: key, label: item.label}]) %}
+                <div class="block-gallery-item" id="block-{{ key }}">
                     <h3 class="block-gallery-item__title">{{ item.label }}</h3>
+                    {% if item.kind %}
+                        <p class="block-gallery-item__slug text-muted">({{ item.kind }})</p>
+                    {% endif %}
                     {% if item.description %}
                         <p class="block-gallery-item__description text-muted">{{ item.description }}</p>
                     {% endif %}
-                    {# Grouped so leftover vertical space (e.g. a row-mate stretching this card taller
-                       than its own content) centers the preview(s) instead of pinning them to the top #}
-                    <div class="block-gallery-item__previews">
-                        {% if item.variants|length > 0 %}
-                            {% for variantLabel, variant in item.variants %}
-                                <div class="block-gallery-item__preview">
-                                    {% if variantLabel %}
-                                        <p class="block-gallery-item__variant text-muted">{{ variantLabel }}</p>
-                                    {% endif %}
-                                    {{ gallery.previewIframe(
-                                        'block' == variant.type ? render_block(variant.content) : variant.content,
-                                        item.label ~ (variantLabel ? ' - ' ~ variantLabel : '')
-                                    ) }}
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="block-gallery-item__preview">
-                                <p class="block-gallery-item__empty text-muted">{{ 'label.block_gallery_no_example'|trans({}, 'ui') }}</p>
+
+                    {% if item.variants|length > 0 %}
+                        {% for variantLabel, variant in item.variants %}
+                            <div class="block-gallery-item__frame">
+                                {% if variantLabel %}
+                                    <p class="block-gallery-item__variant text-muted">{{ variantLabel }}</p>
+                                {% endif %}
+                                {{ gallery.previewIframe(
+                                    'block' == variant.type ? render_block(variant.content) : variant.content,
+                                    item.label ~ (variantLabel ? ' - ' ~ variantLabel : '')
+                                ) }}
                             </div>
-                        {% endif %}
-                    </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="block-gallery-item__empty text-muted">{{ 'label.block_gallery_no_example'|trans({}, 'ui') }}</p>
+                    {% endif %}
                 </div>
             {% endfor %}
-        </div>
-    {% endfor %}
+        {% endfor %}
+    {% endset %}
+
+    {# One flat table of contents across every category, mirroring 975l.com's public "vitrine des
+       blocks" page - a long alphabetic scroll of 30+ kinds is hard to navigate without it #}
+    <ul class="block-gallery-toc">
+        {% for tocItem in tocItems %}
+            <li><a href="#block-{{ tocItem.key }}">{{ tocItem.label }}</a></li>
+        {% endfor %}
+    </ul>
+
+    {{ cardsHtml|raw }}
 {% endblock %}

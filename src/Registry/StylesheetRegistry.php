@@ -34,4 +34,12 @@ class StylesheetRegistry
 
         return $stylesheets;
     }
+
+    // Whether a registered stylesheet path is an absolute/external URL (a CDN resource like
+    // cookieconsent.min.css) rather than a local public/ path resolved through Symfony's asset package -
+    // shared by StylesheetExtension and StylesheetCacheWarmer so "what counts as external" stays defined once
+    public static function isExternal(string $path): bool
+    {
+        return str_starts_with($path, 'http');
+    }
 }

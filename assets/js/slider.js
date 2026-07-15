@@ -445,6 +445,7 @@ export default class extends Controller {
     // .slider-list scrolls natively (overflow-x: auto + scroll-snap, see _slider.scss) - this
     // just drives that scroll and updates dots/video state, like the default slider's displaySlide
     displaySlideFreeflow(sliderId, number, announceChange = true) {
+        const list = document.querySelector(`#${sliderId} .slider-list`);
         const slides = document.querySelectorAll(`#${sliderId} .slider-item`);
         const dots = document.querySelectorAll(`#${sliderId} .slider-dot`);
 
@@ -456,7 +457,15 @@ export default class extends Controller {
         const currentSlide = slides[this.slideIndex - 1];
         const newSlide = slides[index - 1];
 
-        newSlide.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+        // Scrolls only the slider's own horizontal list (scroll-snap-align: start on .slider-item
+        // takes care of exact alignment). Deliberately not newSlide.scrollIntoView(): its "block"
+        // axis climbs ancestor scrollers, including the page itself, and yanks the page back to
+        // the slider whenever autoplay changes the slide while the user has scrolled away from it.
+        if (list) {
+            const listRect = list.getBoundingClientRect();
+            const slideRect = newSlide.getBoundingClientRect();
+            list.scrollTo({ left: list.scrollLeft + (slideRect.left - listRect.left), behavior: "smooth" });
+        }
 
         dots.forEach((dot, idx) => {
             if (idx === index - 1) {

@@ -1,5 +1,26 @@
 # ChangeLog
 
+## v1.6
+
+- Added `image_compare` block: draggable before/after image comparison slider (15/07/2026)
+- Added `StylesheetCacheWarmer`: compiles registered stylesheets to `bundles/build/site.css`/`admin.css` outside `kernel.debug` (15/07/2026)
+- Added `BlockRegistry::getBundle()`/`groupedByBundle()`, grouping block kinds by originating bundle (15/07/2026)
+- Changed block gallery access role from `ROLE_SUPER_ADMIN` to `ROLE_EDITOR` (15/07/2026)
+- Changed Media library `New` action to `ROLE_SUPER_ADMIN`, bumped max upload size to 100M (15/07/2026)
+- Added `BlockUserListener::preUpdate()`, tracking the last editor instead of only the creator (15/07/2026)
+- Fixed `Media::isOgImage()` false-positive on any role-less/block-less Media (15/07/2026)
+- Fixed freeflow slider autoplay scrolling the whole page instead of just its own slide list (15/07/2026)
+- Removed custom composer `vendor-dir`, back to standard `vendor/` (15/07/2026)
+- Fixed the compiled `bundles/build/site.css` URL not busting caches across deploys, now versioned by the compiled file's own mtime (15/07/2026)
+- Suppressed duplication between `BlockRegistry::groupedByCategory()`/`groupedByBundle()`, now sharing a private `groupBy()` helper (15/07/2026)
+- Added `BlockIdGenerator`, shared by `SliderType`/`ImageCompareType` instead of each duplicating the same id-generation line (15/07/2026)
+- Changed block gallery to a full-width single-column layout with a jump-to table of contents, instead of a grid of fixed-width cards (15/07/2026)
+- Added `BlockFixtureMediaAttacher`, a shared service attaching placeholder media to fixture blocks - reused by any consuming app's own block showcase, not just the gallery (15/07/2026)
+- Changed block gallery placeholder media to a rotating pool of real photos/video/audio, instead of a single generic image (15/07/2026)
+- Changed slider `freeflow` gallery preview to 5 images instead of 3 (15/07/2026)
+- Fixed `video_iframe` gallery preview autoplaying with sound, now muted (15/07/2026)
+- Fixed `expertise_banner` text color turning black on its dark background for unclassed rich-text content (15/07/2026)
+
 ## v1.5.4
 
 - Added test to trigger deprecations (14/07/2026)

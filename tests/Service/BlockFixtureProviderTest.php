@@ -9,7 +9,7 @@
 
 namespace c975L\UiBundle\Tests\Service;
 
-use c975L\UiBundle\Controller\Management\BlockGalleryController;
+use c975L\UiBundle\Service\BlockFixtureMediaAttacher;
 use c975L\UiBundle\Service\BlockFixtureProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -20,13 +20,13 @@ class BlockFixtureProviderTest extends TestCase
         $fixtures = (new BlockFixtureProvider())->getFixtures();
 
         $this->assertSame(
-            ['alert', 'audio', 'article', 'banner_title', 'button', 'card', 'image', 'progress_bar', 'rich_snippet', 'slider', 'text_readmore', 'text_section', 'video', 'video_iframe', 'hero', 'feature_bar', 'section_cards', 'expertise_banner', 'process_steps', 'portfolio_grid', 'cta_band'],
+            ['alert', 'audio', 'article', 'banner_title', 'button', 'card', 'image', 'image_compare', 'progress_bar', 'rich_snippet', 'slider', 'text_readmore', 'text_section', 'video', 'video_iframe', 'hero', 'feature_bar', 'section_cards', 'expertise_banner', 'process_steps', 'portfolio_grid', 'cta_band'],
             array_keys($fixtures)
         );
     }
 
     // "audio"'s type must match one of AudioType's real choices - its media is auto-attached generically
-    // by BlockGalleryController (any "audio/*" mediaType), so the fixture only needs the "type" field
+    // by BlockFixtureMediaAttacher (any "audio/*" mediaType), so the fixture only needs the "type" field
     public function testAudioFixtureUsesARealFormatChoice(): void
     {
         $fixtures = (new BlockFixtureProvider())->getFixtures();
@@ -38,16 +38,17 @@ class BlockFixtureProviderTest extends TestCase
     {
         $fixtures = (new BlockFixtureProvider())->getFixtures();
 
-        $this->assertSame(BlockGalleryController::PLACEHOLDER_VIDEO, $fixtures['video']['']['src']);
+        $this->assertSame(BlockFixtureMediaAttacher::PLACEHOLDER_VIDEO, $fixtures['video']['']['src']);
     }
 
-    // video_iframe just renders any URL in an <iframe> (see Video/Iframe.html.twig), so the same
-    // self-hosted placeholder video works fine here too
-    public function testVideoIframeFixtureReusesTheSharedPlaceholderVideoAsset(): void
+    // video_iframe just renders any URL in an <iframe> (see Video/Iframe.html.twig) - a raw video file
+    // navigated to directly would autoplay with sound via the browser's own player, so this uses the
+    // muted HTML wrapper instead of PLACEHOLDER_VIDEO directly
+    public function testVideoIframeFixtureUsesTheMutedVideoEmbedWrapper(): void
     {
         $fixtures = (new BlockFixtureProvider())->getFixtures();
 
-        $this->assertSame(BlockGalleryController::PLACEHOLDER_VIDEO, $fixtures['video_iframe']['']['src']);
+        $this->assertSame(BlockFixtureMediaAttacher::PLACEHOLDER_VIDEO_EMBED, $fixtures['video_iframe']['']['src']);
     }
 
     // alert has 4 style choices (info/success/warning/danger) - all shown side by side in the gallery
@@ -75,7 +76,7 @@ class BlockFixtureProviderTest extends TestCase
     {
         $fixtures = (new BlockFixtureProvider())->getFixtures();
 
-        foreach (['audio', 'article', 'banner_title', 'card', 'image', 'progress_bar', 'rich_snippet', 'text_readmore', 'text_section', 'video', 'video_iframe', 'hero', 'feature_bar', 'section_cards', 'expertise_banner', 'process_steps', 'portfolio_grid', 'cta_band'] as $kind) {
+        foreach (['audio', 'article', 'banner_title', 'card', 'image', 'image_compare', 'progress_bar', 'rich_snippet', 'text_readmore', 'text_section', 'video', 'video_iframe', 'hero', 'feature_bar', 'section_cards', 'expertise_banner', 'process_steps', 'portfolio_grid', 'cta_band'] as $kind) {
             $this->assertSame([''], array_keys($fixtures[$kind]), "Kind \"{$kind}\" should have a single unlabelled variant");
         }
     }

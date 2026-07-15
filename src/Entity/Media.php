@@ -370,14 +370,13 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
 
     public function getImageWidth(): int
     {
-        // The site-wide og-image (role=og-image) and a Page's own og-image override (role=null, no Block)
-        // share the same target width - kept lighter than the 1200px social platforms often suggest,
+        // The site-wide default og-image - kept lighter than the 1200px social platforms often suggest,
         // well above their minimum (~200px)
         if ($this->isOgImage()) {
             return 600;
         }
 
-        return self::MAX_WIDTHS[$this->role] ?? self::IMAGE_WIDTH;
+        return self::MAX_WIDTHS[$this->role ?? ''] ?? self::IMAGE_WIDTH;
     }
 
     // Non-null only for roles needing a fixed target size/format (see FIXED_ICON_SPECS)
@@ -402,10 +401,14 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
         }
     }
 
-    // True for the site-wide default og-image and for a Page's own og-image override (see getVichMediaPath)
+    // True only for the site-wide default og-image (role=og-image). A Page's own og-image override and a
+    // library Media added via MediaCrudController's New action (see c975L\UiBundle\Controller\Management\
+    // MediaCrudController) share the exact same role=null/block=null state and are indistinguishable here -
+    // UiBundle has no visibility into a Page's own fields (see MediaUsageProviderInterface) - so neither
+    // gets the og-image-specific width override, only the true site-wide singleton does
     public function isOgImage(): bool
     {
-        return self::ROLE_OG_IMAGE === $this->role || (null === $this->role && null === $this->block);
+        return self::ROLE_OG_IMAGE === $this->role;
     }
 
     // Singleton roles (favicon, logo...) only, repeatable roles (error-image) share filename naming with block medias

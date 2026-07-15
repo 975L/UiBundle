@@ -28,8 +28,11 @@ interface GalleryShowcaseProviderInterface
     // is tagged with in services.yaml groups it there instead of the generic fallback). Takes precedence
     // over "kind" when both are set. Neither set falls back to a generic category.
     //
-    // "wide" (default false) renders this card wider - set it when the underlying component only applies
-    // its real styles above a CSS breakpoint (e.g. share_buttons() hides itself entirely below 768px),
-    // which a normal card's width would never reach.
+    // "wide" (default false): originally rendered this card wider than the gallery's old fixed-width
+    // cards, for a component whose real styles only apply above a CSS breakpoint (e.g. share_buttons()
+    // hides itself entirely below 768px). Since the gallery now renders every item full-width (see
+    // block_gallery.html.twig), this flag is currently a no-op there - kept in the contract so a provider
+    // that already sets it (e.g. SocialBundle's share_buttons()) doesn't break, and any other consumer of
+    // GalleryShowcaseRegistry's data (e.g. a future non-EasyAdmin listing) can still honor it.
     public function getShowcases(): array;
 }

@@ -12,6 +12,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use c975L\UiBundle\Form\BlockClassChoiceType;
+use c975L\UiBundle\Form\Util\BlockIdGenerator;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -72,7 +73,7 @@ class SliderType extends AbstractType
                 // instead would force this value on every render, silently discarding the saved value of
                 // an existing slider (Symfony's "data" option always overrides the underlying model data)
                 if (!isset($data['id']) || '' === $data['id']) {
-                    $data['id'] = 'slider-' . bin2hex(random_bytes(4));
+                    $data['id'] = BlockIdGenerator::generate('slider');
                 }
                 if (!isset($data['duration'])) {
                     $data['duration'] = 0;

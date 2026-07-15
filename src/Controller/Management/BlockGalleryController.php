@@ -9,10 +9,10 @@
 namespace c975L\UiBundle\Controller\Management;
 
 use c975L\UiBundle\Entity\Block;
-use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Registry\BlockFixtureRegistry;
 use c975L\UiBundle\Registry\BlockRegistry;
 use c975L\UiBundle\Registry\GalleryShowcaseRegistry;
+use c975L\UiBundle\Service\BlockFixtureMediaAttacher;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,16 +25,16 @@ class BlockGalleryController extends AbstractController
     // c975L\UiBundle\Management\MenuProvider to link to this page from the EasyAdmin sidebar
     public const GALLERY_ROUTE = 'management_ui_block_gallery';
 
-    // Static assets shipped by this bundle (see public/images, public/videos and public/audio), used as
-    // stand-ins wherever a block's fixture needs media - no real upload/Media persistence needed
-    public const PLACEHOLDER_IMAGE = 'bundles/c975lui/images/gallery-placeholder.svg';
-    public const PLACEHOLDER_VIDEO = 'bundles/c975lui/videos/gallery-placeholder.mp4';
-    public const PLACEHOLDER_AUDIO = 'bundles/c975lui/audio/gallery-placeholder.mp3';
+    // Editors are the intended audience (deciding which kind to pick before adding a real block) - not
+    // ConfigBundle-driven like other c975L CRUDs' roles, since UiBundle can't depend on ConfigBundle
+    // (ConfigBundle already depends on UiBundle); apps wanting that stay dynamic, override this controller
+    private const ROLE_NEEDED = 'ROLE_EDITOR';
 
     public function __construct(
         private readonly BlockRegistry $registry,
         private readonly BlockFixtureRegistry $fixtures,
         private readonly GalleryShowcaseRegistry $showcases,
+        private readonly BlockFixtureMediaAttacher $mediaAttacher,
         private readonly TranslatorInterface $translator,
     ) {
     }
@@ -48,7 +48,7 @@ class BlockGalleryController extends AbstractController
     #[AdminRoute(path: '/ui/block/gallery', name: 'ui_block_gallery', options: ['methods' => ['GET']])]
     public function gallery(): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+        $this->denyAccessUnlessGranted(self::ROLE_NEEDED);
 
         return $this->render('@c975LUi/management/block_gallery.html.twig', [
             'previews' => $this->buildPreviews(),
@@ -59,6 +59,7 @@ class BlockGalleryController extends AbstractController
     // Split out from gallery() so the merge/suppression logic can be unit-tested without a full request.
     private function buildPreviews(): array
     {
+        $this->mediaAttacher->reset();
         $showcases = $this->showcases->all();
         $replacedKinds = array_filter(array_column($showcases, 'kind'));
 
@@ -73,6 +74,7 @@ class BlockGalleryController extends AbstractController
             $category = $this->registry->getCategory($kind);
             $previews[$category][$kind] = [
                 'label' => $this->registry->getLabel($kind),
+                'kind' => $kind,
                 'description' => $this->registry->getDescription($kind),
                 // variantLabel => ['type' => 'block', 'content' => Block] - empty when the kind has no fixture yet
                 'variants' => $this->buildBlockVariants($kind),
@@ -86,6 +88,7 @@ class BlockGalleryController extends AbstractController
                 ?? $otherCategory;
             $previews[$category][$label] = [
                 'label' => $label,
+                'kind' => $showcase['kind'] ?? null,
                 'description' => $showcase['description'] ?? '',
                 // Some components only style themselves above a CSS breakpoint (e.g. share_buttons()
                 // hides below 768px, mobile has its own native share sheet) - "wide" renders this card's
@@ -110,93 +113,18 @@ class BlockGalleryController extends AbstractController
 
     // One in-memory, never-persisted Block per registered variant (see BlockFixtureProviderInterface) -
     // each passed to render_block() exactly like a real block would be. Empty array when the kind has
-    // no fixture yet, so the gallery falls back to its "no example yet" card.
+    // no fixture yet, so the gallery falls back to its "no example yet" card. Media attachment itself is
+    // delegated to BlockFixtureMediaAttacher, a public UiBundle service - shared with any consuming app's
+    // own showcase page (e.g. 975l.com's /vitrine-blocks) instead of being gallery-only logic.
     private function buildBlockVariants(string $kind): array
     {
         $variants = [];
         foreach ($this->fixtures->get($kind) as $variantLabel => $data) {
             $block = (new Block())->setKind($kind)->setData($data);
-
-            // portfolio_grid needs several distinctly-captioned project cards to look like a real grid,
-            // not just extra copies of the generic placeholder (see placeholderPortfolioProjects())
-            if ('portfolio_grid' === $kind) {
-                foreach ($this->placeholderPortfolioProjects() as $project) {
-                    $block->addMedia($project);
-                }
-            } else {
-                foreach ($this->registry->getMediaTypes($kind) as $mediaType) {
-                    if (str_starts_with($mediaType, 'image/')) {
-                        // "slider" needs several images to look like one; every other image-typed kind
-                        // only ever reads its first media (see e.g. blocks/Image.html.twig). The slider
-                        // also mixes in one video slide below to showcase its mixed-media support.
-                        $count = 'slider' === $kind ? 2 : 1;
-                        for ($i = 0; $i < $count; ++$i) {
-                            $block->addMedia($this->placeholderImage());
-                        }
-                        if ('slider' !== $kind) {
-                            break;
-                        }
-                    }
-
-                    if ('slider' === $kind && str_starts_with($mediaType, 'video/')) {
-                        $block->addMedia($this->placeholderVideo());
-                    }
-
-                    if (str_starts_with($mediaType, 'audio/')) {
-                        $block->addMedia($this->placeholderAudio());
-                        break;
-                    }
-                }
-            }
-
+            $this->mediaAttacher->attach($block, $kind, $variantLabel);
             $variants[$variantLabel] = ['type' => 'block', 'content' => $block];
         }
 
         return $variants;
-    }
-
-    // @return Media[]
-    private function placeholderPortfolioProjects(): array
-    {
-        $projects = [
-            ['Papa Câlin', "Des histoires inventées à partir des idées d'enfants."],
-            ['EIPT', 'École informatique pour tous, de la primaire aux seniors.'],
-            ['Éditions Lolant', 'Le catalogue des livres publiés par la maison.'],
-        ];
-
-        return array_map(
-            static fn (array $project): Media => (new Media())
-                ->setFilename(self::PLACEHOLDER_IMAGE)
-                ->setAlt($project[0])
-                ->setLabel($project[0])
-                ->setDescription($project[1])
-                ->setUrl('https://975l.com'),
-            $projects
-        );
-    }
-
-    private function placeholderImage(): Media
-    {
-        return (new Media())
-            ->setFilename(self::PLACEHOLDER_IMAGE)
-            ->setAlt('Image d\'exemple')
-            ->setWidth('800')
-            ->setHeight('450');
-    }
-
-    private function placeholderVideo(): Media
-    {
-        return (new Media())
-            ->setFilename(self::PLACEHOLDER_VIDEO)
-            ->setMimeType('video/mp4')
-            ->setAlt('Vidéo d\'exemple');
-    }
-
-    private function placeholderAudio(): Media
-    {
-        return (new Media())
-            ->setFilename(self::PLACEHOLDER_AUDIO)
-            ->setMimeType('audio/mpeg')
-            ->setAlt('Audio d\'exemple');
     }
 }

@@ -161,6 +161,87 @@ class BlockRegistryTest extends TestCase
         $this->assertFalse($registry->isCacheable('contact_form'));
     }
 
+    public function testGetBundleReturnsRegisteredValue(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('legal_model', 'label.legal_model', ArticleFormStub::class, '@c975LSite/blocks/LegalModel.html.twig', bundle: 'Site');
+
+        $this->assertSame('Site', $registry->getBundle('legal_model'));
+    }
+
+    public function testGetBundleDefaultsToEmptyString(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('article', 'label.article', ArticleFormStub::class, 'article.html.twig');
+
+        $this->assertSame('', $registry->getBundle('article'));
+    }
+
+    // Same grouping/ordering rules as groupedByCategory(), but keyed by bundle instead
+    public function testGroupedByBundleGroupsAndOrdersEntries(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('hero', 'label.hero', ArticleFormStub::class, 'hero.html.twig', bundle: 'Ui', priority: 10);
+        $registry->register('alert', 'label.alert', ArticleFormStub::class, 'alert.html.twig', bundle: 'Ui');
+        $registry->register('legal_model', 'label.legal_model', ArticleFormStub::class, 'legal.html.twig', bundle: 'Site');
+
+        $grouped = $registry->groupedByBundle();
+
+        $this->assertSame(['Site', 'Ui'], array_keys($grouped));
+        $this->assertSame(['hero', 'alert'], array_values($grouped['Ui']));
+    }
+
+    public function testGroupedByBundleExcludesNonPickableKinds(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('article', 'label.article', ArticleFormStub::class, 'article.html.twig', bundle: 'Ui');
+        $registry->register('social_links', 'label.social_links', ArticleFormStub::class, 'social.html.twig', bundle: 'Social', pickable: false);
+
+        $grouped = $registry->groupedByBundle();
+
+        $this->assertArrayHasKey('Ui', $grouped);
+        $this->assertArrayNotHasKey('Social', $grouped);
+    }
+
+    // groupedByBundle() is memoized independently from groupedByCategory()
+    public function testGroupedByBundleResultIsCached(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('article', 'label.article', ArticleFormStub::class, 'article.html.twig', bundle: 'Ui');
+        $first = $registry->groupedByBundle();
+
+        $registry->register('video', 'label.video', ArticleFormStub::class, 'video.html.twig', bundle: 'Ui');
+        $second = $registry->groupedByBundle();
+
+        $this->assertSame($first, $second);
+    }
+
+    // Same contexts filtering rules as groupedByCategory(): a kind restricted to a context only
+    // appears when that context is asked for
+    public function testGroupedByBundleExcludesKindsRestrictedToOtherContexts(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('menu_link', 'label.menu_link', ArticleFormStub::class, 'menu_link.html.twig', bundle: 'Ui', contexts: ['menu']);
+
+        $forPage = $registry->groupedByBundle('page');
+        $forMenu = $registry->groupedByBundle('menu');
+
+        $this->assertArrayNotHasKey('Ui', $forPage);
+        $this->assertArrayHasKey('Ui', $forMenu);
+    }
+
+    // Each distinct $context is cached separately, same as groupedByCategory()
+    public function testGroupedByBundleCachesPerContext(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('menu_link', 'label.menu_link', ArticleFormStub::class, 'menu_link.html.twig', bundle: 'Ui', contexts: ['menu']);
+
+        $registry->groupedByBundle('menu');
+        $forPage = $registry->groupedByBundle('page');
+
+        $this->assertArrayNotHasKey('Ui', $forPage);
+    }
+
     public function testAllReturnsEveryRegisteredBlockConfig(): void
     {
         $registry = new BlockRegistry($this->createTranslator());

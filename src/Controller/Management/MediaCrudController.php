@@ -37,6 +37,10 @@ class MediaCrudController extends AbstractCrudController
     // standalone) - apps wanting the same dynamic role as other c975L CRUDs can override this controller
     private const ROLE_NEEDED = 'ROLE_ADMIN';
 
+    // Kept in line with php.ini's upload_max_filesize/post_max_size - MediaUploadType (the Block-attached
+    // upload form) has no such constraint of its own and simply relies on those same ini limits
+    private const MAX_FILE_SIZE = '100M';
+
     public function __construct(
         private readonly MediaUsageRegistry $mediaUsageRegistry,
     ) {
@@ -76,19 +80,21 @@ class MediaCrudController extends AbstractCrudController
             ->update(Crud::PAGE_INDEX, Action::DELETE, static fn (Action $action): Action => $action->displayIf(
                 static fn (Media $media): bool => null === $media->getRole()
             ))
-            ->disable(Action::NEW)
+            // Creating a Media with no Block (e.g. for a bundle showcase) is reserved to super admins -
+            // regular admins keep adding media the normal way, through a Block's own form
+            ->setPermission(Action::NEW, 'ROLE_SUPER_ADMIN')
         ;
     }
 
     public function configureFields(string $pageName): iterable
     {
         return [
-            // Shown on Detail (role-set rows, whose Edit action is hidden below) and Edit (NEW is
-            // disabled, so no NEW page to worry about here) - the index is a flat thumbnail gallery
-            // (see media_index.html.twig), not a table of fields, so this stays off it either way.
-            // Detail uses formatValue()+templatePath (EasyAdmin's normal read-only rendering); Edit
-            // needs setFormType() instead - formatValue()/templatePath are never applied to New/Edit
-            // forms, which otherwise fall back to rendering the raw "id" as an editable number input
+            // Shown on Detail (role-set rows, whose Edit action is hidden below), Edit and New - the
+            // index is a flat thumbnail gallery (see media_index.html.twig), not a table of fields, so
+            // this stays off it either way. Detail uses formatValue()+templatePath (EasyAdmin's normal
+            // read-only rendering); New/Edit need setFormType() instead - formatValue()/templatePath are
+            // never applied to New/Edit forms, which otherwise fall back to rendering the raw "id" as an
+            // editable number input. On New, MediaUsagesType simply has nothing to show yet (no id).
             Field::new('id')
                 ->setLabel(t('label.used_in', [], 'ui'))
                 ->formatValue(fn ($value, Media $media): array => $this->mediaUsageRegistry
@@ -111,7 +117,7 @@ class MediaCrudController extends AbstractCrudController
                     // key here - same fix already applied in MediaUploadType for the Block forms
                     'delete_label_translation_domain' => 'messages',
                     'constraints' => [
-                        new FileConstraint(maxSize: '2M'),
+                        new FileConstraint(maxSize: self::MAX_FILE_SIZE),
                     ],
                 ])
                 ->onlyOnForms(),

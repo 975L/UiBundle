@@ -9,7 +9,6 @@
 namespace c975L\UiBundle\Service;
 
 use c975L\UiBundle\Contract\BlockFixtureProviderInterface;
-use c975L\UiBundle\Controller\Management\BlockGalleryController;
 
 // Sample data for UiBundle's own built-in block kinds, shown in the block gallery (see
 // BlockGalleryController).
@@ -80,6 +79,15 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
             'image' => [
                 '' => [],
             ],
+            'image_compare' => [
+                '' => [
+                    'id' => 'image-compare-preview',
+                    'startPosition' => 50,
+                    'beforeLabel' => 'Avant',
+                    'afterLabel' => 'Après',
+                    'class' => [],
+                ],
+            ],
             'progress_bar' => [
                 '' => [
                     'progressPercent' => 65,
@@ -121,7 +129,7 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
             'text_readmore' => [
                 '' => [
                     'id' => 'readmore-exemple',
-                    'text' => '<p>Texte replié, cliquez pour en savoir plus...</p>',
+                    'text' => '<p>Texte replié, cliquez pour en savoir plus...</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p><p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Curabitur pretium tincidunt lacus, ut interdum tellus elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p><p>Praesent auctor purus luctus enim egestas, ac scelerisque ante pulvinar. Donec ut rhoncus ex. Suspendisse ac rhoncus nisl, eu tempor urna. Curabitur vel bibendum lorem. Morbi convallis convallis diam sit amet lacinia.</p><p>Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu.</p>',
                 ],
             ],
             'text_section' => [
@@ -134,7 +142,7 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
             ],
             'video' => [
                 '' => [
-                    'src' => BlockGalleryController::PLACEHOLDER_VIDEO,
+                    'src' => BlockFixtureMediaAttacher::PLACEHOLDER_VIDEO,
                     'type' => 'video/mp4',
                     'poster' => '',
                     'autoplay' => false,
@@ -149,7 +157,9 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
             // works fine here too (browsers show their native player for a media file in an iframe)
             'video_iframe' => [
                 '' => [
-                    'src' => BlockGalleryController::PLACEHOLDER_VIDEO,
+                    // Not PLACEHOLDER_VIDEO directly - a raw video file navigated to in an <iframe> plays
+                    // with sound via the browser's own native player; this wraps it in a muted <video>
+                    'src' => BlockFixtureMediaAttacher::PLACEHOLDER_VIDEO_EMBED,
                     'width' => '560',
                     'height' => '315',
                     'class' => [],

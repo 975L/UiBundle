@@ -48,4 +48,14 @@ class StylesheetRegistryTest extends TestCase
 
         $this->assertSame(['a.css', 'b.css', 'c.css'], $registry->all());
     }
+
+    public function testIsExternalIsTrueForAnHttpUrl(): void
+    {
+        $this->assertTrue(StylesheetRegistry::isExternal('https://cdn.example.com/lib.css'));
+    }
+
+    public function testIsExternalIsFalseForALocalPath(): void
+    {
+        $this->assertFalse(StylesheetRegistry::isExternal('bundles/c975lui/css/styles.min.css'));
+    }
 }

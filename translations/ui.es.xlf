@@ -326,6 +326,10 @@
                 <source>label.icon_path</source>
                 <target>Ruta del Icono (opcional)</target>
             </trans-unit>
+            <trans-unit id="198">
+                <source>label.id</source>
+                <target>ID</target>
+            </trans-unit>
             <trans-unit id="79">
                 <source>label.identifier</source>
                 <target>Identificador</target>
@@ -789,6 +793,34 @@
             <trans-unit id="197">
                 <source>label.link_label</source>
                 <target>Texto del enlace</target>
+            </trans-unit>
+            <trans-unit id="199">
+                <source>label.block_image_compare</source>
+                <target>Comparador antes/después</target>
+            </trans-unit>
+            <trans-unit id="200">
+                <source>label.block_image_compare_description</source>
+                <target>Control deslizante para comparar dos imágenes, antes/después</target>
+            </trans-unit>
+            <trans-unit id="201">
+                <source>label.start_position</source>
+                <target>Posición inicial</target>
+            </trans-unit>
+            <trans-unit id="202">
+                <source>label.start_position_help</source>
+                <target>Posición inicial del control de comparación, en porcentaje (0 a 100)</target>
+            </trans-unit>
+            <trans-unit id="203">
+                <source>label.before_label</source>
+                <target>Etiqueta Antes</target>
+            </trans-unit>
+            <trans-unit id="204">
+                <source>label.after_label</source>
+                <target>Etiqueta Después</target>
+            </trans-unit>
+            <trans-unit id="205">
+                <source>label.compare_position</source>
+                <target>Posición del control de comparación</target>
             </trans-unit>
         </body>
     </file>

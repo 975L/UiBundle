@@ -18,6 +18,7 @@ class BlockRegistry
     private array $descriptionCache = [];
     private array $categoryCache = [];
     private array $groupedCache = [];
+    private array $groupedByBundleCache = [];
 
     public function __construct(private TranslatorInterface $translator)
     {
@@ -37,7 +38,8 @@ class BlockRegistry
         bool $cacheable = true,
         array $contexts = [],
         bool $mediaRequired = false,
-        bool $multiUpload = false
+        bool $multiUpload = false,
+        string $bundle = ''
     ): void {
         $this->blocks[$kind] = [
             'label'         => $label,
@@ -53,6 +55,7 @@ class BlockRegistry
             'contexts'      => $contexts,
             'mediaRequired' => $mediaRequired,
             'multiUpload'   => $multiUpload,
+            'bundle'        => $bundle,
         ];
     }
 
@@ -89,6 +92,13 @@ class BlockRegistry
         }
 
         return $this->categoryCache[$kind];
+    }
+
+    // Gets the bundle a block kind was registered from (derived from its template's Twig namespace by
+    // BlockRegistryPass, e.g. "Ui", "Site", "Social" - empty when that derivation failed)
+    public function getBundle(string $kind): string
+    {
+        return $this->get($kind)['bundle'];
     }
 
     public function get(string $kind): array
@@ -163,9 +173,25 @@ class BlockRegistry
     // working unchanged.
     public function groupedByCategory(?string $context = null): array
     {
+        return $this->groupBy(fn (string $kind) => $this->getCategory($kind), $context, $this->groupedCache);
+    }
+
+    // Same grouping/filtering as groupedByCategory(), but by originating bundle instead of functional
+    // category - used to build a showcase page per bundle (e.g. 975l.com's public block demo) instead
+    // of the kind-picker's functional grouping. Kinds with no derivable bundle group under ''.
+    public function groupedByBundle(?string $context = null): array
+    {
+        return $this->groupBy(fn (string $kind, array $config) => $config['bundle'], $context, $this->groupedByBundleCache);
+    }
+
+    // Shared by groupedByCategory()/groupedByBundle(): groups pickable, context-eligible kinds by
+    // whatever key $keyFn returns, then orders each group by priority (highest first, alphabetical
+    // tie-break) - only the grouping key and the target cache array differ between the two callers
+    private function groupBy(callable $keyFn, ?string $context, array &$cache): array
+    {
         $cacheKey = $context ?? '';
-        if (isset($this->groupedCache[$cacheKey])) {
-            return $this->groupedCache[$cacheKey];
+        if (isset($cache[$cacheKey])) {
+            return $cache[$cacheKey];
         }
 
         $grouped = [];
@@ -176,7 +202,7 @@ class BlockRegistry
             if (null !== $context && !empty($config['contexts']) && !in_array($context, $config['contexts'], true)) {
                 continue;
             }
-            $grouped[$this->getCategory($kind)][] = [
+            $grouped[$keyFn($kind, $config)][] = [
                 'kind'     => $kind,
                 'label'    => $this->getChoiceLabel($kind),
                 'priority' => $config['priority'],
@@ -185,12 +211,12 @@ class BlockRegistry
 
         ksort($grouped, SORT_FLAG_CASE | SORT_STRING);
         // Highest priority first; alphabetical as tie-breaker so unranked (priority 0) blocks stay predictable
-        foreach ($grouped as $category => $entries) {
+        foreach ($grouped as $key => $entries) {
             usort($entries, fn (array $a, array $b) => $b['priority'] <=> $a['priority'] ?: strcasecmp($a['label'], $b['label']));
-            $grouped[$category] = array_column($entries, 'kind', 'label');
+            $grouped[$key] = array_column($entries, 'kind', 'label');
         }
 
-        return $this->groupedCache[$cacheKey] = $grouped;
+        return $cache[$cacheKey] = $grouped;
     }
 
     // Builds the "kind" choice label: name, plus a short description in parentheses when declared.

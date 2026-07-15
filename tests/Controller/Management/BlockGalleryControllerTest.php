@@ -13,6 +13,7 @@ use c975L\UiBundle\Controller\Management\BlockGalleryController;
 use c975L\UiBundle\Registry\BlockFixtureRegistry;
 use c975L\UiBundle\Registry\BlockRegistry;
 use c975L\UiBundle\Registry\GalleryShowcaseRegistry;
+use c975L\UiBundle\Service\BlockFixtureMediaAttacher;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -21,6 +22,16 @@ class BlockGalleryControllerTest extends TestCase
     private function invokeBuildPreviews(BlockGalleryController $controller): array
     {
         return (new \ReflectionMethod($controller, 'buildPreviews'))->invoke($controller);
+    }
+
+    // The gallery is meant for editors deciding which kind to pick, not restricted to super admins -
+    // regression guard for the role this controller checks in gallery()
+    public function testRoleNeededIsEditor(): void
+    {
+        $this->assertSame(
+            'ROLE_EDITOR',
+            (new \ReflectionClass(BlockGalleryController::class))->getConstant('ROLE_NEEDED')
+        );
     }
 
     private function createRegistry(array $kinds): BlockRegistry
@@ -55,7 +66,7 @@ class BlockGalleryControllerTest extends TestCase
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnCallback(static fn (string $id) => $id);
 
-        $controller = new BlockGalleryController($registry, $fixtures, $showcases, $translator);
+        $controller = new BlockGalleryController($registry, $fixtures, $showcases, new BlockFixtureMediaAttacher($registry), $translator);
         $previews = $this->invokeBuildPreviews($controller);
 
         $this->assertCount(1, $previews['Navigation'], 'menu_link should appear exactly once, via its showcase');
@@ -76,7 +87,7 @@ class BlockGalleryControllerTest extends TestCase
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnCallback(static fn (string $id) => $id);
 
-        $controller = new BlockGalleryController($registry, $fixtures, $showcases, $translator);
+        $controller = new BlockGalleryController($registry, $fixtures, $showcases, new BlockFixtureMediaAttacher($registry), $translator);
         $previews = $this->invokeBuildPreviews($controller);
 
         $this->assertArrayHasKey('label.block_gallery_other_components', $previews);
@@ -97,7 +108,7 @@ class BlockGalleryControllerTest extends TestCase
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnCallback(static fn (string $id) => $id);
 
-        $controller = new BlockGalleryController($registry, $fixtures, $showcases, $translator);
+        $controller = new BlockGalleryController($registry, $fixtures, $showcases, new BlockFixtureMediaAttacher($registry), $translator);
         $previews = $this->invokeBuildPreviews($controller);
 
         $this->assertArrayHasKey('Navigation', $previews);
@@ -118,14 +129,15 @@ class BlockGalleryControllerTest extends TestCase
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnCallback(static fn (string $id) => $id);
 
-        $controller = new BlockGalleryController($registry, $fixtures, $showcases, $translator);
+        $controller = new BlockGalleryController($registry, $fixtures, $showcases, new BlockFixtureMediaAttacher($registry), $translator);
         $previews = $this->invokeBuildPreviews($controller);
 
         $this->assertArrayHasKey('alert', $previews['Elements']);
     }
 
     // A "wide" showcase (e.g. share_buttons(), whose CSS only applies above a 768px breakpoint) carries
-    // that flag through to the merged preview item, so the template can render it in a wider card
+    // that flag through to the merged preview item - currently unused by the (now full-width) template
+    // itself, but kept for any other consumer of this data (see GalleryShowcaseProviderInterface)
     public function testWideShowcaseCarriesTheFlagThroughToThePreview(): void
     {
         $registry = $this->createRegistry([]);
@@ -138,7 +150,7 @@ class BlockGalleryControllerTest extends TestCase
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnCallback(static fn (string $id) => $id);
 
-        $controller = new BlockGalleryController($registry, $fixtures, $showcases, $translator);
+        $controller = new BlockGalleryController($registry, $fixtures, $showcases, new BlockFixtureMediaAttacher($registry), $translator);
         $previews = $this->invokeBuildPreviews($controller);
 
         $this->assertTrue($previews['label.block_gallery_other_components']['Boutons de partage']['wide']);
@@ -158,11 +170,11 @@ class BlockGalleryControllerTest extends TestCase
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnCallback(static fn (string $id) => $id);
 
-        $controller = new BlockGalleryController($registry, $fixtures, $showcases, $translator);
+        $controller = new BlockGalleryController($registry, $fixtures, $showcases, new BlockFixtureMediaAttacher($registry), $translator);
         $previews = $this->invokeBuildPreviews($controller);
 
         $block = $previews['Media']['audio']['variants']['']['content'];
-        $this->assertSame(BlockGalleryController::PLACEHOLDER_AUDIO, $block->getMedia()->first()->getFilename());
+        $this->assertSame(BlockFixtureMediaAttacher::PLACEHOLDER_AUDIO, $block->getMedia()->first()->getFilename());
     }
 
     // portfolio_grid bypasses the generic per-mediaType placeholder mechanism above: it gets several
@@ -180,7 +192,7 @@ class BlockGalleryControllerTest extends TestCase
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnCallback(static fn (string $id) => $id);
 
-        $controller = new BlockGalleryController($registry, $fixtures, $showcases, $translator);
+        $controller = new BlockGalleryController($registry, $fixtures, $showcases, new BlockFixtureMediaAttacher($registry), $translator);
         $previews = $this->invokeBuildPreviews($controller);
 
         $block = $previews['Page sections']['portfolio_grid']['variants']['']['content'];

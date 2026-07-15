@@ -57,9 +57,48 @@ class BlockRegistryPassTest extends TestCase
                 [],
                 false,
                 false,
+                '',
             ],
             $calls[0][1]
         );
+    }
+
+    // The originating bundle is derived from the template's "@c975LXxx/..." Twig namespace, not a
+    // dedicated tag attribute - every bundle already declares this namespace for its own templates
+    public function testProcessDerivesBundleFromTemplateNamespace(): void
+    {
+        $container = new ContainerBuilder();
+        $container->register(BlockRegistry::class);
+        $container->register('site.block.legal_model')->addTag('ui.block', [
+            'kind' => 'legal_model',
+            'label' => 'label.legal_model',
+            'form' => 'c975L\\SiteBundle\\Form\\Block\\LegalModelType',
+            'template' => '@c975LSite/blocks/LegalModel.html.twig',
+        ]);
+
+        (new BlockRegistryPass())->process($container);
+
+        $calls = $container->getDefinition(BlockRegistry::class)->getMethodCalls();
+        $this->assertSame('Site', $calls[0][1][14]);
+    }
+
+    // A template outside the "@c975LXxx/..." convention (or a plain path) yields an empty bundle key
+    // instead of throwing - keeps register() usable from app-level/test code that doesn't follow it
+    public function testProcessBundleIsEmptyWhenTemplateHasNoC975LNamespace(): void
+    {
+        $container = new ContainerBuilder();
+        $container->register(BlockRegistry::class);
+        $container->register('block.custom')->addTag('ui.block', [
+            'kind' => 'custom',
+            'label' => 'label.custom',
+            'form' => 'App\\Form\\CustomType',
+            'template' => '@App/blocks/custom.html.twig',
+        ]);
+
+        (new BlockRegistryPass())->process($container);
+
+        $calls = $container->getDefinition(BlockRegistry::class)->getMethodCalls();
+        $this->assertSame('', $calls[0][1][14]);
     }
 
     // media_required defaults to false and can be explicitly enabled, same boolean-flag parsing as pickable/cacheable

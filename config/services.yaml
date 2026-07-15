@@ -124,6 +124,22 @@ services:
               pickable: true
               cacheable: true
 
+    ui.block.image_compare:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: image_compare
+              label: "label.block_image_compare"
+              description: "label.block_image_compare_description"
+              form: c975L\UiBundle\Form\Block\ImageCompareType
+              template: '@c975LUi/blocks/ImageCompare.html.twig'
+              category: 'label.category_media'
+              media_types: 'image/*'
+              media_required: true
+              priority: 85
+              pickable: true
+              cacheable: true
+
     ui.block.progress_bar:
         class: stdClass
         tags:

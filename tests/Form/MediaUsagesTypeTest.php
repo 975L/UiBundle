@@ -55,6 +55,7 @@ class MediaUsagesTypeTest extends TestCase
         $type->buildView($view, $this->createForm($media), []);
 
         $this->assertSame($usages, $view->vars['usages']);
+        $this->assertSame(5, $view->vars['mediaId']);
     }
 
     public function testBuildViewSetsEmptyUsagesWhenParentDataIsNotMedia(): void
@@ -67,6 +68,7 @@ class MediaUsagesTypeTest extends TestCase
         $type->buildView($view, $this->createForm(new \stdClass()), []);
 
         $this->assertSame([], $view->vars['usages']);
+        $this->assertNull($view->vars['mediaId']);
     }
 
     public function testBuildViewSetsEmptyUsagesWhenFormHasNoParent(): void

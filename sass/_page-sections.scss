@@ -2,18 +2,26 @@
    Landing-page style section blocks: hero, feature_bar, section_cards, expertise_banner,
    process_steps, cta_band (see config/services.yaml "ui.block.*" and templates/blocks/).
 
-   UiBundle ships no :root tokens of its own - every existing partial reads CSS custom properties
-   defined by the consuming site's own theme (--button-background-primary, --card-background...).
-   These rules follow the same convention: they reuse that existing vocabulary where it already
-   fits, and introduce a few new generically-named custom properties (never a 975L-specific name
-   or hardcoded brand color) for concepts the bundle didn't need before this block family. Each one
-   ships a neutral var(--x, fallback) default so a site that hasn't themed these new keys yet still
-   gets a readable, unbroken result instead of "unstyled".
+   UiBundle ships no :root tokens of its own - every rule below reads CSS custom properties defined
+   by the consuming site's own theme (SiteBundle's sass/_variables.scss): --primary/--secondary,
+   --text/--background/--card-background, --button-background-primary-dark/-light, --font-family-*,
+   plus the derived --surface-x, --border-x and --text-on-inverse tokens added there for block
+   families like this one. None of them need a local var(..., fallback) - SiteBundle always defines them.
+
+   Mobile-first throughout: base rules are the single-column/mobile layout, @media (min-width: ...)
+   progressively adds columns back in - matches the rest of the bundle's convention.
 
    Shared utility classes below (.section-wrap, .section-eyebrow, .section-btn*, .section-title,
    .section-cards/.section-card*, .section-tags/.section-tag, .section-steps/.section-step*) are
    deliberately NOT named .wrap/.btn/.cards/.card/.tag/.step: those already exist bundle-wide
    (sass/_buttons.scss, sass/_cards.scss) with a different look, reused by every other block kind. */
+
+// A genuine 3-tier grid progression (see the RESPONSIVE block below), not the same concept as
+// _slider.scss's single mobile/desktop toggle - named here so a future tweak has one place to change
+// each tier instead of three unrelated-looking magic numbers repeated across @media queries.
+$page-section-bp-sm: 621px;
+$page-section-bp-md: 861px;
+$page-section-bp-lg: 1025px;
 
 .section-wrap {
     max-width: 1312px;
@@ -27,11 +35,11 @@
 }
 
 .section-eyebrow {
-    font-family: var(--font-family-mono, ui-monospace, "IBM Plex Mono", monospace);
+    font-family: var(--font-family-accent);
     font-size: 12.5px;
     letter-spacing: .14em;
     text-transform: uppercase;
-    color: var(--primary, #e4032e);
+    color: var(--primary);
     margin: 0 0 14px;
 }
 
@@ -42,7 +50,7 @@
     font-size: clamp(30px, 4.4vw, 42px);
     line-height: 1.1;
     margin: 0 0 48px;
-    color: var(--text-primary, #26201d);
+    color: var(--text);
 }
 
 .section-head {
@@ -54,41 +62,41 @@
     display: inline-block;
     font-weight: 600;
     font-size: 16px;
-    border-radius: 999px;
+    border-radius: var(--radius-btn);
     text-align: center;
     text-decoration: none;
 }
 
 .section-btn--primary {
-    background: var(--primary, #e4032e);
-    color: #fff;
+    background: var(--primary);
+    color: var(--button-color);
     padding: 16px 30px;
-    box-shadow: 0 12px 26px rgba(228, 3, 46, .30);
+    box-shadow: 0 12px 26px color-mix(in srgb, var(--primary) 30%, transparent);
 }
 
 .section-btn--primary:hover {
-    background: var(--primary-dark, #c50127);
-    color: #fff;
+    background: var(--button-background-primary-dark);
+    color: var(--button-color);
 }
 
 .section-btn--ghost {
-    color: var(--text-primary, #26201d);
-    border-bottom: 2px solid var(--primary, #e4032e);
+    color: var(--text);
+    border-bottom: 2px solid var(--primary);
     border-radius: 0;
     padding-bottom: 3px;
 }
 
 .section-btn--dark {
-    background: var(--text-primary, #26201d);
-    color: #fff;
+    background: var(--text);
+    color: var(--button-color);
     padding: 11px 20px;
 }
 
 /* ---- hero ---- */
 .hero .section-wrap {
     display: grid;
-    grid-template-columns: 1.15fr .85fr;
-    gap: 48px;
+    grid-template-columns: 1fr;
+    gap: 56px;
     align-items: center;
     padding-top: clamp(48px, 8vw, 84px);
     padding-bottom: clamp(48px, 8vw, 84px);
@@ -98,14 +106,14 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-family: var(--font-family-mono, ui-monospace, "IBM Plex Mono", monospace);
+    font-family: var(--font-family-accent);
     font-size: 12.5px;
     letter-spacing: .12em;
     text-transform: uppercase;
-    color: var(--primary, #e4032e);
-    background: var(--surface-accent, #fbe9ec);
+    color: var(--primary);
+    background: var(--surface-accent);
     padding: 7px 13px;
-    border-radius: 999px;
+    border-radius: var(--radius-btn);
     margin-bottom: 26px;
 }
 
@@ -116,17 +124,17 @@
     font-size: clamp(40px, 6vw, 66px);
     line-height: 1.03;
     margin: 0 0 24px;
-    color: var(--text-primary, #26201d);
+    color: var(--text);
 }
 
 .hero__title em {
-    color: var(--primary, #e4032e);
+    color: var(--primary);
     font-style: italic;
 }
 
 .hero__sub {
     font-size: 19px;
-    color: var(--text-muted, #5c534c);
+    color: var(--label-color);
     max-width: 480px;
     margin: 0 0 34px;
 }
@@ -140,14 +148,15 @@
 
 .hero__media {
     position: relative;
+    max-width: 520px;
 }
 
 .hero__media img {
     display: block;
     max-width: 100%;
-    border-radius: 16px;
-    box-shadow: 0 30px 60px rgba(40, 30, 25, .22);
-    border: 6px solid #fff;
+    border-radius: var(--radius-panel);
+    box-shadow: var(--box-shadow);
+    border: 6px solid var(--card-background);
     aspect-ratio: 4 / 3.2;
     object-fit: cover;
     width: 100%;
@@ -156,11 +165,11 @@
 .hero__stat {
     position: absolute;
     bottom: -26px;
-    left: -26px;
-    background: #fff;
+    left: 0;
+    background: var(--card-background);
     border-radius: 14px;
     padding: 16px 20px;
-    box-shadow: 0 18px 40px rgba(40, 30, 25, .16);
+    box-shadow: var(--box-shadow);
     display: flex;
     gap: 14px;
     align-items: center;
@@ -170,41 +179,38 @@
     font-family: var(--font-family-title);
     font-size: 34px;
     font-weight: 600;
-    color: var(--primary, #e4032e);
+    color: var(--primary);
 }
 
 .hero__stat span {
     font-size: 13px;
     line-height: 1.3;
-    color: var(--text-muted, #5c534c);
+    color: var(--label-color);
 }
 
 /* ---- feature_bar ---- */
 .feature-bar {
-    background: var(--surface-alt, #f2ede3);
-    border-top: 1px solid var(--border-color, #e7e0d4);
-    border-bottom: 1px solid var(--border-color, #e7e0d4);
+    background: var(--surface-alt);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .feature-bar__grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(2, 1fr);
 }
 
 .feature-bar__item {
     padding: 24px 26px;
-    border-right: 1px solid var(--border-color, #e7e0d4);
-    font-size: 14px;
-    color: var(--text-muted, #5c534c);
-}
-
-.feature-bar__item:last-child {
     border-right: 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 14px;
+    color: var(--label-color);
 }
 
 .feature-bar__item b {
     display: block;
-    color: var(--text-primary, #26201d);
+    color: var(--text);
     font-family: var(--font-family-title);
     font-size: 17px;
     margin-bottom: 3px;
@@ -213,22 +219,22 @@
 /* ---- section_cards ---- */
 .section-cards {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
     gap: 24px;
 }
 
 .section-card {
-    background: var(--card-background, #fff);
-    border: 1px solid var(--border-color, #eee4d6);
-    border-radius: 16px;
-    padding: 32px;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-panel);
+    padding: 24px;
 }
 
 .section-card__icon {
     width: 46px;
     height: 46px;
     border-radius: 12px;
-    background: var(--surface-accent, #fbe9ec);
+    background: var(--surface-accent);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -240,29 +246,31 @@
     font-weight: 600;
     font-size: 22px;
     margin: 0 0 10px;
-    color: var(--text-primary, #26201d);
+    color: var(--text);
 }
 
 .section-card__text {
     font-size: 15px;
-    color: var(--text-muted, #6b625b);
+    color: var(--label-color);
     margin: 0;
 }
 
-/* ---- expertise_banner ---- */
+/* ---- expertise_banner ----
+   Deliberately dark regardless of the site's light/dark mode - a contrast panel, not a themed
+   surface - hence --surface-inverse/--text-on-inverse instead of --background/--text. */
 .expertise-banner__inner {
-    background: var(--surface-dark, #26201d);
-    border-radius: 20px;
-    padding: 52px 56px;
-    color: var(--surface-alt, #f7f3ec);
+    background: var(--surface-inverse);
+    border-radius: var(--radius-panel);
+    padding: 36px 24px;
+    color: var(--text-on-inverse);
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 48px;
+    grid-template-columns: 1fr;
+    gap: 28px;
     align-items: center;
 }
 
 .expertise-banner .section-eyebrow {
-    color: var(--primary-light, #ff8a9d);
+    color: var(--button-background-primary-light);
 }
 
 .expertise-banner__title {
@@ -272,13 +280,22 @@
     font-size: clamp(28px, 3.8vw, 38px);
     line-height: 1.12;
     margin: 0 0 16px;
-    color: #fff;
+    color: var(--button-color);
 }
 
 .expertise-banner__text {
     font-size: 16px;
-    color: var(--text-on-dark, #c9beb4);
+    color: var(--text-on-inverse);
     margin: 0;
+}
+
+/* SiteBundle's global "* { color: var(--text); }" (_typography.scss) directly matches every element,
+   including any unclassed tag inside the raw Trix HTML above - a direct match always overrides an
+   inherited color, so each of those inner elements needs its own explicit override back to
+   --text-on-inverse, not just the wrapping <p> itself. Only color, so no other Trix-emitted styling
+   (spacing, font-size on a nested block) is disturbed. */
+.expertise-banner__text * {
+    color: var(--text-on-inverse);
 }
 
 .section-tags {
@@ -288,34 +305,34 @@
 }
 
 .section-tag {
-    border: 1px solid #4a423d;
-    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--text-on-inverse) 25%, transparent);
+    border-radius: var(--radius-btn);
     padding: 11px 20px;
-    font-family: var(--font-family-mono, ui-monospace, "IBM Plex Mono", monospace);
+    font-family: var(--font-family-accent);
     font-size: 14px;
-    color: var(--text-on-dark, #c9beb4);
+    color: var(--text-on-inverse);
 }
 
 /* ---- process_steps ---- */
 .section-steps {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: 1fr;
     gap: 20px;
 }
 
 .section-step {
-    border-top: 2px solid var(--border-accent, #e4c9cf);
+    border-top: 2px solid var(--border-accent);
     padding-top: 20px;
 }
 
 .section-step--first {
-    border-top-color: var(--primary, #e4032e);
+    border-top-color: var(--primary);
 }
 
 .section-step__num {
     font-family: var(--font-family-title);
     font-size: 15px;
-    color: var(--primary, #e4032e);
+    color: var(--primary);
     margin-bottom: 8px;
 }
 
@@ -323,12 +340,12 @@
     font-weight: 600;
     font-size: 20px;
     margin: 0 0 8px;
-    color: var(--text-primary, #26201d);
+    color: var(--text);
 }
 
 .section-step__text {
     font-size: 14.5px;
-    color: var(--text-muted, #6b625b);
+    color: var(--label-color);
     margin: 0;
     line-height: 1.55;
 }
@@ -353,22 +370,22 @@
 
 .portfolio-grid__grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
     gap: 24px;
 }
 
 .portfolio-grid__project {
     display: block;
-    background: var(--card-background, #fff);
-    border: 1px solid var(--border-color, #eee4d6);
-    border-radius: 16px;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-panel);
     overflow: hidden;
 }
 
 .portfolio-grid__project-img {
     aspect-ratio: 16 / 10;
     overflow: hidden;
-    background: var(--surface-alt, #f2ede3);
+    background: var(--surface-alt);
 }
 
 .portfolio-grid__project-img img {
@@ -384,19 +401,19 @@
 }
 
 .portfolio-grid__project-body {
-    padding: 20px 22px;
+    padding: 24px;
 }
 
 .portfolio-grid__project-title {
     font-weight: 600;
     font-size: 19px;
     margin: 0 0 5px;
-    color: var(--text-primary, #26201d);
+    color: var(--text);
 }
 
 .portfolio-grid__project-text {
     font-size: 14px;
-    color: var(--text-muted, #6b625b);
+    color: var(--label-color);
     margin: 0;
     line-height: 1.5;
 }
@@ -408,11 +425,11 @@
 }
 
 .cta-band__inner {
-    background: var(--primary, #e4032e);
-    border-radius: 20px;
-    padding: 64px 56px;
+    background: var(--primary);
+    border-radius: var(--radius-panel);
+    padding: 36px 24px;
     text-align: center;
-    color: #fff;
+    color: var(--button-color);
 }
 
 .cta-band__title {
@@ -422,38 +439,41 @@
     font-size: clamp(32px, 5vw, 46px);
     line-height: 1.1;
     margin: 0 0 18px;
-    color: #fff;
+    color: var(--button-color);
 }
 
 .cta-band__text {
     font-size: 18px;
-    color: #ffd7de;
+    color: color-mix(in srgb, var(--button-color) 80%, transparent);
     max-width: 560px;
     margin: 0 auto 32px;
 }
 
 .cta-band .section-btn {
-    background: #fff;
-    color: var(--primary, #e4032e);
+    background: var(--card-background);
+    color: var(--primary);
     font-weight: 700;
     padding: 17px 36px;
 }
 
 .cta-band .section-btn:hover {
-    background: #fff;
-    color: var(--primary-dark, #c50127);
+    background: var(--card-background);
+    color: var(--button-background-primary-dark);
 }
 
-/* ======================= RESPONSIVE ======================= */
-@media (max-width: 1024px) {
-    .section-cards,
-    .section-steps,
-    .portfolio-grid__grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
+/* ======================= RESPONSIVE (mobile-first: min-width, ascending) ======================= */
+@media (min-width: $page-section-bp-sm) {
     .feature-bar__grid {
         grid-template-columns: repeat(3, 1fr);
+    }
+
+    .feature-bar__item {
+        border-right: 1px solid var(--border-color);
+        border-bottom: none;
+    }
+
+    .feature-bar__item:last-child {
+        border-right: 0;
     }
 
     .feature-bar__item:nth-child(3) {
@@ -461,58 +481,73 @@
     }
 
     .feature-bar__item:nth-child(n+4) {
-        border-top: 1px solid var(--border-color, #e7e0d4);
-    }
-}
-
-@media (max-width: 860px) {
-    .hero .section-wrap {
-        grid-template-columns: 1fr;
-        gap: 56px;
+        border-top: 1px solid var(--border-color);
     }
 
-    .hero__media {
-        max-width: 520px;
-    }
-
-    .expertise-banner__inner {
-        grid-template-columns: 1fr;
-        gap: 28px;
-        padding: 40px;
-    }
-}
-
-@media (max-width: 620px) {
     .section-cards,
     .section-steps,
     .portfolio-grid__grid {
-        grid-template-columns: 1fr;
-    }
-
-    .feature-bar__grid {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .feature-bar__item {
-        border-right: 0;
-        border-bottom: 1px solid var(--border-color, #e7e0d4);
-    }
-
-    .feature-bar__item:nth-child(3) {
-        border-right: 0;
-    }
-
     .hero__stat {
-        left: 0;
+        left: -26px;
     }
 
-    .cta-band__inner,
     .expertise-banner__inner {
-        padding: 36px 24px;
+        padding: 40px;
     }
 
     .section-card,
     .portfolio-grid__project-body {
-        padding: 24px;
+        padding: 32px;
+    }
+
+    .portfolio-grid__project-body {
+        padding: 20px 22px;
+    }
+
+    .cta-band__inner {
+        padding: 64px 56px;
+    }
+}
+
+@media (min-width: $page-section-bp-md) {
+    .hero .section-wrap {
+        grid-template-columns: 1.15fr .85fr;
+        gap: 48px;
+    }
+
+    .hero__media {
+        max-width: none;
+    }
+
+    .expertise-banner__inner {
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+        padding: 52px 56px;
+    }
+}
+
+@media (min-width: $page-section-bp-lg) {
+    .feature-bar__grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .feature-bar__item:nth-child(3) {
+        border-right: 1px solid var(--border-color);
+    }
+
+    .feature-bar__item:nth-child(n+4) {
+        border-top: none;
+    }
+
+    .section-cards,
+    .portfolio-grid__grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .section-steps {
+        grid-template-columns: repeat(4, 1fr);
     }
 }

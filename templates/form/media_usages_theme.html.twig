@@ -1,4 +1,7 @@
 {% block media_usages_widget %}
+    {% if mediaId %}
+        <p class="mb-2"><strong>{{ 'label.id'|trans({}, 'ui') }} :</strong> {{ mediaId }}</p>
+    {% endif %}
     {% if usages is empty %}
         <span class="text-muted">{{ 'label.not_used_anywhere'|trans({}, 'ui') }}</span>
     {% else %}

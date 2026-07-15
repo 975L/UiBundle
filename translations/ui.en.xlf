@@ -326,6 +326,10 @@
                 <source>label.icon_path</source>
                 <target>Icon Path (optional)</target>
             </trans-unit>
+            <trans-unit id="198">
+                <source>label.id</source>
+                <target>ID</target>
+            </trans-unit>
             <trans-unit id="79">
                 <source>label.identifier</source>
                 <target>Identifier</target>
@@ -789,6 +793,34 @@
             <trans-unit id="197">
                 <source>label.link_label</source>
                 <target>Link label</target>
+            </trans-unit>
+            <trans-unit id="199">
+                <source>label.block_image_compare</source>
+                <target>Before/after comparator</target>
+            </trans-unit>
+            <trans-unit id="200">
+                <source>label.block_image_compare_description</source>
+                <target>Draggable slider to compare two images, before/after</target>
+            </trans-unit>
+            <trans-unit id="201">
+                <source>label.start_position</source>
+                <target>Start position</target>
+            </trans-unit>
+            <trans-unit id="202">
+                <source>label.start_position_help</source>
+                <target>Initial position of the comparison handle, as a percentage (0 to 100)</target>
+            </trans-unit>
+            <trans-unit id="203">
+                <source>label.before_label</source>
+                <target>Before label</target>
+            </trans-unit>
+            <trans-unit id="204">
+                <source>label.after_label</source>
+                <target>After label</target>
+            </trans-unit>
+            <trans-unit id="205">
+                <source>label.compare_position</source>
+                <target>Comparison slider position</target>
             </trans-unit>
         </body>
     </file>

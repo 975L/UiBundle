@@ -1,6 +1,7 @@
 import { startStimulusApp } from '@symfony/stimulus-bundle';
 import AnimateScrollController from './js/animate-scroll.js';
 import ConfettiController from './js/confetti.js';
+import ImageCompareController from './js/image-compare.js';
 import MenuController from './js/menu.js';
 import SliderController from './js/slider.js';
 
@@ -9,5 +10,6 @@ import SliderController from './js/slider.js';
 const app = startStimulusApp();
 app.register('animateScroll', AnimateScrollController);
 app.register('confetti', ConfettiController);
+app.register('imageCompare', ImageCompareController);
 app.register('menu', MenuController);
 app.register('slider', SliderController);

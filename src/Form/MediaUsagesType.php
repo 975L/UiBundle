@@ -31,6 +31,7 @@ class MediaUsagesType extends AbstractType
     {
         $media = $form->getParent()?->getData();
 
+        $view->vars['mediaId'] = $media instanceof Media ? $media->getId() : null;
         $view->vars['usages'] = $media instanceof Media
             ? $this->mediaUsageRegistry->getUsages([$media])[$media->getId()] ?? []
             : [];

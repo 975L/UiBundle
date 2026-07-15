@@ -12,7 +12,7 @@
     margin: 1em auto;
     width: clamp(300px, 400px, 90vw);
     border: 1px solid var(--input-border-color);
-    border-radius: 10px;
+    border-radius: var(--radius-card);
     background-color: var(--card-background);
 }
 
@@ -24,7 +24,7 @@ h2.card-header {
     padding: 0.5em 1em;
     margin: 0;
     width: 100%;
-    border-radius: 10px 10px 0 0;
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
 }
 
 .card-body {

@@ -1,5 +1,7 @@
 {# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
 {% set usages = field.formattedValue %}
+<p class="mb-2"><strong>{{ 'label.id'|trans({}, 'ui') }} :</strong> {{ entity.instance.id }}</p>
 {% if usages is empty %}
     <span class="text-muted">{{ 'label.not_used_anywhere'|trans({}, 'ui') }}</span>
 {% else %}

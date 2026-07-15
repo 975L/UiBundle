@@ -1,5 +1,50 @@
 [
     {
+        "date": "2026-07-15",
+        "description": [
+            {
+                "en": "The block example gallery is now open to editors, not just super admins",
+                "fr": "La galerie d'exemples de blocs est désormais accessible aux éditeurs, pas seulement aux super administrateurs",
+                "es": "La galería de ejemplos de bloques ahora está abierta a los editores, no solo a los superadministradores"
+            },
+            {
+                "en": "Super admins can now add a new photo directly from the media library",
+                "fr": "Les super administrateurs peuvent désormais ajouter une nouvelle photo directement depuis la médiathèque",
+                "es": "Los superadministradores ahora pueden añadir una nueva foto directamente desde la mediateca"
+            },
+            {
+                "en": "New block: before/after image comparator, with a draggable slider",
+                "fr": "Nouveau bloc : comparateur d'images avant/après, avec un curseur glissant",
+                "es": "Nuevo bloque: comparador de imágenes antes/después, con un control deslizante"
+            },
+            {
+                "en": "You can now upload much larger photos and files to the media library",
+                "fr": "Vous pouvez désormais téléverser des photos et fichiers bien plus volumineux dans la médiathèque",
+                "es": "Ahora puede subir fotos y archivos mucho más grandes a la mediateca"
+            },
+            {
+                "en": "Fixed the slider sometimes jumping the whole page back up when it changed slide automatically",
+                "fr": "Correction du curseur qui faisait parfois remonter toute la page lors du changement automatique de diapositive",
+                "es": "Corregido el control deslizante que a veces hacía saltar toda la página al cambiar de diapositiva automáticamente"
+            },
+            {
+                "en": "The block example gallery is now easier to browse, with quick links to jump straight to a block",
+                "fr": "La galerie d'exemples de blocs est plus facile à parcourir, avec des liens rapides pour accéder directement à un bloc",
+                "es": "La galería de ejemplos de bloques es más fácil de explorar, con enlaces rápidos para acceder directamente a un bloque"
+            },
+            {
+                "en": "The block example gallery now shows real photos, video and audio instead of generic placeholders",
+                "fr": "La galerie d'exemples de blocs affiche désormais de vraies photos, vidéo et audio, au lieu d'exemples génériques",
+                "es": "La galería de ejemplos de bloques ahora muestra fotos, vídeo y audio reales en lugar de ejemplos genéricos"
+            },
+            {
+                "en": "Fixed the expertise banner block's text sometimes turning unreadable (black on dark background)",
+                "fr": "Correction du texte du bloc bandeau d'expertise parfois illisible (noir sur fond sombre)",
+                "es": "Corregido el texto del bloque de banner de experiencia que a veces era ilegible (negro sobre fondo oscuro)"
+            }
+        ]
+    },
+    {
         "date": "2026-07-14",
         "description": [
             {

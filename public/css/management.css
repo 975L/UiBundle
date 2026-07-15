@@ -117,72 +117,64 @@
 }
 
 /* BLOCK GALLERY (management/block_gallery.html.twig) */
-.block-gallery-category {
-  margin: 0 0 0.5em;
-}
-
-.block-gallery-grid {
-  display: flex !important;
+.block-gallery-toc {
+  margin: 0 0 2em;
+  padding: 0;
+  list-style: none;
+  display: flex;
   flex-wrap: wrap;
-  flex-direction: row;
-  gap: 1em;
-  margin-bottom: 2em;
-  /* A "wide" item (see .block-gallery-item--wide) can be wider than the available content panel -
-     scopes any resulting horizontal overflow to the grid itself rather than the whole page */
-  overflow-x: auto;
+  gap: 0.5em;
 }
 
+.block-gallery-toc a,
+.block-gallery-toc a:visited {
+  display: inline-block;
+  padding: 0.3em 0.75em;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: #fff;
+  background-color: rgb(11, 55, 178);
+  transition: background-color 0.15s ease;
+}
+
+.block-gallery-toc a:hover,
+.block-gallery-toc a:visited:hover {
+  color: #fff;
+  background-color: rgb(8.9222222222, 44.6111111111, 144.3777777778);
+}
+
+.block-gallery-category {
+  margin: 1.5em 0 0.5em;
+}
+
+/* Full-width single-column layout, not a grid of fixed-width cards: several kinds (hero, section_cards,
+   portfolio_grid...) are designed as full-page-width sections and looked broken/cramped squeezed into a
+   480px card - matches 975l.com's public "vitrine des blocks" page, which renders the same way. */
 .block-gallery-item {
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  width: 480px;
-  border: 1px solid var(--border-color, #ddd);
-  border-radius: 4px;
-  padding: 1em;
-}
-
-/* For a showcase whose component only applies its real styles above a CSS breakpoint (e.g.
-   share_buttons() hides itself entirely below 768px) - wide enough that its preview iframe's own
-   width (this card's width minus padding) clears that breakpoint, instead of silently rendering
-   unstyled/invisible content in a too-narrow box (see GalleryShowcaseProviderInterface's "wide") */
-.block-gallery-item--wide {
-  width: 820px;
-}
-
-/* Grabs the leftover vertical space when a row-mate stretches this card taller than its own content
-   (the grid's flex row defaults to align-items:stretch), so preview(s) center in it instead of
-   staying pinned to the top with dead space below */
-.block-gallery-item__previews {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  margin-bottom: 2.5em;
+  scroll-margin-top: 1em;
+  text-align: center;
 }
 
 .block-gallery-item__title {
   margin: 0 0 0.25em;
 }
 
+.block-gallery-item__slug {
+  margin: 0 0 0.5em;
+}
+
 .block-gallery-item__description {
-  margin: 0 0 0.75em;
+  margin: 0 0 1em;
 }
 
-.block-gallery-item__preview {
-  background: var(--body-bg, #fff);
-  border: 1px dashed var(--border-color, #ddd);
+.block-gallery-item__frame {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   border-radius: 4px;
-  padding: 0.75em;
-  margin-bottom: 0.5em;
-}
-
-/* Each preview renders in its own isolated document (own front-end stylesheets, srcdoc - see the
-   template) so the site's CSS never bleeds into this EasyAdmin page's own chrome, and vice versa.
-   Resized to fit its actual content height by the "galleryPreview" Stimulus controller once loaded. */
-.block-gallery-item__iframe {
-  display: block;
-  width: 100%;
-  border: 0;
+  padding: 1.5em;
+  margin-bottom: 1em;
 }
 
 .block-gallery-item__variant {
@@ -195,4 +187,13 @@
 .block-gallery-item__empty {
   font-size: 0.875rem;
   font-style: italic;
+}
+
+/* Each preview renders in its own isolated document (own front-end stylesheets, srcdoc - see the
+   template) so the site's CSS never bleeds into this EasyAdmin page's own chrome, and vice versa.
+   Resized to fit its actual content height by the "galleryPreview" Stimulus controller once loaded. */
+.block-gallery-item__iframe {
+  display: block;
+  width: 100%;
+  border: 0;
 }
