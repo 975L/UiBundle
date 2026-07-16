@@ -1,24 +1,5 @@
-/* PAGE SECTIONS
-   Landing-page style section blocks: hero, feature_bar, section_cards, expertise_banner,
-   process_steps, cta_band (see config/services.yaml "ui.block.*" and templates/blocks/).
+/* PAGE SECTIONS */
 
-   UiBundle ships no :root tokens of its own - every rule below reads CSS custom properties defined
-   by the consuming site's own theme (SiteBundle's sass/_variables.scss): --primary/--secondary,
-   --text/--background/--card-background, --button-background-primary-dark/-light, --font-family-*,
-   plus the derived --surface-x, --border-x and --text-on-inverse tokens added there for block
-   families like this one. None of them need a local var(..., fallback) - SiteBundle always defines them.
-
-   Mobile-first throughout: base rules are the single-column/mobile layout, @media (min-width: ...)
-   progressively adds columns back in - matches the rest of the bundle's convention.
-
-   Shared utility classes below (.section-wrap, .section-eyebrow, .section-btn*, .section-title,
-   .section-cards/.section-card*, .section-tags/.section-tag, .section-steps/.section-step*) are
-   deliberately NOT named .wrap/.btn/.cards/.card/.tag/.step: those already exist bundle-wide
-   (sass/_buttons.scss, sass/_cards.scss) with a different look, reused by every other block kind. */
-
-// A genuine 3-tier grid progression (see the RESPONSIVE block below), not the same concept as
-// _slider.scss's single mobile/desktop toggle - named here so a future tweak has one place to change
-// each tier instead of three unrelated-looking magic numbers repeated across @media queries.
 $page-section-bp-sm: 621px;
 $page-section-bp-md: 861px;
 $page-section-bp-lg: 1025px;
@@ -28,10 +9,6 @@ $page-section-bp-lg: 1025px;
     margin: 0 auto;
     padding-left: clamp(20px, 5vw, 64px);
     padding-right: clamp(20px, 5vw, 64px);
-}
-
-.section-block {
-    padding-top: clamp(48px, 8vw, 84px);
 }
 
 .section-eyebrow {
@@ -292,8 +269,10 @@ $page-section-bp-lg: 1025px;
 /* SiteBundle's global "* { color: var(--text); }" (_typography.scss) directly matches every element,
    including any unclassed tag inside the raw Trix HTML above - a direct match always overrides an
    inherited color, so each of those inner elements needs its own explicit override back to
-   --text-on-inverse, not just the wrapping <p> itself. Only color, so no other Trix-emitted styling
-   (spacing, font-size on a nested block) is disturbed. */
+   --text-on-inverse, not just .expertise-banner__text itself. Only color, so no other Trix-emitted
+   styling (spacing, font-size on a nested block) is disturbed. Needs the wrapper to actually be a <div>
+   (see Banner.html.twig) - a <p> wrapper around already block-level raw HTML gets silently split by the
+   browser's own HTML parser, and this selector can only reach real *descendants*. */
 .expertise-banner__text * {
     color: var(--text-on-inverse);
 }
@@ -416,6 +395,15 @@ $page-section-bp-lg: 1025px;
     color: var(--label-color);
     margin: 0;
     line-height: 1.5;
+}
+
+/* ---- collection - items render as "card" blocks, reusing .cards/.card (sass/_cards.scss) ---- */
+.collection-grid__head {
+    margin-bottom: 36px;
+}
+
+.collection-grid__head .section-title {
+    margin: 0;
 }
 
 /* ---- cta_band ---- */

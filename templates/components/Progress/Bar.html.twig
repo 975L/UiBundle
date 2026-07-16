@@ -1,8 +1,17 @@
-{# <twig:c975LUi:Progress:Bar progressPercent="{{ progressPercent }}" [text="true"]/> #}
-{% set text = text | default('true') %}
+{# <twig:c975LUi:Progress:Bar progressPercent="{{ progressPercent }}" [label="Skill"] [text="true"]/> #}
+{# "??" not the "default" filter: "default" also substitutes on an explicit false (an editor
+   unchecking "show percent"), which would silently turn it back on - "??" only ever falls back
+   when "text" is genuinely undefined (legacy blocks saved before this field existed) #}
+{% set text = text ?? true %}
+{% if label %}
+    <div class="progress-header">
+        <span class="progress-label">{{ label }}</span>
+        {% if "true" == text %}<span class="progress-percent">{{ progressPercent }}%</span>{% endif %}
+    </div>
+{% endif %}
 <div class="progress-container">
     <div class="progress-bar" style="width: {{ progressPercent }}%">
-        {% if "true" == text %}
+        {% if "true" == text and not label %}
             <span class="progress-text">{{ progressPercent }}%</span>
         {% endif %}
     </div>

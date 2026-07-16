@@ -8,6 +8,7 @@
 namespace c975L\UiBundle\Twig;
 
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Registry\BlockCacheTagRegistry;
 use c975L\UiBundle\Registry\BlockRegistry;
 use c975L\UiBundle\Service\BlockCacheInvalidator;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -24,7 +25,8 @@ class BlockExtension extends AbstractExtension
         private BlockRegistry $registry,
         private Environment $twig,
         private TagAwareCacheInterface $cache,
-        private RequestStack $requestStack
+        private RequestStack $requestStack,
+        private BlockCacheTagRegistry $cacheTagRegistry
     ) {}
 
     public function getFunctions(): array
@@ -38,9 +40,9 @@ class BlockExtension extends AbstractExtension
     {
         $kind = $block->getKind();
 
-        // A never-persisted block (e.g. the in-memory previews built by BlockGalleryController) has no
-        // id - caching it by id would collapse every such block onto the same "block_render_0_..." key,
-        // silently serving one block's rendered HTML for every other one
+        // A never-persisted block (e.g. a block showcase's in-memory fixture previews, see
+        // BlockFixtureRegistry) has no id - caching it by id would collapse every such block onto the
+        // same "block_render_0_..." key, silently serving one block's rendered HTML for every other one
         if (null === $block->getId() || !$this->registry->isCacheable($kind)) {
             return $this->doRender($block);
         }
@@ -53,7 +55,11 @@ class BlockExtension extends AbstractExtension
             sprintf('block_render_%d_%s', $block->getId(), $locale),
             function (ItemInterface $item) use ($block): string {
                 $item->expiresAfter(null);
-                $item->tag(['block_' . $block->getId(), BlockCacheInvalidator::CACHE_TAG_ALL]);
+                $item->tag([
+                    'block_' . $block->getId(),
+                    BlockCacheInvalidator::CACHE_TAG_ALL,
+                    ...$this->cacheTagRegistry->getExtraTags($block),
+                ]);
 
                 return $this->doRender($block);
             }

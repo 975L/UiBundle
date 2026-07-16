@@ -54,7 +54,13 @@
     cursor: pointer;
 }
 
-.slider-item:first-child {
+// JS-driven active state (see slider.js's displaySlide()) - a real class, not an inline "style" attribute
+// or property, since the latter can't be authorized by a nonce-based style-src CSP (nonces only ever
+// cover <style>/<link> *elements*). The first slide gets this class server-side too (Slider.html.twig),
+// so it's already visible before JS connects (or if it never does) - not via a :first-child selector,
+// which would keep forcing display:block on the first slide even after JS deactivates it in favor of
+// another one, since :first-child's specificity would otherwise outrank this plain class.
+.slider-item-active {
     display: block;
 }
 

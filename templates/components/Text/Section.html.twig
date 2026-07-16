@@ -1,11 +1,13 @@
 {# <twig:c975LUi:Text:Section title="{{ title }}" slug="{{ slug }}" content="{{ content }}" [image="{{ image }}"]/> #}
 <section class="text-section" id="{{ slug }}">
-    <h2>{{ title }}</h2>
-    {% if image is defined %}
-        <twig:c975LUi:Image:Image src="{{ image }}" class="img-rounded img-responsive"/>
-    {% endif %}
-    {# content is authored via Trix (TrixEditorType), which already encodes its own line breaks as
-       <div>/<br> - nl2br would additionally convert the insignificant newlines between Trix's <div>
-       tags into extra visible <br>, doubling up line breaks and producing blank lines #}
-    {{ content|raw }}
+    <div class="section-wrap">
+        {% if title %}<h2>{{ title }}</h2>{% endif %}
+        {% if image is defined %}
+            <twig:c975LUi:Image:Image src="{{ image }}" class="img-rounded img-responsive"/>
+        {% endif %}
+        {# content is authored via Trix (TrixEditorType), which already encodes its own line breaks as
+           <div>/<br> - nl2br would additionally convert the insignificant newlines between Trix's <div>
+           tags into extra visible <br>, doubling up line breaks and producing blank lines #}
+        {{ content|raw }}
+    </div>
 </section>

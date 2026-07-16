@@ -1,0 +1,8 @@
+{# Adapter for the dynamic Block system — maps Block data to the Collection component.
+   Items are never stored on this block: they're pulled live from "source" (see
+   CollectionSourceProviderInterface) and each rendered as a never-persisted "card" Block - see
+   CollectionExtension::renderItems(). #}
+<twig:c975LUi:Collection:Grid
+    title="{{ title|default('') }}"
+    items="{{ collection_render_items(source, limit|default(null)) }}"
+/>

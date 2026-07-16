@@ -1,0 +1,3 @@
+services:
+    c975L\UiBundle\Maker\MakeBlockCommand:
+        tags: ['maker.command']

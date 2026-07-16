@@ -1,0 +1,19 @@
+{# Static usage: <twig:c975LUi:Collection:Grid items="{{ [...] }}" [title=""]/> #}
+{# Dynamic usage (Block system): see templates/blocks/Collection.html.twig #}
+{# Each entry in "items" is already-rendered HTML - one never-persisted "card" Block per item (see
+   CollectionExtension::renderItems()) - reuses the same ".cards" flex wrap as several manually
+   placed "card" blocks (see templates/components/Blocks/Blocks.html.twig, sass/_cards.scss) #}
+<section class="collection-grid">
+    <div class="section-wrap">
+        {% if title %}
+            <div class="collection-grid__head">
+                <h2 class="section-title">{{ title }}</h2>
+            </div>
+        {% endif %}
+        <div class="cards">
+            {% for html in items %}
+                {{ html|raw }}
+            {% endfor %}
+        </div>
+    </div>
+</section>

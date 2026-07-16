@@ -52,3 +52,16 @@ img.icon-big {
 img.white {
     filter: invert(99%) sepia(16%) saturate(3%) hue-rotate(50deg) brightness(103%) contrast(100%);
 }
+
+.video-iframe-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    aspect-ratio: 16 / 9;
+    text-align: center;
+    padding: 1.5rem;
+    background-color: var(--input-shadow-color);
+    border-radius: var(--radius-btn);
+}

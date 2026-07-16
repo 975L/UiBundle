@@ -8,7 +8,6 @@
  */
 namespace c975L\UiBundle\Tests\Management;
 
-use c975L\UiBundle\Controller\Management\BlockGalleryController;
 use c975L\UiBundle\Management\MenuProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -30,15 +29,21 @@ class MenuProviderTest extends TestCase
         $this->assertSame([], $provider->getMenus());
     }
 
-    public function testGetLinksReturnsTheBlockGalleryLink(): void
+    // The old self-hosted EasyAdmin block gallery was removed (its preview iframes needed inline
+    // scripts, which a hash/nonce-based CSP like nelmio_security can never authorize inside an <iframe
+    // srcdoc> - see MenuProvider::getLinks()'s comment). This link replaces it: a fixed 'url' (not a
+    // route name), since it always points at 975l.com's own /vitrine-blocks - the c975L ecosystem's
+    // canonical demo of every bundle's block kinds - regardless of which app's dashboard shows it.
+    public function testGetLinksReturnsTheBlockShowcaseLink(): void
     {
         $provider = new MenuProvider();
 
         $links = $provider->getLinks();
 
         $this->assertCount(1, $links);
-        $this->assertSame('label.block_gallery', $links['block_gallery']['label']);
-        $this->assertSame('ui', $links['block_gallery']['translation_domain']);
-        $this->assertSame(BlockGalleryController::GALLERY_ROUTE, $links['block_gallery']['name']);
+        $this->assertSame('label.block_showcase', $links['block_showcase']['label']);
+        $this->assertSame('ui', $links['block_showcase']['translation_domain']);
+        $this->assertSame('https://975l.com/vitrine-blocks', $links['block_showcase']['url']);
+        $this->assertSame('_blank', $links['block_showcase']['target']);
     }
 }

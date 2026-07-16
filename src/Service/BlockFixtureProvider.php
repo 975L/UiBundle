@@ -10,8 +10,8 @@ namespace c975L\UiBundle\Service;
 
 use c975L\UiBundle\Contract\BlockFixtureProviderInterface;
 
-// Sample data for UiBundle's own built-in block kinds, shown in the block gallery (see
-// BlockGalleryController).
+// Sample data for UiBundle's own built-in block kinds, shown in a block showcase (see
+// BlockFixtureRegistry).
 class BlockFixtureProvider implements BlockFixtureProviderInterface
 {
     public function getFixtures(): array
@@ -76,6 +76,12 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
                     'class' => [],
                 ],
             ],
+            'document_download' => [
+                '' => [
+                    'label' => 'Mon CV',
+                    'buttonLabel' => '',
+                ],
+            ],
             'image' => [
                 '' => [],
             ],
@@ -90,6 +96,7 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
             ],
             'progress_bar' => [
                 '' => [
+                    'label' => 'Symfony',
                     'progressPercent' => 65,
                     'text' => true,
                 ],
@@ -142,7 +149,13 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
             ],
             'video' => [
                 '' => [
-                    'src' => BlockFixtureMediaAttacher::PLACEHOLDER_VIDEO,
+                    // Leading "/": unlike PLACEHOLDER_VIDEO's other use as a Media filename (resolved by
+                    // vich_uploader_asset()), Video.html.twig outputs this "src" completely raw - on a real
+                    // front-end page SiteBundle's sitewide <base href> makes a bare relative path resolve
+                    // correctly anyway, but the block gallery's preview iframe has no such <base>, so a
+                    // relative path there resolves against the gallery page's own URL instead and 404s
+                    // (Laurent: "video ne fonctionne pas" - the native player showed but nothing played)
+                    'src' => '/' . BlockFixtureMediaAttacher::PLACEHOLDER_VIDEO,
                     'type' => 'video/mp4',
                     'poster' => '',
                     'autoplay' => false,
@@ -158,8 +171,9 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
             'video_iframe' => [
                 '' => [
                     // Not PLACEHOLDER_VIDEO directly - a raw video file navigated to in an <iframe> plays
-                    // with sound via the browser's own native player; this wraps it in a muted <video>
-                    'src' => BlockFixtureMediaAttacher::PLACEHOLDER_VIDEO_EMBED,
+                    // with sound via the browser's own native player; this wraps it in a muted <video>.
+                    // Leading "/" for the same reason as 'video' above - see its comment.
+                    'src' => '/' . BlockFixtureMediaAttacher::PLACEHOLDER_VIDEO_EMBED,
                     'width' => '560',
                     'height' => '315',
                     'class' => [],

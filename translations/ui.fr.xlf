@@ -71,6 +71,14 @@
                 <source>label.block_card_description</source>
                 <target>Carte avec titre et contenu, image et bouton optionnels</target>
             </trans-unit>
+            <trans-unit id="213">
+                <source>label.block_document_download</source>
+                <target>Document à télécharger</target>
+            </trans-unit>
+            <trans-unit id="214">
+                <source>label.block_document_download_description</source>
+                <target>Carte de téléchargement PDF avec vignette automatique</target>
+            </trans-unit>
             <trans-unit id="16">
                 <source>label.block_image</source>
                 <target>Image</target>
@@ -655,22 +663,6 @@
                 <source>label.info_media</source>
                 <target>Bibliothèque de tous les médias téléversés, quel que soit leur usage (pages, blocks, graphismes du site)</target>
             </trans-unit>
-            <trans-unit id="152">
-                <source>label.block_gallery</source>
-                <target>Galerie des blocks</target>
-            </trans-unit>
-            <trans-unit id="153">
-                <source>label.block_gallery_info</source>
-                <target>Aperçu de chaque type de block avec des données d'exemple, pour choisir celui qui convient avant de l'ajouter à une page.</target>
-            </trans-unit>
-            <trans-unit id="154">
-                <source>label.block_gallery_no_example</source>
-                <target>Pas encore d'exemple pour ce type de block.</target>
-            </trans-unit>
-            <trans-unit id="155">
-                <source>label.block_gallery_other_components</source>
-                <target>Autres composants</target>
-            </trans-unit>
             <trans-unit id="167">
                 <source>label.category_sections</source>
                 <target>Sections de page</target>
@@ -822,6 +814,58 @@
             <trans-unit id="205">
                 <source>label.compare_position</source>
                 <target>Position du curseur de comparaison</target>
+            </trans-unit>
+            <trans-unit id="206">
+                <source>label.block_collection</source>
+                <target>Collection</target>
+            </trans-unit>
+            <trans-unit id="207">
+                <source>label.block_collection_description</source>
+                <target>Affiche les éléments d'une collection externe (livres, produits, projets...), gérée par un autre bundle</target>
+            </trans-unit>
+            <trans-unit id="208">
+                <source>label.source</source>
+                <target>Source</target>
+            </trans-unit>
+            <trans-unit id="209">
+                <source>label.limit</source>
+                <target>Nombre maximum affiché</target>
+            </trans-unit>
+            <trans-unit id="210">
+                <source>label.collection_limit_help</source>
+                <target>Laisser vide pour tout afficher</target>
+            </trans-unit>
+            <trans-unit id="211">
+                <source>label.gallery_showcase_collection</source>
+                <target>Collection</target>
+            </trans-unit>
+            <trans-unit id="212">
+                <source>label.gallery_showcase_collection_description</source>
+                <target>Grille de cartes générées à partir d'une collection externe, avec un compteur du nombre total d'éléments</target>
+            </trans-unit>
+            <trans-unit id="215">
+                <source>label.video_iframe_consent_required</source>
+                <target>Ce contenu provient d'un site tiers (YouTube ou similaire) et nécessite votre consentement pour être affiché.</target>
+            </trans-unit>
+            <trans-unit id="216">
+                <source>label.video_iframe_accept</source>
+                <target>Afficher le contenu</target>
+            </trans-unit>
+            <trans-unit id="217">
+                <source>label.block_showcase</source>
+                <target>Vitrine des blocks</target>
+            </trans-unit>
+            <trans-unit id="218">
+                <source>label.no_collection_source_available</source>
+                <target>Aucune source de collection disponible pour le moment</target>
+            </trans-unit>
+            <trans-unit id="219">
+                <source>label.detail_page</source>
+                <target>Page de détail</target>
+            </trans-unit>
+            <trans-unit id="220">
+                <source>label.detail_page_help</source>
+                <target>Slug d'une Page qui affichera le détail de chaque item de cette collection (ex. "vitrine-blocks-detail"). Cette Page peut contenir les blocks de votre choix. Laisser vide si les items n'ont pas de page de détail.</target>
             </trans-unit>
         </body>
     </file>

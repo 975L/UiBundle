@@ -1,5 +1,21 @@
 # ChangeLog
 
+## v1.7
+
+- Changed `MediaCrudController` index action buttons to icon-only with hover title (16/07/2026)
+- Added `c975l:ui:block:create` maker command (16/07/2026)
+- Fixed `articles_slider` cache not invalidating on referenced `article` block changes (16/07/2026)
+- Added `BlockCacheTagProviderInterface` (16/07/2026)
+- Added `collection` block (16/07/2026)
+- Added `Card.html.twig` `imageUrl` fallback for non-Media images (16/07/2026)
+- Added `document_download` block (16/07/2026)
+- Added optional `label` field to `progress_bar` (16/07/2026)
+- Fixed `image_compare`/`slider` under CSP `style-src` (16/07/2026)
+- Changed `video_iframe` to gate behind cookie consent and use `youtube-nocookie.com` (16/07/2026) [BC-Break]
+- Fixed `expertise_banner` text color on dark background (16/07/2026)
+- Removed the EasyAdmin block gallery, superseded by 975l.com's showcase (16/07/2026) [BC-Break]
+- Added sidebar link to `https://975l.com/vitrine-blocks` (16/07/2026)
+
 ## v1.6
 
 - Added `image_compare` block: draggable before/after image comparison slider (15/07/2026)

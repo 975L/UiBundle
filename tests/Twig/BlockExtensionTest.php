@@ -10,6 +10,7 @@
 namespace c975L\UiBundle\Tests\Twig;
 
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Registry\BlockCacheTagRegistry;
 use c975L\UiBundle\Registry\BlockRegistry;
 use c975L\UiBundle\Service\BlockCacheInvalidator;
 use c975L\UiBundle\Twig\BlockExtension;
@@ -53,12 +54,12 @@ class BlockExtensionTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->never())->method('get');
 
-        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack());
+        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), new BlockCacheTagRegistry());
 
         $this->assertSame('<p>rendered</p>', $extension->renderBlock($block));
     }
 
-    // A never-persisted block (e.g. BlockGalleryController's in-memory previews) has no id - caching it
+    // A never-persisted block (e.g. a block showcase's in-memory fixture previews) has no id - caching it
     // would collapse onto the same key as every other unpersisted block of a cacheable kind, silently
     // serving one block's rendered HTML for every other one
     public function testRenderBlockRendersDirectlyWithoutCachingWhenBlockHasNoId(): void
@@ -78,7 +79,7 @@ class BlockExtensionTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->never())->method('get');
 
-        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack());
+        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), new BlockCacheTagRegistry());
 
         $this->assertSame('<article>fresh</article>', $extension->renderBlock($block));
     }
@@ -111,9 +112,42 @@ class BlockExtensionTest extends TestCase
                 return $callback($item);
             });
 
-        $extension = new BlockExtension($registry, $twig, $cache, $requestStack);
+        $extension = new BlockExtension($registry, $twig, $cache, $requestStack, new BlockCacheTagRegistry());
 
         $this->assertSame('<article>cached content</article>', $extension->renderBlock($block));
+    }
+
+    // A kind registered with BlockCacheTagProviderInterface (e.g. articles_slider depending on another
+    // Page's blocks) gets its extra tags merged in alongside the default "block_{id}"/"blocks_all" ones
+    public function testRenderBlockMergesExtraCacheTagsFromTheCacheTagRegistry(): void
+    {
+        $block = $this->createBlock('articles_slider', 42);
+
+        $registry = $this->createStub(BlockRegistry::class);
+        $registry->method('isCacheable')->willReturn(true);
+        $registry->method('getTemplate')->willReturn('articles_slider.html.twig');
+
+        $twig = $this->createStub(Environment::class);
+        $twig->method('render')->willReturn('<div>slider</div>');
+
+        $cacheTagRegistry = $this->createStub(BlockCacheTagRegistry::class);
+        $cacheTagRegistry->method('getExtraTags')->willReturn(['page_5']);
+
+        $item = $this->createMock(ItemInterface::class);
+        $item->expects($this->once())
+            ->method('tag')
+            ->with(['block_42', BlockCacheInvalidator::CACHE_TAG_ALL, 'page_5']);
+
+        $cache = $this->createMock(TagAwareCacheInterface::class);
+        $cache->expects($this->once())
+            ->method('get')
+            ->willReturnCallback(function (string $key, callable $callback) use ($item) {
+                return $callback($item);
+            });
+
+        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), $cacheTagRegistry);
+
+        $extension->renderBlock($block);
     }
 
     // Without a current request (e.g. CLI/message consumer context), the cache key falls back to "fr"
@@ -134,7 +168,7 @@ class BlockExtensionTest extends TestCase
             ->with('block_render_7_fr', $this->anything())
             ->willReturn('content');
 
-        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack());
+        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), new BlockCacheTagRegistry());
 
         $extension->renderBlock($block);
     }
@@ -145,7 +179,8 @@ class BlockExtensionTest extends TestCase
             $this->createStub(BlockRegistry::class),
             $this->createStub(Environment::class),
             $this->createStub(TagAwareCacheInterface::class),
-            new RequestStack()
+            new RequestStack(),
+            new BlockCacheTagRegistry()
         );
         $functions = $extension->getFunctions();
 

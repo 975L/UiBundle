@@ -6,6 +6,13 @@
  * with this source code in the file LICENSE.
  */
 import { Controller } from "@hotwired/stimulus";
+import { createNoncedStyleElement } from "./nonced-style-element.js";
+
+// --slider-freeflow-vw is a page-wide value (drives every freeflow slider's full-bleed breakout width,
+// not just this instance's own), so it's kept in one shared <style> element for the whole page's
+// lifetime instead of a per-controller one - unlike the per-slider height rule below, which is created
+// and torn down with its own instance's connect()/disconnect().
+let sharedFreeflowStyleEl = null;
 
 export default class extends Controller {
     connect() {
@@ -32,6 +39,7 @@ export default class extends Controller {
         if (this.autoPlayInterval) {
             clearInterval(this.autoPlayInterval);
         }
+        this.heightStyleEl?.remove();
     }
 
     // Create ARIA live region for announcements
@@ -209,7 +217,7 @@ export default class extends Controller {
     togglePlayPause(sliderId, button) {
         const action = button.getAttribute("data-action");
         const activeSlide = Array.from(document.querySelectorAll(`#${sliderId} .slider-item`))
-            .find((slide) => slide.style.display === "block");
+            .find((slide) => slide.classList.contains("slider-item-active"));
 
         if (action === "stop") {
             this.suspendAnimation();
@@ -290,7 +298,8 @@ export default class extends Controller {
         // keeps it aligned after the row's item widths (clamp(), viewport-based) change.
         if (this.isFreeflow) {
             const updateFreeflow = () => {
-                document.documentElement.style.setProperty("--slider-freeflow-vw", `${document.documentElement.clientWidth}px`);
+                sharedFreeflowStyleEl ??= createNoncedStyleElement();
+                sharedFreeflowStyleEl.textContent = `:root { --slider-freeflow-vw: ${document.documentElement.clientWidth}px; }`;
                 this.displaySlideFreeflow(sliderId, this.slideIndex, false);
             };
             updateFreeflow();
@@ -334,7 +343,8 @@ export default class extends Controller {
             }, 0);
 
             if (maxHeight > 0) {
-                slider.style.height = `${maxHeight}px`;
+                this.heightStyleEl ??= createNoncedStyleElement();
+                this.heightStyleEl.textContent = `#${CSS.escape(sliderId)} { height: ${maxHeight}px; }`;
                 slider.classList.add("slider-sized");
             }
         };
@@ -378,7 +388,7 @@ export default class extends Controller {
         const index = this.calculateIndex(number, slides.length);
 
         // Find current active slide
-        const currentSlide = Array.from(slides).find((slide) => slide.style.display === "block");
+        const currentSlide = Array.from(slides).find((slide) => slide.classList.contains("slider-item-active"));
         const newSlide = slides[index - 1];
 
         // Remove animation classes
@@ -406,10 +416,10 @@ export default class extends Controller {
             }
 
             setTimeout(() => {
-                currentSlide.style.display = "none";
+                currentSlide.classList.remove("slider-item-active");
             }, 500);
         } else if (currentSlide && currentSlide !== newSlide) {
-            currentSlide.style.display = "none";
+            currentSlide.classList.remove("slider-item-active");
         }
 
         // Update dots
@@ -424,7 +434,7 @@ export default class extends Controller {
         });
 
         // Display new slide
-        newSlide.style.display = "block";
+        newSlide.classList.add("slider-item-active");
 
         // A slide's video only plays while its slide is the active one
         if (currentSlide && currentSlide !== newSlide) {

@@ -29,7 +29,8 @@ class TextSectionType extends AbstractType
     {
         $builder
             ->add('title', TextType::class, [
-                'label' => 'label.title',
+                'label'    => 'label.title',
+                'required' => false,
             ])
             // Not user-editable: derived from the title below, used as the in-page anchor
             ->add('slug', HiddenType::class, [

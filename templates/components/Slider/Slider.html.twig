@@ -47,7 +47,7 @@
                "lazy" left those peeking/off-screen-via-transform slides blank until the browser's lazy-
                load heuristic caught up with the next translateX(), so freeflow always loads eager #}
             {% set isEager = loop.first or layout == "freeflow" %}
-            <li class="slider-item"{% if not loop.first and layout != "freeflow" %} aria-hidden="true"{% endif %}>
+            <li class="slider-item{% if loop.first and layout != "freeflow" %} slider-item-active{% endif %}"{% if not loop.first and layout != "freeflow" %} aria-hidden="true"{% endif %}>
                 {% set img %}
                     {% if isVideo %}
                         <video class="slider-img slider-video img-responsive img-rounded box-shadow {{ slideMedia.cssClasses|join(' ') }}" controls muted loop playsinline preload="{{ isEager ? "auto" : "metadata" }}" aria-label="{{ slideMedia.alt }}"><source src="{{ vich_uploader_asset(slideMedia) }}" type="{{ slideMedia.mimeType }}"></video>

@@ -6,7 +6,12 @@ services:
 
     c975L\UiBundle\:
         resource: '../src/'
-        exclude: '../src/{DependencyInjection,Entity}'
+        # Maker/ excluded: it extends symfony/maker-bundle's AbstractMaker, a dev-only dependency -
+        # registered separately in services_maker.yaml, imported only when that class is available
+        # (see c975LUiBundle::loadExtension()), so a plain resource-glob scan never autoloads it in prod
+        # Model/ excluded: plain value objects (e.g. CollectionItem) built by application code, not services -
+        # autowiring one fails on its first scalar constructor argument
+        exclude: '../src/{DependencyInjection,Entity,Maker,Model}'
 
     c975L\UiBundle\Service\StylesheetProvider:
         tags:
@@ -106,6 +111,22 @@ services:
               category: 'label.category_elements'
               media_types: 'image/*'
               priority: 100
+              pickable: true
+              cacheable: true
+
+    ui.block.document_download:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: document_download
+              label: "label.block_document_download"
+              description: "label.block_document_download_description"
+              form: c975L\UiBundle\Form\Block\DocumentDownloadType
+              template: '@c975LUi/blocks/DocumentDownload.html.twig'
+              category: 'label.category_elements'
+              media_types: 'application/pdf'
+              media_required: true
+              priority: 50
               pickable: true
               cacheable: true
 
@@ -327,6 +348,23 @@ services:
               priority: 55
               pickable: true
               cacheable: true
+
+    # Not cacheable: its items come from another bundle's own entity (see CollectionSourceProviderInterface),
+    # which BlockCacheInvalidationListener has no way to invalidate on - see BlockCacheTagProviderInterface
+    # (Phase 0) for the pattern used to make a referenced-data block cacheable, not applied here for now
+    ui.block.collection:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: collection
+              label: "label.block_collection"
+              description: "label.block_collection_description"
+              form: c975L\UiBundle\Form\Block\CollectionType
+              template: '@c975LUi/blocks/Collection.html.twig'
+              category: 'label.category_sections'
+              priority: 54
+              pickable: true
+              cacheable: false
 
     ui.block.cta_band:
         class: stdClass

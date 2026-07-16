@@ -6,16 +6,27 @@
  * with this source code in the file LICENSE.
  */
 import { Controller } from "@hotwired/stimulus";
+import { createNoncedStyleElement } from "./nonced-style-element.js";
 
 export default class extends Controller {
     static targets = ["frame", "range"];
 
     connect() {
         this.dragging = false;
+        // --image-compare-position is a continuous value (0-100%), so it needs a real <style> element
+        // under a nonce-based CSP (see nonced-style-element.js) - the block's own template no longer
+        // sets a starting inline "style" attribute either, for the same reason (a nonce never covers an
+        // inline style *attribute*, only <style>/<link> *elements*), so apply the real starting value here.
+        this.styleEl = createNoncedStyleElement();
+        this.update();
         this.frameTarget.addEventListener("pointerdown", this.startDrag.bind(this));
         this.frameTarget.addEventListener("pointermove", this.drag.bind(this));
         this.frameTarget.addEventListener("pointerup", this.stopDrag.bind(this));
         this.frameTarget.addEventListener("pointercancel", this.stopDrag.bind(this));
+    }
+
+    disconnect() {
+        this.styleEl.remove();
     }
 
     // Native <input type="range"> already drives --image-compare-position via the "update" action
@@ -54,7 +65,7 @@ export default class extends Controller {
     // driven changes update the visual split exactly like a pointer drag would
     update() {
         const percent = this.rangeTarget.value;
-        this.element.style.setProperty("--image-compare-position", `${percent}%`);
+        this.styleEl.textContent = `#${CSS.escape(this.element.id)} { --image-compare-position: ${percent}%; }`;
         this.rangeTarget.setAttribute("aria-valuetext", `${percent}%`);
     }
 }

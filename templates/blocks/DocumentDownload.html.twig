@@ -1,0 +1,19 @@
+{# Adapter for the dynamic Block system - a single attached PDF (see media_types on this block's tag)
+   rendered as a download card. The .webp thumbnail next to the PDF (see README "PDF thumbnails",
+   generated automatically by VichPdfThumbnailListener on upload) is used as a preview when present,
+   falling back to a plain text/extension card otherwise - document_thumbnail_path() (DocumentExtension)
+   checks the thumbnail actually exists on disk (Ghostscript missing, a fixture/placeholder media with
+   no sidecar file, generation not finished...), it isn't guessed from the media's own path/origin. #}
+{% set media = block.media|first %}
+{% set thumbnailPath = media ? document_thumbnail_path(media) : null %}
+<a class="document-download" href="{{ media ? vich_uploader_asset(media) : '' }}" download>
+    {% if thumbnailPath %}
+        <img class="document-download__thumb" src="{{ asset(thumbnailPath) }}" alt=""/>
+    {% elseif media %}
+        <span class="document-download__thumb document-download__thumb--empty"></span>
+    {% endif %}
+    <span class="document-download__label">{{ label }}</span>
+    {# Not translated: a plain extension/file-type badge (".PDF"), not a sentence - same convention as
+       e.g. a "512 KB" file-size chip would be #}
+    <span class="document-download__ext">{{ buttonLabel|default('.PDF') }}</span>
+</a>

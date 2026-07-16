@@ -14,10 +14,9 @@ use c975L\UiBundle\Registry\BlockRegistry;
 
 // Attaches placeholder media (Laurent Marquet's own photos/video/audio, shipped as static bundle assets -
 // see public/images, public/videos, public/audio) to an in-memory, never-persisted Block, standing in for
-// whatever real media a kind's own fixture doesn't carry. Public service, not gallery-specific logic: shared
-// by BlockGalleryController (EasyAdmin's own gallery) and any consuming app's own public showcase (e.g.
-// 975l.com's /vitrine-blocks) so both get the same real-looking previews without either duplicating this
-// logic or needing app-specific media rows (this replaced 975l.com's own block_showcase_media.json).
+// whatever real media a kind's own fixture doesn't carry. Public service, not app-specific logic: shared
+// by any consuming app's own public showcase (e.g. 975l.com's /vitrine-blocks) so it gets real-looking
+// previews without needing app-specific media rows (this replaced 975l.com's own block_showcase_media.json).
 class BlockFixtureMediaAttacher
 {
     // A small pool rather than one photo per kind: nextPlaceholderImage() hands them out in rotation (see
@@ -32,6 +31,7 @@ class BlockFixtureMediaAttacher
     ];
     public const PLACEHOLDER_VIDEO = 'bundles/c975lui/videos/gallery-video.mp4';
     public const PLACEHOLDER_AUDIO = 'bundles/c975lui/audio/gallery-audio.mp3';
+    public const PLACEHOLDER_DOCUMENT = 'bundles/c975lui/documents/gallery-document.pdf';
 
     // "video_iframe" just embeds any URL in a plain <iframe> (see Video/Iframe.html.twig) - browsers show
     // their own native player for a direct file navigation, autoplaying with sound by default. This tiny
@@ -83,6 +83,11 @@ class BlockFixtureMediaAttacher
 
             if (str_starts_with($mediaType, 'audio/')) {
                 $block->addMedia($this->placeholderAudio());
+                break;
+            }
+
+            if ('application/pdf' === $mediaType) {
+                $block->addMedia($this->placeholderDocument());
                 break;
             }
         }
@@ -161,5 +166,13 @@ class BlockFixtureMediaAttacher
             ->setFilename(self::PLACEHOLDER_AUDIO)
             ->setMimeType('audio/mpeg')
             ->setAlt('Audio d\'exemple');
+    }
+
+    private function placeholderDocument(): Media
+    {
+        return (new Media())
+            ->setFilename(self::PLACEHOLDER_DOCUMENT)
+            ->setMimeType('application/pdf')
+            ->setAlt('Document d\'exemple');
     }
 }

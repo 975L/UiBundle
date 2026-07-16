@@ -8,10 +8,11 @@
  */
 namespace c975L\UiBundle\Contract;
 
-// Implement to add non-block content to the gallery (see BlockGalleryController) - for a component
-// or Twig function whose visual styles are worth showcasing but that isn't a "ui.block" kind (e.g.
-// SocialBundle's social_links icon styles or share_buttons() style, both driven by a singleton or
-// called directly rather than through a per-page Block).
+// Implement to add non-block content to a block showcase (see GalleryShowcaseRegistry, consumed by
+// 975l.com's public /vitrine-blocks) - for a component or Twig function whose visual styles are worth
+// showcasing but that isn't a "ui.block" kind (e.g. SocialBundle's social_links icon styles or
+// share_buttons() style, both driven by a singleton or called directly rather than through a per-page
+// Block).
 interface GalleryShowcaseProviderInterface
 {
     // One entry per showcase: label => ['description' => string, 'kind' => ?string, 'category' => ?string,
@@ -28,11 +29,10 @@ interface GalleryShowcaseProviderInterface
     // is tagged with in services.yaml groups it there instead of the generic fallback). Takes precedence
     // over "kind" when both are set. Neither set falls back to a generic category.
     //
-    // "wide" (default false): originally rendered this card wider than the gallery's old fixed-width
-    // cards, for a component whose real styles only apply above a CSS breakpoint (e.g. share_buttons()
-    // hides itself entirely below 768px). Since the gallery now renders every item full-width (see
-    // block_gallery.html.twig), this flag is currently a no-op there - kept in the contract so a provider
-    // that already sets it (e.g. SocialBundle's share_buttons()) doesn't break, and any other consumer of
-    // GalleryShowcaseRegistry's data (e.g. a future non-EasyAdmin listing) can still honor it.
+    // "wide" (default false): originally rendered this card wider than a fixed-width card grid, for a
+    // component whose real styles only apply above a CSS breakpoint (e.g. share_buttons() hides itself
+    // entirely below 768px). Neither current consumer of this registry renders a fixed-width grid
+    // anymore, so this is currently a no-op - kept in the contract so a provider that already sets it
+    // (e.g. SocialBundle's share_buttons()) doesn't break, and any future fixed-width consumer can honor it.
     public function getShowcases(): array;
 }

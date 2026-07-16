@@ -8,14 +8,14 @@
  */
 namespace c975L\UiBundle\Contract;
 
-// Implement to feed the block gallery (see BlockGalleryController) with sample data for the block
-// kinds a bundle registers via the "ui.block" tag - lets satellite bundles show their own kinds
-// there without UiBundle knowing about them
+// Implement to feed a block showcase (see BlockFixtureRegistry, consumed by 975l.com's public
+// /vitrine-blocks) with sample data for the block kinds a bundle registers via the "ui.block" tag -
+// lets satellite bundles show their own kinds there without UiBundle knowing about them
 interface BlockFixtureProviderInterface
 {
     // One entry per covered kind: kind => [variant label => data]. "data" has the same shape Block::
     // setData() stores. A kind with a single, unlabelled example can use '' as its only variant key -
-    // the gallery only displays variant labels when a kind has more than one (e.g. "alert" showing
-    // its info/success/warning/danger styles side by side).
+    // a consumer typically only displays variant labels when a kind has more than one (e.g. "alert"
+    // showing its info/success/warning/danger styles side by side).
     public function getFixtures(): array;
 }

@@ -1,5 +1,9 @@
 # UPGRADE
 
+## > v1.6
+
+The `video_iframe` block's markup changed: `templates/components/Video/Iframe.html.twig` used to render a bare `<iframe>` directly, it now renders a wrapping `<div>` and creates the `<iframe>` client-side (gated behind cookie consent if a `window.CookieConsent`-exposing banner is present on the page, see the README's "Video:Iframe" section - otherwise it renders immediately, same as before). If your CSS/JS specifically targets that block's `<iframe>` element, update the selector to target the new wrapper instead.
+
 ## > v1.5
 
 `Media` gained two columns (`credits`, `rights_reserved`) used by the Slider block - run `bin/console doctrine:migrations:diff` then `doctrine:migrations:migrate` in the consuming app. Slider slides no longer expose the `label`/`width`/`height`/`above` fields (they were meant for the standalone Image block); existing data in these columns is untouched, just no longer editable/displayed for Slider media.

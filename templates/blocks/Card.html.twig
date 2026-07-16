@@ -1,17 +1,21 @@
 {# Adapter for the dynamic Block system — maps Block data to the Card component.
    With a media (see media_types on this block's tag) and/or a url set, renders an image + button
    teaser instead of the plain content box - same "media travels with its own block" mechanism as
-   Article, just one image per card instead of a gallery. #}
-{% if block.media|length > 0 or url %}
-    <twig:c975LUi:Card:Card id="{{ id }}" title="{{ title }}" level="{{ level }}" class="{{ class|default([])|join(' ') }}">
-        {% if block.media|length > 0 %}
-            <twig:c975LUi:Image:Link src="{{ vich_uploader_asset(block.media|first) }}" class="{{ block.media|first.cssClasses|join(' ') }}" url="{{ url }}" target="{{ target|default('') }}" alt="{{ title }}"/>
+   Article, just one image per card instead of a gallery.
+   "imageUrl" is never exposed in CardType's form - it's an already-resolved URL only ever set by the
+   "collection" block when it builds a never-persisted card Block per item (see Collection.html.twig),
+   for items whose image is managed by another bundle's own entity rather than a real attached Media. #}
+{% set resolvedImageUrl = block.media|length > 0 ? vich_uploader_asset(block.media|first) : imageUrl|default(null) %}
+{% if resolvedImageUrl or url %}
+    <twig:c975LUi:Card:Card id="{{ id|default('') }}" title="{{ title }}" level="{{ level|default('') }}" class="{{ class|default([])|join(' ') }}">
+        {% if resolvedImageUrl %}
+            <twig:c975LUi:Image:Link src="{{ resolvedImageUrl }}" class="{{ block.media|length > 0 ? block.media|first.cssClasses|join(' ') : '' }}" url="{{ url }}" target="{{ target|default('') }}" alt="{{ title }}"/>
         {% endif %}
         <div class="card-data">
             {% if content %}<p class="text-center">{{ content|raw|nl2br }}</p>{% endif %}
-            {% if url %}<twig:c975LUi:Button:Button label="{{ buttonLabel|default(url) }}" url="{{ url }}" target="{{ target|default('') }}"/>{% endif %}
+            {% if url %}<twig:c975LUi:Button:Button label="{{ buttonLabel|default(url) }}" url="{{ url }}" target="{{ target|default('') }}" icon="{{ buttonIcon|default('') }}"/>{% endif %}
         </div>
     </twig:c975LUi:Card:Card>
 {% else %}
-    <twig:c975LUi:Card:Card id="{{ id }}" title="{{ title }}" level="{{ level }}" content="{{ content }}" class="{{ class|default([])|join(' ') }}"/>
+    <twig:c975LUi:Card:Card id="{{ id|default('') }}" title="{{ title }}" level="{{ level|default('') }}" content="{{ content }}" class="{{ class|default([])|join(' ') }}"/>
 {% endif %}

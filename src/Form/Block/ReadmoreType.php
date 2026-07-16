@@ -21,6 +21,7 @@ class ReadmoreType extends AbstractType
         $builder
             ->add('id', TextType::class, [
                 'label' => 'label.identifier',
+                'help'  => 'label.identifier_help',
             ])
             ->add('text', TrixEditorType::class, [
                 'label' => 'label.text',

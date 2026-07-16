@@ -1,5 +1,50 @@
 [
     {
+        "date": "2026-07-16",
+        "description": [
+            {
+                "en": "New block: downloadable document card (e.g. a PDF), with an automatic preview thumbnail",
+                "fr": "Nouveau bloc : fiche de document téléchargeable (par ex. un PDF), avec vignette d'aperçu automatique",
+                "es": "Nuevo bloque: tarjeta de documento descargable (por ejemplo, un PDF), con miniatura de vista previa automática"
+            },
+            {
+                "en": "New block: a section that automatically shows the latest items from another part of the site (e.g. books, products)",
+                "fr": "Nouveau bloc : une section qui affiche automatiquement les derniers éléments d'une autre partie du site (par ex. livres, produits)",
+                "es": "Nuevo bloque: una sección que muestra automáticamente los últimos elementos de otra parte del sitio (por ejemplo, libros, productos)"
+            },
+            {
+                "en": "The progress bar block can now carry its own caption (e.g. a skill name)",
+                "fr": "Le bloc barre de progression peut désormais porter sa propre légende (par ex. un nom de compétence)",
+                "es": "El bloque de barra de progreso ahora puede llevar su propia leyenda (por ejemplo, un nombre de habilidad)"
+            },
+            {
+                "en": "The video embed block now waits for cookie consent before loading, and uses YouTube's privacy-enhanced mode",
+                "fr": "Le bloc vidéo intégrée attend désormais le consentement aux cookies avant de se charger, et utilise le mode confidentialité renforcée de YouTube",
+                "es": "El bloque de vídeo incrustado ahora espera el consentimiento de cookies antes de cargarse, y usa el modo de privacidad mejorada de YouTube"
+            },
+            {
+                "en": "Fixed the image comparison and image slider blocks sometimes not working at all on sites with stricter security settings",
+                "fr": "Correction des blocs comparateur d'images et diaporama qui ne fonctionnaient parfois pas du tout sur les sites aux réglages de sécurité renforcés",
+                "es": "Corregidos los bloques de comparación de imágenes y carrusel que a veces no funcionaban en absoluto en sitios con ajustes de seguridad más estrictos"
+            },
+            {
+                "en": "Fixed the articles slider not refreshing when a referenced article was updated",
+                "fr": "Correction du diaporama d'articles qui ne se mettait pas à jour lorsqu'un article référencé était modifié",
+                "es": "Corregido el carrusel de artículos que no se actualizaba cuando se modificaba un artículo referenciado"
+            },
+            {
+                "en": "The block example gallery has moved out of the back office to a single online showcase page, linked from the sidebar",
+                "fr": "La galerie d'exemples de blocs a quitté le back-office pour une unique page de vitrine en ligne, accessible depuis le menu latéral",
+                "es": "La galería de ejemplos de bloques ha salido del back-office hacia una única página de muestra en línea, enlazada desde el menú lateral"
+            },
+            {
+                "en": "Fixed a remaining case where the expertise banner block's text could still turn unreadable (black on dark background)",
+                "fr": "Correction d'un cas restant où le texte du bloc bandeau d'expertise pouvait encore devenir illisible (noir sur fond sombre)",
+                "es": "Corregido un caso restante en el que el texto del bloque de banner de experiencia aún podía volverse ilegible (negro sobre fondo oscuro)"
+            }
+        ]
+    },
+    {
         "date": "2026-07-15",
         "description": [
             {

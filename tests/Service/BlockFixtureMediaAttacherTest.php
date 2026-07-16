@@ -161,6 +161,17 @@ class BlockFixtureMediaAttacherTest extends TestCase
         $this->assertSame(BlockFixtureMediaAttacher::PLACEHOLDER_AUDIO, $block->getMedia()->first()->getFilename());
     }
 
+    // application/pdf (e.g. "document_download") gets the single placeholder PDF attached
+    public function testPdfKindGetsThePlaceholderDocumentAttached(): void
+    {
+        $attacher = new BlockFixtureMediaAttacher($this->createRegistry(['application/pdf']));
+        $block = (new Block())->setKind('document_download');
+
+        $attacher->attach($block, 'document_download');
+
+        $this->assertSame(BlockFixtureMediaAttacher::PLACEHOLDER_DOCUMENT, $block->getMedia()->first()->getFilename());
+    }
+
     // portfolio_grid bypasses the generic per-mediaType mechanism entirely: it gets several
     // distinctly-captioned project cards instead of N copies of the same placeholder image
     public function testPortfolioGridGetsSeveralDistinctlyCaptionedProjects(): void

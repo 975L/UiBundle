@@ -11,6 +11,7 @@ namespace c975L\UiBundle\Controller\Management;
 
 use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Form\ImageClassChoiceType;
+use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\UiBundle\Form\MediaUsagesType;
 use c975L\UiBundle\Registry\MediaUsageRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -22,6 +23,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Validator\Constraints\File as FileConstraint;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 use function Symfony\Component\Translation\t;
@@ -43,6 +45,7 @@ class MediaCrudController extends AbstractCrudController
 
     public function __construct(
         private readonly MediaUsageRegistry $mediaUsageRegistry,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -74,11 +77,17 @@ class MediaCrudController extends AbstractCrudController
             ->setPermission(Action::DELETE, self::ROLE_NEEDED)
             ->setPermission(Action::DETAIL, self::ROLE_NEEDED)
             // Site-wide graphics (role set) are only editable from SiteGraphicCrudController
-            ->update(Crud::PAGE_INDEX, Action::EDIT, static fn (Action $action): Action => $action->displayIf(
-                static fn (Media $media): bool => null === $media->getRole()
+            ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action->displayIf(static fn (Media $media): bool => null === $media->getRole()),
+                $this->translator->trans('action.edit', [], 'EasyAdminBundle'),
             ))
-            ->update(Crud::PAGE_INDEX, Action::DELETE, static fn (Action $action): Action => $action->displayIf(
-                static fn (Media $media): bool => null === $media->getRole()
+            ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action->displayIf(static fn (Media $media): bool => null === $media->getRole()),
+                $this->translator->trans('action.delete', [], 'EasyAdminBundle'),
+            ))
+            ->update(Crud::PAGE_INDEX, Action::DETAIL, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action,
+                $this->translator->trans('action.detail', [], 'EasyAdminBundle'),
             ))
             // Creating a Media with no Block (e.g. for a bundle showcase) is reserved to super admins -
             // regular admins keep adding media the normal way, through a Block's own form

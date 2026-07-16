@@ -26,6 +26,14 @@ class VichPdfThumbnailListener
 
     private Filesystem $filesystem;
 
+    // Single source of truth for the pdf -> webp naming convention this listener writes to -
+    // DocumentExtension::getThumbnailPath() reads it back through this same method, so the two
+    // never drift apart
+    public static function toWebpPath(string $pdfPath): string
+    {
+        return str_replace('.pdf', '.webp', $pdfPath);
+    }
+
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
     ) {
@@ -66,7 +74,7 @@ class VichPdfThumbnailListener
 
     private function generateThumbnail(string $pdfPath, int $width): void
     {
-        $webpPath = str_replace('.pdf', '.webp', $pdfPath);
+        $webpPath = self::toWebpPath($pdfPath);
         $tmpPng = sys_get_temp_dir() . '/' . uniqid() . '.png';
 
         try {

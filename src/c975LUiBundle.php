@@ -9,8 +9,10 @@
 
 namespace c975L\UiBundle;
 
+use c975L\UiBundle\DependencyInjection\Compiler\BlockCacheTagProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\BlockFixtureProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\BlockRegistryPass;
+use c975L\UiBundle\DependencyInjection\Compiler\CollectionSourceProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\FormThemeRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\GalleryShowcaseProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\MediaUsageProviderPass;
@@ -31,6 +33,8 @@ class c975LUiBundle extends AbstractBundle
     {
         $container->addCompilerPass(new BlockRegistryPass());
         $container->addCompilerPass(new BlockFixtureProviderPass());
+        $container->addCompilerPass(new BlockCacheTagProviderPass());
+        $container->addCompilerPass(new CollectionSourceProviderPass());
         $container->addCompilerPass(new GalleryShowcaseProviderPass());
         $container->addCompilerPass(new StylesheetRegistryPass());
         $container->addCompilerPass(new StylesheetManagementRegistryPass());
@@ -80,6 +84,12 @@ class c975LUiBundle extends AbstractBundle
     public function loadExtension(array $config, ContainerConfigurator $containerConfigurator, ContainerBuilder $containerBuilder): void
     {
         $containerConfigurator->import('../config/services.yaml');
+
+        // symfony/maker-bundle is dev-only in a consuming app - only wire MakeBlockCommand as a
+        // service when it's actually installed, instead of requiring it unconditionally
+        if (class_exists(\Symfony\Bundle\MakerBundle\Maker\AbstractMaker::class)) {
+            $containerConfigurator->import('../config/services_maker.yaml');
+        }
     }
 
     public function getPath(): string

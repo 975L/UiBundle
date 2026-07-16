@@ -1,2 +1,15 @@
 {# <twig:c975LUi:Video:Iframe src="your-url" [class="your-css-classes"] [width="auto"] [height="auto"]/> #}
-<iframe class="img img-responsive {{ class|default([])|join(' ') }}" src="{{ src }}" title="Video player" frameborder="0" allowfullscreen {% if width is defined and width != "" %} width="{{ width }}" {% endif %} {% if height is defined and height != "" %} height="{{ height }}" {% endif %} loading="lazy"></iframe>
+{# The real <iframe> is only created client-side (see video-iframe.js), gated behind cookie consent -
+   this markup stays identical regardless of consent state, so the block remains cacheable #}
+<div class="img img-responsive {{ class|default([])|join(' ') }} video-iframe-consent"
+     data-controller="videoIframe"
+     data-video-iframe-src-value="{{ src|privacy_embed_url }}"
+     data-video-iframe-width-value="{{ width|default('') }}"
+     data-video-iframe-height-value="{{ height|default('') }}">
+    <div data-video-iframe-target="placeholder" class="video-iframe-placeholder">
+        <p>{{ 'label.video_iframe_consent_required'|trans({}, 'ui') }}</p>
+        <button type="button" class="btn btn-primary" data-action="videoIframe#accept">
+            {{ 'label.video_iframe_accept'|trans({}, 'ui') }}
+        </button>
+    </div>
+</div>
