@@ -1,8 +1,15 @@
 {# Adapter for the dynamic Block system — maps Block data to the Collection component.
    Items are never stored on this block: they're pulled live from "source" (see
-   CollectionSourceProviderInterface) and each rendered as a never-persisted "card" Block - see
-   CollectionExtension::renderItems(). #}
+   CollectionSourceProviderInterface) and each rendered as a never-persisted "collection_item" Block -
+   see CollectionExtension::renderItems(). detailPage is only used to decide whether each item's title
+   should link to its detail page (built there from the source's own item slug, if any) - the detail
+   Page's own slug never appears in that URL, see PageController::resolveCollectionDetail(). #}
 <twig:c975LUi:Collection:Grid
+    eyebrow="{{ eyebrow|default('') }}"
     title="{{ title|default('') }}"
-    items="{{ collection_render_items(source, limit|default(null)) }}"
+    linkLabel="{{ linkLabel|default('') }}"
+    linkUrl="{{ linkUrl|default('') }}"
+    items="{{ collection_render_items(source, limit|default(null), detailPage|default(null), variant|default(null)) }}"
+    variant="{{ variant|default('') }}"
+    id="{{ anchor_id }}"
 />

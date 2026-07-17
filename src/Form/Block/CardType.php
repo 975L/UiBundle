@@ -13,7 +13,6 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use c975L\UiBundle\Form\BlockClassChoiceType;
 use c975L\UiBundle\Form\TrixEditorType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -45,7 +44,7 @@ class CardType extends AbstractType
             // is set, blocks/Card.html.twig renders an image + button teaser instead of the plain
             // content box - several such cards placed next to each other on a page (e.g. a "our sites"
             // listing) are auto-wrapped in a ".cards" flex row by templates/components/Blocks/Blocks.html.twig
-            ->add('url', UrlType::class, [
+            ->add('url', TextType::class, [
                 'label' => 'label.url',
                 'required' => false,
             ])

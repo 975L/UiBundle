@@ -12,7 +12,6 @@ use c975L\UiBundle\Form\IconPickerType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -25,7 +24,7 @@ class ButtonType extends AbstractType
                 'label' => 'label.content',
                 'required' => true,
             ])
-            ->add('url', UrlType::class, [
+            ->add('url', TextType::class, [
                 'label' => 'label.url',
                 'required' => true,
             ])

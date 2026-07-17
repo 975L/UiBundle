@@ -835,14 +835,6 @@
                 <source>label.collection_limit_help</source>
                 <target>Laisser vide pour tout afficher</target>
             </trans-unit>
-            <trans-unit id="211">
-                <source>label.gallery_showcase_collection</source>
-                <target>Collection</target>
-            </trans-unit>
-            <trans-unit id="212">
-                <source>label.gallery_showcase_collection_description</source>
-                <target>Grille de cartes générées à partir d'une collection externe, avec un compteur du nombre total d'éléments</target>
-            </trans-unit>
             <trans-unit id="215">
                 <source>label.video_iframe_consent_required</source>
                 <target>Ce contenu provient d'un site tiers (YouTube ou similaire) et nécessite votre consentement pour être affiché.</target>
@@ -866,6 +858,34 @@
             <trans-unit id="220">
                 <source>label.detail_page_help</source>
                 <target>Slug d'une Page qui affichera le détail de chaque item de cette collection (ex. "vitrine-blocks-detail"). Cette Page peut contenir les blocks de votre choix. Laisser vide si les items n'ont pas de page de détail.</target>
+            </trans-unit>
+            <trans-unit id="221">
+                <source>label.anchor</source>
+                <target>Ancre</target>
+            </trans-unit>
+            <trans-unit id="222">
+                <source>label.anchor_help</source>
+                <target>Identifiant court utilisé pour créer un lien de menu pointant directement vers cette section (ex. "services"). Laisser vide pour le déduire automatiquement du titre.</target>
+            </trans-unit>
+            <trans-unit id="223">
+                <source>label.variant</source>
+                <target>Présentation</target>
+            </trans-unit>
+            <trans-unit id="224">
+                <source>label.variant_help</source>
+                <target>Comment chaque item est affiché. S'applique à tous les items de cette collection.</target>
+            </trans-unit>
+            <trans-unit id="225">
+                <source>label.variant_card</source>
+                <target>Carte (par défaut)</target>
+            </trans-unit>
+            <trans-unit id="226">
+                <source>label.variant_portfolio</source>
+                <target>Grille portfolio</target>
+            </trans-unit>
+            <trans-unit id="227">
+                <source>label.hero_media_max</source>
+                <target>Une section hero peut contenir au maximum {{ limit }} images.</target>
             </trans-unit>
         </body>
     </file>

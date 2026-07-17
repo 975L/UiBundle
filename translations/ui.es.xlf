@@ -834,14 +834,6 @@
                 <source>label.collection_limit_help</source>
                 <target>Dejar vacío para mostrar todo</target>
             </trans-unit>
-            <trans-unit id="211">
-                <source>label.gallery_showcase_collection</source>
-                <target>Colección</target>
-            </trans-unit>
-            <trans-unit id="212">
-                <source>label.gallery_showcase_collection_description</source>
-                <target>Cuadrícula de tarjetas generadas a partir de una colección externa, con un contador del número total de elementos</target>
-            </trans-unit>
             <trans-unit id="215">
                 <source>label.video_iframe_consent_required</source>
                 <target>Este contenido proviene de un sitio de terceros (YouTube o similar) y requiere su consentimiento para mostrarse.</target>
@@ -865,6 +857,34 @@
             <trans-unit id="220">
                 <source>label.detail_page_help</source>
                 <target>Slug de una Página que muestra el detalle de cada elemento de esta colección (ej. "vitrine-blocks-detail"). Esa Página puede contener los bloques que quieras. Dejar vacío si los elementos no tienen página de detalle.</target>
+            </trans-unit>
+            <trans-unit id="221">
+                <source>label.anchor</source>
+                <target>Ancla</target>
+            </trans-unit>
+            <trans-unit id="222">
+                <source>label.anchor_help</source>
+                <target>Identificador corto usado para crear un enlace de menú que apunte directamente a esta sección (ej. "services"). Dejar vacío para deducirlo automáticamente del título.</target>
+            </trans-unit>
+            <trans-unit id="223">
+                <source>label.variant</source>
+                <target>Presentación</target>
+            </trans-unit>
+            <trans-unit id="224">
+                <source>label.variant_help</source>
+                <target>Cómo se muestra cada item. Se aplica a todos los items de esta colección.</target>
+            </trans-unit>
+            <trans-unit id="225">
+                <source>label.variant_card</source>
+                <target>Tarjeta (por defecto)</target>
+            </trans-unit>
+            <trans-unit id="226">
+                <source>label.variant_portfolio</source>
+                <target>Cuadrícula portfolio</target>
+            </trans-unit>
+            <trans-unit id="227">
+                <source>label.hero_media_max</source>
+                <target>Una sección hero puede tener como máximo {{ limit }} imágenes.</target>
             </trans-unit>
         </body>
     </file>

@@ -9,52 +9,53 @@
 
 namespace c975L\UiBundle\Tests\Form\Block;
 
-use c975L\UiBundle\Form\Block\SectionCardItemType;
-use c975L\UiBundle\Form\Block\SectionCardsType;
-use c975L\UiBundle\Service\BlockAnchorSlugger;
+use c975L\UiBundle\Form\Block\ButtonType;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\String\Slugger\AsciiSlugger;
 
-class SectionCardsTypeTest extends TestCase
+class ButtonTypeTest extends TestCase
 {
     private function buildAddedFields(): array
     {
         $added = [];
         $builder = $this->createStub(FormBuilderInterface::class);
         $builder->method('add')->willReturnCallback(function (string $name, ?string $type = null, array $options = []) use (&$added, $builder) {
-            $added[$name] = ['type' => $type, 'options' => $options];
+            $added[$name] = $options;
 
             return $builder;
         });
 
-        (new SectionCardsType(new BlockAnchorSlugger(new AsciiSlugger())))->buildForm($builder, []);
+        (new ButtonType())->buildForm($builder, []);
 
         return $added;
     }
 
-    public function testBuildFormAddsEyebrowTitleCardsAndAnchorFields(): void
+    public function testBuildFormAddsExpectedFields(): void
     {
         $added = $this->buildAddedFields();
 
-        foreach (['eyebrow', 'title', 'cards', 'anchor'] as $field) {
-            $this->assertArrayHasKey($field, $added, "\"$field\" should be added to the SectionCards form");
+        foreach (['label', 'url', 'type', 'target', 'icon', 'download', 'inline'] as $field) {
+            $this->assertArrayHasKey($field, $added, "\"$field\" should be added to the Button form");
         }
     }
 
-    public function testCardsFieldIsACollectionOfSectionCardItemType(): void
+    public function testLabelAndUrlAreRequired(): void
     {
         $added = $this->buildAddedFields();
 
-        $this->assertSame(CollectionType::class, $added['cards']['type']);
-        $this->assertSame(SectionCardItemType::class, $added['cards']['options']['entry_type']);
+        $this->assertTrue($added['label']['required']);
+        $this->assertTrue($added['url']['required']);
+    }
+
+    public function testGetBlockPrefixReturnsUiButton(): void
+    {
+        $this->assertSame('ui_button', (new ButtonType())->getBlockPrefix());
     }
 
     public function testConfigureOptionsDefaultsToNullDataClassAndUiTranslationDomain(): void
     {
-        $type = new SectionCardsType(new BlockAnchorSlugger(new AsciiSlugger()));
+        $type = new ButtonType();
         $resolver = new OptionsResolver();
         $type->configureOptions($resolver);
 

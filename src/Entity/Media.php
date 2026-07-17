@@ -61,6 +61,14 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
         self::ROLE_LOGO => 600,
     ];
 
+    // Block kinds needing a wider stored image than IMAGE_WIDTH (block medias all share role=null, so
+    // MAX_WIDTHS above can't key on them). Hero crops tightly via CSS object-fit:cover into a 4/3.2 box
+    // and can display up to 520px CSS-wide - on a retina/2x display that needs ~1040 native pixels, and
+    // the default 800 falls short, visibly pixelating once cover crops further into the image
+    private const BLOCK_KIND_MAX_WIDTHS = [
+        'hero' => 1200,
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -376,7 +384,11 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
             return 600;
         }
 
-        return self::MAX_WIDTHS[$this->role ?? ''] ?? self::IMAGE_WIDTH;
+        if (null !== $this->role) {
+            return self::MAX_WIDTHS[$this->role] ?? self::IMAGE_WIDTH;
+        }
+
+        return self::BLOCK_KIND_MAX_WIDTHS[$this->block?->getKind() ?? ''] ?? self::IMAGE_WIDTH;
     }
 
     // Non-null only for roles needing a fixed target size/format (see FIXED_ICON_SPECS)

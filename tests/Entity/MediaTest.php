@@ -48,4 +48,13 @@ class MediaTest extends TestCase
 
         $this->assertSame(600, $media->getImageWidth());
     }
+
+    // Hero crops tightly via CSS object-fit:cover (see sass/_page-sections.scss) - needs a wider stored
+    // image than other block kinds to avoid pixelating on retina displays
+    public function testGetImageWidthUsesBlockKindMaxWidthsForHero(): void
+    {
+        $media = (new Media())->setBlock((new Block())->setKind('hero'));
+
+        $this->assertSame(1200, $media->getImageWidth());
+    }
 }

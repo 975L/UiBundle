@@ -11,14 +11,16 @@ namespace c975L\UiBundle\Tests\Form\Block;
 
 use c975L\UiBundle\Form\Block\FeatureBarType;
 use c975L\UiBundle\Form\Block\FeatureItemType;
+use c975L\UiBundle\Service\BlockAnchorSlugger;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class FeatureBarTypeTest extends TestCase
 {
-    public function testBuildFormAddsAnItemsCollectionOfFeatureItemType(): void
+    public function testBuildFormAddsAnItemsCollectionOfFeatureItemTypeAndAnAnchorField(): void
     {
         $added = [];
         $builder = $this->createStub(FormBuilderInterface::class);
@@ -28,18 +30,19 @@ class FeatureBarTypeTest extends TestCase
             return $builder;
         });
 
-        (new FeatureBarType())->buildForm($builder, []);
+        (new FeatureBarType(new BlockAnchorSlugger(new AsciiSlugger())))->buildForm($builder, []);
 
         $this->assertArrayHasKey('items', $added);
         $this->assertSame(CollectionType::class, $added['items']['type']);
         $this->assertSame(FeatureItemType::class, $added['items']['options']['entry_type']);
         $this->assertTrue($added['items']['options']['allow_add']);
         $this->assertTrue($added['items']['options']['allow_delete']);
+        $this->assertArrayHasKey('anchor', $added);
     }
 
     public function testConfigureOptionsDefaultsToNullDataClassAndUiTranslationDomain(): void
     {
-        $type = new FeatureBarType();
+        $type = new FeatureBarType(new BlockAnchorSlugger(new AsciiSlugger()));
         $resolver = new OptionsResolver();
         $type->configureOptions($resolver);
 

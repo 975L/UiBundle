@@ -1,6 +1,6 @@
-{# Static usage: <twig:c975LUi:Process:Steps title="..." steps="{{ [{title: '...', text: '...'}] }}" [eyebrow=""]/> #}
+{# Static usage: <twig:c975LUi:Process:Steps title="..." steps="{{ [{title: '...', text: '...'}] }}" [eyebrow=""] [id=""]/> #}
 {# Dynamic usage (Block system): see templates/blocks/ProcessSteps.html.twig #}
-<section class="process-steps">
+<section class="process-steps"{% if id is defined and id %} id="{{ id }}"{% endif %}>
     <div class="section-wrap">
         {% if eyebrow %}<p class="section-eyebrow">{{ eyebrow }}</p>{% endif %}
         <h2 class="section-title">{{ title }}</h2>

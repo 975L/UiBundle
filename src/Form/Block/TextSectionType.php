@@ -10,18 +10,18 @@ namespace c975L\UiBundle\Form\Block;
 
 use Symfony\Component\Form\AbstractType;
 use c975L\UiBundle\Form\TrixEditorType;
+use c975L\UiBundle\Service\BlockAnchorSlugger;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 class TextSectionType extends AbstractType
 {
     public function __construct(
-        private readonly SluggerInterface $slugger
+        private readonly BlockAnchorSlugger $anchorSlugger
     ) {
     }
 
@@ -48,10 +48,7 @@ class TextSectionType extends AbstractType
             FormEvents::SUBMIT,
             function (FormEvent $event): void {
                 $data = $event->getData();
-                $title = $data['title'] ?? '';
-                $data['slug'] = '' !== trim((string) $title)
-                    ? strtolower($this->slugger->slug($title)->toString())
-                    : '';
+                $data['slug'] = $this->anchorSlugger->slugify(null, $data['title'] ?? null) ?? '';
                 $event->setData($data);
             }
         );

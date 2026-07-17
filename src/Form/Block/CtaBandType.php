@@ -9,16 +9,24 @@
 namespace c975L\UiBundle\Form\Block;
 
 use c975L\UiBundle\Form\TrixEditorType;
+use c975L\UiBundle\Service\BlockAnchorSlugger;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CtaBandType extends AbstractType
 {
+    use HasAnchorFieldTrait;
+
+    public function __construct(private readonly BlockAnchorSlugger $anchorSlugger)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $this->addAnchorField($builder, $this->anchorSlugger);
+
         $builder
             ->add('title', TextType::class, [
                 'label' => 'label.title',
@@ -30,7 +38,7 @@ class CtaBandType extends AbstractType
             ->add('ctaLabel', TextType::class, [
                 'label' => 'label.cta_label',
             ])
-            ->add('ctaUrl', UrlType::class, [
+            ->add('ctaUrl', TextType::class, [
                 'label' => 'label.url',
             ]);
     }

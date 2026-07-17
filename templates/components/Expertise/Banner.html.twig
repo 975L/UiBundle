@@ -1,6 +1,6 @@
-{# Static usage: <twig:c975LUi:Expertise:Banner title="..." [eyebrow=""] [text=""] [tags="{{ ['Symfony', 'PHP'] }}"]/> #}
+{# Static usage: <twig:c975LUi:Expertise:Banner title="..." [eyebrow=""] [text=""] [tags="{{ ['Symfony', 'PHP'] }}"] [id=""]/> #}
 {# Dynamic usage (Block system): see templates/blocks/ExpertiseBanner.html.twig #}
-<section class="expertise-banner">
+<section class="expertise-banner"{% if id is defined and id %} id="{{ id }}"{% endif %}>
     <div class="section-wrap">
         <div class="expertise-banner__inner">
             <div>

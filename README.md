@@ -214,6 +214,47 @@ The bundle ships the following kinds out of the box (see `config/services.yaml` 
 
 ---
 
+## Anchors (in-page navigation)
+
+Every "Page sections" kind above (`hero`, `feature_bar`, `section_cards`, `expertise_banner`, `process_steps`, `portfolio_grid`, `cta_band`, `collection`) has an optional **Anchor** field, letting an editor build a one-page nav (a `menu_link` block - see `c975L/SiteBundle`'s README - pointing straight at a section of the same page).
+
+- Typing an anchor (e.g. `Services`) slugifies it (`services`). Leaving it empty falls back to slugifying the block's own title.
+- The final HTML `id` rendered on the section is always `{slug}-{block.id}` (e.g. `services-42`) - the trailing block id is added at render time, not stored, so two blocks of the same kind on the same page (or the same title reused elsewhere) never collide.
+- In `SiteBundle`'s Menu admin, a `menu_link` block's target select lists every page's anchored sections alongside its pages/routes (`Home → Services`), decoded by `MenuExtension::getMenuLinkUrl()` into `/home#services-42`.
+- Every `url`-style field on `button`, `card`, `cta_band`, `hero` and `portfolio_grid` (e.g. `primaryUrl`, `ctaUrl`, `linkUrl`) is a plain `TextType`, not Symfony's `UrlType` — so an editor can point one straight at an in-page anchor (`#services-42`) or a relative path, not just an absolute URL.
+
+Implemented by `c975L\UiBundle\Service\BlockAnchorSlugger` (the slug logic) and `c975L\UiBundle\Form\Block\HasAnchorFieldTrait` (the reusable field + `FormEvents::SUBMIT` listener). To add the same anchor field to a new "section" kind, in any bundle (own or third-party) that requires `c975l/ui-bundle`:
+
+```php
+use c975L\UiBundle\Form\Block\HasAnchorFieldTrait;
+use c975L\UiBundle\Service\BlockAnchorSlugger;
+
+class MySectionType extends AbstractType
+{
+    use HasAnchorFieldTrait;
+
+    public function __construct(private readonly BlockAnchorSlugger $anchorSlugger)
+    {
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $this->addAnchorField($builder, $this->anchorSlugger); // 2nd arg: title field name, defaults to "title"
+        // ...your own fields...
+    }
+}
+```
+
+Then, in the kind's template (`{'block' => $block} + $block->getData()` is what `render_block()` passes it - see "Registering a custom block kind" below), compose the final `id` and pass it to your section's outer tag:
+
+```twig
+<section{% if anchor %} id="{{ anchor }}-{{ block.id }}"{% endif %}>...</section>
+```
+
+No `services.yaml` entry is needed for `BlockAnchorSlugger` itself: it's autowired like any other service, from any bundle whose `services.yaml` scans its own `src/` (the convention already used by every c975L bundle) - the same way `SocialBundle`'s `SocialLinkEntryType` already reuses `UiBundle\Form\IconPickerType` across bundles.
+
+---
+
 ## Registering a custom block kind
 
 Run `bin/console c975l:ui:block:create` (requires `symfony/maker-bundle` in `require-dev`) to scaffold the FormType, template and test below for a new kind - it prints the `services.yaml` snippet to add once it's done. The rest of this section describes what that snippet means and the manual steps if you'd rather write them yourself.
@@ -301,7 +342,7 @@ A kind with no registered fixture (empty array, or not returned at all) simply s
 
 ### Showcasing content that isn't a block kind
 
-Some content is worth showing in the gallery but doesn't fit `BlockFixtureProviderInterface`, typically because rendering it through the real block/kind never reflects the fixture's own data anyway (e.g. SocialBundle's `social_links_display` always renders the site-wide singleton regardless of its own data, and `share_buttons()` isn't a block kind at all) or because the real template only renders something once resolved against live data this provider can't fabricate (e.g. SiteBundle's `articles_slider`/`menu_link`, resolved against a real `Page`/route). For these, implement `GalleryShowcaseProviderInterface` instead (same auto-discovery, no tag needed) and render the underlying component/Twig function directly with made-up sample data, bypassing whatever real lookup it would otherwise do:
+Some content is worth showing in the gallery but doesn't fit `BlockFixtureProviderInterface`, typically because rendering it through the real block/kind never reflects the fixture's own data anyway (e.g. SocialBundle's `social_links_display` always renders the site-wide singleton regardless of its own data, and `share_buttons()` isn't a block kind at all) or because the real template only renders something once resolved against live data this provider can't fabricate (e.g. a kind resolved against a real `Page`/route, or against an external source `CollectionSourceProviderInterface` supplies). For these, implement `GalleryShowcaseProviderInterface` instead (same auto-discovery, no tag needed) and render the underlying component/Twig function directly with made-up sample data, bypassing whatever real lookup it would otherwise do:
 
 ```php
 use c975L\UiBundle\Contract\GalleryShowcaseProviderInterface;
@@ -332,7 +373,7 @@ class BookingGalleryShowcaseProvider implements GalleryShowcaseProviderInterface
 }
 ```
 
-Each variant is already-rendered HTML (a plain string) rather than a `Block` - the gallery wraps it in the same isolated `<iframe>` a block preview gets. `'wide' => true` originally rendered a showcase's card wider, for a component whose real styles only apply above a CSS breakpoint (e.g. `share_buttons()` hides itself entirely below 768px). The gallery now renders every item full-width by default, so this flag is currently a no-op there - it's kept in the interface so an existing provider that sets it (e.g. SocialBundle's `share_buttons()`) doesn't break. See UiBundle's own `BlockFixtureProvider`'s class comment, and SocialBundle's/SiteBundle's `GalleryShowcaseProvider` for real examples.
+Each variant is already-rendered HTML (a plain string) rather than a `Block` - the gallery wraps it in the same isolated `<iframe>` a block preview gets. `'wide' => true` originally rendered a showcase's card wider, for a component whose real styles only apply above a CSS breakpoint (e.g. `share_buttons()` hides itself entirely below 768px). The gallery now renders every item full-width by default, so this flag is currently a no-op there - it's kept in the interface so an existing provider that sets it (e.g. SocialBundle's `share_buttons()`) doesn't break. See UiBundle's own `BlockFixtureProvider`'s class comment, and SocialBundle's `GalleryShowcaseProvider` for a real example.
 
 ---
 
@@ -455,10 +496,11 @@ component doesn't know or care where `items` comes from; each entry must expose:
 ### Collection: a live grid sourced from another bundle
 
 The `collection` kind lets an editor drop a section on a page that always shows the latest N items
-from **another bundle's own entities** (books, products, projects...) — unlike `card`/`card`, no item
-data is entered on the block itself, only which source to pull from (`source`), how many to show
-(`limit`) and the surrounding section heading/link. Each item is resolved live at render time and
-rendered through the exact same `card` block pipeline as a manually placed one, so it looks identical.
+from **another bundle's own entities** (books, products, projects...) — unlike `card`, no item data is
+entered on the block itself, only which source to pull from (`source`), how many to show (`limit`) and
+the surrounding section heading/link. Each item is resolved live at render time and rendered through
+`collection_item`, a `card`-based kind reserved for this use (never offered in the block picker - see
+`pickable: false` in `config/services.yaml`), so it looks the same as a manually placed `card`.
 Not cacheable (`cacheable: false` in `config/services.yaml`) — its content depends on another bundle's
 own entities, which `BlockCacheInvalidationListener` has no way to invalidate on.
 
@@ -501,8 +543,12 @@ still referenced from, it just renders an empty grid.
 
 `CollectionItem` also takes `buttonLabel` (defaults to the raw `url` when empty) and `buttonIcon` (a
 `c975L\UiBundle\Image\Icon` component `src`, e.g. an icon path from `social_link_icon()`) — both flow
-straight into the transient `card` Block's own teaser button, so a collection item's call-to-action reads
-the same as a manually placed `card`'s.
+straight into the transient `collection_item` Block's own teaser button, so a collection item's
+call-to-action reads the same as a manually placed `card`'s.
+
+The `collection` block's own **Presentation** field (`variant`) switches every item's markup at once,
+without an app-level template override: `''` (default) renders each item as a `card`, `'portfolio'`
+reuses `portfolio_grid`'s own markup/CSS instead (see `CollectionItem.html.twig`).
 
 #### Item detail pages
 
@@ -522,6 +568,22 @@ row persisted per item**: the data is rebuilt from the source on every request. 
 render as this item's detail view, a `collectionItem` Twig global carrying the current item's data to
 whichever of them needs it) — see SiteBundle's README ("Item detail pages", under "Collection entries")
 for the full recipe and `PageController::resolveCollectionDetail()` for the resolution logic itself.
+
+To also make each item's own **title** a link to its detail page, `CollectionItem` needs the same slug
+the `detail` callable expects:
+
+```php
+yield new CollectionItem(
+    title: $book->getTitle(),
+    // ...
+    slug: $book->getSlug(),
+);
+```
+
+`CollectionExtension::renderItems()` builds that link itself (`/pages/{currentPage}/{item->slug}`) once
+both the block's `detailPage` and the item's `slug` are set — nothing to do on the template side. Either
+one missing (no `detailPage` configured, or a source whose items carry no `slug`) just renders the title
+as plain text, same as today.
 
 ### Video:Iframe: consent-gated third-party embeds
 
@@ -590,6 +652,8 @@ A `Media` row can be attached in several ways depending on the consuming bundle:
 UiBundle does **not** register a menu entry for it: `c975l/config-bundle` (which owns the menu registration mechanism, see below) already depends on `c975l/ui-bundle`, so the reverse would be a circular dependency. A bundle that depends on both - e.g. c975L/SiteBundle - should add an entry pointing to `MediaCrudController::class` in its own `MenuProviderInterface` implementation.
 
 `Media::$url`/`Media::$description` back the per-project link and text of the `portfolio_grid` kind (see `MediaUploadType`'s `portfolio_grid` context) - a project card's title reuses the existing `$label` field.
+
+Attaching more than one `Media` to a `hero` block switches it from a single static image to a pure-CSS crossfade slideshow cycling through all of them (no JS, disabled under `prefers-reduced-motion`) - see `.hero__media--slideshow` in `sass/_page-sections.scss`. A single attached media keeps the plain static image.
 
 ### Declaring where a Media is used
 

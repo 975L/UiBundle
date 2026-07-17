@@ -10,11 +10,13 @@
 namespace c975L\UiBundle\Tests\Form\Block;
 
 use c975L\UiBundle\Form\Block\ExpertiseBannerType;
+use c975L\UiBundle\Service\BlockAnchorSlugger;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class ExpertiseBannerTypeTest extends TestCase
 {
@@ -28,7 +30,7 @@ class ExpertiseBannerTypeTest extends TestCase
             return $builder;
         });
 
-        (new ExpertiseBannerType())->buildForm($builder, []);
+        (new ExpertiseBannerType(new BlockAnchorSlugger(new AsciiSlugger())))->buildForm($builder, []);
 
         return $added;
     }
@@ -37,7 +39,7 @@ class ExpertiseBannerTypeTest extends TestCase
     {
         $added = $this->buildAddedFields();
 
-        foreach (['eyebrow', 'title', 'text', 'tags'] as $field) {
+        foreach (['eyebrow', 'title', 'text', 'tags', 'anchor'] as $field) {
             $this->assertArrayHasKey($field, $added, "\"$field\" should be added to the ExpertiseBanner form");
         }
     }
@@ -53,7 +55,7 @@ class ExpertiseBannerTypeTest extends TestCase
 
     public function testConfigureOptionsDefaultsToNullDataClassAndUiTranslationDomain(): void
     {
-        $type = new ExpertiseBannerType();
+        $type = new ExpertiseBannerType(new BlockAnchorSlugger(new AsciiSlugger()));
         $resolver = new OptionsResolver();
         $type->configureOptions($resolver);
 

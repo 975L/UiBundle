@@ -123,10 +123,13 @@ class BlockFixtureMediaAttacher
     // @return Media[]
     private function placeholderPortfolioProjects(): array
     {
+        // Generic client-project copy, not a real 975l.com portfolio - same reasoning as
+        // GalleryShowcaseProvider's own "collection" fixture. "#" (not a real 975l.com URL) since this
+        // is rendered by any consuming app's own showcase, not just 975l.com's.
         $projects = [
-            ['Papa Câlin', "Des histoires inventées à partir des idées d'enfants."],
-            ['EIPT', 'École informatique pour tous, de la primaire aux seniors.'],
-            ['Éditions Lolant', 'Le catalogue des livres publiés par la maison.'],
+            ['Refonte e-commerce', 'Une boutique en ligne repensée pour la conversion, développée sur mesure avec Symfony.'],
+            ['Application SaaS', 'Une plateforme métier sur mesure, de la conception à la mise en production.'],
+            ['Site vitrine', 'Un site rapide, accessible et facile à maintenir, sans usine à gaz.'],
         ];
 
         return array_map(
@@ -134,14 +137,14 @@ class BlockFixtureMediaAttacher
                 ->setAlt($project[0])
                 ->setLabel($project[0])
                 ->setDescription($project[1])
-                ->setUrl('https://975l.com'),
+                ->setUrl('#'),
             $projects
         );
     }
 
     // Public: also used directly by callers building a placeholder image outside of attach()'s own
-    // media_types-driven logic (e.g. SiteBundle's GalleryShowcaseProvider, feeding a few placeholder
-    // images into its "articles_slider" showcase preview)
+    // media_types-driven logic (e.g. a GalleryShowcaseProviderInterface implementation feeding a few
+    // placeholder images into its own showcase preview)
     public function nextPlaceholderImage(): Media
     {
         $filename = self::PLACEHOLDER_IMAGES[$this->photoCursor % count(self::PLACEHOLDER_IMAGES)];

@@ -11,9 +11,11 @@ namespace c975L\UiBundle\Tests\Form\Block;
 
 use c975L\UiBundle\Form\Block\CollectionType;
 use c975L\UiBundle\Registry\CollectionSourceRegistry;
+use c975L\UiBundle\Service\BlockAnchorSlugger;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class CollectionTypeTest extends TestCase
 {
@@ -27,7 +29,7 @@ class CollectionTypeTest extends TestCase
             return $builder;
         });
 
-        (new CollectionType($sourceRegistry))->buildForm($builder, []);
+        (new CollectionType($sourceRegistry, new BlockAnchorSlugger(new AsciiSlugger())))->buildForm($builder, []);
 
         return $added;
     }
@@ -36,9 +38,19 @@ class CollectionTypeTest extends TestCase
     {
         $added = $this->buildAddedFields(new CollectionSourceRegistry());
 
-        foreach (['source', 'limit', 'title'] as $field) {
+        foreach (['source', 'limit', 'title', 'anchor', 'variant'] as $field) {
             $this->assertArrayHasKey($field, $added, "\"$field\" should be added to the Collection form");
         }
+    }
+
+    public function testVariantChoicesOfferCardAndPortfolio(): void
+    {
+        $added = $this->buildAddedFields(new CollectionSourceRegistry());
+
+        $this->assertSame([
+            'label.variant_card'      => '',
+            'label.variant_portfolio' => 'portfolio',
+        ], $added['variant']['choices']);
     }
 
     // The header fields are optional - only "source" (which collection to pull from) is required
@@ -83,7 +95,7 @@ class CollectionTypeTest extends TestCase
 
     public function testConfigureOptionsDefaultsToNullDataClassAndUiTranslationDomain(): void
     {
-        $type = new CollectionType(new CollectionSourceRegistry());
+        $type = new CollectionType(new CollectionSourceRegistry(), new BlockAnchorSlugger(new AsciiSlugger()));
         $resolver = new OptionsResolver();
         $type->configureOptions($resolver);
 

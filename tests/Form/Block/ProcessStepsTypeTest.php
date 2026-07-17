@@ -11,10 +11,12 @@ namespace c975L\UiBundle\Tests\Form\Block;
 
 use c975L\UiBundle\Form\Block\ProcessStepItemType;
 use c975L\UiBundle\Form\Block\ProcessStepsType;
+use c975L\UiBundle\Service\BlockAnchorSlugger;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class ProcessStepsTypeTest extends TestCase
 {
@@ -28,16 +30,16 @@ class ProcessStepsTypeTest extends TestCase
             return $builder;
         });
 
-        (new ProcessStepsType())->buildForm($builder, []);
+        (new ProcessStepsType(new BlockAnchorSlugger(new AsciiSlugger())))->buildForm($builder, []);
 
         return $added;
     }
 
-    public function testBuildFormAddsEyebrowTitleAndStepsFields(): void
+    public function testBuildFormAddsEyebrowTitleStepsAndAnchorFields(): void
     {
         $added = $this->buildAddedFields();
 
-        foreach (['eyebrow', 'title', 'steps'] as $field) {
+        foreach (['eyebrow', 'title', 'steps', 'anchor'] as $field) {
             $this->assertArrayHasKey($field, $added, "\"$field\" should be added to the ProcessSteps form");
         }
     }
@@ -52,7 +54,7 @@ class ProcessStepsTypeTest extends TestCase
 
     public function testConfigureOptionsDefaultsToNullDataClassAndUiTranslationDomain(): void
     {
-        $type = new ProcessStepsType();
+        $type = new ProcessStepsType(new BlockAnchorSlugger(new AsciiSlugger()));
         $resolver = new OptionsResolver();
         $type->configureOptions($resolver);
 

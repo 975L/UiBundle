@@ -2,7 +2,7 @@
 .cards {
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
+    align-items: stretch;
     flex-wrap: wrap;
     justify-content: center;
     gap: 20px;
@@ -14,6 +14,14 @@
     border: 1px solid var(--input-border-color);
     border-radius: var(--radius-card);
     background-color: var(--card-background);
+    display: flex;
+    flex-direction: column;
+}
+
+// ".cards" already spaces its children via "gap" - without this, a card's own "margin" stacks on
+// top of that gap, making rows sit further apart than cards within the same row
+.cards > .card {
+    margin: 0;
 }
 
 .card-header,
@@ -27,8 +35,28 @@ h2.card-header {
     border-radius: var(--radius-card) var(--radius-card) 0 0;
 }
 
+// Title link (e.g. a collection item's card, see CollectionItem.html.twig) - without these, two
+// global rules with the same specificity win on any directly-matched element regardless of source
+// order: the universal "*" (sass/_typography.scss) sets font-family to the body font instead of
+// the inherited h2 title font, and "a:hover" (sass/_links.scss) sets color back to var(--primary),
+// invisible on this var(--primary) background; underline on hover gives it the same clickable
+// "preview" as links in .card-body
+.card-header a,
+.card-header a:visited {
+    color: inherit;
+    font-family: inherit;
+    text-decoration: none;
+}
+
+.card-header a:hover,
+.card-header a:visited:hover {
+    color: inherit;
+    text-decoration: underline;
+}
+
 .card-body {
     padding: 1em;
+    flex: 1;
 }
 
 .card-data {

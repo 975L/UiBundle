@@ -1,6 +1,7 @@
-{# Static usage: <twig:c975LUi:Hero:Hero title="..." primaryLabel="..." primaryUrl="..." [badge=""] [subtitle=""] [secondaryLabel=""] [secondaryUrl=""] [statValue=""] [statLabel=""] [src=""] [alt=""]/> #}
+{# Static usage: <twig:c975LUi:Hero:Hero title="..." primaryLabel="..." primaryUrl="..." [badge=""] [subtitle=""] [secondaryLabel=""] [secondaryUrl=""] [statValue=""] [statLabel=""] [src=""] [alt=""] [id=""] [medias=[]]/> #}
 {# Dynamic usage (Block system): see templates/blocks/Hero.html.twig #}
-<section class="hero">
+{% set medias = medias|default([]) %}
+<section class="hero"{% if id is defined and id %} id="{{ id }}"{% endif %}>
     <div class="section-wrap">
         <div class="hero__text">
             {% if badge %}<span class="hero__badge">{{ badge }}</span>{% endif %}
@@ -11,7 +12,18 @@
                 {% if secondaryLabel %}<a class="section-btn section-btn--ghost" href="{{ secondaryUrl }}">{{ secondaryLabel }}</a>{% endif %}
             </div>
         </div>
-        {% if src %}
+        {% if medias|length > 1 %}
+            {# Several media attached: cycle through all of them, pure CSS (.hero__media--slideshow in
+               _page-sections.scss), no next/prev/dots control - each <img> is alt="" (decorative: the
+               text carries the meaning, not which photo happens to be showing) and the crossfade is
+               disabled entirely under prefers-reduced-motion, freezing on the first image instead #}
+            <div class="hero__media hero__media--slideshow" data-count="{{ medias|length }}">
+                {% for m in medias %}
+                    <img src="{{ vich_uploader_asset(m) }}" alt="">
+                {% endfor %}
+                {% if statValue %}<div class="hero__stat"><b>{{ statValue }}</b><span>{{ statLabel }}</span></div>{% endif %}
+            </div>
+        {% elseif src %}
             <div class="hero__media">
                 <img src="{{ src }}" alt="{{ alt }}">
                 {% if statValue %}<div class="hero__stat"><b>{{ statValue }}</b><span>{{ statLabel }}</span></div>{% endif %}

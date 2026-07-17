@@ -10,9 +10,11 @@
 namespace c975L\UiBundle\Tests\Form\Block;
 
 use c975L\UiBundle\Form\Block\PortfolioGridType;
+use c975L\UiBundle\Service\BlockAnchorSlugger;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class PortfolioGridTypeTest extends TestCase
 {
@@ -26,7 +28,7 @@ class PortfolioGridTypeTest extends TestCase
             return $builder;
         });
 
-        (new PortfolioGridType())->buildForm($builder, []);
+        (new PortfolioGridType(new BlockAnchorSlugger(new AsciiSlugger())))->buildForm($builder, []);
 
         return $added;
     }
@@ -35,7 +37,7 @@ class PortfolioGridTypeTest extends TestCase
     {
         $added = $this->buildAddedFields();
 
-        foreach (['eyebrow', 'title', 'linkLabel', 'linkUrl'] as $field) {
+        foreach (['eyebrow', 'title', 'linkLabel', 'linkUrl', 'anchor'] as $field) {
             $this->assertArrayHasKey($field, $added, "\"$field\" should be added to the PortfolioGrid form");
         }
     }
@@ -52,7 +54,7 @@ class PortfolioGridTypeTest extends TestCase
 
     public function testConfigureOptionsDefaultsToNullDataClassAndUiTranslationDomain(): void
     {
-        $type = new PortfolioGridType();
+        $type = new PortfolioGridType(new BlockAnchorSlugger(new AsciiSlugger()));
         $resolver = new OptionsResolver();
         $type->configureOptions($resolver);
 

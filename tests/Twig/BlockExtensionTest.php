@@ -48,7 +48,7 @@ class BlockExtensionTest extends TestCase
         $twig = $this->createMock(Environment::class);
         $twig->expects($this->once())
             ->method('render')
-            ->with('contact.html.twig', ['block' => $block, 'title' => 'Hello'])
+            ->with('contact.html.twig', ['block' => $block, 'anchor_id' => '', 'title' => 'Hello'])
             ->willReturn('<p>rendered</p>');
 
         $cache = $this->createMock(TagAwareCacheInterface::class);
@@ -73,7 +73,7 @@ class BlockExtensionTest extends TestCase
         $twig = $this->createMock(Environment::class);
         $twig->expects($this->once())
             ->method('render')
-            ->with('article.html.twig', ['block' => $block, 'title' => 'Hello'])
+            ->with('article.html.twig', ['block' => $block, 'anchor_id' => '', 'title' => 'Hello'])
             ->willReturn('<article>fresh</article>');
 
         $cache = $this->createMock(TagAwareCacheInterface::class);
@@ -82,6 +82,57 @@ class BlockExtensionTest extends TestCase
         $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), new BlockCacheTagRegistry());
 
         $this->assertSame('<article>fresh</article>', $extension->renderBlock($block));
+    }
+
+    // anchor_id is computed once here instead of every "Page sections" adapter template repeating its
+    // own "{{ anchor ~ '-' ~ block.id }}" - the trailing block id keeps two blocks of the same kind (or
+    // the same title/anchor reused elsewhere) on the same page from colliding on the same HTML id
+    public function testRenderBlockComputesAnchorIdFromTheBlocksAnchorAndId(): void
+    {
+        $block = new Block();
+        $block->setKind('hero');
+        $block->setData(['title' => 'Hello', 'anchor' => 'services']);
+        (new \ReflectionProperty(Block::class, 'id'))->setValue($block, 42);
+
+        $registry = $this->createStub(BlockRegistry::class);
+        $registry->method('isCacheable')->willReturn(false);
+        $registry->method('getTemplate')->willReturn('hero.html.twig');
+
+        $twig = $this->createMock(Environment::class);
+        $twig->expects($this->once())
+            ->method('render')
+            ->with('hero.html.twig', ['block' => $block, 'anchor_id' => 'services-42', 'title' => 'Hello', 'anchor' => 'services'])
+            ->willReturn('<section id="services-42"></section>');
+
+        $cache = $this->createStub(TagAwareCacheInterface::class);
+
+        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), new BlockCacheTagRegistry());
+
+        $this->assertSame('<section id="services-42"></section>', $extension->renderBlock($block));
+    }
+
+    // A never-persisted block (e.g. a gallery fixture preview) has no id yet - the anchor still needs
+    // to render into something rather than crash, even without the trailing "-{id}" uniqueness suffix
+    public function testRenderBlockComputesAnchorIdWithoutATrailingIdWhenBlockIsNeverPersisted(): void
+    {
+        $block = $this->createBlock('hero', null);
+        $block->setData(['title' => 'Hello', 'anchor' => 'services']);
+
+        $registry = $this->createStub(BlockRegistry::class);
+        $registry->method('isCacheable')->willReturn(false);
+        $registry->method('getTemplate')->willReturn('hero.html.twig');
+
+        $twig = $this->createMock(Environment::class);
+        $twig->expects($this->once())
+            ->method('render')
+            ->with('hero.html.twig', ['block' => $block, 'anchor_id' => 'services-', 'title' => 'Hello', 'anchor' => 'services'])
+            ->willReturn('<section id="services-"></section>');
+
+        $cache = $this->createStub(TagAwareCacheInterface::class);
+
+        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), new BlockCacheTagRegistry());
+
+        $this->assertSame('<section id="services-"></section>', $extension->renderBlock($block));
     }
 
     // Cacheable kinds go through the cache pool, keyed by block id and current locale

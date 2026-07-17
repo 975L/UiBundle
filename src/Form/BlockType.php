@@ -27,10 +27,16 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Validator\Constraints\Count;
 
 // Check Readme for usage instructions
 class BlockType extends AbstractType
 {
+    // "hero"'s pure-CSS crossfade slideshow only has :nth-child/[data-count] rules for up to this many
+    // images (see .hero__media--slideshow in sass/_page-sections.scss) - beyond it, extra images would
+    // silently collide with an earlier slide's animation timing instead of taking their own turn
+    private const HERO_MEDIA_MAX = 6;
+
     public function __construct(
         private BlockRegistry $registry,
         private UrlGeneratorInterface $router
@@ -161,6 +167,10 @@ class BlockType extends AbstractType
     {
         $accept = implode(',', $this->registry->getMediaTypes($kind));
 
+        $constraints = 'hero' === $kind
+            ? [new Count(max: self::HERO_MEDIA_MAX, maxMessage: 'label.hero_media_max')]
+            : [];
+
         $form->add('medias', CollectionType::class, [
             'label' => 'label.media',
             'help' => 'label.media_help',
@@ -170,6 +180,7 @@ class BlockType extends AbstractType
             'allow_delete' => true,
             'by_reference' => false,
             'prototype' => true,
+            'constraints' => $constraints,
         ]);
 
         // Unmapped: consumed directly from the submitted data by mergeMultiUpload() below (spliced

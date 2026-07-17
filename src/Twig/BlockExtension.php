@@ -68,9 +68,19 @@ class BlockExtension extends AbstractExtension
 
     private function doRender(Block $block): string
     {
+        $data = $block->getData();
+
         return $this->twig->render(
             $this->registry->getTemplate($block->getKind()),
-            ['block' => $block] + $block->getData()
+            ['block' => $block, 'anchor_id' => $this->buildAnchorId($data['anchor'] ?? null, $block->getId())] + $data
         );
+    }
+
+    // Computed once here instead of every "Page sections" adapter template repeating its own
+    // "{{ anchor ~ '-' ~ block.id }}" - the trailing block id keeps two blocks of the same kind (or
+    // the same title/anchor reused elsewhere) on the same page from colliding on the same HTML id
+    private function buildAnchorId(?string $anchor, ?int $blockId): string
+    {
+        return $anchor ? $anchor . '-' . $blockId : '';
     }
 }

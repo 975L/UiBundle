@@ -10,9 +10,11 @@
 namespace c975L\UiBundle\Tests\Form\Block;
 
 use c975L\UiBundle\Form\Block\CtaBandType;
+use c975L\UiBundle\Service\BlockAnchorSlugger;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class CtaBandTypeTest extends TestCase
 {
@@ -26,7 +28,7 @@ class CtaBandTypeTest extends TestCase
             return $builder;
         });
 
-        (new CtaBandType())->buildForm($builder, []);
+        (new CtaBandType(new BlockAnchorSlugger(new AsciiSlugger())))->buildForm($builder, []);
 
         return $added;
     }
@@ -35,14 +37,14 @@ class CtaBandTypeTest extends TestCase
     {
         $added = $this->buildAddedFields();
 
-        foreach (['title', 'text', 'ctaLabel', 'ctaUrl'] as $field) {
+        foreach (['title', 'text', 'ctaLabel', 'ctaUrl', 'anchor'] as $field) {
             $this->assertArrayHasKey($field, $added, "\"$field\" should be added to the CtaBand form");
         }
     }
 
     public function testConfigureOptionsDefaultsToNullDataClassAndUiTranslationDomain(): void
     {
-        $type = new CtaBandType();
+        $type = new CtaBandType(new BlockAnchorSlugger(new AsciiSlugger()));
         $resolver = new OptionsResolver();
         $type->configureOptions($resolver);
 

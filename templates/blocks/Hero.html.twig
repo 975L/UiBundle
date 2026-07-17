@@ -1,6 +1,9 @@
-{# Adapter for the dynamic Block system — resolves the media file into the Hero component, same
-   convention as blocks/BannerTitle.html.twig #}
-{% set media = block.media|first %}
+{# Adapter for the dynamic Block system — resolves the media file(s) into the Hero component, same
+   convention as blocks/BannerTitle.html.twig, except Hero shows every attached media in rotation
+   (via "medias") instead of just the first one (unlike every other single-media block kind) - see
+   Hero/Hero.html.twig for the pure-CSS crossfade this feeds, no randomness/caching concern involved #}
+{% set medias = block.media %}
+{% set media = medias|length == 1 ? medias|first : null %}
 <twig:c975LUi:Hero:Hero
     badge="{{ badge|default('') }}"
     title="{{ title }}"
@@ -13,4 +16,6 @@
     statLabel="{{ statLabel|default('') }}"
     src="{{ media ? vich_uploader_asset(media) : '' }}"
     alt="{{ media ? media.alt : '' }}"
+    medias="{{ medias|length > 1 ? medias : [] }}"
+    id="{{ anchor_id }}"
 />

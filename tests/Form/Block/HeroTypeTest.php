@@ -10,9 +10,11 @@
 namespace c975L\UiBundle\Tests\Form\Block;
 
 use c975L\UiBundle\Form\Block\HeroType;
+use c975L\UiBundle\Service\BlockAnchorSlugger;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class HeroTypeTest extends TestCase
 {
@@ -26,7 +28,7 @@ class HeroTypeTest extends TestCase
             return $builder;
         });
 
-        (new HeroType())->buildForm($builder, []);
+        (new HeroType(new BlockAnchorSlugger(new AsciiSlugger())))->buildForm($builder, []);
 
         return $added;
     }
@@ -35,7 +37,7 @@ class HeroTypeTest extends TestCase
     {
         $added = $this->buildAddedFields();
 
-        foreach (['badge', 'title', 'subtitle', 'primaryLabel', 'primaryUrl', 'secondaryLabel', 'secondaryUrl', 'statValue', 'statLabel'] as $field) {
+        foreach (['badge', 'title', 'subtitle', 'primaryLabel', 'primaryUrl', 'secondaryLabel', 'secondaryUrl', 'statValue', 'statLabel', 'anchor'] as $field) {
             $this->assertArrayHasKey($field, $added, "\"$field\" should be added to the Hero form");
         }
     }
@@ -54,7 +56,7 @@ class HeroTypeTest extends TestCase
 
     public function testConfigureOptionsDefaultsToNullDataClassAndUiTranslationDomain(): void
     {
-        $type = new HeroType();
+        $type = new HeroType(new BlockAnchorSlugger(new AsciiSlugger()));
         $resolver = new OptionsResolver();
         $type->configureOptions($resolver);
 

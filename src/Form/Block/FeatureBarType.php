@@ -8,6 +8,7 @@
  */
 namespace c975L\UiBundle\Form\Block;
 
+use c975L\UiBundle\Service\BlockAnchorSlugger;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,8 +16,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FeatureBarType extends AbstractType
 {
+    use HasAnchorFieldTrait;
+
+    public function __construct(private readonly BlockAnchorSlugger $anchorSlugger)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        // No "title" field on this kind - the anchor field must be typed explicitly, no slug fallback
+        $this->addAnchorField($builder, $this->anchorSlugger);
+
         $builder->add('items', CollectionType::class, [
             'label' => 'label.items',
             'entry_type' => FeatureItemType::class,

@@ -9,52 +9,51 @@
 
 namespace c975L\UiBundle\Tests\Form\Block;
 
-use c975L\UiBundle\Form\Block\SectionCardItemType;
-use c975L\UiBundle\Form\Block\SectionCardsType;
-use c975L\UiBundle\Service\BlockAnchorSlugger;
+use c975L\UiBundle\Form\Block\CollectionItemType;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\String\Slugger\AsciiSlugger;
 
-class SectionCardsTypeTest extends TestCase
+class CollectionItemTypeTest extends TestCase
 {
     private function buildAddedFields(): array
     {
         $added = [];
         $builder = $this->createStub(FormBuilderInterface::class);
         $builder->method('add')->willReturnCallback(function (string $name, ?string $type = null, array $options = []) use (&$added, $builder) {
-            $added[$name] = ['type' => $type, 'options' => $options];
+            $added[$name] = $options;
 
             return $builder;
         });
 
-        (new SectionCardsType(new BlockAnchorSlugger(new AsciiSlugger())))->buildForm($builder, []);
+        (new CollectionItemType())->buildForm($builder, []);
 
         return $added;
     }
 
-    public function testBuildFormAddsEyebrowTitleCardsAndAnchorFields(): void
+    public function testBuildFormAddsExpectedFields(): void
     {
         $added = $this->buildAddedFields();
 
-        foreach (['eyebrow', 'title', 'cards', 'anchor'] as $field) {
-            $this->assertArrayHasKey($field, $added, "\"$field\" should be added to the SectionCards form");
+        foreach (['title', 'content', 'url', 'imageUrl', 'buttonLabel', 'buttonIcon', 'detailUrl'] as $field) {
+            $this->assertArrayHasKey($field, $added, "\"$field\" should be added to the CollectionItem form");
         }
     }
 
-    public function testCardsFieldIsACollectionOfSectionCardItemType(): void
+    // Every field is optional - CollectionExtension::renderItems() fills only whichever of them a
+    // given CollectionItem/source actually provides
+    public function testEveryFieldIsOptional(): void
     {
         $added = $this->buildAddedFields();
 
-        $this->assertSame(CollectionType::class, $added['cards']['type']);
-        $this->assertSame(SectionCardItemType::class, $added['cards']['options']['entry_type']);
+        foreach ($added as $field => $options) {
+            $this->assertFalse($options['required'], "\"$field\" should be optional on the CollectionItem form");
+        }
     }
 
     public function testConfigureOptionsDefaultsToNullDataClassAndUiTranslationDomain(): void
     {
-        $type = new SectionCardsType(new BlockAnchorSlugger(new AsciiSlugger()));
+        $type = new CollectionItemType();
         $resolver = new OptionsResolver();
         $type->configureOptions($resolver);
 

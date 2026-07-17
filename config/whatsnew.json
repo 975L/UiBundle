@@ -1,5 +1,55 @@
 [
     {
+        "date": "2026-07-17",
+        "description": [
+            {
+                "en": "Page sections can now carry a short anchor, so you can build a one-page menu linking straight to them",
+                "fr": "Les sections de page peuvent désormais recevoir une ancre courte, pour créer un menu qui pointe directement vers elles",
+                "es": "Las secciones de página ahora pueden llevar un ancla corta, para crear un menú que apunte directamente a ellas"
+            },
+            {
+                "en": "Buttons and call-to-action links can now point to a section of the same page, not just an external address",
+                "fr": "Les boutons et liens d'appel à l'action peuvent désormais pointer vers une section de la même page, pas seulement vers une adresse externe",
+                "es": "Los botones y enlaces de llamada a la acción ahora pueden apuntar a una sección de la misma página, no solo a una dirección externa"
+            },
+            {
+                "en": "Titles in a collection section can now link to their own detail page",
+                "fr": "Les titres d'une section collection peuvent désormais pointer vers leur propre page de détail",
+                "es": "Los títulos de una sección de colección ahora pueden enlazar a su propia página de detalle"
+            },
+            {
+                "en": "A collection section can now be displayed as cards or as a portfolio grid",
+                "fr": "Une section collection peut désormais s'afficher en cartes ou en grille portfolio",
+                "es": "Una sección de colección ahora puede mostrarse como tarjetas o como cuadrícula de portafolio"
+            },
+            {
+                "en": "The header banner block can now cycle automatically through several images when more than one is attached",
+                "fr": "Le bloc bannière d'en-tête peut désormais faire défiler automatiquement plusieurs images lorsque plus d'une est ajoutée",
+                "es": "El bloque de banner de cabecera ahora puede pasar automáticamente por varias imágenes cuando se añade más de una"
+            },
+            {
+                "en": "Header banner and portfolio images are no longer cropped when their proportions don't match the display box",
+                "fr": "Les images de la bannière d'en-tête et du portfolio ne sont plus recadrées lorsque leurs proportions ne correspondent pas au cadre d'affichage",
+                "es": "Las imágenes del banner de cabecera y del portafolio ya no se recortan cuando sus proporciones no coinciden con el marco de visualización"
+            },
+            {
+                "en": "Header banner images now look sharper on high-resolution screens",
+                "fr": "Les images de la bannière d'en-tête sont désormais plus nettes sur les écrans haute résolution",
+                "es": "Las imágenes del banner de cabecera ahora se ven más nítidas en pantallas de alta resolución"
+            },
+            {
+                "en": "Portfolio project links now open in a new tab",
+                "fr": "Les liens des projets du portfolio s'ouvrent désormais dans un nouvel onglet",
+                "es": "Los enlaces de los proyectos del portafolio ahora se abren en una pestaña nueva"
+            },
+            {
+                "en": "Fixed the call-to-action band text sometimes showing in the wrong color",
+                "fr": "Correction du texte du bandeau d'appel à l'action qui s'affichait parfois dans la mauvaise couleur",
+                "es": "Corregido el texto de la banda de llamada a la acción que a veces se mostraba en el color incorrecto"
+            }
+        ]
+    },
+    {
         "date": "2026-07-16",
         "description": [
             {

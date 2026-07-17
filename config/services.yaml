@@ -114,6 +114,20 @@ services:
               pickable: true
               cacheable: true
 
+    # Never offered in the block picker (pickable: false) - only ever built transiently by
+    # CollectionExtension::renderItems(), one per "collection" block item, see CollectionItemType
+    ui.block.collection_item:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: collection_item
+              label: "label.block_card"
+              form: c975L\UiBundle\Form\Block\CollectionItemType
+              template: '@c975LUi/blocks/CollectionItem.html.twig'
+              category: 'label.category_elements'
+              pickable: false
+              cacheable: false
+
     ui.block.document_download:
         class: stdClass
         tags:
@@ -273,6 +287,7 @@ services:
               template: '@c975LUi/blocks/Hero.html.twig'
               category: 'label.category_sections'
               media_types: 'image/*'
+              media_multi_upload: true
               priority: 100
               pickable: true
               cacheable: true

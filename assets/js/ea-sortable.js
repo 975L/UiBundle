@@ -97,8 +97,25 @@ export default class extends Controller {
 
         btn.classList.add('ui-sort-handle');
         btn.style.cursor = 'grab';
-        btn.addEventListener('mousedown', () => item.setAttribute('draggable', 'true'));
-        btn.addEventListener('mouseup', () => item.removeAttribute('draggable'));
+
+        const startDrag = () => item.setAttribute('draggable', 'true');
+        const endDrag = () => item.removeAttribute('draggable');
+        btn.addEventListener('mousedown', startDrag);
+        btn.addEventListener('mouseup', endDrag);
+
+        // Extended to the whole header bar so grabbing isn't limited to this small icon. Only
+        // the toolbar itself (duplicate, delete, this handle) is excluded - EasyAdmin's own
+        // title/toggle button covers most of the bar's width, and it must stay draggable too,
+        // it just keeps toggling normally on a plain click since only an actual drag gesture
+        // (pointer movement) hijacks it instead of a click.
+        const header = item.querySelector('.accordion-header');
+        if (header) {
+            header.style.cursor = 'grab';
+            header.addEventListener('mousedown', e => {
+                if (!e.target.closest('.ui-row-toolbar')) startDrag();
+            });
+            header.addEventListener('mouseup', endDrag);
+        }
     }
 
     dragAfter(field, y) {

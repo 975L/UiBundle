@@ -13,9 +13,11 @@ use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Registry\BlockRegistry;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Validator\Constraints\Count;
 
 class BlockTypeTest extends TestCase
 {
@@ -87,6 +89,23 @@ class BlockTypeTest extends TestCase
         return (new \ReflectionMethod($type, 'mergeMultiUpload'))->invoke($type, $submitted, $kind);
     }
 
+    // Captures every form->add() call's options fired by the private addMediaSubForm(), so the
+    // "medias" field's "constraints" can be asserted
+    private function buildAddedMediaOptions(BlockType $type, string $kind): array
+    {
+        $added = [];
+        $form = $this->createStub(FormInterface::class);
+        $form->method('add')->willReturnCallback(function (string $name, ?string $fieldType = null, array $fieldOptions = []) use (&$added, $form) {
+            $added[$name] = $fieldOptions;
+
+            return $form;
+        });
+
+        (new \ReflectionMethod($type, 'addMediaSubForm'))->invoke($type, $form, $kind);
+
+        return $added;
+    }
+
     private function createUploadedFile(string $originalName): UploadedFile
     {
         $path = tempnam(sys_get_temp_dir(), 'ui-block-type-test-');
@@ -142,5 +161,33 @@ class BlockTypeTest extends TestCase
         $this->assertArrayNotHasKey('mediaUpload', $result);
         $this->assertCount(1, $result['medias']);
         $this->assertSame($file, $result['medias'][0]['file']['file']);
+    }
+
+    // "hero"'s pure-CSS crossfade only has slide rules for up to 6 images (see sass/_page-sections.scss) -
+    // this caps the field so an editor can't silently attach a 7th that would collide with an earlier slide
+    public function testAddMediaSubFormCapsHeroMediaCountWithACountConstraint(): void
+    {
+        $registry = $this->createStub(BlockRegistry::class);
+        $registry->method('getMediaTypes')->willReturn(['image/*']);
+        $registry->method('allowsMultiUpload')->willReturn(true);
+        $type = new BlockType($registry, $this->createRouter());
+
+        $added = $this->buildAddedMediaOptions($type, 'hero');
+
+        $this->assertCount(1, $added['medias']['constraints']);
+        $this->assertInstanceOf(Count::class, $added['medias']['constraints'][0]);
+        $this->assertSame(6, $added['medias']['constraints'][0]->max);
+    }
+
+    public function testAddMediaSubFormAddsNoConstraintsForKindsOtherThanHero(): void
+    {
+        $registry = $this->createStub(BlockRegistry::class);
+        $registry->method('getMediaTypes')->willReturn(['image/*']);
+        $registry->method('allowsMultiUpload')->willReturn(false);
+        $type = new BlockType($registry, $this->createRouter());
+
+        $added = $this->buildAddedMediaOptions($type, 'article');
+
+        $this->assertSame([], $added['medias']['constraints']);
     }
 }

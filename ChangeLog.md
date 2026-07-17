@@ -1,5 +1,26 @@
 # ChangeLog
 
+## v1.7.2
+
+- Added an optional Anchor field to `hero`/`feature_bar`/`section_cards`/`expertise_banner`/`process_steps`/`portfolio_grid`/`cta_band`/`collection`, for in-page navigation (17/07/2026)
+- Added `collection_item` block kind, replacing the `card` kind reuse for `collection` items (17/07/2026)
+- Added a detail-page link on `collection` item titles, when the item's source provides a slug (17/07/2026)
+- Added a `variant` field to `collection`, switching every item's presentation between `card` and `portfolio_grid` styles (17/07/2026)
+- Added a pure-CSS crossfade slideshow to `hero` when several media are attached (17/07/2026)
+- Changed `button`/`card`/`cta_band`/`hero`/`portfolio_grid` url fields from `UrlType` to `TextType`, allowing in-page anchor/relative links (17/07/2026)
+- Changed `hero` to store a wider image (1200px) to avoid pixelating on retina displays (17/07/2026)
+- Changed `hero`/`portfolio_grid` images to `object-fit: contain` instead of `cover`, avoiding cropping (17/07/2026)
+- Changed `portfolio_grid` project links to open in a new tab (17/07/2026)
+- Added consistent top padding across stacked "Page sections" blocks (17/07/2026)
+- Fixed `cta_band` text color on dark background, nested-`<p>` double-wrapping same as `expertise_banner` (17/07/2026)
+- Changed `portfolio_grid` gallery fixture to generic placeholder copy, not real client names (17/07/2026)
+- Removed `GalleryShowcaseProvider` (17/07/2026)
+- Added a cap of 6 attached media on `hero`, matching its crossfade slideshow's own CSS limit (17/07/2026)
+- Fixed `portfolio_grid` project links opening a blank new tab when the project has no real url (17/07/2026)
+- Added `hero` to the gallery's multi-image fixtures, so its slideshow can be previewed (17/07/2026)
+- Suppressed the anchor-id composition duplicated across 8 block adapter templates, now computed once by `BlockExtension` (17/07/2026)
+- Suppressed `article`/`text_section`'s own hand-rolled slug logic, now sharing `BlockAnchorSlugger` (17/07/2026)
+
 ## v1.7.1
 
 - Corrected link https://975l.com/pages/vitrine-blocks (17/07/2026)

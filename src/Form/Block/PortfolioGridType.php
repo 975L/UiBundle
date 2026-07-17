@@ -8,9 +8,9 @@
  */
 namespace c975L\UiBundle\Form\Block;
 
+use c975L\UiBundle\Service\BlockAnchorSlugger;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -18,8 +18,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 // context: label = project title, description = project text, url = outbound link)
 class PortfolioGridType extends AbstractType
 {
+    use HasAnchorFieldTrait;
+
+    public function __construct(private readonly BlockAnchorSlugger $anchorSlugger)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $this->addAnchorField($builder, $this->anchorSlugger);
+
         $builder
             ->add('eyebrow', TextType::class, [
                 'label' => 'label.eyebrow',
@@ -33,7 +41,7 @@ class PortfolioGridType extends AbstractType
                 'label' => 'label.link_label',
                 'required' => false,
             ])
-            ->add('linkUrl', UrlType::class, [
+            ->add('linkUrl', TextType::class, [
                 'label' => 'label.url',
                 'required' => false,
             ]);

@@ -183,7 +183,7 @@ class BlockFixtureMediaAttacherTest extends TestCase
 
         $medias = $block->getMedia();
         $this->assertCount(3, $medias, 'portfolio_grid should get several distinct project cards, not a single placeholder');
-        $this->assertSame('Papa Câlin', $medias->first()->getLabel());
+        $this->assertSame('Refonte e-commerce', $medias->first()->getLabel());
         $this->assertNotNull($medias->first()->getDescription());
         $this->assertNotNull($medias->first()->getUrl());
     }

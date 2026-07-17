@@ -1,15 +1,16 @@
 {#
-<twig:c975LUi:Card:Card id="id" title="Title" [level="h2"] [icon="{{ ['your-path/file.ext', 'your-css-classes', width, height] }}"] [lang="{{ language }}"]>
+<twig:c975LUi:Card:Card id="id" title="Title" [titleUrl="/pages/projects/item-a"] [level="h2"] [icon="{{ ['your-path/file.ext', 'your-css-classes', width, height] }}"] [lang="{{ language }}"]>
     Your content
 </twig:c975LUi:Card:Card>
 #}
 {% set icon = icon | default("") %}
 {% set lang = lang | default("") %}
+{% set titleUrl = titleUrl | default("") %}
 <div class="card box-shadow {{ class|default("") }}" id="{{ id }}" data-animation="{{ dataAnimation|default("") }}" {% if lang %}lang="{{ lang|default("") }}"{% endif %}>
     {% if icon != "" %}
-        <{{ level|default('h2') }} class="card-header"><twig:c975LUi:Image:Icon src="{{ icon[0] }}" class="{{ icon[1] }}" width="{{ icon[2] }}" height="{{ icon[3] }}"/> {{ title }}</{{ level|default('h2') }}>
+        <{{ level|default('h2') }} class="card-header"><twig:c975LUi:Image:Icon src="{{ icon[0] }}" class="{{ icon[1] }}" width="{{ icon[2] }}" height="{{ icon[3] }}"/> {% if titleUrl %}<a href="{{ titleUrl }}">{{ title }}</a>{% else %}{{ title }}{% endif %}</{{ level|default('h2') }}>
     {% else %}
-        <{{ level|default('h2') }} class="card-header">{{ title }}</{{ level|default('h2') }}>
+        <{{ level|default('h2') }} class="card-header">{% if titleUrl %}<a href="{{ titleUrl }}">{{ title }}</a>{% else %}{{ title }}{% endif %}</{{ level|default('h2') }}>
     {% endif %}
     <div class="card-body">
         {% block content %}{{ content|raw|nl2br }}{% endblock %}

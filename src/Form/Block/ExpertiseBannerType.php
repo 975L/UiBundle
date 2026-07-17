@@ -9,6 +9,7 @@
 namespace c975L\UiBundle\Form\Block;
 
 use c975L\UiBundle\Form\TrixEditorType;
+use c975L\UiBundle\Service\BlockAnchorSlugger;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -17,8 +18,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ExpertiseBannerType extends AbstractType
 {
+    use HasAnchorFieldTrait;
+
+    public function __construct(private readonly BlockAnchorSlugger $anchorSlugger)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $this->addAnchorField($builder, $this->anchorSlugger);
+
         $builder
             ->add('eyebrow', TextType::class, [
                 'label' => 'label.eyebrow',

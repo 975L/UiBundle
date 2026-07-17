@@ -1,0 +1,38 @@
+{# Adapter for the dynamic Block system — maps Block data to the Card component, for "collection"
+   block items only (see CollectionExtension::renderItems()). Never picklable, never persisted
+   (see the "collection_item" kind's "pickable: false" tag) - its data contract is exactly the 6
+   fields CollectionItem can carry, plus "detailUrl" (computed from the item's own slug) and
+   "variant" (copied straight from the parent Collection block, see CollectionType) - both added by
+   CollectionExtension::renderItems(), never entered on this never-persisted block itself. #}
+{% if variant is defined and variant == 'portfolio' %}
+    {# Reuses portfolio-grid's own classes (sass/_page-sections.scss) so a Collection can look
+       exactly like a PortfolioGrid block without any app-level template override - see
+       PortfolioGrid.html.twig/Portfolio/Grid.html.twig for the block this mirrors #}
+    {% set href = detailUrl|default(null) ?: url|default('#') %}
+    <a class="portfolio-grid__project" href="{{ href }}"{% if not detailUrl and url %} target="_blank" rel="noopener"{% endif %}>
+        {% if imageUrl %}
+            <div class="portfolio-grid__project-img">
+                <img src="{{ imageUrl }}" alt="{{ title }}">
+            </div>
+        {% endif %}
+        <div class="portfolio-grid__project-body">
+            <h3 class="portfolio-grid__project-title">{{ title }}</h3>
+            {% if content %}<p class="portfolio-grid__project-text">{{ content }}</p>{% endif %}
+        </div>
+    </a>
+{% else %}
+    {% set resolvedImageUrl = imageUrl|default(null) %}
+    {% if resolvedImageUrl or url %}
+        <twig:c975LUi:Card:Card id="{{ id|default('') }}" title="{{ title }}" titleUrl="{{ detailUrl|default('') }}" level="{{ level|default('') }}" class="{{ class|default([])|join(' ') }}">
+            {% if resolvedImageUrl %}
+                <twig:c975LUi:Image:Link src="{{ resolvedImageUrl }}" class="{{ block.media|length > 0 ? block.media|first.cssClasses|join(' ') : '' }}" url="{{ url }}" target="{{ target|default('') }}" alt="{{ title }}"/>
+            {% endif %}
+            <div class="card-data">
+                {% if content %}<p class="text-center">{{ content|raw|nl2br }}</p>{% endif %}
+                {% if url %}<twig:c975LUi:Button:Button label="{{ buttonLabel|default(url) }}" url="{{ url }}" target="{{ target|default('') }}" icon="{{ buttonIcon|default('') }}"/>{% endif %}
+            </div>
+        </twig:c975LUi:Card:Card>
+    {% else %}
+        <twig:c975LUi:Card:Card id="{{ id|default('') }}" title="{{ title }}" titleUrl="{{ detailUrl|default('') }}" level="{{ level|default('') }}" content="{{ content }}" class="{{ class|default([])|join(' ') }}"/>
+    {% endif %}
+{% endif %}

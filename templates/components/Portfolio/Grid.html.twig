@@ -1,8 +1,8 @@
-{# Static usage: <twig:c975LUi:Portfolio:Grid media="{{ block.media }}" [eyebrow=""] [title=""] [linkLabel=""] [linkUrl=""]/> #}
+{# Static usage: <twig:c975LUi:Portfolio:Grid media="{{ block.media }}" [eyebrow=""] [title=""] [linkLabel=""] [linkUrl=""] [id=""]/> #}
 {# Dynamic usage (Block system): see templates/blocks/PortfolioGrid.html.twig #}
 {# Per-project title/text/link come straight from each media's own label/description/url (see
    MediaUploadType's "portfolio_grid" context) - no separate collection to keep in sync with the medias #}
-<section class="portfolio-grid">
+<section class="portfolio-grid"{% if id is defined and id %} id="{{ id }}"{% endif %}>
     <div class="section-wrap">
         <div class="portfolio-grid__head">
             <div>
@@ -13,7 +13,7 @@
         </div>
         <div class="portfolio-grid__grid">
             {% for m in media %}
-                <a class="portfolio-grid__project" href="{{ m.url|default('#') }}">
+                <a class="portfolio-grid__project" href="{{ m.url|default('#') }}"{% if m.url %} target="_blank" rel="noopener"{% endif %}>
                     <div class="portfolio-grid__project-img">
                         <img src="{{ vich_uploader_asset(m) }}" alt="{{ m.alt|default(m.label) }}">
                     </div>

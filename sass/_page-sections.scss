@@ -34,6 +34,20 @@ $page-section-bp-lg: 1025px;
     max-width: 640px;
 }
 
+/* Vertical rhythm between stacked block sections - every section-level block kind gets the same
+   top spacing so gaps stay consistent regardless of which kinds end up next to each other on a
+   page. .hero and .cta-band aren't in this list: they already set their own top+bottom padding
+   below, since they're the kinds most often placed first/last on a page. .feature-bar is
+   deliberately excluded too - it's a full-bleed border-only band, not a padded section. */
+.section-cards-section,
+.expertise-banner,
+.process-steps,
+.portfolio-grid,
+.collection-grid,
+.text-section {
+    padding-top: clamp(48px, 8vw, 84px);
+}
+
 /* Buttons for this block family only - kept out of sass/_buttons.scss's .btn/.btn-* on purpose */
 .section-btn {
     display: inline-block;
@@ -135,8 +149,67 @@ $page-section-bp-lg: 1025px;
     box-shadow: var(--box-shadow);
     border: 6px solid var(--card-background);
     aspect-ratio: 4 / 3.2;
-    object-fit: cover;
+    // contain (not cover): an uploaded image whose ratio isn't already ~4/3.2 gets letterboxed inside
+    // the card instead of cropped/truncated - keeps the box size predictable for the grid layout below
+    object-fit: contain;
+    background: var(--card-background);
     width: 100%;
+}
+
+// Decorative crossfade for a Hero with several media attached (see Hero/Hero.html.twig). Each <img> is
+// stacked absolute (inset: 0) and stays hidden (opacity: 0) except during its own turn - "turn length"
+// is a fixed 6s/slide, so the loop's total animation-duration has to grow with the actual slide count.
+// CSS keyframes can't read that count dynamically, and per-instance inline style/JS-computed values are
+// blocked outright under a nonce-based CSP (see assets/js/nonced-style-element.js) - so instead this
+// enumerates the handful of counts a Hero realistically has (2-6) via the plain data-count HTML
+// attribute (not a CSP concern, unlike a style attribute), entirely static/compiled CSS, no JS at all.
+// Beyond 6 slides, the fallback duration below still plays (just proportionally faster per image).
+.hero__media--slideshow {
+    aspect-ratio: 4 / 3.2;
+}
+
+.hero__media--slideshow img {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    animation-name: hero-slide-fade;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-duration: 36s;
+}
+
+.hero__media--slideshow img:nth-child(1) { animation-delay: 0s; }
+.hero__media--slideshow img:nth-child(2) { animation-delay: 6s; }
+.hero__media--slideshow img:nth-child(3) { animation-delay: 12s; }
+.hero__media--slideshow img:nth-child(4) { animation-delay: 18s; }
+.hero__media--slideshow img:nth-child(5) { animation-delay: 24s; }
+.hero__media--slideshow img:nth-child(6) { animation-delay: 30s; }
+
+.hero__media--slideshow[data-count="2"] img { animation-duration: 12s; }
+.hero__media--slideshow[data-count="3"] img { animation-duration: 18s; }
+.hero__media--slideshow[data-count="4"] img { animation-duration: 24s; }
+.hero__media--slideshow[data-count="5"] img { animation-duration: 30s; }
+.hero__media--slideshow[data-count="6"] img { animation-duration: 36s; }
+
+@keyframes hero-slide-fade {
+    0%, 4% { opacity: 0; transform: translateX(16px); }
+    9%, 88% { opacity: 1; transform: translateX(0); }
+    93%, 100% { opacity: 0; transform: translateX(-16px); }
+}
+
+// WCAG 2.2.2-conscious default: an editor-facing decorative crossfade has no visible pause control
+// (deliberate, see Hero/Hero.html.twig), so the one mechanism available to opt out is respected fully -
+// anyone whose OS reports a motion sensitivity preference gets a static hero, first image only, instead
+@media (prefers-reduced-motion: reduce) {
+    .hero__media--slideshow img {
+        animation: none;
+        opacity: 0;
+        transform: none;
+    }
+
+    .hero__media--slideshow img:first-child {
+        opacity: 1;
+    }
 }
 
 .hero__stat {
@@ -359,6 +432,14 @@ $page-section-bp-lg: 1025px;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-panel);
     overflow: hidden;
+    text-decoration: none;
+}
+
+// Overrides sass/_links.scss's global "a:hover" underline - this anchor wraps the whole card
+// (image + title + text), not a text link, so underlining it on hover reads as broken, not clickable
+.portfolio-grid__project:hover,
+.portfolio-grid__project:visited:hover {
+    text-decoration: none;
 }
 
 .portfolio-grid__project-img {
@@ -371,7 +452,9 @@ $page-section-bp-lg: 1025px;
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    // contain (not cover): same reasoning as .hero__media img above - avoids cropping project screenshots
+    object-fit: contain;
+    background: var(--card-background);
     transition: transform .4s ease;
 }
 
@@ -398,6 +481,15 @@ $page-section-bp-lg: 1025px;
 }
 
 /* ---- collection - items render as "card" blocks, reusing .cards/.card (sass/_cards.scss) ---- */
+// ".section-wrap" caps content at 1312px but is border-box, so its own horizontal padding (up to
+// 64px each side) eats into that measure instead of sitting outside it - 1312 - 128 = 1184px was too
+// narrow to fit three fixed 400px cards + two 20px gaps (1240px), always wrapping to two per row.
+// Only the collection grid needs the extra room to fit three across; other ".section-wrap" usages
+// (hero, portfolio-grid, prose...) keep the narrower measure that suits them.
+.collection-grid .section-wrap {
+    max-width: calc(1312px + 2 * clamp(20px, 5vw, 64px));
+}
+
 .collection-grid__head {
     margin-bottom: 36px;
 }
@@ -435,6 +527,10 @@ $page-section-bp-lg: 1025px;
     color: color-mix(in srgb, var(--button-color) 80%, transparent);
     max-width: 560px;
     margin: 0 auto 32px;
+}
+
+.cta-band__text * {
+    color: color-mix(in srgb, var(--button-color) 80%, transparent);
 }
 
 .cta-band .section-btn {
