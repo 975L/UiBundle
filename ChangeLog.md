@@ -1,5 +1,9 @@
 # ChangeLog
 
+## v1.7.1
+
+- Corrected link https://975l.com/pages/vitrine-blocks (17/07/2026)
+
 ## v1.7
 
 - Changed `MediaCrudController` index action buttons to icon-only with hover title (16/07/2026)
@@ -14,7 +18,7 @@
 - Changed `video_iframe` to gate behind cookie consent and use `youtube-nocookie.com` (16/07/2026) [BC-Break]
 - Fixed `expertise_banner` text color on dark background (16/07/2026)
 - Removed the EasyAdmin block gallery, superseded by 975l.com's showcase (16/07/2026) [BC-Break]
-- Added sidebar link to `https://975l.com/vitrine-blocks` (16/07/2026)
+- Added sidebar link to `https://975l.com/pages/vitrine-blocks` (16/07/2026)
 
 ## v1.6
 

@@ -271,7 +271,7 @@ A `CollectionField` that doesn't set `context` (the default, `null`) sees every 
 
 There is no EasyAdmin block gallery anymore - it was removed entirely, not just unlinked. Its preview variants needed inline scripts for interactivity (`slider`, `image_compare`...), and a hash/nonce-based CSP (e.g. `nelmio_security`'s `csp.hash` config) can never authorize a script trapped inside an `<iframe srcdoc="...">` attribute string - that class of CSP tooling scans a response's literal `<script>`/`<style>` elements, and content inside a `srcdoc` string is invisible to that scan. Not a bug in the gallery's own templates, a structural incompatibility.
 
-The sidebar's "Links" section (see `c975L\UiBundle\Management\MenuProvider::getLinks()`) instead links out to <https://975l.com/vitrine-blocks>, the c975L ecosystem's own canonical showcase of every bundle's block kinds - rendered inline in a normal page, no iframe, no CSP conflict. This is a fixed link shipped by the bundle itself, the same for every consuming app.
+The sidebar's "Links" section (see `c975L\UiBundle\Management\MenuProvider::getLinks()`) instead links out to <https://975l.com/pages/vitrine-blocks>, the c975L ecosystem's own canonical showcase of every bundle's block kinds - rendered inline in a normal page, no iframe, no CSP conflict. This is a fixed link shipped by the bundle itself, the same for every consuming app.
 
 The fixture/showcase machinery the old gallery used (`BlockFixtureProviderInterface`, `GalleryShowcaseProviderInterface`, `BlockFixtureMediaAttacher`...) wasn't removed - it's what powers that `/vitrine-blocks` page, and is available to any consuming app wanting to build its own equivalent showcase page (a plain controller/template, not an EasyAdmin/iframe one).
 

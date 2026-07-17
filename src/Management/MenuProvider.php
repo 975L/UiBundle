@@ -48,7 +48,7 @@ class MenuProvider implements MenuProviderInterface
                 'label' => 'label.block_showcase',
                 'translation_domain' => 'ui',
                 'icon' => 'fas fa-shapes',
-                'url' => 'https://975l.com/vitrine-blocks',
+                'url' => 'https://975l.com/pages/vitrine-blocks',
                 'target' => '_blank',
             ],
         ];

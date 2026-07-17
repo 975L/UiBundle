@@ -43,7 +43,7 @@ class MenuProviderTest extends TestCase
         $this->assertCount(1, $links);
         $this->assertSame('label.block_showcase', $links['block_showcase']['label']);
         $this->assertSame('ui', $links['block_showcase']['translation_domain']);
-        $this->assertSame('https://975l.com/vitrine-blocks', $links['block_showcase']['url']);
+        $this->assertSame('https://975l.com/pages/vitrine-blocks', $links['block_showcase']['url']);
         $this->assertSame('_blank', $links['block_showcase']['target']);
     }
 }
