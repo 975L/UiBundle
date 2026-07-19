@@ -31,7 +31,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\IsTrue;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotCompromisedPassword;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 // Builds a plain Symfony form from a c975L\UiBundle\Entity\Form's FormField collection - one input per field, keyed by FormField::getName(), unmapped to any entity (see FormController, which hands the submitted array straight to FormActionRegistry). Also adds the same protections every c975L bundle's own public forms already share: honeypot (always), GDPR/recaptcha (site-wide config, same keys contact/register/reset already read), receive-copy (per-Form, see Form::$actionConfig's "offerReceiveCopy")
@@ -89,12 +92,17 @@ class FormSubmissionType extends AbstractType
                 $fieldOptions['widget'] = 'single_text';
             }
 
-            // RepeatedType wraps two sub-fields (its own "first_options"/"second_options"), it doesn't take the same flat options as every other field type
+            // RepeatedType wraps two sub-fields (its own "first_options"/"second_options"), it doesn't take the same flat options as every other field type. A repeated password field always means "set a new password" (unlike a plain TYPE_PASSWORD field, which could be re-entering an existing one) - Length/PasswordStrength/NotCompromisedPassword enforce the same minimum policy ChangePasswordFormType already does
             if (FormField::TYPE_PASSWORD_REPEATED === $field->getType()) {
                 $builder->add($field->getName(), RepeatedType::class, [
                     'type' => PasswordType::class,
                     'required' => $required,
-                    'first_options' => ['label' => $field->getLabel(), 'translation_domain' => false, 'constraints' => $constraints, 'attr' => array_merge($fieldOptions['attr'], ['autocomplete' => 'new-password'])],
+                    'first_options' => [
+                        'label' => $field->getLabel(),
+                        'translation_domain' => false,
+                        'constraints' => [...$constraints, new Length(min: 8, max: 25), new PasswordStrength(), new NotCompromisedPassword()],
+                        'attr' => array_merge($fieldOptions['attr'], ['autocomplete' => 'new-password']),
+                    ],
                     'second_options' => ['label' => 'label.password_confirm', 'attr' => array_filter(['placeholder' => $field->getPlaceholder(), 'autocomplete' => 'new-password'])],
                     'invalid_message' => 'text.password_mismatch',
                 ]);

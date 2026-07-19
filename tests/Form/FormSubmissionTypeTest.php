@@ -33,7 +33,10 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\IsTrue;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotCompromisedPassword;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FormSubmissionTypeTest extends TestCase
@@ -133,6 +136,18 @@ class FormSubmissionTypeTest extends TestCase
         $this->assertSame(PasswordType::class, $added['plainPassword']['options']['type']);
         $this->assertSame('PlainPassword', $added['plainPassword']['options']['first_options']['label']);
         $this->assertSame('label.password_confirm', $added['plainPassword']['options']['second_options']['label']);
+    }
+
+    // A repeated password field always means "set a new password" - enforce the same minimum policy ChangePasswordFormType already does, regardless of which Form uses it (register, or any admin-built one)
+    public function testPasswordRepeatedFieldGetsStrengthConstraints(): void
+    {
+        $added = $this->buildAddedFields([$this->buildField('plainPassword', FormField::TYPE_PASSWORD_REPEATED, true)]);
+        $constraints = $added['plainPassword']['options']['first_options']['constraints'];
+
+        $this->assertInstanceOf(NotBlank::class, $constraints[0]);
+        $this->assertInstanceOf(Length::class, $constraints[1]);
+        $this->assertInstanceOf(PasswordStrength::class, $constraints[2]);
+        $this->assertInstanceOf(NotCompromisedPassword::class, $constraints[3]);
     }
 
     // Without this, a browser's password manager treats the email+password pair as a login form and autofills the visitor's already-saved password for this site

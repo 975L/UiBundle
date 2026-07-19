@@ -1,5 +1,9 @@
 # ChangeLog
 
+## v1.9.1
+
+- Fixed `FormSubmissionType`'s `password_repeated` fields only enforcing `NotBlank`, letting a Form (e.g. registration) accept an arbitrarily weak password - now also enforces `Length`/`PasswordStrength`/`NotCompromisedPassword`, same policy as `ChangePasswordFormType` (19/07/2026)
+
 ## v1.9
 
 - Fixed `FormSubmissionType`'s password fields missing `autocomplete="new-password"`, letting browsers autofill an existing saved password onto e.g. the registration form (19/07/2026)
