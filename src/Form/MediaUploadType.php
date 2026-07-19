@@ -35,10 +35,7 @@ class MediaUploadType extends AbstractType
         $isBannerTitle = 'banner_title' === $options['context'];
         $isPortfolioGrid = 'portfolio_grid' === $options['context'];
 
-        // Placeholder type, always overridden in the PRE_SET_DATA listener below once the entry's real
-        // data (and mimetype, for an existing upload) is known - added here first only so "file" keeps
-        // rendering as the form's first field (re-adding a field under the same name replaces it in
-        // place rather than moving it to the end).
+        // Placeholder type, always overridden in the PRE_SET_DATA listener below once the entry's real data (and mimetype, for an existing upload) is known - added here first only so "file" keeps rendering as the form's first field (re-adding a field under the same name replaces it in place rather than moving it to the end).
         $builder
             ->add('file', VichFileType::class, [
                 'label' => false,
@@ -52,27 +49,19 @@ class MediaUploadType extends AbstractType
                 'attr' => ['class' => 'ui-sort-position'],
             ]);
 
-        // cssClasses applies to a Card's teaser image too (see templates/blocks/Card.html.twig), so it
-        // stays out of the "!$isCards" group below
+        // cssClasses applies to a Card's teaser image too (see templates/blocks/Card.html.twig), so it stays out of the "!$isCards" group below
         if ($isImage) {
             $builder->add('cssClasses', ImageClassChoiceType::class);
         }
 
-        // Per-image display metadata, only relevant when the uploaded file is an image - none of the
-        // rest applies to a Card's teaser image: alt comes from the card's own title, there's no
-        // caption/sizing/rights markup for a card teaser
-        // Field order/set kept in parity with MediaCrudController (the Media library's own edit form)
+        // Per-image display metadata, only relevant when the uploaded file is an image - none of the rest applies to a Card's teaser image: alt comes from the card's own title, there's no caption/sizing/rights markup for a card teaser Field order/set kept in parity with MediaCrudController (the Media library's own edit form)
         if ($isImage && !$isCards) {
             $builder->add('alt', TextType::class, [
                 'label' => 'label.alt_text',
                 'required' => false,
             ]);
 
-            // Caption/positioning/rights fields make sense for a standalone Image block, not for a slide
-            // inside a Slider (no in-page position to control, no "above the caption" layout) nor for a
-            // BannerTitle's background image (it's decoration behind text, not a captioned figure). A
-            // portfolio_grid project card reuses "label" too, but as its title, not a figure caption -
-            // width/height/above (inline captioned-figure layout) don't apply to a grid card.
+            // Caption/positioning/rights fields make sense for a standalone Image block, not for a slide inside a Slider (no in-page position to control, no "above the caption" layout) nor for a BannerTitle's background image (it's decoration behind text, not a captioned figure). A portfolio_grid project card reuses "label" too, but as its title, not a figure caption - width/height/above (inline captioned-figure layout) don't apply to a grid card.
             if (!$isSlider && !$isBannerTitle) {
                 $builder->add('label', TextType::class, array_filter([
                     'label' => $isPortfolioGrid ? 'label.title' : 'label.caption',
@@ -95,16 +84,13 @@ class MediaUploadType extends AbstractType
                         ->add('above', CheckboxType::class, [
                             'label' => 'label.caption_above',
                             'required' => false,
-                            // Bootstrap 5's native toggle-switch look (see bootstrap_5_layout.html.twig's
-                            // checkbox_widget block) instead of a plain checkbox - same widget EasyAdmin's
-                            // own BooleanField uses (BooleanConfigurator sets this same label_attr class)
+                            // Bootstrap 5's native toggle-switch look (see bootstrap_5_layout.html.twig's checkbox_widget block) instead of a plain checkbox - same widget EasyAdmin's own BooleanField uses (BooleanConfigurator sets this same label_attr class)
                             'label_attr' => ['class' => 'checkbox-switch'],
                         ]);
                 }
             }
 
-            // A project card's own text and outbound link (see Media::$url/$description, reserved for
-            // this use case)
+            // A project card's own text and outbound link (see Media::$url/$description, reserved for this use case)
             if ($isPortfolioGrid) {
                 $builder
                     ->add('description', TextareaType::class, [
@@ -137,22 +123,14 @@ class MediaUploadType extends AbstractType
             function (PreSetDataEvent $event) use ($isImage, $isVideo, $options): void {
                 $media = $event->getData();
 
-                // Unmapped, only used server-side to reconcile submitted entries against existing rows by
-                // ID (see BlockType's PRE_SUBMIT listener) - positional/identity diffing is unreliable once
-                // nested dynamic sub-forms are involved. Must be added here with "data" set directly:
-                // setting it via setData() after a static add() gets overwritten by the default mapper for
-                // unmapped fields, which falls back to the field's original (empty) "data" option.
+                // Unmapped, only used server-side to reconcile submitted entries against existing rows by ID (see BlockType's PRE_SUBMIT listener) - positional/identity diffing is unreliable once nested dynamic sub-forms are involved. Must be added here with "data" set directly: setting it via setData() after a static add() gets overwritten by the default mapper for unmapped fields, which falls back to the field's original (empty) "data" option.
                 $event->getForm()->add('id', HiddenType::class, [
                     'mapped' => false,
                     'required' => false,
                     'data' => $media instanceof Media ? $media->getId() : null,
                 ]);
 
-                // For an already-uploaded entry, go off its real mimetype rather than the block kind's
-                // static accept list: a Slider (accept "image/*,video/*") always has $isVideo true, which
-                // used to force every slide - image slides included - onto VichFileType and lose their
-                // thumbnail preview. A brand-new empty entry has no mimetype yet, so it falls back to the
-                // accept-based guess; it gets no preview either way until saved & reloaded.
+                // For an already-uploaded entry, go off its real mimetype rather than the block kind's static accept list: a Slider (accept "image/*,video/*") always has $isVideo true, which used to force every slide - image slides included - onto VichFileType and lose their thumbnail preview. A brand-new empty entry has no mimetype yet, so it falls back to the accept-based guess; it gets no preview either way until saved & reloaded.
                 $mimeType = $media instanceof Media ? $media->getMimeType() : null;
                 $useImageType = null !== $mimeType
                     ? str_starts_with($mimeType, 'image/')

@@ -43,8 +43,7 @@ class SliderType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // Auto-generated unique HTML id (used for the section id/data-slider-id), not user-editable:
-            // avoids collisions/typos that a free-text identifier would allow, see PRE_SET_DATA below
+            // Auto-generated unique HTML id (used for the section id/data-slider-id), not user-editable: avoids collisions/typos that a free-text identifier would allow, see PRE_SET_DATA below
             ->add('id', HiddenType::class)
             ->add('duration', IntegerType::class, [
                 'label' => 'label.slide_duration',
@@ -69,9 +68,7 @@ class SliderType extends AbstractType
                     $data = [];
                 }
 
-                // Defaults for a brand new slider only - setting these via the field's own "data" option
-                // instead would force this value on every render, silently discarding the saved value of
-                // an existing slider (Symfony's "data" option always overrides the underlying model data)
+                // Defaults for a brand new slider only - setting these via the field's own "data" option instead would force this value on every render, silently discarding the saved value of an existing slider (Symfony's "data" option always overrides the underlying model data)
                 if (!isset($data['id']) || '' === $data['id']) {
                     $data['id'] = BlockIdGenerator::generate('slider');
                 }

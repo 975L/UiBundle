@@ -8,10 +8,7 @@
 import { Controller } from "@hotwired/stimulus";
 import { createNoncedStyleElement } from "./nonced-style-element.js";
 
-// --slider-freeflow-vw is a page-wide value (drives every freeflow slider's full-bleed breakout width,
-// not just this instance's own), so it's kept in one shared <style> element for the whole page's
-// lifetime instead of a per-controller one - unlike the per-slider height rule below, which is created
-// and torn down with its own instance's connect()/disconnect().
+// --slider-freeflow-vw is a page-wide value (drives every freeflow slider's full-bleed breakout width, not just this instance's own), so it's kept in one shared <style> element for the whole page's lifetime instead of a per-controller one - unlike the per-slider height rule below, which is created and torn down with its own instance's connect()/disconnect().
 let sharedFreeflowStyleEl = null;
 
 export default class extends Controller {
@@ -21,9 +18,7 @@ export default class extends Controller {
             this.slideIndex = 1;
             this.isPlaying = false;
             this.isFreeflow = this.element.classList.contains("slider-freeflow");
-            // Slide videos auto-play muted, like an animated image - but not for users who asked
-            // the OS to reduce motion. Native <video controls> stays available either way so they
-            // can still start it manually.
+            // Slide videos auto-play muted, like an animated image - but not for users who asked the OS to reduce motion. Native <video controls> stays available either way so they can still start it manually.
             this.reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
             this.createLiveRegion(sliderId);
             this.preloadSliderImages(sliderId);
@@ -109,12 +104,9 @@ export default class extends Controller {
         }
     }
 
-    // Touch gestures: swipe left/right to navigate, press-and-hold to pause.
-    // A plain tap (released quickly, without moving) falls through to the existing
-    // "click on slide" listener set up in initializeSlider(), which advances to the next slide.
+    // Touch gestures: swipe left/right to navigate, press-and-hold to pause. A plain tap (released quickly, without moving) falls through to the existing "click on slide" listener set up in initializeSlider(), which advances to the next slide.
     setupTouchGestures(sliderId) {
-        // Freeflow scrolls natively (overflow-x: auto + scroll-snap) - swipe is already handled
-        // by the browser itself, and this handler's preventDefault() on touchmove would fight it.
+        // Freeflow scrolls natively (overflow-x: auto + scroll-snap) - swipe is already handled by the browser itself, and this handler's preventDefault() on touchmove would fight it.
         if (this.isFreeflow) {
             return;
         }
@@ -184,8 +176,7 @@ export default class extends Controller {
         });
     }
 
-    // Plays the <video> inside a slide, if any. Suppressed under prefers-reduced-motion unless
-    // explicit is true (user pressed the play/pause control themselves, which overrides it).
+    // Plays the <video> inside a slide, if any. Suppressed under prefers-reduced-motion unless explicit is true (user pressed the play/pause control themselves, which overrides it).
     playSlideVideo(slide, explicit = false) {
         const video = slide && slide.querySelector("video");
         if (video && (explicit || !this.reducedMotion)) {
@@ -259,8 +250,7 @@ export default class extends Controller {
             this.displaySlide(sliderId, ++this.slideIndex, "next");
         });
 
-        // Click on slide to go next, unless the click is on a link (title/text/image linking to
-        // slide.url) or on a video's native controls (play/pause/volume/seek)
+        // Click on slide to go next, unless the click is on a link (title/text/image linking to slide.url) or on a video's native controls (play/pause/volume/seek)
         const slides = document.querySelectorAll(`#${sliderId} .slider-item`);
         slides.forEach((slide) => {
             slide.addEventListener("click", (e) => {
@@ -291,11 +281,7 @@ export default class extends Controller {
             return;
         }
 
-        // Freeflow slides stay in normal flow (natural height) - only the --slider-freeflow-vw
-        // custom property (drives the full-bleed breakout width; computed via clientWidth rather
-        // than raw vw units so a desktop scrollbar's own width can't create a horizontal scroll)
-        // needs refreshing when the viewport resizes; re-scrolling the current slide into place
-        // keeps it aligned after the row's item widths (clamp(), viewport-based) change.
+        // Freeflow slides stay in normal flow (natural height) - only the --slider-freeflow-vw custom property (drives the full-bleed breakout width; computed via clientWidth rather than raw vw units so a desktop scrollbar's own width can't create a horizontal scroll) needs refreshing when the viewport resizes; re-scrolling the current slide into place keeps it aligned after the row's item widths (clamp(), viewport-based) change.
         if (this.isFreeflow) {
             const updateFreeflow = () => {
                 sharedFreeflowStyleEl ??= createNoncedStyleElement();
@@ -311,9 +297,7 @@ export default class extends Controller {
             return;
         }
 
-        // A fixed ratio (CSS aspect-ratio, via a "slider-ratio-*" class) already sizes the slider.
-        // This JS height fallback is only needed in free/natural ratio mode, where slides are
-        // absolutely positioned and stacked, so the container can't size itself from content alone.
+        // A fixed ratio (CSS aspect-ratio, via a "slider-ratio-*" class) already sizes the slider. This JS height fallback is only needed in free/natural ratio mode, where slides are absolutely positioned and stacked, so the container can't size itself from content alone.
         const hasFixedRatio = Array.from(slider.classList).some((c) => c.startsWith("slider-ratio-"));
         if (hasFixedRatio) {
             return;
@@ -323,13 +307,7 @@ export default class extends Controller {
             .map((slide) => slide.querySelector("img, video"))
             .filter((el) => el !== null);
 
-        // Sets the slider height to the tallest media scaled to the slider's width, using the
-        // width/height HTML attributes (Media entity dimensions, images only) which are known
-        // synchronously - no waiting on load events, which used to grow the slider after the fact
-        // and shift bottom-anchored text/credits down. Videos never have stored dimensions (see
-        // MediaUploadType), so their natural size is only known once "loadedmetadata" fires below.
-        // "slider-sized" then lets every slide - including smaller media - fill that height and
-        // get cropped via object-fit: cover.
+        // Sets the slider height to the tallest media scaled to the slider's width, using the width/height HTML attributes (Media entity dimensions, images only) which are known synchronously - no waiting on load events, which used to grow the slider after the fact and shift bottom-anchored text/credits down. Videos never have stored dimensions (see MediaUploadType), so their natural size is only known once "loadedmetadata" fires below. "slider-sized" then lets every slide - including smaller media - fill that height and get cropped via object-fit: cover.
         const applyMaxHeight = () => {
             const width = slider.clientWidth;
             const maxHeight = mediaEls.reduce((max, el) => {
@@ -451,9 +429,7 @@ export default class extends Controller {
         this.slideIndex = index;
     }
 
-    // Freeflow layout: every slide stays visible side by side (no display none/block toggling),
-    // .slider-list scrolls natively (overflow-x: auto + scroll-snap, see _slider.scss) - this
-    // just drives that scroll and updates dots/video state, like the default slider's displaySlide
+    // Freeflow layout: every slide stays visible side by side (no display none/block toggling), .slider-list scrolls natively (overflow-x: auto + scroll-snap, see _slider.scss) - this just drives that scroll and updates dots/video state, like the default slider's displaySlide
     displaySlideFreeflow(sliderId, number, announceChange = true) {
         const list = document.querySelector(`#${sliderId} .slider-list`);
         const slides = document.querySelectorAll(`#${sliderId} .slider-item`);
@@ -467,10 +443,7 @@ export default class extends Controller {
         const currentSlide = slides[this.slideIndex - 1];
         const newSlide = slides[index - 1];
 
-        // Scrolls only the slider's own horizontal list (scroll-snap-align: start on .slider-item
-        // takes care of exact alignment). Deliberately not newSlide.scrollIntoView(): its "block"
-        // axis climbs ancestor scrollers, including the page itself, and yanks the page back to
-        // the slider whenever autoplay changes the slide while the user has scrolled away from it.
+        // Scrolls only the slider's own horizontal list (scroll-snap-align: start on .slider-item takes care of exact alignment). Deliberately not newSlide.scrollIntoView(): its "block" axis climbs ancestor scrollers, including the page itself, and yanks the page back to the slider whenever autoplay changes the slide while the user has scrolled away from it.
         if (list) {
             const listRect = list.getBoundingClientRect();
             const slideRect = newSlide.getBoundingClientRect();

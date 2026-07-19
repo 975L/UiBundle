@@ -13,15 +13,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Vich\UploaderBundle\Mapping\PropertyMapping;
 use Vich\UploaderBundle\Storage\AbstractStorage;
 
-// Vich's own FileSystemStorage is final and can't be extended, so doRemove()/doResolvePath() are
-// duplicated here unchanged - only doUpload() differs. Namers (see UiMediaNamer) return a name that
-// already contains the full path relative to the mapping's upload_destination (e.g.
-// "medias/site/block-article-42-xxx.webp"), so that "filename" in DB is self-sufficient and doesn't
-// need to be paired with a separate directory_namer to know where a file lives. But
-// Symfony\Component\HttpFoundation\File\File::move() silently strips everything before the last "/"
-// in the target name, so left to Vich's default storage, uploads would flatten into one folder while
-// removal (which doesn't go through File::move()) would still expect the nested path - looking for a
-// file that was never actually placed there, and silently failing (Vich swallows remove() exceptions).
+// Vich's own FileSystemStorage is final and can't be extended, so doRemove()/doResolvePath() are duplicated here unchanged - only doUpload() differs. Namers (see UiMediaNamer) return a name that already contains the full path relative to the mapping's upload_destination (e.g. "medias/site/block-article-42-xxx.webp"), so that "filename" in DB is self-sufficient and doesn't need to be paired with a separate directory_namer to know where a file lives. But Symfony\Component\HttpFoundation\File\File::move() silently strips everything before the last "/" in the target name, so left to Vich's default storage, uploads would flatten into one folder while removal (which doesn't go through File::move()) would still expect the nested path - looking for a file that was never actually placed there, and silently failing (Vich swallows remove() exceptions).
 class NestedFileSystemStorage extends AbstractStorage
 {
     protected function doUpload(PropertyMapping $mapping, File $file, ?string $dir, string $name): ?File

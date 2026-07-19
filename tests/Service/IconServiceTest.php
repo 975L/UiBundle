@@ -102,8 +102,7 @@ class IconServiceTest extends TestCase
         $this->assertSame(['apple', 'mango', 'zebra'], array_keys($service->getIcons()));
     }
 
-    // When a bundle and the project root both define an icon under the same name, the project-level
-    // icon must win, since it is scanned after the bundle icons and overwrites the array entry
+    // When a bundle and the project root both define an icon under the same name, the project-level icon must win, since it is scanned after the bundle icons and overwrites the array entry
     public function testGetIconsLetsProjectRootIconOverrideBundleIconOfSameName(): void
     {
         $this->createIcon('bundles/somebundle/icons/shared.svg');

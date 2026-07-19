@@ -64,8 +64,7 @@ class VideoExtensionTest extends TestCase
         yield 'vimeo' => ['https://player.vimeo.com/video/123456'];
         yield 'dailymotion' => ['https://www.dailymotion.com/embed/video/x123'];
         yield 'already nocookie' => ['https://www.youtube-nocookie.com/embed/abc123'];
-        // Left as-is even without "/embed/": whoever built this URL already made the privacy-safe
-        // choice themselves, not second-guessed by adding a path they may have deliberately omitted
+        // Left as-is even without "/embed/": whoever built this URL already made the privacy-safe choice themselves, not second-guessed by adding a path they may have deliberately omitted
         yield 'already nocookie bare path' => ['https://www.youtube-nocookie.com/abc123'];
         yield 'null' => [null];
         yield 'empty string' => [''];

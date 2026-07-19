@@ -59,10 +59,7 @@ class BlockRegistryPass implements CompilerPassInterface
         }
     }
 
-    // Every c975L bundle registers its block templates under its own "@c975LXxx/..." Twig namespace
-    // (see each bundle's src/c975LXxxBundle.php) - reused here instead of adding a new tag attribute
-    // every bundle would have to fill in, so a bundle gaining its first block kind needs zero extra
-    // wiring beyond the existing "ui.block" tag it already had to declare
+    // Every c975L bundle registers its block templates under its own "@c975LXxx/..." Twig namespace (see each bundle's src/c975LXxxBundle.php) - reused here instead of adding a new tag attribute every bundle would have to fill in, so a bundle gaining its first block kind needs zero extra wiring beyond the existing "ui.block" tag it already had to declare
     private function bundleFromTemplate(string $template): string
     {
         return 1 === preg_match('/^@c975L([A-Za-z0-9]+)\//', $template, $matches) ? $matches[1] : '';

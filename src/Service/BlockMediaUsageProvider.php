@@ -11,8 +11,7 @@ namespace c975L\UiBundle\Service;
 use c975L\UiBundle\Contract\MediaUsageProviderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-// Baseline usage info for any Media attached to a Block: UiBundle knows the Block, but not which
-// entity/bundle owns it (see SiteBundle's own MediaUsageProviderInterface implementation for that)
+// Baseline usage info for any Media attached to a Block: UiBundle knows the Block, but not which entity/bundle owns it (see SiteBundle's own MediaUsageProviderInterface implementation for that)
 class BlockMediaUsageProvider implements MediaUsageProviderInterface
 {
     public function __construct(

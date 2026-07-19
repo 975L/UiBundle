@@ -7,12 +7,7 @@
  */
 import { Controller } from "@hotwired/stimulus";
 
-// Deliberately not coupled to any particular consent-banner implementation or bundle - reacts to
-// an optional external contract instead: a `[data-controller~="cookieConsent"]` element present in
-// the page, a `window.CookieConsent` global exposing vanilla-cookieconsent v3's API
-// (https://cookieconsent.orestbida.com/), and its `cc:onConsent`/`cc:onChange` DOM events. c975l/site-bundle's
-// `<twig:c975LSite:General:CookieConsent/>` is one such provider, but any consuming app's own banner
-// satisfying the same contract works just as well - no composer dependency on it either way.
+// Deliberately not coupled to any particular consent-banner implementation or bundle - reacts to an optional external contract instead: a `[data-controller~="cookieConsent"]` element present in the page, a `window.CookieConsent` global exposing vanilla-cookieconsent v3's API (https://cookieconsent.orestbida.com/), and its `cc:onConsent`/`cc:onChange` DOM events. c975l/site-bundle's `<twig:c975LSite:General:CookieConsent/>` is one such provider, but any consuming app's own banner satisfying the same contract works just as well - no composer dependency on it either way.
 export default class extends Controller {
     static targets = ["placeholder"];
     static values = { src: String, width: String, height: String };
@@ -31,9 +26,7 @@ export default class extends Controller {
             return;
         }
 
-        // Consent not yet decided (or lib still loading) - wait for it. "cc:onConsent" fires on
-        // every page load once the user's choice is known (not just the first time), so returning
-        // visitors who already accepted still get the iframe without needing to click again
+        // Consent not yet decided (or lib still loading) - wait for it. "cc:onConsent" fires on every page load once the user's choice is known (not just the first time), so returning visitors who already accepted still get the iframe without needing to click again
         window.addEventListener("cc:onConsent", this.onConsent);
         window.addEventListener("cc:onChange", this.onConsent);
     }
@@ -44,8 +37,7 @@ export default class extends Controller {
     }
 
     accept() {
-        // The banner element can render before its own script (which sets this global) finishes
-        // loading - a click in that window must be a no-op, not a thrown error
+        // The banner element can render before its own script (which sets this global) finishes loading - a click in that window must be a no-op, not a thrown error
         window.CookieConsent?.acceptCategory("content");
     }
 

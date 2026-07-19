@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="en" datatype="plaintext" original="site_config.en.xlf">
+        <body>
+            <trans-unit id="1">
+                <source>description.ai_assistant_dashboard_enabled</source>
+                <target>Enable (true) or disable (false) the dashboard AI assistant</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>description.ai_assistant_dashboard_endpoint</source>
+                <target>URL of the AI assistant backend to forward dashboard questions to. This bundle ships no default backend - leave empty to keep the feature disabled.</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>description.ai_assistant_dashboard_token</source>
+                <target>Bearer token sent to the dashboard AI assistant endpoint</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>description.ai_assistant_rephrase_provider</source>
+                <target>AI provider used for the content rephrase button: anthropic, openai or euria</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>description.ai_assistant_rephrase_api_key</source>
+                <target>API key for the chosen rephrase provider, billed to whoever owns this key</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>description.ai_assistant_rephrase_base_uri</source>
+                <target>Base URI of the OpenAI-compatible API, required only for euria</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>description.ai_assistant_rephrase_model</source>
+                <target>Model id used for rephrasing - optional for Anthropic/OpenAI (defaults to a sensible model), required for Euria (no safe default, its catalog isn't static enough to hardcode one)</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>label.ui_ai_assistant_dashboard_enabled</source>
+                <target>Donovan (Site) - Enabled</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>label.ui_ai_assistant_dashboard_endpoint</source>
+                <target>Donovan (Site) - Endpoint</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>label.ui_ai_assistant_dashboard_token</source>
+                <target>Donovan (Site) - Token</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>label.ui_ai_assistant_rephrase_provider</source>
+                <target>Donovan (Site) - LLM provider</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>label.ui_ai_assistant_rephrase_api_key</source>
+                <target>Donovan (Site) - LLM API key</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>label.ui_ai_assistant_rephrase_base_uri</source>
+                <target>Donovan (Site) - Base URI</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>label.ui_ai_assistant_rephrase_model</source>
+                <target>Donovan (Site) - LLM model</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>label.ai_rephrase_failure_alert</source>
+                <target>AI rephrase feature failed on its last attempt</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>description.ai_rephrase_failure_alert</source>
+                <target>Check the configured AI rephrase provider and API key</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>label.ai_assistant_dashboard_not_enabled</source>
+                <target>Dashboard AI assistant not enabled</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>description.ai_assistant_dashboard_not_enabled</source>
+                <target>Enable it and set an endpoint and token to activate it</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>label.ai_rephrase_not_enabled</source>
+                <target>AI rephrase feature not enabled</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>description.ai_rephrase_not_enabled</source>
+                <target>Set a provider and API key to activate the rephrase button</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

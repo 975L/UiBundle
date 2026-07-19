@@ -57,8 +57,7 @@ class BlockTypeTest extends TestCase
         $this->assertNull($options['context']);
     }
 
-    // "kind" field's choices are restricted per context (e.g. a CollectionField configured with
-    // context: 'menu' only offers kinds available in that context) - see BlockRegistry::groupedByCategory()
+    // "kind" field's choices are restricted per context (e.g. a CollectionField configured with context: 'menu' only offers kinds available in that context) - see BlockRegistry::groupedByCategory()
     public function testBuildFormPassesTheContextOptionToGroupedByCategory(): void
     {
         $registry = $this->createMock(BlockRegistry::class);
@@ -73,8 +72,7 @@ class BlockTypeTest extends TestCase
         $this->assertSame(['Navigation' => ['Menu link' => 'menu_link']], $added['kind']['choices']);
     }
 
-    // A CollectionField that never sets "context" (existing usages, before this option existed) must
-    // keep seeing every pickable kind - groupedByCategory(null) applies no context filter
+    // A CollectionField that never sets "context" (existing usages, before this option existed) must keep seeing every pickable kind - groupedByCategory(null) applies no context filter
     public function testBuildFormWithNoContextPassesNullToGroupedByCategory(): void
     {
         $registry = $this->createMock(BlockRegistry::class);
@@ -89,8 +87,7 @@ class BlockTypeTest extends TestCase
         return (new \ReflectionMethod($type, 'mergeMultiUpload'))->invoke($type, $submitted, $kind);
     }
 
-    // Captures every form->add() call's options fired by the private addMediaSubForm(), so the
-    // "medias" field's "constraints" can be asserted
+    // Captures every form->add() call's options fired by the private addMediaSubForm(), so the "medias" field's "constraints" can be asserted
     private function buildAddedMediaOptions(BlockType $type, string $kind): array
     {
         $added = [];
@@ -147,8 +144,7 @@ class BlockTypeTest extends TestCase
         $this->assertSame(['x'], $result['medias']);
     }
 
-    // The actual splicing logic is MultiUploadMerger's own (see MultiUploadMergerTest) - this only
-    // verifies BlockType wires it in correctly for a kind that allows multi upload
+    // The actual splicing logic is MultiUploadMerger's own (see MultiUploadMergerTest) - this only verifies BlockType wires it in correctly for a kind that allows multi upload
     public function testMergeMultiUploadSplicesSubmittedFilesIntoMediasWhenKindAllowsIt(): void
     {
         $registry = $this->createStub(BlockRegistry::class);
@@ -163,8 +159,7 @@ class BlockTypeTest extends TestCase
         $this->assertSame($file, $result['medias'][0]['file']['file']);
     }
 
-    // "hero"'s pure-CSS crossfade only has slide rules for up to 6 images (see sass/_page-sections.scss) -
-    // this caps the field so an editor can't silently attach a 7th that would collide with an earlier slide
+    // "hero"'s pure-CSS crossfade only has slide rules for up to 6 images (see sass/_page-sections.scss) - this caps the field so an editor can't silently attach a 7th that would collide with an earlier slide
     public function testAddMediaSubFormCapsHeroMediaCountWithACountConstraint(): void
     {
         $registry = $this->createStub(BlockRegistry::class);

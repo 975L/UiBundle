@@ -33,8 +33,7 @@ class SliderTypeTest extends TestCase
         return $added;
     }
 
-    // Captures the PRE_SET_DATA listener and fires it with $initialData, returning the resulting
-    // (possibly defaulted) data - mirrors what happens when a Slider block form is first displayed
+    // Captures the PRE_SET_DATA listener and fires it with $initialData, returning the resulting (possibly defaulted) data - mirrors what happens when a Slider block form is first displayed
     private function firePreSetData(mixed $initialData): array
     {
         $listener = null;
@@ -97,9 +96,7 @@ class SliderTypeTest extends TestCase
         $this->assertMatchesRegularExpression('/^slider-[0-9a-f]{8}$/', $data['id']);
     }
 
-    // Documents the actual current defaults applied to a brand new slider (no "id" set at all) - note
-    // "duration" defaults to 0 (autoplay disabled, see assets/js/slider.js), not the 5000ms the field
-    // used to default to via its "data" option before this was moved into PRE_SET_DATA
+    // Documents the actual current defaults applied to a brand new slider (no "id" set at all) - note "duration" defaults to 0 (autoplay disabled, see assets/js/slider.js), not the 5000ms the field used to default to via its "data" option before this was moved into PRE_SET_DATA
     public function testPreSetDataDefaultsForABrandNewSlider(): void
     {
         $data = $this->firePreSetData([]);

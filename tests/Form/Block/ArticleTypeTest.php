@@ -41,8 +41,7 @@ class ArticleTypeTest extends TestCase
         return $added;
     }
 
-    // Captures the SUBMIT listener and fires it with $submittedData, returning the resulting data -
-    // mirrors what happens when an Article block form is submitted
+    // Captures the SUBMIT listener and fires it with $submittedData, returning the resulting data - mirrors what happens when an Article block form is submitted
     private function fireSubmit(array $submittedData): array
     {
         $listener = null;

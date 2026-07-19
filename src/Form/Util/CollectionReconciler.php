@@ -9,10 +9,7 @@
 
 namespace c975L\UiBundle\Form\Util;
 
-// Symfony's by_reference:false adder/remover collection diffing is unreliable once nested dynamic
-// sub-forms are involved (see BlockType/PageCrudController PRE_SUBMIT listeners): it can fail to detect
-// that an item was removed when other items remain. This reconciles a Doctrine collection against a
-// submitted collection-of-arrays form field by ID instead, removing whatever is no longer present.
+// Symfony's by_reference:false adder/remover collection diffing is unreliable once nested dynamic sub-forms are involved (see BlockType/PageCrudController PRE_SUBMIT listeners): it can fail to detect that an item was removed when other items remain. This reconciles a Doctrine collection against a submitted collection-of-arrays form field by ID instead, removing whatever is no longer present.
 final class CollectionReconciler
 {
     public function __construct()
@@ -30,11 +27,7 @@ final class CollectionReconciler
         }
     }
 
-    // Drops submitted entries that neither match a surviving item by ID nor look like a genuine new
-    // entry (per $isNewEntry) - call after pruneRemoved(), passing the now-pruned collection. Guards
-    // against a malformed/partial submission for a just-deleted entry (see BlockType for the concrete
-    // case): left in the submitted array, CollectionType's own diffing (allow_add) would treat it as a
-    // new item and bind it to null data instead of dropping it.
+    // Drops submitted entries that neither match a surviving item by ID nor look like a genuine new entry (per $isNewEntry) - call after pruneRemoved(), passing the now-pruned collection. Guards against a malformed/partial submission for a just-deleted entry (see BlockType for the concrete case): left in the submitted array, CollectionType's own diffing (allow_add) would treat it as a new item and bind it to null data instead of dropping it.
     public static function dropOrphaned(array $submittedEntries, iterable $survivors, callable $isNewEntry): array
     {
         $survivingIds = [];

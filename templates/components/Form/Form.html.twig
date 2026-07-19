@@ -1,0 +1,17 @@
+{# Static usage  : render(controller('c975L\\UiBundle\\Controller\\FormController::fragment', {'name': 'contact'})) #}
+{# Dynamic usage : {{ render_block(block) }} — via FormBlock.html.twig #}
+{% trans_default_domain 'ui' %}
+
+<section>
+    {% for label, messages in app.flashes(['success', 'danger']) %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">{{ message|trans }}</div>
+        {% endfor %}
+    {% endfor %}
+    {{ form_start(form, {'action': path('ui_form_submit', {'name': uiForm.name}), 'attr': {'data-turbo': 'false'}}) }}
+        {{ form_widget(form) }}
+        <div>
+            <input type="submit" name="submit" title="{{ 'label.send'|trans }}" class="btn btn-primary" value="{{ 'label.send'|trans }}">
+        </div>
+    {{ form_end(form) }}
+</section>

@@ -24,8 +24,7 @@ class ImageCompareType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // Auto-generated unique HTML id (used for the section id/data-image-compare-id), not
-            // user-editable - same rationale as SliderType's own "id" field
+            // Auto-generated unique HTML id (used for the section id/data-image-compare-id), not user-editable - same rationale as SliderType's own "id" field
             ->add('id', HiddenType::class)
             ->add('startPosition', IntegerType::class, [
                 'label' => 'label.start_position',
@@ -49,8 +48,7 @@ class ImageCompareType extends AbstractType
                     $data = [];
                 }
 
-                // Defaults for a brand new comparator only - see SliderType for why these aren't set
-                // via each field's own "data" option instead
+                // Defaults for a brand new comparator only - see SliderType for why these aren't set via each field's own "data" option instead
                 if (!isset($data['id']) || '' === $data['id']) {
                     $data['id'] = BlockIdGenerator::generate('image-compare');
                 }

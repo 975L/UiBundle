@@ -10,8 +10,7 @@ namespace c975L\UiBundle\Service;
 
 use c975L\UiBundle\Contract\BlockFixtureProviderInterface;
 
-// Sample data for UiBundle's own built-in block kinds, shown in a block showcase (see
-// BlockFixtureRegistry).
+// Sample data for UiBundle's own built-in block kinds, shown in a block showcase (see BlockFixtureRegistry).
 class BlockFixtureProvider implements BlockFixtureProviderInterface
 {
     public function getFixtures(): array
@@ -82,6 +81,12 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
                     'buttonLabel' => '',
                 ],
             ],
+            // Unlike most fixtures, this renders a real sub-request looking up a Form named "contact" in DB (see FormController::fragment()) - throws if it doesn't exist, acceptable here since the block showcase only ever runs on 975l.com, which seeds it via "c975l:site:pages:import-defaults"
+            'form' => [
+                '' => [
+                    'name' => 'contact',
+                ],
+            ],
             'image' => [
                 '' => [],
             ],
@@ -149,12 +154,7 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
             ],
             'video' => [
                 '' => [
-                    // Leading "/": unlike PLACEHOLDER_VIDEO's other use as a Media filename (resolved by
-                    // vich_uploader_asset()), Video.html.twig outputs this "src" completely raw - on a real
-                    // front-end page SiteBundle's sitewide <base href> makes a bare relative path resolve
-                    // correctly anyway, but the block gallery's preview iframe has no such <base>, so a
-                    // relative path there resolves against the gallery page's own URL instead and 404s
-                    // (Laurent: "video ne fonctionne pas" - the native player showed but nothing played)
+                    // Leading "/": unlike PLACEHOLDER_VIDEO's other use as a Media filename (resolved by vich_uploader_asset()), Video.html.twig outputs this "src" completely raw - on a real front-end page SiteBundle's sitewide <base href> makes a bare relative path resolve correctly anyway, but the block gallery's preview iframe has no such <base>, so a relative path there resolves against the gallery page's own URL instead and 404s (Laurent: "video ne fonctionne pas" - the native player showed but nothing played)
                     'src' => '/' . BlockFixtureMediaAttacher::PLACEHOLDER_VIDEO,
                     'type' => 'video/mp4',
                     'poster' => '',
@@ -165,14 +165,10 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
                     'height' => '',
                 ],
             ],
-            // Its "src" is any URL rendered directly in an <iframe> (see Video/Iframe.html.twig) - not
-            // limited to a YouTube/Vimeo-style embed, so the same self-hosted placeholder as "video"
-            // works fine here too (browsers show their native player for a media file in an iframe)
+            // Its "src" is any URL rendered directly in an <iframe> (see Video/Iframe.html.twig) - not limited to a YouTube/Vimeo-style embed, so the same self-hosted placeholder as "video" works fine here too (browsers show their native player for a media file in an iframe)
             'video_iframe' => [
                 '' => [
-                    // Not PLACEHOLDER_VIDEO directly - a raw video file navigated to in an <iframe> plays
-                    // with sound via the browser's own native player; this wraps it in a muted <video>.
-                    // Leading "/" for the same reason as 'video' above - see its comment.
+                    // Not PLACEHOLDER_VIDEO directly - a raw video file navigated to in an <iframe> plays with sound via the browser's own native player; this wraps it in a muted <video>. Leading "/" for the same reason as 'video' above - see its comment.
                     'src' => '/' . BlockFixtureMediaAttacher::PLACEHOLDER_VIDEO_EMBED,
                     'width' => '560',
                     'height' => '315',

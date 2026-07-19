@@ -18,8 +18,7 @@ use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Symfony\Bundle\SecurityBundle\Security;
 
-// Tracks who last touched a Block/Media, not who originally created it - $user is overwritten on
-// every save (see preUpdate below), so it always reflects the last editor
+// Tracks who last touched a Block/Media, not who originally created it - $user is overwritten on every save (see preUpdate below), so it always reflects the last editor
 #[AsDoctrineListener(event: Events::prePersist)]
 #[AsDoctrineListener(event: Events::preUpdate)]
 class BlockUserListener
@@ -34,12 +33,7 @@ class BlockUserListener
         }
     }
 
-    // Doctrine already computed the update changeset by the time preUpdate fires, so a plain setter call
-    // here would be silently dropped from the SQL UPDATE. PreUpdateEventArgs::setNewValue() looks like
-    // the lighter fix but only works for a field already present in the changeset (it throws otherwise -
-    // see assertValidField() in Doctrine's own source) - "user" usually ISN'T there yet on an update that
-    // only touches other fields, which is exactly the common case here. recomputeSingleEntityChangeSet()
-    // re-diffs the whole entity so Doctrine picks up "user" even when it's the only field that changed.
+    // Doctrine already computed the update changeset by the time preUpdate fires, so a plain setter call here would be silently dropped from the SQL UPDATE. PreUpdateEventArgs::setNewValue() looks like the lighter fix but only works for a field already present in the changeset (it throws otherwise - see assertValidField() in Doctrine's own source) - "user" usually ISN'T there yet on an update that only touches other fields, which is exactly the common case here. recomputeSingleEntityChangeSet() re-diffs the whole entity so Doctrine picks up "user" even when it's the only field that changed.
     public function preUpdate(PreUpdateEventArgs $args): void
     {
         $entity = $args->getObject();

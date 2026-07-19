@@ -857,7 +857,7 @@
             </trans-unit>
             <trans-unit id="220">
                 <source>label.detail_page_help</source>
-                <target>Slug d'une Page qui affichera le détail de chaque item de cette collection (ex. "vitrine-blocks-detail"). Cette Page peut contenir les blocks de votre choix. Laisser vide si les items n'ont pas de page de détail.</target>
+                <target>Slug d'une Page qui affichera le détail de chaque item de cette collection (ex. "blocks-detail"). Cette Page peut contenir les blocks de votre choix. Laisser vide si les items n'ont pas de page de détail.</target>
             </trans-unit>
             <trans-unit id="221">
                 <source>label.anchor</source>
@@ -886,6 +886,250 @@
             <trans-unit id="227">
                 <source>label.hero_media_max</source>
                 <target>Une section hero peut contenir au maximum {{ limit }} images.</target>
+            </trans-unit>
+            <trans-unit id="230">
+                <source>label.ai_assistant_question</source>
+                <target>Posez une question sur le système de blocks…</target>
+            </trans-unit>
+            <trans-unit id="231">
+                <source>label.ai_assistant_ask</source>
+                <target>Demander</target>
+            </trans-unit>
+            <trans-unit id="232">
+                <source>label.ai_rephrase_usage_this_month</source>
+                <target>Usage de la reformulation IA ce mois-ci : %input% tokens en entrée, %output% tokens en sortie.</target>
+            </trans-unit>
+            <trans-unit id="233">
+                <source>label.ai_assistant_subtitle</source>
+                <target>Posez vos questions sur le système de blocks</target>
+            </trans-unit>
+            <trans-unit id="234">
+                <source>label.ai_rephrase_style_neutral</source>
+                <target>Neutre</target>
+            </trans-unit>
+            <trans-unit id="235">
+                <source>label.ai_rephrase_style_professional</source>
+                <target>Professionnel</target>
+            </trans-unit>
+            <trans-unit id="236">
+                <source>label.ai_rephrase_style_friendly</source>
+                <target>Enjoué</target>
+            </trans-unit>
+            <trans-unit id="237">
+                <source>label.ai_rephrase_style_concise</source>
+                <target>Concis</target>
+            </trans-unit>
+            <trans-unit id="269">
+                <source>label.ai_rephrase_style_persuasive</source>
+                <target>Persuasif</target>
+            </trans-unit>
+            <trans-unit id="270">
+                <source>label.ai_rephrase_style_simple</source>
+                <target>Simple</target>
+            </trans-unit>
+            <trans-unit id="271">
+                <source>label.ai_rephrase_style_enthusiastic</source>
+                <target>Enthousiaste</target>
+            </trans-unit>
+            <trans-unit id="272">
+                <source>label.ai_rephrase_style_expanded</source>
+                <target>Détaillé</target>
+            </trans-unit>
+            <trans-unit id="281">
+                <source>label.ai_rephrase_length_same</source>
+                <target>Même longueur</target>
+            </trans-unit>
+            <trans-unit id="282">
+                <source>label.ai_rephrase_length_shorter</source>
+                <target>Plus court</target>
+            </trans-unit>
+            <trans-unit id="283">
+                <source>label.ai_rephrase_length_longer</source>
+                <target>Plus long</target>
+            </trans-unit>
+            <trans-unit id="238">
+                <source>label.ai_rephrase_button</source>
+                <target>Reformuler avec %name%</target>
+            </trans-unit>
+            <trans-unit id="239">
+                <source>label.ai_rephrase_error</source>
+                <target>La reformulation a échoué - vérifiez la clé IA configurée</target>
+            </trans-unit>
+            <trans-unit id="240">
+                <source>label.ai_assistant_menu_suffix</source>
+                <target>Agent IA</target>
+            </trans-unit>
+            <trans-unit id="241">
+                <source>label.ai_assistant_dashboard_section_title</source>
+                <target>Assistant du tableau de bord</target>
+            </trans-unit>
+            <trans-unit id="242">
+                <source>label.ai_assistant_setup_intro</source>
+                <target>Permet de poser des questions sur le système de blocks. Pas encore activé sur ce site :</target>
+            </trans-unit>
+            <trans-unit id="243">
+                <source>label.ai_assistant_setup_step_enabled</source>
+                <target>Activez « Assistant IA du tableau de bord »</target>
+            </trans-unit>
+            <trans-unit id="244">
+                <source>label.ai_assistant_setup_step_endpoint</source>
+                <target>Renseignez son endpoint</target>
+            </trans-unit>
+            <trans-unit id="245">
+                <source>label.ai_assistant_setup_step_token</source>
+                <target>Renseignez son jeton</target>
+            </trans-unit>
+            <trans-unit id="247">
+                <source>label.ai_rephrase_section_title</source>
+                <target>Reformulation de contenu</target>
+            </trans-unit>
+            <trans-unit id="248">
+                <source>label.ai_rephrase_setup_intro</source>
+                <target>Permet de reformuler le contenu des champs de texte avec votre propre clé IA. Pas encore activé sur ce site :</target>
+            </trans-unit>
+            <trans-unit id="249">
+                <source>label.ai_rephrase_setup_step_provider</source>
+                <target>Renseignez un fournisseur (anthropic, openai ou euria)</target>
+            </trans-unit>
+            <trans-unit id="250">
+                <source>label.ai_rephrase_setup_step_key</source>
+                <target>Renseignez une clé API</target>
+            </trans-unit>
+            <trans-unit id="251">
+                <source>label.ai_assistant_setup_credentials_help</source>
+                <target>L'endpoint et le jeton sont fournis par l'opérateur de votre backend d'assistant IA, pas par vous - demandez-les-lui.</target>
+            </trans-unit>
+            <trans-unit id="252">
+                <source>label.ai_rephrase_get_key_intro</source>
+                <target>Où trouver une clé API, selon le fournisseur choisi ci-dessus :</target>
+            </trans-unit>
+            <trans-unit id="253">
+                <source>label.ai_rephrase_get_key_anthropic</source>
+                <target>Menu « API Keys » → Create Key (facturation à l'usage)</target>
+            </trans-unit>
+            <trans-unit id="254">
+                <source>label.ai_rephrase_get_key_openai</source>
+                <target>Menu « API keys » → Create new secret key (facturation à l'usage)</target>
+            </trans-unit>
+            <trans-unit id="255">
+                <source>label.ai_rephrase_get_key_euria</source>
+                <target>Section « AI Tools » → créer un produit → générer un token (1 million de crédits offerts le premier mois). Modèle conseillé : mistralai/Mistral-Small-4-119B-2603</target>
+            </trans-unit>
+            <trans-unit id="256">
+                <source>label.ai_rephrase_freeform_intro</source>
+                <target>Reformulez n'importe quel texte avec votre propre clé, indépendamment d'un champ précis.</target>
+            </trans-unit>
+            <trans-unit id="257">
+                <source>label.ai_rephrase_setup_step_base_uri</source>
+                <target>Renseignez l'URL de base (requise pour euria)</target>
+            </trans-unit>
+            <trans-unit id="258">
+                <source>label.ai_rephrase_setup_model_optional</source>
+                <target>Optionnel -</target>
+            </trans-unit>
+            <trans-unit id="259">
+                <source>label.ai_rephrase_setup_step_model</source>
+                <target>changer le modèle (un défaut raisonnable est utilisé sinon)</target>
+            </trans-unit>
+            <trans-unit id="289">
+                <source>label.ai_rephrase_setup_step_model_required</source>
+                <target>définir le modèle à utiliser (obligatoire pour Euria - conseillé : mistralai/Mistral-Small-4-119B-2603)</target>
+            </trans-unit>
+            <trans-unit id="260">
+                <source>label.field_label</source>
+                <target>Libellé</target>
+            </trans-unit>
+            <trans-unit id="261">
+                <source>label.field_type</source>
+                <target>Type</target>
+            </trans-unit>
+            <trans-unit id="262">
+                <source>label.field_type_text</source>
+                <target>Texte</target>
+            </trans-unit>
+            <trans-unit id="263">
+                <source>label.field_type_textarea</source>
+                <target>Texte long</target>
+            </trans-unit>
+            <trans-unit id="264">
+                <source>label.field_type_email</source>
+                <target>Email</target>
+            </trans-unit>
+            <trans-unit id="265">
+                <source>label.field_type_checkbox</source>
+                <target>Case à cocher</target>
+            </trans-unit>
+            <trans-unit id="266">
+                <source>label.field_placeholder</source>
+                <target>Texte indicatif</target>
+            </trans-unit>
+            <trans-unit id="267">
+                <source>label.field_required</source>
+                <target>Obligatoire</target>
+            </trans-unit>
+            <trans-unit id="268">
+                <source>label.ai_rephrase_suggestion_label</source>
+                <target>Proposition de texte reformulé :</target>
+            </trans-unit>
+            <trans-unit id="273">
+                <source>label.block_form</source>
+                <target>Formulaire</target>
+            </trans-unit>
+            <trans-unit id="274">
+                <source>label.block_form_description</source>
+                <target>Insère un formulaire personnalisé, choisi par son nom</target>
+            </trans-unit>
+            <trans-unit id="275">
+                <source>label.category_forms</source>
+                <target>Formulaires</target>
+            </trans-unit>
+            <trans-unit id="276">
+                <source>label.form_picker_name</source>
+                <target>Formulaire</target>
+            </trans-unit>
+            <trans-unit id="277">
+                <source>label.choose_form</source>
+                <target>Choisir un formulaire</target>
+            </trans-unit>
+            <trans-unit id="278">
+                <source>label.send</source>
+                <target>Envoyer</target>
+            </trans-unit>
+            <trans-unit id="279">
+                <source>label.form_submitted</source>
+                <target>Merci, votre envoi a bien été reçu.</target>
+            </trans-unit>
+            <trans-unit id="280">
+                <source>label.form_submission_failed</source>
+                <target>Une erreur est survenue, votre envoi n'a pas pu être traité.</target>
+            </trans-unit>
+            <trans-unit id="284">
+                <source>label.forms</source>
+                <target>Formulaires</target>
+            </trans-unit>
+            <trans-unit id="285">
+                <source>label.action_help</source>
+                <target>Ce qui se passe quand ce formulaire est soumis</target>
+            </trans-unit>
+            <trans-unit id="286">
+                <source>label.action_config</source>
+                <target>Configuration de l'action (JSON)</target>
+            </trans-unit>
+            <trans-unit id="287">
+                <source>label.action_config_help</source>
+                <target>Optionnel, dépend de l'action choisie - ex. pour "send_email" : to, from, subject, template, senderEmailField, receiveCopy</target>
+            </trans-unit>
+            <trans-unit id="288">
+                <source>label.fields</source>
+                <target>Champs</target>
+            </trans-unit>
+            <trans-unit id="290">
+                <source>label.receive_copy</source>
+                <target>Recevoir une copie</target>
+            </trans-unit>
+            <trans-unit id="291">
+                <source>text.too_many_attempts</source>
+                <target>Trop de tentatives, merci de réessayer plus tard.</target>
             </trans-unit>
         </body>
     </file>

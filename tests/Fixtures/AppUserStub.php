@@ -7,10 +7,7 @@
  * with this source code in the file LICENSE.
  */
 
-// App\Entity\User belongs to the consuming application, not to this standalone bundle checkout -
-// BlockUserListener still type-checks against it directly (`$user instanceof User`), so any test
-// needing a real logged-in user (not just the "nobody logged in" branch) needs a minimal stand-in.
-// Guarded so this stays harmless if a real App\Entity\User is ever autoloadable in the same process.
+// App\Entity\User belongs to the consuming application, not to this standalone bundle checkout - BlockUserListener still type-checks against it directly (`$user instanceof User`), so any test needing a real logged-in user (not just the "nobody logged in" branch) needs a minimal stand-in. Guarded so this stays harmless if a real App\Entity\User is ever autoloadable in the same process.
 namespace App\Entity;
 
 use Symfony\Component\Security\Core\User\UserInterface;

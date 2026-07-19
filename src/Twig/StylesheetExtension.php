@@ -40,13 +40,7 @@ class StylesheetExtension extends AbstractExtension
         $request = $this->requestStack->getCurrentRequest();
         $baseUrl = $request ? $request->getSchemeAndHttpHost() : '';
 
-        // In dev, keeps each bundle's stylesheet separate for instant reload on every CSS edit;
-        // in prod, links to the single file compiled by StylesheetCacheWarmer instead, plus any
-        // absolute URL (CDN resources like cookieconsent.min.css) which stays served on its own.
-        // Falls back to the per-bundle list below when that compiled file doesn't exist yet (e.g.
-        // the first request right after a deploy, before cache:warmup has run) instead of linking
-        // a 404 and losing every local stylesheet at once. A single filemtime() call doubles as both
-        // the existence check and the cache-busting value below, instead of two separate stat()s.
+        // In dev, keeps each bundle's stylesheet separate for instant reload on every CSS edit; in prod, links to the single file compiled by StylesheetCacheWarmer instead, plus any absolute URL (CDN resources like cookieconsent.min.css) which stays served on its own. Falls back to the per-bundle list below when that compiled file doesn't exist yet (e.g. the first request right after a deploy, before cache:warmup has run) instead of linking a 404 and losing every local stylesheet at once. A single filemtime() call doubles as both the existence check and the cache-busting value below, instead of two separate stat()s.
         $compiledPath = $this->projectDir . '/public/bundles/build/site.css';
         $compiledMtime = $this->debug ? false : @filemtime($compiledPath);
         if (false !== $compiledMtime) {
@@ -66,10 +60,7 @@ class StylesheetExtension extends AbstractExtension
         );
     }
 
-    // bundles/build/site.css is generated at cache-warmup time (see StylesheetCacheWarmer), outside
-    // any asset-manifest build step - Packages::getUrl() has no way to know its content changed on a
-    // later warmup/deploy, so its own versioning can't be relied on for this specific path. Appending
-    // the compiled file's own mtime as a query param busts caches independently of that.
+    // bundles/build/site.css is generated at cache-warmup time (see StylesheetCacheWarmer), outside any asset-manifest build step - Packages::getUrl() has no way to know its content changed on a later warmup/deploy, so its own versioning can't be relied on for this specific path. Appending the compiled file's own mtime as a query param busts caches independently of that.
     private function addCacheBustingParam(string $url, int $mtime): string
     {
         $separator = str_contains($url, '?') ? '&' : '?';

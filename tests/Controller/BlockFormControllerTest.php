@@ -25,8 +25,7 @@ class BlockFormControllerTest extends TestCase
 {
     use ControllerContainerTestTrait;
 
-    // Records every builder->add() call's field name, so the "mediaUpload" field's presence/absence
-    // can be asserted - createNamedBuilder()->add('data', ...) chains off the same stub
+    // Records every builder->add() call's field name, so the "mediaUpload" field's presence/absence can be asserted - createNamedBuilder()->add('data', ...) chains off the same stub
     private function createFormFactory(array &$added): FormFactoryInterface
     {
         $builder = $this->createStub(FormBuilderInterface::class);
@@ -93,8 +92,7 @@ class BlockFormControllerTest extends TestCase
         $this->assertNotContains('mediaUpload', $added);
     }
 
-    // Mirrors BlockType::addMediaSubForm() - the AJAX-loaded kind preview must offer the same
-    // multi-upload input right away for a kind that allows it (e.g. "slider")
+    // Mirrors BlockType::addMediaSubForm() - the AJAX-loaded kind preview must offer the same multi-upload input right away for a kind that allows it (e.g. "slider")
     public function testDataFormAddsMediaUploadFieldWhenKindAllowsMultiUpload(): void
     {
         $registry = $this->createStub(BlockRegistry::class);

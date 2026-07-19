@@ -28,19 +28,13 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 
 use function Symfony\Component\Translation\t;
 
-// Cross-bundle media library: browses every c975L\UiBundle\Entity\Media row regardless of how it is
-// attached (Block, Page og-image, site-wide role...) and shows where each one is used, via
-// MediaUsageRegistry (fed by any bundle implementing MediaUsageProviderInterface). Site-wide role
-// graphics (favicon, logo, error-image...) stay read-only here - they keep being managed in
-// SiteGraphicCrudController, which enforces the one-row-per-singleton-role rule and its own alerts.
+// Cross-bundle media library: browses every c975L\UiBundle\Entity\Media row regardless of how it is attached (Block, Page og-image, site-wide role...) and shows where each one is used, via MediaUsageRegistry (fed by any bundle implementing MediaUsageProviderInterface). Site-wide role graphics (favicon, logo, error-image...) stay read-only here - they keep being managed in SiteGraphicCrudController, which enforces the one-row-per-singleton-role rule and its own alerts.
 class MediaCrudController extends AbstractCrudController
 {
-    // No ConfigBundle dependency here (ConfigBundle already depends on UiBundle, so UiBundle must stay
-    // standalone) - apps wanting the same dynamic role as other c975L CRUDs can override this controller
+    // No ConfigBundle dependency here (ConfigBundle already depends on UiBundle, so UiBundle must stay standalone) - apps wanting the same dynamic role as other c975L CRUDs can override this controller
     private const ROLE_NEEDED = 'ROLE_ADMIN';
 
-    // Kept in line with php.ini's upload_max_filesize/post_max_size - MediaUploadType (the Block-attached
-    // upload form) has no such constraint of its own and simply relies on those same ini limits
+    // Kept in line with php.ini's upload_max_filesize/post_max_size - MediaUploadType (the Block-attached upload form) has no such constraint of its own and simply relies on those same ini limits
     private const MAX_FILE_SIZE = '100M';
 
     public function __construct(
@@ -68,9 +62,7 @@ class MediaCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return $actions
-            // Detail isn't added to PAGE_INDEX by default - needed here as the fallback default action
-            // (entity.defaultActionUrl in media_index.html.twig) for role-set rows, since those hide
-            // Edit/Delete below and would otherwise have no action to link their gallery thumbnail to
+            // Detail isn't added to PAGE_INDEX by default - needed here as the fallback default action (entity.defaultActionUrl in media_index.html.twig) for role-set rows, since those hide Edit/Delete below and would otherwise have no action to link their gallery thumbnail to
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->setPermission(Action::INDEX, self::ROLE_NEEDED)
             ->setPermission(Action::EDIT, self::ROLE_NEEDED)
@@ -89,8 +81,7 @@ class MediaCrudController extends AbstractCrudController
                 $action,
                 $this->translator->trans('action.detail', [], 'EasyAdminBundle'),
             ))
-            // Creating a Media with no Block (e.g. for a bundle showcase) is reserved to super admins -
-            // regular admins keep adding media the normal way, through a Block's own form
+            // Creating a Media with no Block (e.g. for a bundle showcase) is reserved to super admins - regular admins keep adding media the normal way, through a Block's own form
             ->setPermission(Action::NEW, 'ROLE_SUPER_ADMIN')
         ;
     }
@@ -98,12 +89,7 @@ class MediaCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            // Shown on Detail (role-set rows, whose Edit action is hidden below), Edit and New - the
-            // index is a flat thumbnail gallery (see media_index.html.twig), not a table of fields, so
-            // this stays off it either way. Detail uses formatValue()+templatePath (EasyAdmin's normal
-            // read-only rendering); New/Edit need setFormType() instead - formatValue()/templatePath are
-            // never applied to New/Edit forms, which otherwise fall back to rendering the raw "id" as an
-            // editable number input. On New, MediaUsagesType simply has nothing to show yet (no id).
+            // Shown on Detail (role-set rows, whose Edit action is hidden below), Edit and New - the index is a flat thumbnail gallery (see media_index.html.twig), not a table of fields, so this stays off it either way. Detail uses formatValue()+templatePath (EasyAdmin's normal read-only rendering); New/Edit need setFormType() instead - formatValue()/templatePath are never applied to New/Edit forms, which otherwise fall back to rendering the raw "id" as an editable number input. On New, MediaUsagesType simply has nothing to show yet (no id).
             Field::new('id')
                 ->setLabel(t('label.used_in', [], 'ui'))
                 ->formatValue(fn ($value, Media $media): array => $this->mediaUsageRegistry
@@ -121,9 +107,7 @@ class MediaCrudController extends AbstractCrudController
                     'allow_delete' => true,
                     'download_uri' => true,
                     'asset_helper' => true,
-                    // Without this, the "delete file" checkbox label falls back to whatever domain
-                    // EasyAdmin resolves by default for nested form widgets, which doesn't carry this
-                    // key here - same fix already applied in MediaUploadType for the Block forms
+                    // Without this, the "delete file" checkbox label falls back to whatever domain EasyAdmin resolves by default for nested form widgets, which doesn't carry this key here - same fix already applied in MediaUploadType for the Block forms
                     'delete_label_translation_domain' => 'messages',
                     'constraints' => [
                         new FileConstraint(maxSize: self::MAX_FILE_SIZE),
@@ -139,9 +123,7 @@ class MediaCrudController extends AbstractCrudController
                 ->setLabel(t('label.caption', [], 'ui'))
                 ->hideOnIndex(),
 
-            // Same fields as the caption/positioning group in MediaUploadType (the Block form), kept
-            // in parity so editing a Media from the library isn't missing anything a Block's own
-            // inline media form offers
+            // Same fields as the caption/positioning group in MediaUploadType (the Block form), kept in parity so editing a Media from the library isn't missing anything a Block's own inline media form offers
             TextField::new('width')
                 ->setLabel(t('label.width', [], 'ui'))
                 ->setHelp(t('label.width_help', [], 'ui'))
@@ -156,13 +138,7 @@ class MediaCrudController extends AbstractCrudController
                 ->setLabel(t('label.caption_above', [], 'ui'))
                 ->hideOnIndex(),
 
-            // Native ChoiceField (not Field/TextField): EasyAdmin's TextConfigurator throws on any
-            // non-string value regardless of a custom setFormType(), and a plain Field::new() on this
-            // json-typed column gets auto-promoted to ArrayField, whose default CollectionType options
-            // (entry_type, allow_add...) collide with ImageClassChoiceType (a plain ChoiceType).
-            // ChoiceField natively supports multi-valued/array-backed choices, so we replicate its
-            // options here instead of reusing the form type directly. Left non-expanded (default) so it
-            // renders as the same removable-tags autocomplete widget used for Serie and for block classes.
+            // Native ChoiceField (not Field/TextField): EasyAdmin's TextConfigurator throws on any non-string value regardless of a custom setFormType(), and a plain Field::new() on this json-typed column gets auto-promoted to ArrayField, whose default CollectionType options (entry_type, allow_add...) collide with ImageClassChoiceType (a plain ChoiceType). ChoiceField natively supports multi-valued/array-backed choices, so we replicate its options here instead of reusing the form type directly. Left non-expanded (default) so it renders as the same removable-tags autocomplete widget used for Serie and for block classes.
             ChoiceField::new('cssClasses')
                 ->setLabel(t('label.css_classes', [], 'ui'))
                 ->setTranslatableChoices(array_combine(

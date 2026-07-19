@@ -18,10 +18,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 
-// Generates the FormType/template/test skeleton for a new UiBundle block "kind" in the consuming
-// app. Doesn't touch services.yaml: the "ui.block.<kind>" tagged-service registration (see README
-// "Registering a custom block kind") has too many app-specific choices (category, media_types,
-// priority...) to guess safely, so it's printed as a snippet to paste instead
+// Generates the FormType/template/test skeleton for a new UiBundle block "kind" in the consuming app. Doesn't touch services.yaml: the "ui.block.<kind>" tagged-service registration (see README "Registering a custom block kind") has too many app-specific choices (category, media_types, priority...) to guess safely, so it's printed as a snippet to paste instead
 class MakeBlockCommand extends AbstractMaker
 {
     private const SKELETON_DIR = __DIR__ . '/../Resources/skeleton/block';
@@ -38,10 +35,7 @@ class MakeBlockCommand extends AbstractMaker
 
     public function configureCommand(Command $command, InputConfiguration $inputConfig): void
     {
-        // REQUIRED, not OPTIONAL: interact() below fills it in for an interactive run before Console's
-        // own argument validation runs, but --no-interaction has no such chance to fill it in - with
-        // OPTIONAL, a missing argument reached generate() as null and crashed Str::asSnakeCase() with a
-        // TypeError instead of Console's own clear "Not enough arguments" message
+        // REQUIRED, not OPTIONAL: interact() below fills it in for an interactive run before Console's own argument validation runs, but --no-interaction has no such chance to fill it in - with OPTIONAL, a missing argument reached generate() as null and crashed Str::asSnakeCase() with a TypeError instead of Console's own clear "Not enough arguments" message
         $command->addArgument('kind', InputArgument::REQUIRED, 'Block identifier, in snake_case (e.g. testimonial)');
     }
 

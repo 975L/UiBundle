@@ -14,8 +14,7 @@ use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Events;
 
-// Removing a Block from a HasBlocksInterface collection only deletes the join row (ManyToMany),
-// so the orphaned Block (and cascade to its Medias/files) must be removed explicitly here
+// Removing a Block from a HasBlocksInterface collection only deletes the join row (ManyToMany), so the orphaned Block (and cascade to its Medias/files) must be removed explicitly here
 #[AsDoctrineListener(event: Events::preFlush)]
 class BlockRemovalListener
 {

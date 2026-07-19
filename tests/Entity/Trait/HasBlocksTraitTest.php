@@ -47,8 +47,7 @@ class HasBlocksTraitTest extends TestCase
         $this->assertFalse($owner->getBlocks()->contains($block));
     }
 
-    // Removed blocks are queued for explicit deletion by BlockRemovalListener, since dropping them
-    // from a ManyToMany collection alone only deletes the join row, not the orphaned Block itself
+    // Removed blocks are queued for explicit deletion by BlockRemovalListener, since dropping them from a ManyToMany collection alone only deletes the join row, not the orphaned Block itself
     public function testRemoveBlockQueuesItForPendingRemoval(): void
     {
         $owner = new HasBlocksTraitStub();

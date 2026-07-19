@@ -63,8 +63,7 @@ class BlockRegistryPassTest extends TestCase
         );
     }
 
-    // The originating bundle is derived from the template's "@c975LXxx/..." Twig namespace, not a
-    // dedicated tag attribute - every bundle already declares this namespace for its own templates
+    // The originating bundle is derived from the template's "@c975LXxx/..." Twig namespace, not a dedicated tag attribute - every bundle already declares this namespace for its own templates
     public function testProcessDerivesBundleFromTemplateNamespace(): void
     {
         $container = new ContainerBuilder();
@@ -82,8 +81,7 @@ class BlockRegistryPassTest extends TestCase
         $this->assertSame('Site', $calls[0][1][14]);
     }
 
-    // A template outside the "@c975LXxx/..." convention (or a plain path) yields an empty bundle key
-    // instead of throwing - keeps register() usable from app-level/test code that doesn't follow it
+    // A template outside the "@c975LXxx/..." convention (or a plain path) yields an empty bundle key instead of throwing - keeps register() usable from app-level/test code that doesn't follow it
     public function testProcessBundleIsEmptyWhenTemplateHasNoC975LNamespace(): void
     {
         $container = new ContainerBuilder();

@@ -13,9 +13,11 @@ use c975L\UiBundle\DependencyInjection\Compiler\BlockCacheTagProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\BlockFixtureProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\BlockRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\CollectionSourceProviderPass;
+use c975L\UiBundle\DependencyInjection\Compiler\FormActionProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\FormThemeRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\GalleryShowcaseProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\MediaUsageProviderPass;
+use c975L\UiBundle\DependencyInjection\Compiler\RecaptchaPass;
 use c975L\UiBundle\DependencyInjection\Compiler\ScriptAdminRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\ScriptRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\StylesheetManagementRegistryPass;
@@ -43,6 +45,8 @@ class c975LUiBundle extends AbstractBundle
         $container->addCompilerPass(new WhatsNewProviderPass());
         $container->addCompilerPass(new MediaUsageProviderPass());
         $container->addCompilerPass(new FormThemeRegistryPass());
+        $container->addCompilerPass(new FormActionProviderPass());
+        $container->addCompilerPass(new RecaptchaPass());
     }
 
     public function prependExtension(ContainerConfigurator $configurator, ContainerBuilder $container): void
@@ -55,17 +59,11 @@ class c975LUiBundle extends AbstractBundle
             ],
         ]);
 
-        // Not registered via the app-wide twig.form_themes config: EasyAdmin renders every CRUD form
-        // with "... only", which ignores that config entirely (see FormThemeProviderInterface) - these
-        // are instead contributed to FormThemeRegistry via UiFormThemeProvider and picked up by
-        // ConfigBundle's DashboardController::configureCrud()
+        // Not registered via the app-wide twig.form_themes config: EasyAdmin renders every CRUD form with "... only", which ignores that config entirely (see FormThemeProviderInterface) - these are instead contributed to FormThemeRegistry via UiFormThemeProvider and picked up by ConfigBundle's DashboardController::configureCrud()
 
         if ($container->hasExtension('vich_uploader')) {
             $container->prependExtensionConfig('vich_uploader', [
-                // Lets namers (see UiMediaNamer/getVichMediaPath) return a path with subdirectories
-                // (e.g. "medias/site/block-article-42-xxx.webp") that is both the value stored in
-                // "filename" and the file's real location on disk - Vich's own storage silently
-                // flattens such paths on upload (see NestedFileSystemStorage for why).
+                // Lets namers (see UiMediaNamer/getVichMediaPath) return a path with subdirectories (e.g. "medias/site/block-article-42-xxx.webp") that is both the value stored in "filename" and the file's real location on disk - Vich's own storage silently flattens such paths on upload (see NestedFileSystemStorage for why).
                 'storage' => '@' . NestedFileSystemStorage::class,
                 'mappings' => [
                     'block_media' => [
@@ -85,8 +83,7 @@ class c975LUiBundle extends AbstractBundle
     {
         $containerConfigurator->import('../config/services.yaml');
 
-        // symfony/maker-bundle is dev-only in a consuming app - only wire MakeBlockCommand as a
-        // service when it's actually installed, instead of requiring it unconditionally
+        // symfony/maker-bundle is dev-only in a consuming app - only wire MakeBlockCommand as a service when it's actually installed, instead of requiring it unconditionally
         if (class_exists(\Symfony\Bundle\MakerBundle\Maker\AbstractMaker::class)) {
             $containerConfigurator->import('../config/services_maker.yaml');
         }

@@ -11,10 +11,7 @@ namespace c975L\UiBundle\Form\Util;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-// Splits a multi-file input's submitted files into individual "medias" collection entries, appended
-// after the existing ones - each entry has the same shape a single manually-added collection row
-// would submit ("file" => ["file" => UploadedFile]), so MediaUploadType/VichFileType process it
-// exactly like any other new media (see BlockType, which calls this from its PRE_SUBMIT listener).
+// Splits a multi-file input's submitted files into individual "medias" collection entries, appended after the existing ones - each entry has the same shape a single manually-added collection row would submit ("file" => ["file" => UploadedFile]), so MediaUploadType/VichFileType process it exactly like any other new media (see BlockType, which calls this from its PRE_SUBMIT listener).
 final class MultiUploadMerger
 {
     public function __construct()

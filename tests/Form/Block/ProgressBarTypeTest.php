@@ -40,8 +40,7 @@ class ProgressBarTypeTest extends TestCase
         }
     }
 
-    // "label" is optional so pre-existing progress_bar blocks (created before this field existed)
-    // keep working unchanged
+    // "label" is optional so pre-existing progress_bar blocks (created before this field existed) keep working unchanged
     public function testLabelFieldIsNotRequired(): void
     {
         $added = $this->buildAddedFields();

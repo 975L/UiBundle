@@ -19,9 +19,7 @@ class VideoExtension extends AbstractExtension
         'm.youtube.com',
     ];
 
-    // youtu.be links only ever carry a bare video id path ("/abc123"), never "/embed/..." -
-    // youtube-nocookie.com only serves the "/embed/" path, so this host needs its path rewritten
-    // too, not just its host swapped like the youtube.com family above (assumed already "/embed/")
+    // youtu.be links only ever carry a bare video id path ("/abc123"), never "/embed/..." - youtube-nocookie.com only serves the "/embed/" path, so this host needs its path rewritten too, not just its host swapped like the youtube.com family above (assumed already "/embed/")
     private const SHORT_HOSTS = [
         'youtu.be',
     ];
@@ -38,8 +36,7 @@ class VideoExtension extends AbstractExtension
         ];
     }
 
-    // Rewrites known YouTube hosts to youtube-nocookie.com (no tracking cookie set until playback
-    // starts) - every other provider (Vimeo, Dailymotion...) is left untouched
+    // Rewrites known YouTube hosts to youtube-nocookie.com (no tracking cookie set until playback starts) - every other provider (Vimeo, Dailymotion...) is left untouched
     public function toPrivacyEmbedUrl(?string $url): ?string
     {
         if (null === $url || '' === $url) {
@@ -51,8 +48,7 @@ class VideoExtension extends AbstractExtension
             return $url;
         }
 
-        // Already on youtube-nocookie.com - an explicit choice made upstream (whoever built this URL
-        // already resolved the "/embed/" path themselves), left untouched rather than second-guessed
+        // Already on youtube-nocookie.com - an explicit choice made upstream (whoever built this URL already resolved the "/embed/" path themselves), left untouched rather than second-guessed
         if (in_array($host, self::NOCOOKIE_HOSTS, true)) {
             return $url;
         }
@@ -67,8 +63,7 @@ class VideoExtension extends AbstractExtension
             return $url;
         }
 
-        // "/watch?v=..." is what an editor actually copies from their browser's address bar while
-        // watching a video - youtube-nocookie.com doesn't serve that path, only "/embed/{id}"
+        // "/watch?v=..." is what an editor actually copies from their browser's address bar while watching a video - youtube-nocookie.com doesn't serve that path, only "/embed/{id}"
         if ('/watch' === (parse_url($url, PHP_URL_PATH) ?? '')) {
             parse_str(parse_url($url, PHP_URL_QUERY) ?? '', $query);
 

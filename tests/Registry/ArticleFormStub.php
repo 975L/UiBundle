@@ -8,10 +8,7 @@
  */
 namespace c975L\UiBundle\Tests\Registry;
 
-// Stand-in form class name for BlockRegistryTest, never instantiated - BlockRegistry only stores
-// the FQCN string. Its own file (not inlined in the test class) - src/Tests classes are
-// autoloadable by consuming apps, whose attribute route loader recursively reflects every class
-// under the bundle root, and PSR-4 requires one file per class for that to work.
+// Stand-in form class name for BlockRegistryTest, never instantiated - BlockRegistry only stores the FQCN string. Its own file (not inlined in the test class) - src/Tests classes are autoloadable by consuming apps, whose attribute route loader recursively reflects every class under the bundle root, and PSR-4 requires one file per class for that to work.
 class ArticleFormStub
 {
 }

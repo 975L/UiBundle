@@ -1,0 +1,79 @@
+[
+    {
+        "label": "label.ai_assistant_dashboard_enabled",
+        "slug": "ui-ai-assistant-dashboard-enabled",
+        "sensitive": false,
+        "restricted": false,
+        "value": "false",
+        "kind": "bool",
+        "group": "ai",
+        "severity": null,
+        "description": "description.ai_assistant_dashboard_enabled"
+    },
+    {
+        "label": "label.ai_assistant_dashboard_endpoint",
+        "slug": "ui-ai-assistant-dashboard-endpoint",
+        "sensitive": false,
+        "restricted": false,
+        "value": null,
+        "kind": "text",
+        "group": "ai",
+        "severity": null,
+        "description": "description.ai_assistant_dashboard_endpoint"
+    },
+    {
+        "label": "label.ai_assistant_dashboard_token",
+        "slug": "ui-ai-assistant-dashboard-token",
+        "sensitive": true,
+        "restricted": false,
+        "value": null,
+        "kind": "text",
+        "group": "ai",
+        "severity": null,
+        "description": "description.ai_assistant_dashboard_token"
+    },
+    {
+        "label": "label.ai_assistant_rephrase_provider",
+        "slug": "ui-ai-assistant-rephrase-provider",
+        "sensitive": false,
+        "restricted": false,
+        "value": null,
+        "kind": "text",
+        "group": "ai",
+        "severity": null,
+        "description": "description.ai_assistant_rephrase_provider"
+    },
+    {
+        "label": "label.ai_assistant_rephrase_api_key",
+        "slug": "ui-ai-assistant-rephrase-api-key",
+        "sensitive": true,
+        "restricted": false,
+        "value": null,
+        "kind": "text",
+        "group": "ai",
+        "severity": null,
+        "description": "description.ai_assistant_rephrase_api_key"
+    },
+    {
+        "label": "label.ai_assistant_rephrase_base_uri",
+        "slug": "ui-ai-assistant-rephrase-base-uri",
+        "sensitive": false,
+        "restricted": false,
+        "value": null,
+        "kind": "text",
+        "group": "ai",
+        "severity": null,
+        "description": "description.ai_assistant_rephrase_base_uri"
+    },
+    {
+        "label": "label.ai_assistant_rephrase_model",
+        "slug": "ui-ai-assistant-rephrase-model",
+        "sensitive": false,
+        "restricted": false,
+        "value": null,
+        "kind": "text",
+        "group": "ai",
+        "severity": null,
+        "description": "description.ai_assistant_rephrase_model"
+    }
+]

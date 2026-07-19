@@ -33,8 +33,7 @@ class MultiUploadMergerTest extends TestCase
         return new UploadedFile($path, $originalName, null, null, true);
     }
 
-    // Each uploaded file becomes its own "medias" entry, in the same shape a single manually-added
-    // collection row would submit (see MediaUploadType/VichFileType)
+    // Each uploaded file becomes its own "medias" entry, in the same shape a single manually-added collection row would submit (see MediaUploadType/VichFileType)
     public function testMergeAddsOneEntryPerFile(): void
     {
         $fileA = $this->createUploadedFile('a.jpg');
@@ -47,8 +46,7 @@ class MultiUploadMergerTest extends TestCase
         $this->assertSame($fileB, $medias[1]['file']['file']);
     }
 
-    // Positions continue after the existing entries instead of restarting at 0, so uploaded files
-    // land at the end of the collection
+    // Positions continue after the existing entries instead of restarting at 0, so uploaded files land at the end of the collection
     public function testMergeAssignsSequentialPositionsAfterExistingEntries(): void
     {
         $existing = [0 => ['id' => '1', 'position' => '0']];
@@ -59,8 +57,7 @@ class MultiUploadMergerTest extends TestCase
         $this->assertSame('1', $medias[1]['position']);
     }
 
-    // New entries must use keys the existing collection doesn't already occupy, whatever those
-    // existing keys are (e.g. after a deletion leaves a gap), or they'd silently overwrite an entry
+    // New entries must use keys the existing collection doesn't already occupy, whatever those existing keys are (e.g. after a deletion leaves a gap), or they'd silently overwrite an entry
     public function testMergeUsesKeysNotAlreadyPresentInExistingEntries(): void
     {
         $existing = [5 => ['id' => '1']];
@@ -73,8 +70,7 @@ class MultiUploadMergerTest extends TestCase
         $this->assertSame($file, $medias[6]['file']['file']);
     }
 
-    // A failed/empty file input slot (null, per PHP's multi-file upload behavior) must be skipped
-    // rather than turned into a bogus entry
+    // A failed/empty file input slot (null, per PHP's multi-file upload behavior) must be skipped rather than turned into a bogus entry
     public function testMergeSkipsNonUploadedFileEntries(): void
     {
         $file = $this->createUploadedFile('e.jpg');

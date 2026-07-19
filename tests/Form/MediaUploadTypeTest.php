@@ -22,11 +22,7 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class MediaUploadTypeTest extends TestCase
 {
-    // buildForm() only branches on $options['accept']/$options['context'] - a mocked builder that just
-    // records "add()" calls is enough to assert which fields end up on the form, without having to
-    // resolve VichImageType/VichFileType's own (Vich-bundle) constructor dependencies. "file"'s *final*
-    // type is decided later, in the PRE_SET_DATA listener (see buildFieldNamesForEntry()) - buildForm()
-    // itself only ever adds a VichFileType placeholder, so it keeps rendering as the first field.
+    // buildForm() only branches on $options['accept']/$options['context'] - a mocked builder that just records "add()" calls is enough to assert which fields end up on the form, without having to resolve VichImageType/VichFileType's own (Vich-bundle) constructor dependencies. "file"'s *final* type is decided later, in the PRE_SET_DATA listener (see buildFieldNamesForEntry()) - buildForm() itself only ever adds a VichFileType placeholder, so it keeps rendering as the first field.
     private function buildFieldNames(?string $accept, ?string $context): array
     {
         $added = [];
@@ -44,9 +40,7 @@ class MediaUploadTypeTest extends TestCase
         return $added;
     }
 
-    // Captures the PRE_SET_DATA listener and fires it with $media as the entry's data, simulating what
-    // happens once a real (possibly already-uploaded) Media flows into the form - this is where "file"
-    // gets its real VichImageType/VichFileType decision, based on $media's own mimetype when it has one
+    // Captures the PRE_SET_DATA listener and fires it with $media as the entry's data, simulating what happens once a real (possibly already-uploaded) Media flows into the form - this is where "file" gets its real VichImageType/VichFileType decision, based on $media's own mimetype when it has one
     private function buildFieldNamesForEntry(?string $accept, ?string $context, ?Media $media): array
     {
         $added = [];
@@ -97,10 +91,7 @@ class MediaUploadTypeTest extends TestCase
         $this->assertSame(VichFileType::class, $added['file']);
     }
 
-    // The bug this covers: a Slider's entry_options always advertise "image/*,video/*" (a slide can be
-    // either), which used to force every slide onto VichFileType - image slides included - losing their
-    // thumbnail preview in the admin form. An already-uploaded slide must go off its own real mimetype
-    // instead, so an image slide gets its VichImageType preview back and a video slide still gets VichFileType
+    // The bug this covers: a Slider's entry_options always advertise "image/*,video/*" (a slide can be either), which used to force every slide onto VichFileType - image slides included - losing their thumbnail preview in the admin form. An already-uploaded slide must go off its own real mimetype instead, so an image slide gets its VichImageType preview back and a video slide still gets VichFileType
     public function testPreSetDataForSliderPicksTypeFromTheEntrysOwnMimeTypeNotTheSharedAcceptList(): void
     {
         $image = new Media();
@@ -114,8 +105,7 @@ class MediaUploadTypeTest extends TestCase
         $this->assertSame(VichFileType::class, $addedForVideo['file']);
     }
 
-    // A brand-new Slider entry has no file yet, hence no mimetype - falls back to the shared accept
-    // list, which for a Slider always contains "video/*" too, so it defaults to VichFileType
+    // A brand-new Slider entry has no file yet, hence no mimetype - falls back to the shared accept list, which for a Slider always contains "video/*" too, so it defaults to VichFileType
     public function testPreSetDataForSliderFallsBackToVichFileTypeWhenEntryHasNoMimeTypeYet(): void
     {
         $added = $this->buildFieldNamesForEntry('image/*,video/*', 'slider', new Media());
@@ -132,8 +122,7 @@ class MediaUploadTypeTest extends TestCase
         }
     }
 
-    // "card" context (the Card block's teaser image, see templates/blocks/Card.html.twig) only ever
-    // reads the file itself and its cssClasses - none of the other display metadata applies to it
+    // "card" context (the Card block's teaser image, see templates/blocks/Card.html.twig) only ever reads the file itself and its cssClasses - none of the other display metadata applies to it
     public function testBuildFormForCardContextKeepsOnlyCssClasses(): void
     {
         $added = $this->buildFieldNames('image/*', 'card');
@@ -144,8 +133,7 @@ class MediaUploadTypeTest extends TestCase
         }
     }
 
-    // A "cards" (plural) context - or any other unrecognized context string - must NOT be treated
-    // as the Card block's context; only the literal "card" kind should trigger the isCards branch
+    // A "cards" (plural) context - or any other unrecognized context string - must NOT be treated as the Card block's context; only the literal "card" kind should trigger the isCards branch
     public function testBuildFormForUnrecognizedContextBehavesLikePlainImage(): void
     {
         $added = $this->buildFieldNames('image/*', 'cards');
@@ -155,8 +143,7 @@ class MediaUploadTypeTest extends TestCase
         $this->assertArrayHasKey('rightsReserved', $added);
     }
 
-    // Inside a Slider, a slide has no standalone in-page position to control (no caption/sizing/
-    // "above" layout), but still needs alt/credits/rightsReserved - see Slider/Slider.html.twig
+    // Inside a Slider, a slide has no standalone in-page position to control (no caption/sizing/ "above" layout), but still needs alt/credits/rightsReserved - see Slider/Slider.html.twig
     public function testBuildFormForSliderContextSkipsCaptionPositioningButKeepsAltAndCredits(): void
     {
         $added = $this->buildFieldNames('image/*', 'slider');
@@ -170,8 +157,7 @@ class MediaUploadTypeTest extends TestCase
         }
     }
 
-    // The BannerTitle block's background image is decoration behind the title text, not a captioned
-    // figure - only alt (accessibility) and cssClasses survive, same reduced set as "card"
+    // The BannerTitle block's background image is decoration behind the title text, not a captioned figure - only alt (accessibility) and cssClasses survive, same reduced set as "card"
     public function testBuildFormForBannerTitleContextKeepsOnlyAltAndCssClasses(): void
     {
         $added = $this->buildFieldNames('image/*', 'banner_title');
@@ -183,8 +169,7 @@ class MediaUploadTypeTest extends TestCase
         }
     }
 
-    // A portfolio_grid project card reuses "label" as its title and adds "description"/"url" (see
-    // Media::$description/$url) - but has no in-page position to control, hence no width/height/above
+    // A portfolio_grid project card reuses "label" as its title and adds "description"/"url" (see Media::$description/$url) - but has no in-page position to control, hence no width/height/above
     public function testBuildFormForPortfolioGridContextAddsTitleDescriptionAndUrlButSkipsPositioning(): void
     {
         $added = $this->buildFieldNames('image/*', 'portfolio_grid');

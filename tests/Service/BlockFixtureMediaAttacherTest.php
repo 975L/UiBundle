@@ -25,8 +25,7 @@ class BlockFixtureMediaAttacherTest extends TestCase
         return $registry;
     }
 
-    // A single image/* kind (e.g. "image", "article", "hero"...) only ever reads its first media -
-    // one placeholder is enough, drawn from the rotating pool
+    // A single image/* kind (e.g. "image", "article", "hero"...) only ever reads its first media - one placeholder is enough, drawn from the rotating pool
     public function testSingleImageKindGetsOnePlaceholderImage(): void
     {
         $attacher = new BlockFixtureMediaAttacher($this->createRegistry(['image/*']));
@@ -38,8 +37,7 @@ class BlockFixtureMediaAttacherTest extends TestCase
         $this->assertContains($block->getMedia()->first()->getFilename(), BlockFixtureMediaAttacher::PLACEHOLDER_IMAGES);
     }
 
-    // image_compare needs two distinct images to look like a real before/after comparison, not two
-    // copies of the same one
+    // image_compare needs two distinct images to look like a real before/after comparison, not two copies of the same one
     public function testImageCompareGetsTwoDistinctPlaceholderImages(): void
     {
         $attacher = new BlockFixtureMediaAttacher($this->createRegistry(['image/*']));
@@ -52,8 +50,7 @@ class BlockFixtureMediaAttacherTest extends TestCase
         $this->assertNotSame($medias->first()->getFilename(), $medias->last()->getFilename());
     }
 
-    // slider mixes 2 images with 1 video slide, to showcase its mixed-media support - it's tagged
-    // media_multi_upload (see services.yaml), the generic signal for "several images"
+    // slider mixes 2 images with 1 video slide, to showcase its mixed-media support - it's tagged media_multi_upload (see services.yaml), the generic signal for "several images"
     public function testSliderGetsTwoImagesAndOneVideo(): void
     {
         $attacher = new BlockFixtureMediaAttacher($this->createRegistry(['image/*', 'video/*'], multiUpload: true));
@@ -66,8 +63,7 @@ class BlockFixtureMediaAttacherTest extends TestCase
         $this->assertSame(BlockFixtureMediaAttacher::PLACEHOLDER_VIDEO, $medias->last()->getFilename());
     }
 
-    // The "freeflow" variant needs enough slides to actually demonstrate its distinct scrolling layout -
-    // 5 images, no video mixed in (unlike the default variant, already covered above)
+    // The "freeflow" variant needs enough slides to actually demonstrate its distinct scrolling layout - 5 images, no video mixed in (unlike the default variant, already covered above)
     public function testSliderFreeflowVariantGetsFiveImagesAndNoVideo(): void
     {
         $attacher = new BlockFixtureMediaAttacher($this->createRegistry(['image/*', 'video/*'], multiUpload: true));
@@ -82,8 +78,7 @@ class BlockFixtureMediaAttacherTest extends TestCase
         }
     }
 
-    // Regression guard: video mixing used to be hardcoded to "slider" by name - any kind whose own
-    // media_types include video/* gets a video slide now, without UiBundle needing to know its name
+    // Regression guard: video mixing used to be hardcoded to "slider" by name - any kind whose own media_types include video/* gets a video slide now, without UiBundle needing to know its name
     public function testAnyKindWithVideoMediaTypeGetsAVideoMixedIn(): void
     {
         $attacher = new BlockFixtureMediaAttacher($this->createRegistry(['image/*', 'video/*'], multiUpload: true));
@@ -94,8 +89,7 @@ class BlockFixtureMediaAttacherTest extends TestCase
         $this->assertSame(BlockFixtureMediaAttacher::PLACEHOLDER_VIDEO, $block->getMedia()->last()->getFilename());
     }
 
-    // article is tagged media_multi_upload too, but wants 3 images specifically (Laurent's call),
-    // more than the generic multi-upload default of 2
+    // article is tagged media_multi_upload too, but wants 3 images specifically (Laurent's call), more than the generic multi-upload default of 2
     public function testArticleGetsThreeImages(): void
     {
         $attacher = new BlockFixtureMediaAttacher($this->createRegistry(['image/*'], multiUpload: true));
@@ -106,8 +100,7 @@ class BlockFixtureMediaAttacherTest extends TestCase
         $this->assertCount(3, $block->getMedia());
     }
 
-    // Regression guard: the "several images" count used to be hardcoded to "slider"/"image_compare" by
-    // name - any kind tagged media_multi_upload gets 2 now, without UiBundle needing to know its name
+    // Regression guard: the "several images" count used to be hardcoded to "slider"/"image_compare" by name - any kind tagged media_multi_upload gets 2 now, without UiBundle needing to know its name
     public function testAnyMultiUploadKindGetsTwoImagesByDefault(): void
     {
         $attacher = new BlockFixtureMediaAttacher($this->createRegistry(['image/*'], multiUpload: true));
@@ -118,8 +111,7 @@ class BlockFixtureMediaAttacherTest extends TestCase
         $this->assertCount(2, $block->getMedia());
     }
 
-    // A kind with no media_multi_upload tag only ever gets 1 image, even if the registry stub happens
-    // to return other media types alongside it
+    // A kind with no media_multi_upload tag only ever gets 1 image, even if the registry stub happens to return other media types alongside it
     public function testNonMultiUploadKindGetsOneImage(): void
     {
         $attacher = new BlockFixtureMediaAttacher($this->createRegistry(['image/*'], multiUpload: false));
@@ -130,8 +122,7 @@ class BlockFixtureMediaAttacherTest extends TestCase
         $this->assertCount(1, $block->getMedia());
     }
 
-    // Rotation is shared across calls (not reset per attach()) - consecutive blocks built in the same
-    // request/page don't all show the same photo. reset() restarts it, e.g. at the top of a new request.
+    // Rotation is shared across calls (not reset per attach()) - consecutive blocks built in the same request/page don't all show the same photo. reset() restarts it, e.g. at the top of a new request.
     public function testImagesRotateAcrossSuccessiveCallsUntilReset(): void
     {
         $attacher = new BlockFixtureMediaAttacher($this->createRegistry(['image/*']));
@@ -172,8 +163,7 @@ class BlockFixtureMediaAttacherTest extends TestCase
         $this->assertSame(BlockFixtureMediaAttacher::PLACEHOLDER_DOCUMENT, $block->getMedia()->first()->getFilename());
     }
 
-    // portfolio_grid bypasses the generic per-mediaType mechanism entirely: it gets several
-    // distinctly-captioned project cards instead of N copies of the same placeholder image
+    // portfolio_grid bypasses the generic per-mediaType mechanism entirely: it gets several distinctly-captioned project cards instead of N copies of the same placeholder image
     public function testPortfolioGridGetsSeveralDistinctlyCaptionedProjects(): void
     {
         $attacher = new BlockFixtureMediaAttacher($this->createRegistry(['image/*']));

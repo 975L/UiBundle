@@ -35,8 +35,7 @@ class BlockExtensionTest extends TestCase
         return $block;
     }
 
-    // Non-cacheable kinds (e.g. embedding a form with its own CSRF token) must render fresh every time,
-    // bypassing the cache pool entirely
+    // Non-cacheable kinds (e.g. embedding a form with its own CSRF token) must render fresh every time, bypassing the cache pool entirely
     public function testRenderBlockRendersDirectlyWithoutCachingWhenKindIsNotCacheable(): void
     {
         $block = $this->createBlock('contact_form');
@@ -59,9 +58,7 @@ class BlockExtensionTest extends TestCase
         $this->assertSame('<p>rendered</p>', $extension->renderBlock($block));
     }
 
-    // A never-persisted block (e.g. a block showcase's in-memory fixture previews) has no id - caching it
-    // would collapse onto the same key as every other unpersisted block of a cacheable kind, silently
-    // serving one block's rendered HTML for every other one
+    // A never-persisted block (e.g. a block showcase's in-memory fixture previews) has no id - caching it would collapse onto the same key as every other unpersisted block of a cacheable kind, silently serving one block's rendered HTML for every other one
     public function testRenderBlockRendersDirectlyWithoutCachingWhenBlockHasNoId(): void
     {
         $block = $this->createBlock('article', null);
@@ -84,9 +81,7 @@ class BlockExtensionTest extends TestCase
         $this->assertSame('<article>fresh</article>', $extension->renderBlock($block));
     }
 
-    // anchor_id is computed once here instead of every "Page sections" adapter template repeating its
-    // own "{{ anchor ~ '-' ~ block.id }}" - the trailing block id keeps two blocks of the same kind (or
-    // the same title/anchor reused elsewhere) on the same page from colliding on the same HTML id
+    // anchor_id is computed once here instead of every "Page sections" adapter template repeating its own "{{ anchor ~ '-' ~ block.id }}" - the trailing block id keeps two blocks of the same kind (or the same title/anchor reused elsewhere) on the same page from colliding on the same HTML id
     public function testRenderBlockComputesAnchorIdFromTheBlocksAnchorAndId(): void
     {
         $block = new Block();
@@ -111,8 +106,7 @@ class BlockExtensionTest extends TestCase
         $this->assertSame('<section id="services-42"></section>', $extension->renderBlock($block));
     }
 
-    // A never-persisted block (e.g. a gallery fixture preview) has no id yet - the anchor still needs
-    // to render into something rather than crash, even without the trailing "-{id}" uniqueness suffix
+    // A never-persisted block (e.g. a gallery fixture preview) has no id yet - the anchor still needs to render into something rather than crash, even without the trailing "-{id}" uniqueness suffix
     public function testRenderBlockComputesAnchorIdWithoutATrailingIdWhenBlockIsNeverPersisted(): void
     {
         $block = $this->createBlock('hero', null);
@@ -168,8 +162,7 @@ class BlockExtensionTest extends TestCase
         $this->assertSame('<article>cached content</article>', $extension->renderBlock($block));
     }
 
-    // A kind registered with BlockCacheTagProviderInterface (e.g. articles_slider depending on another
-    // Page's blocks) gets its extra tags merged in alongside the default "block_{id}"/"blocks_all" ones
+    // A kind registered with BlockCacheTagProviderInterface (e.g. articles_slider depending on another Page's blocks) gets its extra tags merged in alongside the default "block_{id}"/"blocks_all" ones
     public function testRenderBlockMergesExtraCacheTagsFromTheCacheTagRegistry(): void
     {
         $block = $this->createBlock('articles_slider', 42);

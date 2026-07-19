@@ -9,8 +9,7 @@
 
 namespace c975L\UiBundle\Form\Util;
 
-// Shared by any block form type needing a unique, auto-generated HTML id (used for the section id/data-*-id
-// attribute, not user-editable) - see SliderType/ImageCompareType's PRE_SET_DATA listeners
+// Shared by any block form type needing a unique, auto-generated HTML id (used for the section id/data-*-id attribute, not user-editable) - see SliderType/ImageCompareType's PRE_SET_DATA listeners
 final class BlockIdGenerator
 {
     public function __construct()

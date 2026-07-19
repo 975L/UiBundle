@@ -15,8 +15,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class BlockRegistryTest extends TestCase
 {
-    // Translator stub that echoes the key back, optionally with a locale-ish marker, so assertions
-    // can check both which key was looked up and which domain it was resolved in
+    // Translator stub that echoes the key back, optionally with a locale-ish marker, so assertions can check both which key was looked up and which domain it was resolved in
     private function createTranslator(): TranslatorInterface
     {
         $translator = $this->createStub(TranslatorInterface::class);
@@ -216,8 +215,7 @@ class BlockRegistryTest extends TestCase
         $this->assertSame($first, $second);
     }
 
-    // Same contexts filtering rules as groupedByCategory(): a kind restricted to a context only
-    // appears when that context is asked for
+    // Same contexts filtering rules as groupedByCategory(): a kind restricted to a context only appears when that context is asked for
     public function testGroupedByBundleExcludesKindsRestrictedToOtherContexts(): void
     {
         $registry = new BlockRegistry($this->createTranslator());
@@ -322,8 +320,7 @@ class BlockRegistryTest extends TestCase
         $this->assertSame($first, $second);
     }
 
-    // A kind declared with no "contexts" at all (the default) is available regardless of which
-    // context is asked for - e.g. legal_model, usable both on a Page and (in theory) a Menu
+    // A kind declared with no "contexts" at all (the default) is available regardless of which context is asked for - e.g. legal_model, usable both on a Page and (in theory) a Menu
     public function testGroupedByCategoryIncludesUncontextualizedKindsInAnyContext(): void
     {
         $registry = new BlockRegistry($this->createTranslator());
@@ -336,8 +333,7 @@ class BlockRegistryTest extends TestCase
         $this->assertArrayHasKey('label.article[ui]', $forMenu);
     }
 
-    // A kind restricted to one or more contexts (e.g. SiteBundle's "menu_link", contexts: ['menu'])
-    // only appears when that matching context is asked for, not in unrelated ones
+    // A kind restricted to one or more contexts (e.g. SiteBundle's "menu_link", contexts: ['menu']) only appears when that matching context is asked for, not in unrelated ones
     public function testGroupedByCategoryExcludesKindsRestrictedToOtherContexts(): void
     {
         $registry = new BlockRegistry($this->createTranslator());
@@ -350,8 +346,7 @@ class BlockRegistryTest extends TestCase
         $this->assertArrayHasKey('label.menu_link[ui]', $forMenu);
     }
 
-    // Calling groupedByCategory() with no context at all (the pre-existing call signature) skips the
-    // contexts filter entirely, so callers that haven't started passing a context yet see everything
+    // Calling groupedByCategory() with no context at all (the pre-existing call signature) skips the contexts filter entirely, so callers that haven't started passing a context yet see everything
     public function testGroupedByCategoryWithoutContextIgnoresContextsRestriction(): void
     {
         $registry = new BlockRegistry($this->createTranslator());

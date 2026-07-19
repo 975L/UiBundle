@@ -12,8 +12,7 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class BlockCacheInvalidator
 {
-    // Tagged on every cached block render (see BlockExtension::renderBlock()), letting this
-    // invalidate the whole blocks cache pool without knowing every individual block id
+    // Tagged on every cached block render (see BlockExtension::renderBlock()), letting this invalidate the whole blocks cache pool without knowing every individual block id
     public const CACHE_TAG_ALL = 'blocks_all';
 
     public function __construct(private readonly TagAwareCacheInterface $cache) {}

@@ -29,11 +29,7 @@ class DocumentExtension extends AbstractExtension
         ];
     }
 
-    // Reuses VichPdfThumbnailListener::toWebpPath() so this only ever looks at the path that
-    // listener actually writes to. Null when no thumbnail exists (no filename at all, Ghostscript
-    // missing on the server, generation not finished for some other reason, or a fixture/placeholder
-    // media with no sidecar file at all) - the caller falls back to a plain placeholder instead of a
-    // broken <img>.
+    // Reuses VichPdfThumbnailListener::toWebpPath() so this only ever looks at the path that listener actually writes to. Null when no thumbnail exists (no filename at all, Ghostscript missing on the server, generation not finished for some other reason, or a fixture/placeholder media with no sidecar file at all) - the caller falls back to a plain placeholder instead of a broken <img>.
     public function getThumbnailPath(Media $media): ?string
     {
         $filename = (string) $media->getFilename();

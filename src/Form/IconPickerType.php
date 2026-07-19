@@ -44,13 +44,9 @@ class IconPickerType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            // Restricts the picker to these icon keys instead of every icon IconServiceInterface
-            // knows about - e.g. a picker meant for social networks shouldn't also offer generic
-            // UI glyphs (alerts, faces, arrows...). Null (default) keeps the full, unrestricted set.
+            // Restricts the picker to these icon keys instead of every icon IconServiceInterface knows about - e.g. a picker meant for social networks shouldn't also offer generic UI glyphs (alerts, faces, arrows...). Null (default) keeps the full, unrestricted set.
             'icons' => null,
-            // 'path' (default): the hidden field stores the icon's asset path, as every existing
-            // picker expects. 'name': it stores the bare icon key instead, for callers that need to
-            // resolve the actual icon dynamically later (e.g. by a different key built at render time).
+            // 'path' (default): the hidden field stores the icon's asset path, as every existing picker expects. 'name': it stores the bare icon key instead, for callers that need to resolve the actual icon dynamically later (e.g. by a different key built at render time).
             'value_field' => 'path',
         ]);
         $resolver->setAllowedTypes('icons', ['null', 'array']);

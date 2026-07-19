@@ -15,11 +15,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-// Opt-in for any "Page sections" kind FormType wanting a menu-targetable in-page anchor - see
-// UiBundle/README.md "Anchors (in-page navigation)". Call addAnchorField() from buildForm(),
-// injecting BlockAnchorSlugger in the FormType's own constructor (autowired, no services.yaml
-// entry needed thanks to the bundle's "resource: '../src/'" scan - works the same from any other
-// c975L bundle's FormType as long as it requires c975l/ui-bundle).
+// Opt-in for any "Page sections" kind FormType wanting a menu-targetable in-page anchor - see UiBundle/README.md "Anchors (in-page navigation)". Call addAnchorField() from buildForm(), injecting BlockAnchorSlugger in the FormType's own constructor (autowired, no services.yaml entry needed thanks to the bundle's "resource: '../src/'" scan - works the same from any other c975L bundle's FormType as long as it requires c975l/ui-bundle).
 trait HasAnchorFieldTrait
 {
     private function addAnchorField(FormBuilderInterface $builder, BlockAnchorSlugger $anchorSlugger, string $titleField = 'title'): void

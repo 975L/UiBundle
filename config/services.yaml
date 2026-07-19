@@ -23,6 +23,10 @@ services:
             - { name: 'ui.script', priority: 100 }
             - { name: 'ui.admin_script', priority: 100 }
 
+    c975L\UiBundle\Controller\FormController:
+        arguments:
+            $formLimiterFactory: '@?limiter.ui_form'
+
     # Ui Blocks
     ui.block.article:
         class: stdClass
@@ -394,3 +398,18 @@ services:
               priority: 50
               pickable: true
               cacheable: true
+
+    ui.block.form:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: form
+              label: "label.block_form"
+              description: "label.block_form_description"
+              form: c975L\UiBundle\Form\Block\FormPickerType
+              template: '@c975LUi/components/Form/FormBlock.html.twig'
+              icon: '📝'
+              category: 'label.category_forms'
+              pickable: true
+              # Embeds a Symfony form with its own CSRF token - never cache, every visitor needs a fresh one
+              cacheable: false

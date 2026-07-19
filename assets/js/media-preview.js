@@ -6,16 +6,12 @@
  * with this source code in the file LICENSE.
  */
 
-// EasyAdmin's own Vich image widget shows no live thumbnail for a freshly-picked file - only a text
-// "filename (size)" label - until the page is saved and reloaded. This shows an actual preview in the
-// meantime, for any Vich image field on the page (a manual "Choisir un fichier" click or a file set
-// programmatically, e.g. by block-duplicate.js - both fire a normal "change" event on the input).
+// EasyAdmin's own Vich image widget shows no live thumbnail for a freshly-picked file - only a text "filename (size)" label - until the page is saved and reloaded. This shows an actual preview in the meantime, for any Vich image field on the page (a manual "Choisir un fichier" click or a file set programmatically, e.g. by block-duplicate.js - both fire a normal "change" event on the input).
 document.addEventListener('change', event => {
     const input = event.target;
     if (input.tagName !== 'INPUT' || input.type !== 'file') return;
 
-    // Only image fields render this wrapper class - a non-image Vich field (.ea-vich-file) has no
-    // thumbnail to show and is left untouched.
+    // Only image fields render this wrapper class - a non-image Vich field (.ea-vich-file) has no thumbnail to show and is left untouched.
     const wrapper = input.closest('.ea-vich-image');
     if (!wrapper) return;
 
@@ -34,9 +30,7 @@ document.addEventListener('change', event => {
         wrapper.prepend(preview);
     }
 
-    // Not URL.createObjectURL(): a "blob:" URI needs "blob:" explicitly allowed in the app's own
-    // img-src CSP directive, which isn't a given (and wasn't, in practice) - a "data:" URI instead
-    // stays within the "data:" allowance most CSP configs already grant img-src for inline images.
+    // Not URL.createObjectURL(): a "blob:" URI needs "blob:" explicitly allowed in the app's own img-src CSP directive, which isn't a given (and wasn't, in practice) - a "data:" URI instead stays within the "data:" allowance most CSP configs already grant img-src for inline images.
     const reader = new FileReader();
     reader.onload = () => { preview.src = reader.result; };
     reader.readAsDataURL(file);

@@ -12,11 +12,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-// Entrance animation played once a Block scrolls into view (assets/js/animate-scroll.js),
-// matching the CSS classes defined in sass/_animations-classes.scss. Single choice: a block
-// gets one entrance effect, not a stack of them.
-// Only the one-shot classes (animation-fill-mode: both, no "infinite") belong here - bounce-*
-// and rotate-x/y* loop forever and are meant for hover/attention effects elsewhere, not entrances.
+// Entrance animation played once a Block scrolls into view (assets/js/animate-scroll.js), matching the CSS classes defined in sass/_animations-classes.scss. Single choice: a block gets one entrance effect, not a stack of them. Only the one-shot classes (animation-fill-mode: both, no "infinite") belong here - bounce-* and rotate-x/y* loop forever and are meant for hover/attention effects elsewhere, not entrances.
 class AnimationChoiceType extends AbstractType
 {
     public const CHOICES = [

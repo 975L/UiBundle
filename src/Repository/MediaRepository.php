@@ -28,6 +28,12 @@ class MediaRepository extends ServiceEntityRepository
         return $this->findOneBy(['role' => $role]);
     }
 
+    // @return Media[] Every site-wide singleton role row (logo, favicon...) in one query - see MediaExtension::preloadSingletonRoles()
+    public function findBySingletonRoles(): array
+    {
+        return $this->findBy(['role' => Media::getSingletonRoles()]);
+    }
+
     // Picks one row at random among all sharing a repeatable role (e.g. a pool of error images)
     public function findRandomByRole(string $role): ?Media
     {

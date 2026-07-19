@@ -19,8 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 class BlockRemovalListenerTest extends TestCase
 {
-    // popPendingBlockRemovals() must be called exactly once per owner - once it has been drained,
-    // the queue is empty on the next call, which the listener must not confuse with "nothing to remove"
+    // popPendingBlockRemovals() must be called exactly once per owner - once it has been drained, the queue is empty on the next call, which the listener must not confuse with "nothing to remove"
     public function testPreFlushRemovesEveryPendingBlockFromOwnersInTheIdentityMap(): void
     {
         $block = new Block();

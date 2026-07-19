@@ -33,8 +33,7 @@ class ImageCompareTypeTest extends TestCase
         return $added;
     }
 
-    // Captures the PRE_SET_DATA listener and fires it with $initialData, returning the resulting
-    // (possibly defaulted) data - mirrors what happens when an ImageCompare block form is first displayed
+    // Captures the PRE_SET_DATA listener and fires it with $initialData, returning the resulting (possibly defaulted) data - mirrors what happens when an ImageCompare block form is first displayed
     private function firePreSetData(mixed $initialData): array
     {
         $listener = null;

@@ -8,15 +8,37 @@
  */
 namespace c975L\UiBundle\Tests\Management;
 
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\UiBundle\Management\MenuProvider;
 use PHPUnit\Framework\TestCase;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MenuProviderTest extends TestCase
 {
-    // Shared with ConfigBundle's and SiteBundle's own MenuProvider so all three merge into one section
+    private function createConfigService(): ConfigServiceInterface
+    {
+        $configService = $this->createStub(ConfigServiceInterface::class);
+        $configService->method('get')->willReturnMap([
+            ['site-role-admin', 'ROLE_ADMIN'],
+        ]);
+
+        return $configService;
+    }
+
+    private function createTranslator(string $suffix = 'AI Agent'): TranslatorInterface
+    {
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturnMap([
+            ['label.ai_assistant_menu_suffix', [], 'ui', $suffix],
+        ]);
+
+        return $translator;
+    }
+
+    // Matches ConfigBundle's/SiteBundle's section value so a future CRUD entry here merges into the same group
     public function testGetMenuSectionMatchesTheSharedManagementSection(): void
     {
-        $provider = new MenuProvider();
+        $provider = new MenuProvider($this->createConfigService(), $this->createTranslator());
 
         $this->assertSame(['label' => 'label.management', 'translation_domain' => 'site'], $provider->getMenuSection());
     }
@@ -24,26 +46,36 @@ class MenuProviderTest extends TestCase
     // UiBundle's own CRUD entries (Media Library) stay declared from SiteBundle - see its MenuProvider
     public function testGetMenusReturnsNoCrudEntries(): void
     {
-        $provider = new MenuProvider();
+        $provider = new MenuProvider($this->createConfigService(), $this->createTranslator());
 
         $this->assertSame([], $provider->getMenus());
     }
 
-    // The old self-hosted EasyAdmin block gallery was removed (its preview iframes needed inline
-    // scripts, which a hash/nonce-based CSP like nelmio_security can never authorize inside an <iframe
-    // srcdoc> - see MenuProvider::getLinks()'s comment). This link replaces it: a fixed 'url' (not a
-    // route name), since it always points at 975l.com's own /vitrine-blocks - the c975L ecosystem's
-    // canonical demo of every bundle's block kinds - regardless of which app's dashboard shows it.
+    // Fixed external url, not a route name, since every app's dashboard links to the same external block showcase site
     public function testGetLinksReturnsTheBlockShowcaseLink(): void
     {
-        $provider = new MenuProvider();
+        $provider = new MenuProvider($this->createConfigService(), $this->createTranslator());
 
         $links = $provider->getLinks();
 
-        $this->assertCount(1, $links);
+        $this->assertCount(2, $links);
         $this->assertSame('label.block_showcase', $links['block_showcase']['label']);
         $this->assertSame('ui', $links['block_showcase']['translation_domain']);
-        $this->assertSame('https://975l.com/pages/vitrine-blocks', $links['block_showcase']['url']);
+        $this->assertSame('https://975l.com/pages/blocks', $links['block_showcase']['url']);
         $this->assertSame('_blank', $links['block_showcase']['target']);
+    }
+
+    // 'role' matches AiAssistantController::index()'s own minimum bar ("site-role-admin") - a plain
+    // editor can no longer act on either section, so no point showing them the link at all
+    public function testGetLinksReturnsTheAiAssistantLinkWithTheHardcodedNameTranslatedSuffixAndRole(): void
+    {
+        $provider = new MenuProvider($this->createConfigService(), $this->createTranslator('AI Agent'));
+
+        $links = $provider->getLinks();
+
+        $this->assertSame('Donovan (AI Agent)', $links['ai_assistant']['label']);
+        $this->assertSame('ui', $links['ai_assistant']['translation_domain']);
+        $this->assertSame('management_ui_ai_assistant_index', $links['ai_assistant']['name']);
+        $this->assertSame('ROLE_ADMIN', $links['ai_assistant']['role']);
     }
 }

@@ -34,13 +34,7 @@ class BlockFormController extends AbstractController
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
-        // Duplicating a block (see block-duplicate.js) posts its current "data" field values here, so
-        // the sub-form comes back pre-filled instead of empty. Deliberately NOT extended to "medias":
-        // MediaUploadType has `data_class: Media`, and Symfony's form component requires a form's view
-        // data to be an actual instance of that class (or null) when one is set - passing it a plain
-        // array throws ("the form's view data is expected to be an instance of Media, but is an
-        // array"). That only works for "data" because kind-specific form types (SliderType etc.) have
-        // `data_class: null`. Media duplication is instead handled entirely client-side.
+        // Duplicating a block (see block-duplicate.js) posts its current "data" field values here, so the sub-form comes back pre-filled instead of empty. Deliberately NOT extended to "medias": MediaUploadType has `data_class: Media`, and Symfony's form component requires a form's view data to be an actual instance of that class (or null) when one is set - passing it a plain array throws ("the form's view data is expected to be an instance of Media, but is an array"). That only works for "data" because kind-specific form types (SliderType etc.) have `data_class: null`. Media duplication is instead handled entirely client-side.
         $initialData = null;
         if ($request->isMethod('POST') && $request->request->has('data')) {
             $initialData = ['data' => $request->request->all('data')];
@@ -63,8 +57,7 @@ class BlockFormController extends AbstractController
                 'prototype'     => true,
             ]);
 
-            // Mirrors BlockType::addMediaSubForm() - only relevant here so the AJAX-loaded preview
-            // (picking a kind on a brand new block) shows the same multi-upload input right away
+            // Mirrors BlockType::addMediaSubForm() - only relevant here so the AJAX-loaded preview (picking a kind on a brand new block) shows the same multi-upload input right away
             if ($this->registry->allowsMultiUpload($kind)) {
                 $builder->add('mediaUpload', FileType::class, [
                     'label'    => 'label.media_multi_upload',

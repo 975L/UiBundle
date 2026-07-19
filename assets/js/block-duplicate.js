@@ -9,16 +9,12 @@ import { Controller } from "@hotwired/stimulus";
 import { loadBlockData } from "./block.js";
 import { addToolbarButton } from "./block-toolbar.js";
 
-// No width/height here, deliberately - see the same note in ea-sortable.js: EasyAdmin's own icons
-// rely entirely on its global ".icon svg" CSS for sizing, so this needs to too, to stay consistent.
+// No width/height here, deliberately - see the same note in ea-sortable.js: EasyAdmin's own icons rely entirely on its global ".icon svg" CSS for sizing, so this needs to too, to stay consistent.
 const ICON_COPY = '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">'
     + '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>'
     + '</svg>';
 
-// Mounted automatically on <body> by controllers-admin.js — no layout override needed.
-// Adds a "Duplicate" button to each block row AND to each individual media row inside a block. Both
-// insert a full copy right below the source (same fields, same media/files) - everything client-side,
-// no DB write on click, so this also works on a page that hasn't been saved yet.
+// Mounted automatically on <body> by controllers-admin.js — no layout override needed. Adds a "Duplicate" button to each block row AND to each individual media row inside a block. Both insert a full copy right below the source (same fields, same media/files) - everything client-side, no DB write on click, so this also works on a page that hasn't been saved yet.
 export default class extends Controller {
     connect() {
         this.element.querySelectorAll('[data-ea-collection-field]').forEach(field => this.initField(field));
@@ -40,10 +36,7 @@ export default class extends Controller {
         this.collectionItems(field).forEach(item => this.addButtonFor(item));
     }
 
-    // A row is either a block (has its own kind selector) or a media entry (has a raw file input) -
-    // anything else is some unrelated EasyAdmin collection elsewhere in the admin and is left alone.
-    // Not keying off Vich's wrapper class: EasyAdmin renders its own Vich widget theme with classes
-    // like "ea-vich-image"/"ea-vich-file", not VichUploaderBundle's own default "vich-image"/"vich-file".
+    // A row is either a block (has its own kind selector) or a media entry (has a raw file input) - anything else is some unrelated EasyAdmin collection elsewhere in the admin and is left alone. Not keying off Vich's wrapper class: EasyAdmin renders its own Vich widget theme with classes like "ea-vich-image"/"ea-vich-file", not VichUploaderBundle's own default "vich-image"/"vich-file".
     addButtonFor(item) {
         if (item.querySelector('[data-kind-row]')) {
             this.addButton(item, () => this.duplicateBlock(item));
@@ -56,9 +49,7 @@ export default class extends Controller {
         if (item.dataset.uiDuplicateBtn) return;
         item.dataset.uiDuplicateBtn = '1';
 
-        // Shared with ea-sortable.js's move handle, so both plus EasyAdmin's own delete button always
-        // end up grouped in one toolbar (move, duplicate, delete - see block-toolbar.js), regardless of
-        // which of these scripts happens to run first for a given row.
+        // Shared with ea-sortable.js's move handle, so both plus EasyAdmin's own delete button always end up grouped in one toolbar (move, duplicate, delete - see block-toolbar.js), regardless of which of these scripts happens to run first for a given row.
         addToolbarButton(item, {
             title: 'Dupliquer',
             icon: ICON_COPY,
@@ -67,10 +58,7 @@ export default class extends Controller {
         });
     }
 
-    // Finds the "add" button belonging directly to `field`, never one from a collection nested inside
-    // one of its own items (e.g. a block's own media collection also has an "add" button, and it sits
-    // earlier in the DOM than the outer "add block" button - a plain field.querySelector() would grab
-    // that one instead).
+    // Finds the "add" button belonging directly to `field`, never one from a collection nested inside one of its own items (e.g. a block's own media collection also has an "add" button, and it sits earlier in the DOM than the outer "add block" button - a plain field.querySelector() would grab that one instead).
     ownAddButton(field) {
         return [...field.querySelectorAll('.field-collection-add-button')]
             .find(button => button.closest('[data-ea-collection-field]') === field);
@@ -87,8 +75,7 @@ export default class extends Controller {
 
         const payload = this.buildDataPayload(sourceItem);
 
-        // The click synchronously appends a fresh empty row and fires ea.collection.item-added -
-        // suppress block-collection.js's auto-scroll/focus for it, we drive this row ourselves.
+        // The click synchronously appends a fresh empty row and fires ea.collection.item-added - suppress block-collection.js's auto-scroll/focus for it, we drive this row ourselves.
         field.dataset.uiSuppressAutofocus = '1';
         addButton.click();
         delete field.dataset.uiSuppressAutofocus;
@@ -108,8 +95,7 @@ export default class extends Controller {
             .then(() => this.copyMediaFiles(sourceItem, newItem));
     }
 
-    // A media row has no dynamic sub-form to (re)load - its fields are already fully rendered, so
-    // duplicating it is a straight DOM-to-DOM copy, no server round-trip needed.
+    // A media row has no dynamic sub-form to (re)load - its fields are already fully rendered, so duplicating it is a straight DOM-to-DOM copy, no server round-trip needed.
     duplicateMedia(sourceItem) {
         const field = sourceItem.closest('[data-ea-collection-field]');
         if (!field) return;
@@ -131,14 +117,7 @@ export default class extends Controller {
         this.copyMediaFile(sourceItem, newItem);
     }
 
-    // Copies the source row's "data" field values (renamed to the plain "data[...]" shape
-    // BlockFormController::dataForm expects), so the freshly-injected sub-form comes back pre-filled -
-    // including arbitrarily nested fields (e.g. a repeatable field inside "data") since Symfony's own
-    // form rendering does that from bound data. Medias are deliberately NOT included here (see
-    // copyMediaFiles): MediaUploadType has `data_class: Media`, and Symfony's form component refuses
-    // to use a plain array as a data_class-bound form's data ("the form's view data is expected to be
-    // an instance of Media, but is an array") - that only works for "data" because those kind-specific
-    // form types have `data_class: null`.
+    // Copies the source row's "data" field values (renamed to the plain "data[...]" shape BlockFormController::dataForm expects), so the freshly-injected sub-form comes back pre-filled - including arbitrarily nested fields (e.g. a repeatable field inside "data") since Symfony's own form rendering does that from bound data. Medias are deliberately NOT included here (see copyMediaFiles): MediaUploadType has `data_class: Media`, and Symfony's form component refuses to use a plain array as a data_class-bound form's data ("the form's view data is expected to be an instance of Media, but is an array") - that only works for "data" because those kind-specific form types have `data_class: null`.
     buildDataPayload(sourceItem) {
         const params = new URLSearchParams();
 
@@ -168,9 +147,7 @@ export default class extends Controller {
         params.append(name, el.value);
     }
 
-    // The part of a media field's name after its own item's index bracket, e.g.
-    // "blocks][3][medias][7][alt]" -> "[alt]" - used to match "the same field" between two media rows
-    // regardless of their respective index in the collection.
+    // The part of a media field's name after its own item's index bracket, e.g. "blocks][3][medias][7][alt]" -> "[alt]" - used to match "the same field" between two media rows regardless of their respective index in the collection.
     mediaLocalName(name) {
         const marker = '[medias][';
         const idx = name.indexOf(marker);
@@ -179,14 +156,9 @@ export default class extends Controller {
         return name.slice(closeBracket + 1);
     }
 
-    // Copies one media row's non-file field values into another (both already fully rendered, no
-    // sub-form to load) - matched by local field name rather than by position, since a source media
-    // with an existing file has an extra Vich "delete" checkbox a fresh target row doesn't have yet.
+    // Copies one media row's non-file field values into another (both already fully rendered, no sub-form to load) - matched by local field name rather than by position, since a source media with an existing file has an extra Vich "delete" checkbox a fresh target row doesn't have yet.
     copyMediaValues(sourceItem, targetItem) {
-        // A field's local name alone isn't a unique key: a multi-checkbox field like "cssClasses[]"
-        // (rounded corners, thumbnail, etc.) renders several checkboxes sharing that exact same name,
-        // one per possible value - so the value has to be part of the key too, or every checkbox
-        // collapses onto whichever one happens to be seen last and only it gets matched/copied.
+        // A field's local name alone isn't a unique key: a multi-checkbox field like "cssClasses[]" (rounded corners, thumbnail, etc.) renders several checkboxes sharing that exact same name, one per possible value - so the value has to be part of the key too, or every checkbox collapses onto whichever one happens to be seen last and only it gets matched/copied.
         const keyOf = el => {
             const name = el.name && this.mediaLocalName(el.name);
             if (!name) return null;
@@ -219,11 +191,7 @@ export default class extends Controller {
         });
     }
 
-    // The freshly-loaded block starts with an empty medias collection (see buildDataPayload - it's
-    // never pre-filled from the server). So for each source media, first click the target's own "add"
-    // button to get a normal empty prototype row (the exact same thing a manual click on that button
-    // does, no data_class conflict since nothing but the prototype markup is involved), then reuse the
-    // same value/file copy already proven correct for duplicating a single media entry directly.
+    // The freshly-loaded block starts with an empty medias collection (see buildDataPayload - it's never pre-filled from the server). So for each source media, first click the target's own "add" button to get a normal empty prototype row (the exact same thing a manual click on that button does, no data_class conflict since nothing but the prototype markup is involved), then reuse the same value/file copy already proven correct for duplicating a single media entry directly.
     copyMediaFiles(sourceItem, newItem) {
         const sourceMediasField = this.mediasFieldIn(sourceItem);
         const targetMediasField = this.mediasFieldIn(newItem);
@@ -243,11 +211,7 @@ export default class extends Controller {
         });
     }
 
-    // Locates a block's nested "medias" CollectionType field without assuming anything about its
-    // generated id (that assumption was wrong before: id patterns for dynamically-injected fields
-    // aren't guaranteed the way a literal "_medias" suffix implied, which silently broke every media
-    // duplication path even though "add" of a brand new one worked). A collection field's own
-    // prototype HTML is a reliable fingerprint instead - only the medias field renders a file input.
+    // Locates a block's nested "medias" CollectionType field without assuming anything about its generated id (that assumption was wrong before: id patterns for dynamically-injected fields aren't guaranteed the way a literal "_medias" suffix implied, which silently broke every media duplication path even though "add" of a brand new one worked). A collection field's own prototype HTML is a reliable fingerprint instead - only the medias field renders a file input.
     mediasFieldIn(item) {
         return [...item.querySelectorAll('[data-ea-collection-field]')]
             .find(field => /type=(["'])file\1/.test(field.dataset.prototype || ''));
@@ -275,9 +239,7 @@ export default class extends Controller {
             .catch(() => {}); // best-effort: leave that one media without a file rather than break the page
     }
 
-    // EasyAdmin shows an existing image as an <img src="..."> thumbnail wrapped in a lightbox link
-    // whose own href is just "#" (a JS hook, not the real URL) - so the actual URL has to come from
-    // the <img>, not the <a>. For a non-image file there's no thumbnail, so fall back to any real link.
+    // EasyAdmin shows an existing image as an <img src="..."> thumbnail wrapped in a lightbox link whose own href is just "#" (a JS hook, not the real URL) - so the actual URL has to come from the <img>, not the <a>. For a non-image file there's no thumbnail, so fall back to any real link.
     existingFileUrl(mediaItem) {
         const img = mediaItem.querySelector('img[src]');
         if (img) return img.src;

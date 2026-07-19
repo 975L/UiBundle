@@ -19,13 +19,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MediaCrudControllerTest extends TestCase
 {
-    // Creating a Media with no Block (e.g. for a bundle showcase) is reserved to super admins -
-    // regular admins keep adding media the normal way, through a Block's own form
+    // Creating a Media with no Block (e.g. for a bundle showcase) is reserved to super admins - regular admins keep adding media the normal way, through a Block's own form
     public function testConfigureActionsRestrictsNewToSuperAdmin(): void
     {
-        // Known issue: local vendor/c975l/config-bundle install is broken (doesn't contain real
-        // ConfigBundle source), so EasyAdminActionHelper can't autoload here - skip until bundles are
-        // committed/pushed and composer can pull the real package again
+        // Known issue: local vendor/c975l/config-bundle install is broken (doesn't contain real ConfigBundle source), so EasyAdminActionHelper can't autoload here - skip until bundles are committed/pushed and composer can pull the real package again
         if (!class_exists(\c975L\ConfigBundle\Management\EasyAdminActionHelper::class)) {
             self::markTestSkipped('c975L\ConfigBundle\Management\EasyAdminActionHelper not available (vendor/c975l/config-bundle install is broken)');
         }
@@ -35,9 +32,7 @@ class MediaCrudControllerTest extends TestCase
 
         $controller = new MediaCrudController($this->createStub(MediaUsageRegistry::class), $translator);
 
-        // A real EasyAdmin runtime pre-populates default actions (EDIT, DELETE...) before calling
-        // configureActions() - update() below assumes EDIT/DELETE already exist on PAGE_INDEX
-        // (DETAIL is added by the controller itself, not pre-populated here)
+        // A real EasyAdmin runtime pre-populates default actions (EDIT, DELETE...) before calling configureActions() - update() below assumes EDIT/DELETE already exist on PAGE_INDEX (DETAIL is added by the controller itself, not pre-populated here)
         $actions = $controller->configureActions(
             Actions::new()
                 ->add(Crud::PAGE_INDEX, Action::EDIT)

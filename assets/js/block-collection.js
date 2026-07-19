@@ -7,10 +7,7 @@
  */
 import { Controller } from "@hotwired/stimulus";
 
-// Mounted automatically on <body> by controllers-admin.js — no layout override needed.
-// EasyAdmin's "Add" button appends new block rows at the bottom of the collection, often far
-// below the fold, leaving the user to scroll down and hunt for the row they just created. This
-// brings it into view and opens its kind selector right away instead.
+// Mounted automatically on <body> by controllers-admin.js — no layout override needed. EasyAdmin's "Add" button appends new block rows at the bottom of the collection, often far below the fold, leaving the user to scroll down and hunt for the row they just created. This brings it into view and opens its kind selector right away instead.
 export default class extends Controller {
     connect() {
         this.boundOnItemAdded = this.onItemAdded.bind(this);
@@ -25,8 +22,7 @@ export default class extends Controller {
         const newElement = event.detail && event.detail.newElement;
         if (!newElement) return;
 
-        // block-duplicate.js drives its own freshly-added row (kind + scroll position) itself,
-        // so it flags the collection to skip this scroll/focus while it does that.
+        // block-duplicate.js drives its own freshly-added row (kind + scroll position) itself, so it flags the collection to skip this scroll/focus while it does that.
         const collection = event.detail.collection;
         if (collection && collection.dataset.uiSuppressAutofocus) return;
 
@@ -36,8 +32,7 @@ export default class extends Controller {
 
         newElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-        // TomSelect wraps the <select> on this same event (EasyAdmin's own listener), so it isn't
-        // ready to be focused/opened yet - defer to the next tick.
+        // TomSelect wraps the <select> on this same event (EasyAdmin's own listener), so it isn't ready to be focused/opened yet - defer to the next tick.
         const select = kindRow.querySelector('select');
         if (select) {
             setTimeout(() => (select.tomselect || select).focus(), 0);

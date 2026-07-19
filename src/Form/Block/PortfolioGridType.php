@@ -14,8 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-// Each project card itself comes from this block's medias (see MediaUploadType's "portfolio_grid"
-// context: label = project title, description = project text, url = outbound link)
+// Each project card itself comes from this block's medias (see MediaUploadType's "portfolio_grid" context: label = project title, description = project text, url = outbound link)
 class PortfolioGridType extends AbstractType
 {
     use HasAnchorFieldTrait;

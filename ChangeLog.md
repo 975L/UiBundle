@@ -1,5 +1,34 @@
 # ChangeLog
 
+## v1.8
+
+- Added `Form`/`FormField` entities (`site_form`/`site_form_field` tables) and `FormFieldType`, a shared sortable field-collection system (18/07/2026)
+- Added `Form::$action` and `FormActionInterface`/`FormActionRegistry` (18/07/2026)
+- Added a generic `form` Block kind (`FormController`/`FormSubmissionType`/`FormPickerType`) (18/07/2026)
+- Added `FormField::$restricted`, locking a form-owning bundle's core fields (18/07/2026)
+- Added `Service/FormBotProtection`/`RateLimiterGuard`/`ReCaptchaFactory` (reCAPTCHA v3), moved out of ContactFormBundle - see UPGRADE.md [BC-Break] (19/07/2026)
+- Added `Service/EmailService`/`SendEmailFormAction`, moved out of ContactFormBundle - see UPGRADE.md [BC-Break] (19/07/2026)
+- Added `Form::$restricted` (19/07/2026)
+- Added `Controller/Management/FormCrudController` (19/07/2026)
+- Added shared bot/recaptcha/rate-limiter protection and a "receive a copy" option to the `form` Block - see UPGRADE.md [BC-Break] (19/07/2026)
+- Fixed `FormSubmissionType`'s recaptcha field missing a CSP nonce under strict CSP (19/07/2026)
+- Added `Contract/DebugPreviewCapableInterface`, showing a debug email preview on `FormController` (19/07/2026)
+- Added `Service/FormPrefillHelper` - see UPGRADE.md [BC-Break] (19/07/2026)
+- Added a `form` Block showcase fixture, replacing ContactFormBundle's own (19/07/2026)
+- Changed the sidebar's block showcase link to `https://975l.com/pages/blocks` (19/07/2026)
+- Added an "AI Assistant" back-office page (dashboard Q&A + text rephrase), optional and config-driven (19/07/2026)
+- Added `c975l:ui:donovan-qa:create` maker command (19/07/2026)
+- Added monthly AI rephrase spend tracking and dashboard alerts (19/07/2026)
+- Changed `site_media()` to memoize per-request (19/07/2026)
+- Suppressed `CollectionExtension`'s eager DB-touching constructor, split into `CollectionRuntime` (19/07/2026)
+- Fixed `FormController` open redirect via unvalidated Referer header (19/07/2026)
+- Fixed `EmailService`'s debug preview banner corrupting on some subjects (19/07/2026)
+- Fixed `SendEmailFormAction` dropping a value when two fields share the same label (19/07/2026)
+- Fixed `ReCaptchaFactory` ignoring a configured score threshold of 0 (19/07/2026)
+- Fixed `FormController`'s rate limiter sharing one bucket when the client IP can't be resolved (19/07/2026)
+- Changed `RateLimiterGuard`/`FormController` to type against `RateLimiterFactoryInterface` (19/07/2026)
+- Fixed the AI Assistant page's centralized-backend override ordering (19/07/2026)
+
 ## v1.7.2
 
 - Added an optional Anchor field to `hero`/`feature_bar`/`section_cards`/`expertise_banner`/`process_steps`/`portfolio_grid`/`cta_band`/`collection`, for in-page navigation (17/07/2026)
@@ -23,7 +52,7 @@
 
 ## v1.7.1
 
-- Corrected link https://975l.com/pages/vitrine-blocks (17/07/2026)
+- Corrected link https://975l.com/pages/blocks (17/07/2026)
 
 ## v1.7
 
@@ -39,7 +68,7 @@
 - Changed `video_iframe` to gate behind cookie consent and use `youtube-nocookie.com` (16/07/2026) [BC-Break]
 - Fixed `expertise_banner` text color on dark background (16/07/2026)
 - Removed the EasyAdmin block gallery, superseded by 975l.com's showcase (16/07/2026) [BC-Break]
-- Added sidebar link to `https://975l.com/pages/vitrine-blocks` (16/07/2026)
+- Added sidebar link to `https://975l.com/pages/blocks` (16/07/2026)
 
 ## v1.6
 

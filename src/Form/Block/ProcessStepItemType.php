@@ -14,8 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-// One entry of ProcessStepsType's "steps" collection - the step number itself isn't a field, it's
-// computed from the entry's position in the collection (see templates/components/Process/Steps.html.twig)
+// One entry of ProcessStepsType's "steps" collection - the step number itself isn't a field, it's computed from the entry's position in the collection (see templates/components/Process/Steps.html.twig)
 class ProcessStepItemType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

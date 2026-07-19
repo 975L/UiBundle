@@ -24,9 +24,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 require_once __DIR__ . '/../Fixtures/AppUserStub.php';
 
-// App\Entity\User (the type BlockUserListener actually assigns) belongs to the consuming application,
-// not to this standalone bundle checkout - Fixtures/AppUserStub.php defines a minimal stand-in so the
-// "somebody is logged in" branches (previously untestable here) can be covered too.
+// App\Entity\User (the type BlockUserListener actually assigns) belongs to the consuming application, not to this standalone bundle checkout - Fixtures/AppUserStub.php defines a minimal stand-in so the "somebody is logged in" branches (previously untestable here) can be covered too.
 class BlockUserListenerTest extends TestCase
 {
     private function createPersistArgs(object $entity): PrePersistEventArgs
@@ -88,9 +86,7 @@ class BlockUserListenerTest extends TestCase
         $this->assertSame($user, $media->getUser());
     }
 
-    // Regression guard: prePersist used to skip assignment entirely when the entity already had a user
-    // (e.g. explicitly set by an import/fixture loader before persist()) - it no longer does, by design
-    // (see the class comment: $user always reflects the last editor, not just the creator)
+    // Regression guard: prePersist used to skip assignment entirely when the entity already had a user (e.g. explicitly set by an import/fixture loader before persist()) - it no longer does, by design (see the class comment: $user always reflects the last editor, not just the creator)
     public function testPrePersistOverwritesAnAlreadyAssignedUser(): void
     {
         $newUser = new User('bob');
@@ -117,8 +113,7 @@ class BlockUserListenerTest extends TestCase
         $this->addToAssertionCount(1);
     }
 
-    // Nobody logged in (CLI import, expired session...): the changeset must not be recomputed for
-    // nothing - only a real assignment justifies the extra recompute cost
+    // Nobody logged in (CLI import, expired session...): the changeset must not be recomputed for nothing - only a real assignment justifies the extra recompute cost
     public function testPreUpdateDoesNotRecomputeChangeSetWhenNobodyIsLoggedInForMedia(): void
     {
         $security = $this->createStub(Security::class);
@@ -149,17 +144,14 @@ class BlockUserListenerTest extends TestCase
         $this->assertNull($block->getUser());
     }
 
-    // Somebody logged in: the entity's user is overwritten (even if it already had one - same
-    // "last editor, not just creator" intent as prePersist) and the changeset is recomputed so
-    // Doctrine actually includes "user" in the SQL UPDATE, even when it's the only field that changed
+    // Somebody logged in: the entity's user is overwritten (even if it already had one - same "last editor, not just creator" intent as prePersist) and the changeset is recomputed so Doctrine actually includes "user" in the SQL UPDATE, even when it's the only field that changed
     public function testPreUpdateAssignsTheLoggedInUserAndRecomputesTheChangeSet(): void
     {
         $newUser = new User('bob');
         $security = $this->createStub(Security::class);
         $security->method('getUser')->willReturn($newUser);
 
-        // A real instance rather than a stub - PHPUnit's mock generator otherwise trips one of
-        // ClassMetadata's own @deprecated methods while building the double
+        // A real instance rather than a stub - PHPUnit's mock generator otherwise trips one of ClassMetadata's own @deprecated methods while building the double
         $classMetadata = new ClassMetadata(Block::class);
         $unitOfWork = $this->createMock(UnitOfWork::class);
         $unitOfWork->expects($this->once())

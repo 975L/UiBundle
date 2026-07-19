@@ -17,9 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-// Each item comes from the chosen source, rendered as a never-persisted "collection_item" Block - see
-// Collection.html.twig. No item is entered here: source/limit only pick which external collection
-// to pull from and how many of its items to show
+// Each item comes from the chosen source, rendered as a never-persisted "collection_item" Block - see Collection.html.twig. No item is entered here: source/limit only pick which external collection to pull from and how many of its items to show
 class CollectionType extends AbstractType
 {
     use HasAnchorFieldTrait;
@@ -40,9 +38,7 @@ class CollectionType extends AbstractType
             ->add('source', ChoiceType::class, [
                 'label'   => 'label.source',
                 'choices' => $choices,
-                // No bundle implementing CollectionSourceProviderInterface yet (fresh install) means
-                // an empty select with nothing to pick - a disabled placeholder explains why instead
-                // of leaving the editor facing a blank dropdown with no clue what's wrong
+                // No bundle implementing CollectionSourceProviderInterface yet (fresh install) means an empty select with nothing to pick - a disabled placeholder explains why instead of leaving the editor facing a blank dropdown with no clue what's wrong
                 'placeholder' => [] === $choices ? 'label.no_collection_source_available' : null,
             ])
             ->add('limit', IntegerType::class, [
@@ -58,9 +54,7 @@ class CollectionType extends AbstractType
                 'label' => 'label.title',
                 'required' => false,
             ])
-            // "Voir tout" link next to the head, e.g. pointing at a fuller listing elsewhere - same
-            // pair of fields as PortfolioGridType, only rendered when the "portfolio" variant is picked
-            // (see Collection/Grid.html.twig)
+            // "Voir tout" link next to the head, e.g. pointing at a fuller listing elsewhere - same pair of fields as PortfolioGridType, only rendered when the "portfolio" variant is picked (see Collection/Grid.html.twig)
             ->add('linkLabel', TextType::class, [
                 'label' => 'label.link_label',
                 'required' => false,
@@ -69,22 +63,13 @@ class CollectionType extends AbstractType
                 'label' => 'label.url',
                 'required' => false,
             ])
-            // Slug of a real Page (site_page) that renders this source's per-item detail views - its
-            // own blocks are rendered as-is (a "collectionItem" Twig global carries the current item's
-            // data, picked up by whichever block on it needs it, e.g. a "twig_content" block's own
-            // templatePath) - see PageController::resolveCollectionDetail() and SiteBundle's README
-            // ("Item detail pages", under "Collection entries"). Never rendered by this block itself -
-            // only used to decide whether each item's own title links to its detail URL (see
-            // CollectionExtension::renderItems()), for items whose source also hands back a slug.
+            // Slug of a real Page (site_page) that renders this source's per-item detail views - its own blocks are rendered as-is (a "collectionItem" Twig global carries the current item's data, picked up by whichever block on it needs it, e.g. a "twig_content" block's own templatePath) - see PageController::resolveCollectionDetail() and SiteBundle's README ("Item detail pages", under "Collection entries"). Never rendered by this block itself - only used to decide whether each item's own title links to its detail URL (see CollectionExtension::renderItems()), for items whose source also hands back a slug.
             ->add('detailPage', TextType::class, [
                 'label'    => 'label.detail_page',
                 'help'     => 'label.detail_page_help',
                 'required' => false,
             ])
-            // Picked up by CollectionItem.html.twig to switch its markup - keeps every collection
-            // sharing the same "collection_item" kind/template (see class-level comment) while still
-            // allowing a visually different presentation per Collection block instance, no app-level
-            // template override needed
+            // Picked up by CollectionItem.html.twig to switch its markup - keeps every collection sharing the same "collection_item" kind/template (see class-level comment) while still allowing a visually different presentation per Collection block instance, no app-level template override needed
             ->add('variant', ChoiceType::class, [
                 'label'    => 'label.variant',
                 'help'     => 'label.variant_help',
@@ -104,10 +89,7 @@ class CollectionType extends AbstractType
         ]);
     }
 
-    // Without this, the default block prefix derived from the class name ("CollectionType" -> "collection")
-    // collides with Symfony's own CollectionType (used by PageCrudController's "blocks" field), making
-    // EasyAdmin's collection_row/collection_widget form theme blocks wrongly apply here and blow up on
-    // "allow_add"/"allow_delete" - vars only a real CollectionType field populates
+    // Without this, the default block prefix derived from the class name ("CollectionType" -> "collection") collides with Symfony's own CollectionType (used by PageCrudController's "blocks" field), making EasyAdmin's collection_row/collection_widget form theme blocks wrongly apply here and blow up on "allow_add"/"allow_delete" - vars only a real CollectionType field populates
     public function getBlockPrefix(): string
     {
         return 'block_collection';

@@ -54,8 +54,7 @@ class NestedFileSystemStorageTest extends TestCase
         rmdir($dir);
     }
 
-    // Building a real PropertyMappingFactory is cheap (its dependencies are never actually invoked
-    // by doUpload/doRemove/doResolvePath) and avoids doubling final Vich classes
+    // Building a real PropertyMappingFactory is cheap (its dependencies are never actually invoked by doUpload/doRemove/doResolvePath) and avoids doubling final Vich classes
     private function createStorage(): NestedFileSystemStorageTestSubject
     {
         $metadataReader = new MetadataReader($this->createStub(AdvancedMetadataFactoryInterface::class));
@@ -83,13 +82,11 @@ class NestedFileSystemStorageTest extends TestCase
 
         $this->assertFileExists($this->uploadDestination . '/flat.txt');
         $this->assertSame('content', file_get_contents($this->uploadDestination . '/flat.txt'));
-        // A trailing "/" is harmlessly duplicated when $dir is null and the name is flat (nestedDir resolves
-        // to null), since it's concatenated as an empty path segment - still resolves to the same real file
+        // A trailing "/" is harmlessly duplicated when $dir is null and the name is flat (nestedDir resolves to null), since it's concatenated as an empty path segment - still resolves to the same real file
         $this->assertSame(basename($this->uploadDestination . '/flat.txt'), basename($result->getPathname()));
     }
 
-    // A name containing a nested subdirectory (as returned by UiMediaNamer, e.g. "medias/site/block-x")
-    // must be uploaded into that nested subdirectory, which is created on demand
+    // A name containing a nested subdirectory (as returned by UiMediaNamer, e.g. "medias/site/block-x") must be uploaded into that nested subdirectory, which is created on demand
     public function testDoUploadCreatesNestedSubdirectoryFromName(): void
     {
         $sourcePath = $this->sourceDir . '/source.txt';

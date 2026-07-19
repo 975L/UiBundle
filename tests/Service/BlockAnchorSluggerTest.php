@@ -38,8 +38,7 @@ class BlockAnchorSluggerTest extends TestCase
         $this->assertNull($this->createSlugger()->slugify('   ', '  '));
     }
 
-    // The title fallback may come from a TrixEditorType field (e.g. HeroType) - its inline markup
-    // must not leak into the slug as stray words
+    // The title fallback may come from a TrixEditorType field (e.g. HeroType) - its inline markup must not leak into the slug as stray words
     public function testSlugifyStripsHtmlTagsFromTheTitleFallback(): void
     {
         $this->assertSame('votre-projet', $this->createSlugger()->slugify(null, 'Votre <em>projet</em>'));

@@ -101,8 +101,7 @@ class UiMediaNamerTest extends TestCase
         $this->assertSame('apple-touch-icon.png', $namer->name($media, $this->createMapping()));
     }
 
-    // og-image is a singleton role but has no fixed spec: extension is determined from the upload,
-    // and raster formats get converted to webp
+    // og-image is a singleton role but has no fixed spec: extension is determined from the upload, and raster formats get converted to webp
     public function testOgImageSingletonConvertsRasterUploadToWebp(): void
     {
         $namer = new UiMediaNamer();
@@ -143,8 +142,7 @@ class UiMediaNamerTest extends TestCase
         $this->assertSame('logo.svg', $namer->name($media, $this->createMapping()));
     }
 
-    // Sanity check that VichMediaNamableInterface implementors other than Media skip the singleton branch
-    // entirely and always go through the generic "append uniqid" path
+    // Sanity check that VichMediaNamableInterface implementors other than Media skip the singleton branch entirely and always go through the generic "append uniqid" path
     public function testGenericVichMediaNamableEntitySkipsSingletonHandling(): void
     {
         $namer = new UiMediaNamer();

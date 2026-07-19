@@ -34,9 +34,7 @@ class StylesheetCacheWarmer implements CacheWarmerInterface
         return [];
     }
 
-    // Rebuilds site.css/admin.css from every currently registered stylesheet - public so it can also
-    // be called at runtime (see SiteBundle's ThemeVariablesCssListener) when a contributed stylesheet's
-    // content changes (e.g. a theme config update), instead of waiting for the next cache:warmup
+    // Rebuilds site.css/admin.css from every currently registered stylesheet - public so it can also be called at runtime (see SiteBundle's ThemeVariablesCssListener) when a contributed stylesheet's content changes (e.g. a theme config update), instead of waiting for the next cache:warmup
     public function compileAll(): void
     {
         $buildPath = $this->projectDir . '/public/bundles/build';
@@ -48,11 +46,7 @@ class StylesheetCacheWarmer implements CacheWarmerInterface
         $this->write($buildPath . '/admin.css', $this->compile($this->stylesheetManagementRegistry->all()));
     }
 
-    // Writes through a temp file + rename() instead of file_put_contents() directly on the served path -
-    // rename() is atomic on the same filesystem, so a request served mid-warmup never sees a truncated
-    // file. Throws (rather than failing silently) on any I/O error - this warmer isn't wrapped in a
-    // try/catch by Symfony's CacheWarmerAggregate, so a thrown exception surfaces as a loud
-    // cache:warmup/cache:clear failure instead of leaving a stale or missing compiled stylesheet
+    // Writes through a temp file + rename() instead of file_put_contents() directly on the served path - rename() is atomic on the same filesystem, so a request served mid-warmup never sees a truncated file. Throws (rather than failing silently) on any I/O error - this warmer isn't wrapped in a try/catch by Symfony's CacheWarmerAggregate, so a thrown exception surfaces as a loud cache:warmup/cache:clear failure instead of leaving a stale or missing compiled stylesheet
     private function write(string $path, string $content): void
     {
         $tmpPath = $path . '.' . uniqid('', true) . '.tmp';
@@ -61,8 +55,7 @@ class StylesheetCacheWarmer implements CacheWarmerInterface
         }
     }
 
-    // Concatenates the content of every local stylesheet, skipping absolute URLs (CDN resources
-    // like cookieconsent.min.css), which stay served as separate <link> tags
+    // Concatenates the content of every local stylesheet, skipping absolute URLs (CDN resources like cookieconsent.min.css), which stay served as separate <link> tags
     private function compile(array $stylesheets): string
     {
         $content = [];
@@ -71,8 +64,7 @@ class StylesheetCacheWarmer implements CacheWarmerInterface
                 continue;
             }
 
-            // Some contributed stylesheets are generated at runtime (e.g. SiteBundle's
-            // ThemeVariablesCssListener) and may not exist yet on a fresh install
+            // Some contributed stylesheets are generated at runtime (e.g. SiteBundle's ThemeVariablesCssListener) and may not exist yet on a fresh install
             $path = $this->projectDir . '/public/' . $stylesheet;
             if (is_file($path)) {
                 $content[] = file_get_contents($path);

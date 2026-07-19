@@ -10,8 +10,7 @@ namespace c975L\UiBundle\Management;
 
 use c975L\UiBundle\Contract\FormThemeProviderInterface;
 
-// UiBundle's own EasyAdmin form theme contributions - see FormThemeProviderInterface for why this
-// exists instead of the app-wide twig.form_themes config
+// UiBundle's own EasyAdmin form theme contributions - see FormThemeProviderInterface for why this exists instead of the app-wide twig.form_themes config
 class UiFormThemeProvider implements FormThemeProviderInterface
 {
     public function getFormThemes(): array

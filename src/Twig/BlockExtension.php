@@ -40,15 +40,12 @@ class BlockExtension extends AbstractExtension
     {
         $kind = $block->getKind();
 
-        // A never-persisted block (e.g. a block showcase's in-memory fixture previews, see
-        // BlockFixtureRegistry) has no id - caching it by id would collapse every such block onto the
-        // same "block_render_0_..." key, silently serving one block's rendered HTML for every other one
+        // A never-persisted block (e.g. a block showcase's in-memory fixture previews, see BlockFixtureRegistry) has no id - caching it by id would collapse every such block onto the same "block_render_0_..." key, silently serving one block's rendered HTML for every other one
         if (null === $block->getId() || !$this->registry->isCacheable($kind)) {
             return $this->doRender($block);
         }
 
-        // Locale is part of the key: some templates (e.g. legal_model) render different
-        // content per app.request.locale, not just per Block::$data
+        // Locale is part of the key: some templates (e.g. legal_model) render different content per app.request.locale, not just per Block::$data
         $locale = $this->requestStack->getCurrentRequest()?->getLocale() ?? 'fr';
 
         return $this->cache->get(
@@ -76,9 +73,7 @@ class BlockExtension extends AbstractExtension
         );
     }
 
-    // Computed once here instead of every "Page sections" adapter template repeating its own
-    // "{{ anchor ~ '-' ~ block.id }}" - the trailing block id keeps two blocks of the same kind (or
-    // the same title/anchor reused elsewhere) on the same page from colliding on the same HTML id
+    // Computed once here instead of every "Page sections" adapter template repeating its own "{{ anchor ~ '-' ~ block.id }}" - the trailing block id keeps two blocks of the same kind (or the same title/anchor reused elsewhere) on the same page from colliding on the same HTML id
     private function buildAnchorId(?string $anchor, ?int $blockId): string
     {
         return $anchor ? $anchor . '-' . $blockId : '';

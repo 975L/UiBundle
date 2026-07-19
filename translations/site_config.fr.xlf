@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="fr" target-language="fr" datatype="plaintext" original="site_config.fr.xlf">
+        <body>
+            <trans-unit id="1">
+                <source>description.ai_assistant_dashboard_enabled</source>
+                <target>Active (true) ou désactive (false) l'assistant IA du tableau de bord</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>description.ai_assistant_dashboard_endpoint</source>
+                <target>URL du backend de l'assistant IA vers lequel transmettre les questions du tableau de bord. Ce bundle ne fournit aucun backend par défaut - laisser vide désactive la fonctionnalité.</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>description.ai_assistant_dashboard_token</source>
+                <target>Jeton Bearer envoyé au endpoint de l'assistant IA du tableau de bord</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>description.ai_assistant_rephrase_provider</source>
+                <target>Fournisseur IA utilisé pour le bouton de reformulation : anthropic, openai ou euria</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>description.ai_assistant_rephrase_api_key</source>
+                <target>Clé API du fournisseur de reformulation choisi, facturée au titulaire de cette clé</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>description.ai_assistant_rephrase_base_uri</source>
+                <target>URL de base de l'API compatible OpenAI, requise uniquement pour euria</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>description.ai_assistant_rephrase_model</source>
+                <target>Identifiant du modèle utilisé pour la reformulation - optionnel pour Anthropic/OpenAI (modèle par défaut raisonnable), obligatoire pour Euria (pas de défaut sûr, son catalogue n'est pas assez stable pour en figer un)</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>label.ui_ai_assistant_dashboard_enabled</source>
+                <target>Donovan (Site) - Activé</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>label.ui_ai_assistant_dashboard_endpoint</source>
+                <target>Donovan (Site) - Endpoint</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>label.ui_ai_assistant_dashboard_token</source>
+                <target>Donovan (Site) - Jeton</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>label.ui_ai_assistant_rephrase_provider</source>
+                <target>Donovan (Site) - Fournisseur LLM</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>label.ui_ai_assistant_rephrase_api_key</source>
+                <target>Donovan (Site) - Clé API LLM</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>label.ui_ai_assistant_rephrase_base_uri</source>
+                <target>Donovan (Site) - URI de base</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>label.ui_ai_assistant_rephrase_model</source>
+                <target>Donovan (Site) - Modèle LLM</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>label.ai_rephrase_failure_alert</source>
+                <target>La reformulation IA a échoué lors de sa dernière tentative</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>description.ai_rephrase_failure_alert</source>
+                <target>Vérifiez le fournisseur et la clé API de reformulation configurés</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>label.ai_assistant_dashboard_not_enabled</source>
+                <target>Assistant IA du tableau de bord non activé</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>description.ai_assistant_dashboard_not_enabled</source>
+                <target>Activez-le et renseignez un endpoint et un jeton pour l'activer</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>label.ai_rephrase_not_enabled</source>
+                <target>Fonction de reformulation IA non activée</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>description.ai_rephrase_not_enabled</source>
+                <target>Renseignez un fournisseur et une clé API pour activer le bouton de reformulation</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

@@ -123,8 +123,7 @@ class StylesheetCacheWarmerTest extends TestCase
         );
     }
 
-    // A contributed stylesheet can be generated at runtime (e.g. SiteBundle's ThemeVariablesCssListener)
-    // and may not exist yet on a fresh install - it must be skipped, not raise a warning
+    // A contributed stylesheet can be generated at runtime (e.g. SiteBundle's ThemeVariablesCssListener) and may not exist yet on a fresh install - it must be skipped, not raise a warning
     public function testWarmUpSkipsAMissingLocalStylesheet(): void
     {
         $this->createCssFile('bundles/c975lsite/css/styles.min.css', '.site{color:blue}');
@@ -163,8 +162,7 @@ class StylesheetCacheWarmerTest extends TestCase
         $this->assertSame([], $warmer->warmUp($this->projectDir . '/var/cache'));
     }
 
-    // No leftover .tmp file after a successful run - write() always renames its temp file over the
-    // final path rather than leaving it behind
+    // No leftover .tmp file after a successful run - write() always renames its temp file over the final path rather than leaving it behind
     public function testWarmUpLeavesNoTemporaryFileBehind(): void
     {
         $this->createCssFile('bundles/c975lui/css/styles.min.css', '.ui{color:red}');
@@ -176,8 +174,7 @@ class StylesheetCacheWarmerTest extends TestCase
         $this->assertSame(['admin.css', 'site.css'], array_values(array_diff($entries, ['.', '..'])));
     }
 
-    // A directory that can't be created (blocked by a same-named regular file already sitting at that
-    // path, e.g. left over from a broken previous deploy) must fail loudly, not silently no-op
+    // A directory that can't be created (blocked by a same-named regular file already sitting at that path, e.g. left over from a broken previous deploy) must fail loudly, not silently no-op
     public function testWarmUpThrowsWhenTheBuildDirectoryCannotBeCreated(): void
     {
         mkdir($this->projectDir . '/public/bundles', 0777, true);

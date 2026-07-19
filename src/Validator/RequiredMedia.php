@@ -10,8 +10,7 @@ namespace c975L\UiBundle\Validator;
 
 use Symfony\Component\Validator\Constraint;
 
-// Class-level constraint on Block - whether it actually applies depends on BlockRegistry::isMediaRequired()
-// for the block's own kind, checked by RequiredMediaValidator
+// Class-level constraint on Block - whether it actually applies depends on BlockRegistry::isMediaRequired() for the block's own kind, checked by RequiredMediaValidator
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class RequiredMedia extends Constraint
 {

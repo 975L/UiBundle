@@ -17,8 +17,7 @@ class DocumentExtensionTest extends TestCase
 {
     private string $projectDir;
 
-    // Sandboxes each test behind its own throwaway project directory, so the thumbnail existence
-    // check can be exercised safely with real filesystem reads (same pattern as StylesheetExtensionTest)
+    // Sandboxes each test behind its own throwaway project directory, so the thumbnail existence check can be exercised safely with real filesystem reads (same pattern as StylesheetExtensionTest)
     protected function setUp(): void
     {
         $this->projectDir = sys_get_temp_dir() . '/document-extension-test-' . uniqid();
@@ -56,8 +55,7 @@ class DocumentExtensionTest extends TestCase
 
     public function testGetThumbnailPathReplacesExtensionNotAppendsIt(): void
     {
-        // VichPdfThumbnailListener writes via str_replace('.pdf', '.webp', ...) - "document.pdf"
-        // becomes "document.webp", never "document.pdf.webp"
+        // VichPdfThumbnailListener writes via str_replace('.pdf', '.webp', ...) - "document.pdf" becomes "document.webp", never "document.pdf.webp"
         touch($this->projectDir . '/public/document.webp');
 
         $extension = new DocumentExtension($this->projectDir);
@@ -67,8 +65,7 @@ class DocumentExtensionTest extends TestCase
 
     public function testGetThumbnailPathReturnsNullWhenNoThumbnailWasGenerated(): void
     {
-        // Ghostscript missing on the server, a fixture/placeholder media with no sidecar file,
-        // generation not finished - none of these should ever look like a real thumbnail
+        // Ghostscript missing on the server, a fixture/placeholder media with no sidecar file, generation not finished - none of these should ever look like a real thumbnail
         $extension = new DocumentExtension($this->projectDir);
 
         $this->assertNull($extension->getThumbnailPath($this->createMedia('document.pdf')));

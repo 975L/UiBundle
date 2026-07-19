@@ -10,9 +10,7 @@ import { addToolbarButton } from "./block-toolbar.js";
 
 // Mounted automatically on <body> by controllers-admin.js — no layout override needed.
 
-// No width/height here, deliberately - EasyAdmin's own icons (e.g. the delete button's) don't set
-// them either, relying entirely on its global ".icon svg" CSS to size every icon consistently.
-// Hard-coding a size here would make this one the odd one out instead of matching the others.
+// No width/height here, deliberately - EasyAdmin's own icons (e.g. the delete button's) don't set them either, relying entirely on its global ".icon svg" CSS to size every icon consistently. Hard-coding a size here would make this one the odd one out instead of matching the others.
 const UI_MOVE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" '
     + 'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
     + '<polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/>'
@@ -39,7 +37,10 @@ export default class extends Controller {
         const container = this.itemsContainer(field);
         if (!container) return;
 
-        field.querySelectorAll('.field-collection-item').forEach(item => this.addHandle(item));
+        field.querySelectorAll('.field-collection-item').forEach(item => {
+            this.addHandle(item);
+            this.applyRestriction(item);
+        });
 
         let dragging = null;
 
@@ -103,11 +104,7 @@ export default class extends Controller {
         btn.addEventListener('mousedown', startDrag);
         btn.addEventListener('mouseup', endDrag);
 
-        // Extended to the whole header bar so grabbing isn't limited to this small icon. Only
-        // the toolbar itself (duplicate, delete, this handle) is excluded - EasyAdmin's own
-        // title/toggle button covers most of the bar's width, and it must stay draggable too,
-        // it just keeps toggling normally on a plain click since only an actual drag gesture
-        // (pointer movement) hijacks it instead of a click.
+        // Extended to the whole header bar so grabbing isn't limited to this small icon. Only the toolbar itself (duplicate, delete, this handle) is excluded - EasyAdmin's own title/toggle button covers most of the bar's width, and it must stay draggable too, it just keeps toggling normally on a plain click since only an actual drag gesture (pointer movement) hijacks it instead of a click.
         const header = item.querySelector('.accordion-header');
         if (header) {
             header.style.cursor = 'grab';
@@ -116,6 +113,15 @@ export default class extends Controller {
             });
             header.addEventListener('mouseup', endDrag);
         }
+    }
+
+    // Hides the (native EasyAdmin) delete button on a row carrying a checked ".ui-field-restricted" marker (see FormFieldType) - reorder stays available (the move handle is untouched), only removal is blocked. Purely a UX guard: the real enforcement is server-side, via the "restricted"/"type" fields both being disabled (see FormFieldType) and CollectionReconciler's caller skipping restricted entries on removal (see ContactFormCrudController).
+    applyRestriction(item) {
+        const marker = item.querySelector('.ui-field-restricted');
+        if (!marker || !marker.checked) return;
+
+        const deleteButton = item.querySelector('.field-collection-delete-button');
+        if (deleteButton) deleteButton.style.display = 'none';
     }
 
     dragAfter(field, y) {

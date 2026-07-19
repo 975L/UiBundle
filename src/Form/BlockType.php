@@ -32,9 +32,7 @@ use Symfony\Component\Validator\Constraints\Count;
 // Check Readme for usage instructions
 class BlockType extends AbstractType
 {
-    // "hero"'s pure-CSS crossfade slideshow only has :nth-child/[data-count] rules for up to this many
-    // images (see .hero__media--slideshow in sass/_page-sections.scss) - beyond it, extra images would
-    // silently collide with an earlier slide's animation timing instead of taking their own turn
+    // "hero"'s pure-CSS crossfade slideshow only has :nth-child/[data-count] rules for up to this many images (see .hero__media--slideshow in sass/_page-sections.scss) - beyond it, extra images would silently collide with an earlier slide's animation timing instead of taking their own turn
     private const HERO_MEDIA_MAX = 6;
 
     public function __construct(
@@ -68,11 +66,7 @@ class BlockType extends AbstractType
             function (PreSetDataEvent $event): void {
                 $block = $event->getData();
 
-                // Unmapped, only used server-side to reconcile submitted entries against existing rows by
-                // ID (see PageCrudController::createEditFormBuilder) - positional/identity diffing is
-                // unreliable once nested dynamic sub-forms are involved. Must be added here with "data" set
-                // directly: setting it via setData() after a static add() gets overwritten by the default
-                // mapper for unmapped fields, which falls back to the field's original (empty) "data" option.
+                // Unmapped, only used server-side to reconcile submitted entries against existing rows by ID (see PageCrudController::createEditFormBuilder) - positional/identity diffing is unreliable once nested dynamic sub-forms are involved. Must be added here with "data" set directly: setting it via setData() after a static add() gets overwritten by the default mapper for unmapped fields, which falls back to the field's original (empty) "data" option.
                 $event->getForm()->add('id', HiddenType::class, [
                     'mapped' => false,
                     'required' => false,
@@ -90,9 +84,7 @@ class BlockType extends AbstractType
                     }
                 }
 
-                // Added last (after "data", not statically at the top of buildForm) so it always
-                // renders below the kind-specific fields (e.g. MenuLinkType's "target") instead of
-                // between "kind" and "data"
+                // Added last (after "data", not statically at the top of buildForm) so it always renders below the kind-specific fields (e.g. MenuLinkType's "target") instead of between "kind" and "data"
                 $this->addAnimationField($event->getForm());
             }
         );
@@ -114,12 +106,7 @@ class BlockType extends AbstractType
                                 static fn (Media $media) => $block->removeMedia($media)
                             );
 
-                            // A deleted media can leave a malformed remnant behind in the submission (its
-                            // "delete"/css-class checkboxes resubmitted under the old array key, with no id
-                            // and no actual file) - left as-is, CollectionType treats it as a genuine new
-                            // entry and binds it to null data, which breaks Vich's own conditional "delete"
-                            // checkbox (VichFileType only adds it when the bound object is non-null) and
-                            // fails validation with "This form should not contain extra fields".
+                            // A deleted media can leave a malformed remnant behind in the submission (its "delete"/css-class checkboxes resubmitted under the old array key, with no id and no actual file) - left as-is, CollectionType treats it as a genuine new entry and binds it to null data, which breaks Vich's own conditional "delete" checkbox (VichFileType only adds it when the bound object is non-null) and fails validation with "This form should not contain extra fields".
                             $submitted['medias'] = CollectionReconciler::dropOrphaned(
                                 $submitted['medias'] ?? [],
                                 $block->getMedias(),
@@ -127,9 +114,7 @@ class BlockType extends AbstractType
                             );
                         }
 
-                        // Removing the very last media also leaves nothing submitted at all under "medias"
-                        // (an HTML form can't represent an empty array, only an absent key), which has to
-                        // be normalized to [] below or Symfony skips add/remove handling for the field.
+                        // Removing the very last media also leaves nothing submitted at all under "medias" (an HTML form can't represent an empty array, only an absent key), which has to be normalized to [] below or Symfony skips add/remove handling for the field.
                         if (!isset($submitted['medias'])) {
                             $submitted['medias'] = [];
                         }
@@ -138,9 +123,7 @@ class BlockType extends AbstractType
                         $this->addMediaSubForm($event->getForm(), $kind);
                     }
 
-                    // "data" (and "medias") were just (re)added above - move "animation" back below
-                    // them, in case this is a brand new collection entry whose PRE_SET_DATA fired with
-                    // no kind yet (so "animation" was added there before "data" ever existed)
+                    // "data" (and "medias") were just (re)added above - move "animation" back below them, in case this is a brand new collection entry whose PRE_SET_DATA fired with no kind yet (so "animation" was added there before "data" ever existed)
                     $event->getForm()->remove('animation');
                     $this->addAnimationField($event->getForm());
                 }
@@ -183,8 +166,7 @@ class BlockType extends AbstractType
             'constraints' => $constraints,
         ]);
 
-        // Unmapped: consumed directly from the submitted data by mergeMultiUpload() below (spliced
-        // into "medias" as brand new entries), never bound onto the entity itself
+        // Unmapped: consumed directly from the submitted data by mergeMultiUpload() below (spliced into "medias" as brand new entries), never bound onto the entity itself
         if ($this->registry->allowsMultiUpload($kind)) {
             $form->add('mediaUpload', FileType::class, [
                 'label' => 'label.media_multi_upload',
@@ -197,8 +179,7 @@ class BlockType extends AbstractType
         }
     }
 
-    // Consumes the "mediaUpload" multi-file input (if any), splicing its files into "medias" - see
-    // MultiUploadMerger for the actual entry-building logic
+    // Consumes the "mediaUpload" multi-file input (if any), splicing its files into "medias" - see MultiUploadMerger for the actual entry-building logic
     private function mergeMultiUpload(array $submitted, string $kind): array
     {
         $files = $submitted['mediaUpload'] ?? null;
@@ -218,9 +199,7 @@ class BlockType extends AbstractType
             'data_class' => Block::class,
             'label' => false,
             'translation_domain' => 'ui',
-            // Restricts the "kind" choices to block kinds available in this context (see BlockRegistry::
-            // groupedByCategory()) - e.g. 'page' or 'menu'. Null (default) applies no restriction, so
-            // existing CollectionField usages that don't pass it keep seeing every pickable kind.
+            // Restricts the "kind" choices to block kinds available in this context (see BlockRegistry:: groupedByCategory()) - e.g. 'page' or 'menu'. Null (default) applies no restriction, so existing CollectionField usages that don't pass it keep seeing every pickable kind.
             'context' => null,
         ]);
         $resolver->setAllowedTypes('context', ['null', 'string']);

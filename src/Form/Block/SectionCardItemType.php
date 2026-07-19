@@ -21,8 +21,7 @@ class SectionCardItemType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // Reuses the existing icon picker (see ButtonType) instead of a per-card media upload -
-            // keeps this kind free of the block-level media wiring entirely
+            // Reuses the existing icon picker (see ButtonType) instead of a per-card media upload - keeps this kind free of the block-level media wiring entirely
             ->add('icon', IconPickerType::class, [
                 'label' => 'label.icon',
                 'required' => false,

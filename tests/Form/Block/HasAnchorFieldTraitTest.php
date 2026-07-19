@@ -39,8 +39,7 @@ class HasAnchorFieldTraitTest extends TestCase
         return $added;
     }
 
-    // Captures the SUBMIT listener and fires it with $submittedData, returning the resulting data -
-    // mirrors what happens when a "Page sections" block form is submitted (see HasAnchorFieldTrait)
+    // Captures the SUBMIT listener and fires it with $submittedData, returning the resulting data - mirrors what happens when a "Page sections" block form is submitted (see HasAnchorFieldTrait)
     private function fireSubmit(array $submittedData, string $titleField = 'title'): array
     {
         $listener = null;

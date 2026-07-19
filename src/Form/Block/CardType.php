@@ -40,10 +40,7 @@ class CardType extends AbstractType
             ->add('content', TrixEditorType::class, [
                 'label' => 'label.content',
             ])
-            // Optional teaser fields: when a media (see media_types on this block's tag) and/or a url
-            // is set, blocks/Card.html.twig renders an image + button teaser instead of the plain
-            // content box - several such cards placed next to each other on a page (e.g. a "our sites"
-            // listing) are auto-wrapped in a ".cards" flex row by templates/components/Blocks/Blocks.html.twig
+            // Optional teaser fields: when a media (see media_types on this block's tag) and/or a url is set, blocks/Card.html.twig renders an image + button teaser instead of the plain content box - several such cards placed next to each other on a page (e.g. a "our sites" listing) are auto-wrapped in a ".cards" flex row by templates/components/Blocks/Blocks.html.twig
             ->add('url', TextType::class, [
                 'label' => 'label.url',
                 'required' => false,

@@ -23,9 +23,7 @@ class MediaTest extends TestCase
         $this->assertSame(600, $media->getImageWidth());
     }
 
-    // Regression guard: role=null/block=null used to also mean "og-image" (a Page's own og-image
-    // override), a heuristic that broke once MediaCrudController's New action could produce that exact
-    // same state for a plain library Media - isOgImage() must no longer treat it as an og-image
+    // Regression guard: role=null/block=null used to also mean "og-image" (a Page's own og-image override), a heuristic that broke once MediaCrudController's New action could produce that exact same state for a plain library Media - isOgImage() must no longer treat it as an og-image
     public function testIsOgImageIsFalseWithNoRoleAndNoBlock(): void
     {
         $media = new Media();
@@ -49,8 +47,7 @@ class MediaTest extends TestCase
         $this->assertSame(600, $media->getImageWidth());
     }
 
-    // Hero crops tightly via CSS object-fit:cover (see sass/_page-sections.scss) - needs a wider stored
-    // image than other block kinds to avoid pixelating on retina displays
+    // Hero crops tightly via CSS object-fit:cover (see sass/_page-sections.scss) - needs a wider stored image than other block kinds to avoid pixelating on retina displays
     public function testGetImageWidthUsesBlockKindMaxWidthsForHero(): void
     {
         $media = (new Media())->setBlock((new Block())->setKind('hero'));

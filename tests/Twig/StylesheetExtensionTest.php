@@ -20,8 +20,7 @@ class StylesheetExtensionTest extends TestCase
 {
     private string $projectDir;
 
-    // Sandboxes each test behind its own throwaway project directory, so the compiled-file existence
-    // check can be exercised safely with real filesystem reads
+    // Sandboxes each test behind its own throwaway project directory, so the compiled-file existence check can be exercised safely with real filesystem reads
     protected function setUp(): void
     {
         $this->projectDir = sys_get_temp_dir() . '/stylesheet-extension-test-' . uniqid();
@@ -63,8 +62,7 @@ class StylesheetExtensionTest extends TestCase
         return $requestStack;
     }
 
-    // Relative paths are resolved through Packages::getUrl() and prefixed with the current request's
-    // scheme+host, so stylesheets keep working behind a CDN/asset-mapper versioned URL
+    // Relative paths are resolved through Packages::getUrl() and prefixed with the current request's scheme+host, so stylesheets keep working behind a CDN/asset-mapper versioned URL
     public function testGetBundleStylesheetsPrefixesRelativePathWithRequestBaseUrlInDebug(): void
     {
         $registry = $this->createStub(StylesheetRegistry::class);
@@ -117,8 +115,7 @@ class StylesheetExtensionTest extends TestCase
         $this->assertSame(['/css/styles.min.css'], $extension->getBundleStylesheets());
     }
 
-    // Outside debug, links to the single file compiled on disk by StylesheetCacheWarmer instead of
-    // the per-bundle list, so only one local <link> request is made
+    // Outside debug, links to the single file compiled on disk by StylesheetCacheWarmer instead of the per-bundle list, so only one local <link> request is made
     public function testGetBundleStylesheetsReturnsCompiledFileUrlWhenNotDebug(): void
     {
         $this->createCompiledSiteCss();
@@ -144,8 +141,7 @@ class StylesheetExtensionTest extends TestCase
         );
     }
 
-    // Absolute URLs (CDN resources like cookieconsent.min.css) stay served on their own even when not debug,
-    // since they are excluded from the compiled file by StylesheetCacheWarmer
+    // Absolute URLs (CDN resources like cookieconsent.min.css) stay served on their own even when not debug, since they are excluded from the compiled file by StylesheetCacheWarmer
     public function testGetBundleStylesheetsKeepsAbsoluteHttpUrlAlongsideCompiledFileWhenNotDebug(): void
     {
         $this->createCompiledSiteCss();
@@ -174,8 +170,7 @@ class StylesheetExtensionTest extends TestCase
         );
     }
 
-    // The compiled file's own mtime busts caches independently of whatever Packages::getUrl() returns -
-    // regression guard for stale CSS being served after a deploy that only changed a stylesheet's content
+    // The compiled file's own mtime busts caches independently of whatever Packages::getUrl() returns - regression guard for stale CSS being served after a deploy that only changed a stylesheet's content
     public function testGetBundleStylesheetsCacheBustingParamChangesWhenCompiledFileIsRewritten(): void
     {
         $this->createCompiledSiteCss();
@@ -202,8 +197,7 @@ class StylesheetExtensionTest extends TestCase
         $this->assertNotSame($first, $second);
     }
 
-    // Packages::getUrl() may already return its own versioned query string (e.g. an app-level manifest
-    // strategy) - the cache-busting param must be appended with "&", not overwrite/duplicate the "?"
+    // Packages::getUrl() may already return its own versioned query string (e.g. an app-level manifest strategy) - the cache-busting param must be appended with "&", not overwrite/duplicate the "?"
     public function testGetBundleStylesheetsAppendsCacheBustingParamToAnExistingQueryString(): void
     {
         $this->createCompiledSiteCss();
@@ -229,9 +223,7 @@ class StylesheetExtensionTest extends TestCase
         );
     }
 
-    // Regression guard: when the compiled file hasn't been produced yet (first request right after a
-    // deploy, before cache:warmup runs, or a failed warmup), falls back to the per-bundle list instead
-    // of linking a 404 and losing every local stylesheet at once
+    // Regression guard: when the compiled file hasn't been produced yet (first request right after a deploy, before cache:warmup runs, or a failed warmup), falls back to the per-bundle list instead of linking a 404 and losing every local stylesheet at once
     public function testGetBundleStylesheetsFallsBackToPerBundleListWhenCompiledFileIsMissingNotDebug(): void
     {
         $registry = $this->createStub(StylesheetRegistry::class);

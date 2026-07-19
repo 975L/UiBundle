@@ -9,12 +9,18 @@
 namespace c975L\UiBundle\Management;
 
 use c975L\ConfigBundle\Management\MenuProviderInterface;
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MenuProvider implements MenuProviderInterface
 {
-    // getMenus() is empty below, so this section never actually renders for this provider - kept
-    // identical to ConfigBundle's/SiteBundle's own value only so a future CRUD entry added here
-    // merges into the same "Management" group instead of creating a duplicate one
+    public function __construct(
+        private readonly ConfigServiceInterface $configService,
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
+    // Matches ConfigBundle's/SiteBundle's section value so a future CRUD entry here merges into the same group
     public function getMenuSection(): array
     {
         return [
@@ -28,19 +34,7 @@ class MenuProvider implements MenuProviderInterface
         return [];
     }
 
-    // UiBundle's own EasyAdmin block gallery (BlockGalleryController) was removed entirely, not just
-    // unlinked: its preview iframes needed inline scripts for interactivity (slider/image_compare),
-    // which a hash/nonce-based CSP (e.g. nelmio_security's csp.hash config) can never authorize inside an
-    // <iframe srcdoc> - nelmio secures a response by scanning its literal <script>/<style> elements, and
-    // content trapped inside a srcdoc *attribute string* is invisible to that scan, so those scripts got
-    // no valid nonce/hash and were permanently blocked. Not a bug in the gallery's own templates, a
-    // structural incompatibility with that class of CSP tooling. The block fixture/showcase machinery it
-    // used (BlockFixtureRegistry, GalleryShowcaseRegistry...) stays - it's what powers 975l.com's public
-    // /vitrine-blocks, the c975L ecosystem's own canonical demo of every bundle's block kinds (rendered
-    // inline in a normal page, no iframe, no CSP conflict). This link to it is part of the bundle itself,
-    // not app-specific config (Laurent: "elle fait partie du système de management") - every app using
-    // this bundle gets the same reference demo, a fixed 'url' (not a route name resolved per-app) since
-    // it always points at that one canonical site regardless of which app's dashboard is showing it.
+    // Fixed external url (not a route name) since every app links to the same external block showcase site
     public function getLinks(): array
     {
         return [
@@ -48,8 +42,25 @@ class MenuProvider implements MenuProviderInterface
                 'label' => 'label.block_showcase',
                 'translation_domain' => 'ui',
                 'icon' => 'fas fa-shapes',
-                'url' => 'https://975l.com/pages/vitrine-blocks',
+                'url' => 'https://975l.com/pages/blocks',
                 'target' => '_blank',
+            ],
+            'ai_assistant' => [
+                // Built here, not left as a translation key: the "Donovan" half is hardcoded (see
+                // AiRephraseExtension::assistantName()), the "(AI Agent)" half is translated up front so
+                // the composed label carries both correctly - MenuBuilder's trans() call on the composed
+                // string below returns it unchanged since it never matches a catalog entry
+                'label' => \sprintf(
+                    'Donovan (%s)',
+                    $this->translator->trans('label.ai_assistant_menu_suffix', [], 'ui'),
+                ),
+                'translation_domain' => 'ui',
+                'icon' => 'fas fa-robot',
+                'name' => 'management_ui_ai_assistant_index',
+                // Matches AiAssistantController::index()'s own minimum bar - a plain editor could no
+                // longer act on either section anyway (dashboard needs ROLE_SUPER_ADMIN, rephrase needs
+                // this same "site-role-admin")
+                'role' => $this->configService->get('site-role-admin'),
             ],
         ];
     }

@@ -6,14 +6,7 @@
  * with this source code in the file LICENSE.
  */
 
-// icon_picker_theme.html.twig only renders the ".ui-icon-picker" markup, not this behavior: a
-// CollectionType (e.g. SocialLinksType) starting empty renders no widget at all on first load, and
-// EasyAdmin's field-collection.js then has to eval() the widget's own inline <script> to set it up
-// on the row it just cloned - which a CSP without 'unsafe-eval' silently blocks. Loading this setup
-// once as a real module sidesteps both: it runs regardless of how many pickers exist yet, and the
-// delegated listeners below work for any ".ui-icon-picker" added to the DOM afterwards.
-// Styling lives in sass/management/_icon-picker.scss, not injected here - a CSP with a nonce on
-// style-src blocks any <style> created via document.createElement, unsafe-inline or not.
+// icon_picker_theme.html.twig only renders the ".ui-icon-picker" markup, not this behavior: a CollectionType (e.g. SocialLinksType) starting empty renders no widget at all on first load, and EasyAdmin's field-collection.js then has to eval() the widget's own inline <script> to set it up on the row it just cloned - which a CSP without 'unsafe-eval' silently blocks. Loading this setup once as a real module sidesteps both: it runs regardless of how many pickers exist yet, and the delegated listeners below work for any ".ui-icon-picker" added to the DOM afterwards. Styling lives in sass/management/_icon-picker.scss, not injected here - a CSP with a nonce on style-src blocks any <style> created via document.createElement, unsafe-inline or not.
 
 function render(picker, query) {
     const icons = JSON.parse(picker.dataset.icons || '[]');
@@ -67,8 +60,7 @@ document.addEventListener('click', event => {
     if (item) {
         const picker = item.closest('.ui-icon-picker');
         const hidden = picker.querySelector('input[type="hidden"]');
-        // "name" mode (data-value-field, see IconPickerType's "value_field" option) stores the bare
-        // icon key instead of its asset path - the preview always uses the actual image regardless
+        // "name" mode (data-value-field, see IconPickerType's "value_field" option) stores the bare icon key instead of its asset path - the preview always uses the actual image regardless
         hidden.value = picker.dataset.valueField === 'name' ? item.title : item.dataset.path;
         hidden.dispatchEvent(new Event('change', { bubbles: true }));
         picker.querySelector('.ui-icon-search').value = item.title;

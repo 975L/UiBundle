@@ -72,9 +72,7 @@ class VichImageResizeListener
         $imagine = new Imagine();
         $media = $imagine->open($absolutePath);
 
-        // Derivatives are generated from the untouched original first - the entity's own stored
-        // file (below) is a downscale of it, and deriving the highres version from that instead
-        // would upscale a already-shrunk image
+        // Derivatives are generated from the untouched original first - the entity's own stored file (below) is a downscale of it, and deriving the highres version from that instead would upscale a already-shrunk image
         if ($entity instanceof VichMultiSizeImageInterface) {
             $this->processMultiSizeDerivatives($entity, $media, $absolutePath);
         }
@@ -95,12 +93,7 @@ class VichImageResizeListener
         }
     }
 
-    // Sibling files next to the entity's own stored (medium) image: a square outbound-cropped
-    // thumbnail for grid displays, and a proportionally-resized highres version for zoom - both
-    // derived from a copy() of the original so the shared $media instance stays untouched for the
-    // medium resize that follows in processImage(). Filenames match what VichMultiSizeImageInterface
-    // consumers derive themselves from their own stored filename (see e.g. GalleryBundle's
-    // GalleryPhoto::getThumbnailFilename()/getHighresFilename()).
+    // Sibling files next to the entity's own stored (medium) image: a square outbound-cropped thumbnail for grid displays, and a proportionally-resized highres version for zoom - both derived from a copy() of the original so the shared $media instance stays untouched for the medium resize that follows in processImage(). Filenames match what VichMultiSizeImageInterface consumers derive themselves from their own stored filename (see e.g. GalleryBundle's GalleryPhoto::getThumbnailFilename()/getHighresFilename()).
     private function processMultiSizeDerivatives(VichMultiSizeImageInterface $entity, ImageInterface $original, string $absolutePath): void
     {
         $base = preg_replace('/\.[^.]+$/', '', $absolutePath);
@@ -118,8 +111,7 @@ class VichImageResizeListener
             ->save($base . '-thumb.webp', ['format' => 'webp', 'webp_quality' => 90]);
     }
 
-    // Crops/resizes to the exact target size (fixed icon roles never keep the uploaded aspect ratio) and
-    // converts to the target format - .ico has no native GD/Imagine writer, so it's hand-wrapped around a raw bitmap
+    // Crops/resizes to the exact target size (fixed icon roles never keep the uploaded aspect ratio) and converts to the target format - .ico has no native GD/Imagine writer, so it's hand-wrapped around a raw bitmap
     private function processFixedIcon(Media $entity, string $absolutePath, array $spec): void
     {
         $imagine = new Imagine();
@@ -139,10 +131,7 @@ class VichImageResizeListener
         }
     }
 
-    // Wraps a raw 32bpp bitmap in a minimal ICO container. PNG-compressed ICO entries (valid since
-    // Windows Vista, and readable by browsers/GIMP) are rejected by gdk-pixbuf ("Compressed icons are
-    // not supported"), which breaks thumbnails in Nemo/Nautilus - so the classic uncompressed
-    // BITMAPINFOHEADER payload is used instead for universal compatibility
+    // Wraps a raw 32bpp bitmap in a minimal ICO container. PNG-compressed ICO entries (valid since Windows Vista, and readable by browsers/GIMP) are rejected by gdk-pixbuf ("Compressed icons are not supported"), which breaks thumbnails in Nemo/Nautilus - so the classic uncompressed BITMAPINFOHEADER payload is used instead for universal compatibility
     private function wrapAsIco(ImageInterface $image, int $width, int $height): string
     {
         $dib = $this->buildIcoDib($image, $width, $height);

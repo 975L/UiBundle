@@ -12,9 +12,7 @@ use c975L\UiBundle\Contract\HasBlocksInterface;
 use c975L\UiBundle\Entity\Trait\HasBlocksTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 
-// Minimal HasBlocksInterface owner, standing in for a real entity (Page, Article...) - its own file
-// (not inlined in the test class) since src/Tests classes are autoloadable by consuming apps, whose
-// attribute route loader recursively reflects every class under the bundle root
+// Minimal HasBlocksInterface owner, standing in for a real entity (Page, Article...) - its own file (not inlined in the test class) since src/Tests classes are autoloadable by consuming apps, whose attribute route loader recursively reflects every class under the bundle root
 class HasBlocksTraitStub implements HasBlocksInterface
 {
     use HasBlocksTrait;

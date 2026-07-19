@@ -12,8 +12,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-// Closed list of classes available for a block's own wrapper (Card/Slider/VideoIframe...), separate
-// from ImageClassChoiceType which covers the image embedded inside a block - fill in as needed
+// Closed list of classes available for a block's own wrapper (Card/Slider/VideoIframe...), separate from ImageClassChoiceType which covers the image embedded inside a block - fill in as needed
 class BlockClassChoiceType extends AbstractType
 {
     public const CHOICES = [

@@ -1,5 +1,40 @@
 [
     {
+        "date": "2026-07-19",
+        "description": [
+            {
+                "en": "You can now build custom forms in the back office and place them anywhere on a page as a block",
+                "fr": "Vous pouvez désormais créer des formulaires personnalisés dans le back office et les placer où vous voulez sur une page",
+                "es": "Ahora puede crear formularios personalizados en el back office y colocarlos donde quiera en una página"
+            },
+            {
+                "en": "People filling in a form can now ask to receive a copy of what they sent by email",
+                "fr": "Les personnes qui remplissent un formulaire peuvent désormais demander à recevoir une copie de leur envoi par e-mail",
+                "es": "Las personas que completan un formulario ahora pueden solicitar recibir una copia de su envío por correo electrónico"
+            },
+            {
+                "en": "Forms now have stronger built-in spam protection, with optional Google reCAPTCHA support",
+                "fr": "Les formulaires bénéficient désormais d'une protection anti-spam renforcée, avec prise en charge optionnelle de Google reCAPTCHA",
+                "es": "Los formularios ahora cuentan con una protección antispam reforzada, con soporte opcional para Google reCAPTCHA"
+            },
+            {
+                "en": "New optional AI assistant (\"Donovan\") in the back office, able to suggest which block to use",
+                "fr": "Nouvel assistant IA optionnel (« Donovan ») dans le back office, capable de suggérer quel bloc utiliser",
+                "es": "Nuevo asistente de IA opcional (\"Donovan\") en el back office, capaz de sugerir qué bloque usar"
+            },
+            {
+                "en": "You can now ask AI to rephrase your text in a different tone or length with one click",
+                "fr": "Vous pouvez désormais demander à l'IA de reformuler votre texte dans un autre ton ou une autre longueur en un clic",
+                "es": "Ahora puede pedirle a la IA que reformule su texto en otro tono o longitud con un solo clic"
+            },
+            {
+                "en": "You'll now see a warning in the back office if an AI feature stops working, e.g. an expired key",
+                "fr": "Un avertissement s'affiche désormais dans le back office si une fonctionnalité IA cesse de fonctionner, par ex. une clé expirée",
+                "es": "Ahora verá una advertencia en el back office si una función de IA deja de funcionar, por ejemplo, una clave caducada"
+            }
+        ]
+    },
+    {
         "date": "2026-07-17",
         "description": [
             {

@@ -6,25 +6,7 @@
  * with this source code in the file LICENSE.
  */
 
-// Trix has no built-in text-align support (Basecamp's own choice, repeatedly declined upstream).
-// Its blockAttributes config has no "class" property - only "htmlAttributes" is a passthrough
-// whitelist (already used internally for the "language" attribute of code blocks), applied both
-// ways by html_parser.js (HTML -> model) and block_view.js (model -> HTML).
-//
-// A plain paragraph block has an EMPTY attribute stack, and block_view.js takes a fast render
-// path for empty-stack blocks that ignores htmlAttributes entirely - whitelisting "class" on
-// "default" is not enough on its own, the class would never reach the DOM. It IS still needed
-// on "default" because html_parser.js's htmlAttributes reader always resolves a <div> to the
-// "default" config first (plain first-match-by-tagName lookup), regardless of which named
-// attribute actually matched.
-// So alignment is modelled as its own named block attribute ("textAlign", tagName div, detected
-// on parse via test()), which routes the block through the container-rendering path that DOES
-// honor htmlAttributes. Setting the class then requires activating "textAlign" on the block
-// BEFORE calling setHTMLAtributeAtPosition (itself a Trix-internal, not a typo we introduced -
-// it no-ops unless the block's last attribute already whitelists "class").
-// This relies on non-public Trix internals (verified against basecamp/trix 2.1.19 source with a
-// jsdom parse/render round-trip), so every touch point is feature-detected: an EasyAdmin/Trix
-// upgrade should silently disable the alignment buttons rather than break the editor.
+// Trix has no built-in text-align support (Basecamp's own choice, repeatedly declined upstream). Its blockAttributes config has no "class" property - only "htmlAttributes" is a passthrough whitelist (already used internally for the "language" attribute of code blocks), applied both ways by html_parser.js (HTML -> model) and block_view.js (model -> HTML). A plain paragraph block has an EMPTY attribute stack, and block_view.js takes a fast render path for empty-stack blocks that ignores htmlAttributes entirely - whitelisting "class" on "default" is not enough on its own, the class would never reach the DOM. It IS still needed on "default" because html_parser.js's htmlAttributes reader always resolves a <div> to the "default" config first (plain first-match-by-tagName lookup), regardless of which named attribute actually matched. So alignment is modelled as its own named block attribute ("textAlign", tagName div, detected on parse via test()), which routes the block through the container-rendering path that DOES honor htmlAttributes. Setting the class then requires activating "textAlign" on the block BEFORE calling setHTMLAtributeAtPosition (itself a Trix-internal, not a typo we introduced - it no-ops unless the block's last attribute already whitelists "class"). This relies on non-public Trix internals (verified against basecamp/trix 2.1.19 source with a jsdom parse/render round-trip), so every touch point is feature-detected: an EasyAdmin/Trix upgrade should silently disable the alignment buttons rather than break the editor.
 const ALIGN_CLASSES = {
     left: 'text-left',
     center: 'text-center',

@@ -22,8 +22,12 @@
         "doctrine/orm": "*",
         "easycorp/easyadmin-bundle": "*",
         "imagine/imagine": "*",
+        "karser/karser-recaptcha3-bundle": "*",
         "sensiolabs/minify-bundle": "*",
         "symfony/form": "*",
+        "symfony/http-client": "*",
+        "symfony/mailer": "*",
+        "symfony/security-bundle": "*",
         "symfony/yaml": "*",
         "vich/uploader-bundle": "*"
     },
@@ -34,6 +38,7 @@
         "symfony/css-selector": "*",
         "symfony/maker-bundle": "*",
         "symfony/phpunit-bridge": "*",
+        "symfony/rate-limiter": "^8.1",
         "symfony/var-dumper": "*"
     },
     "minimum-stability": "dev",

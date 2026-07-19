@@ -94,8 +94,7 @@ class BlockRegistry
         return $this->categoryCache[$kind];
     }
 
-    // Gets the bundle a block kind was registered from (derived from its template's Twig namespace by
-    // BlockRegistryPass, e.g. "Ui", "Site", "Social" - empty when that derivation failed)
+    // Gets the bundle a block kind was registered from (derived from its template's Twig namespace by BlockRegistryPass, e.g. "Ui", "Site", "Social" - empty when that derivation failed)
     public function getBundle(string $kind): string
     {
         return $this->get($kind)['bundle'];
@@ -140,53 +139,37 @@ class BlockRegistry
         return !empty($this->get($kind)['mediaTypes']);
     }
 
-    // True for kinds that can't be saved without at least one attached media (e.g. "banner_title", whose
-    // background image isn't optional decoration but the whole point of the block) - enforced by
-    // RequiredMediaValidator on the Block entity itself
+    // True for kinds that can't be saved without at least one attached media (e.g. "banner_title", whose background image isn't optional decoration but the whole point of the block) - enforced by RequiredMediaValidator on the Block entity itself
     public function isMediaRequired(string $kind): bool
     {
         return $this->get($kind)['mediaRequired'];
     }
 
-    // True for kinds whose media collection additionally exposes a "select several files at once"
-    // input (e.g. "slider", "article") instead of the default one-file-per-row Add button
+    // True for kinds whose media collection additionally exposes a "select several files at once" input (e.g. "slider", "article") instead of the default one-file-per-row Add button
     public function allowsMultiUpload(string $kind): bool
     {
         return $this->get($kind)['multiUpload'];
     }
 
-    // False for kinds whose rendered output isn't safe to reuse across requests
-    // (e.g. embeds a Symfony form with its own CSRF token, like "contact_form")
+    // False for kinds whose rendered output isn't safe to reuse across requests (e.g. embeds a Symfony form with its own CSRF token, like "contact_form")
     public function isCacheable(string $kind): bool
     {
         return $this->get($kind)['cacheable'];
     }
 
-    // Result only depends on the static block registrations, cached per $context after its first call -
-    // excludes non-pickable kinds (singleton blocks with their own dedicated admin entry, e.g.
-    // SocialBundle's "social_links": offering them here would let editors create duplicate,
-    // independently-filled instances instead of reusing the single site-wide one found via
-    // BlockRepository::findOneByKind()), and kinds restricted to other contexts (e.g. SiteBundle's
-    // "menu_link", declared with contexts: ['menu'] so it doesn't leak into a Page's block picker).
-    // A kind declared with no contexts at all is available everywhere, and passing no $context here
-    // skips the contexts filter entirely - both keep existing callers (that don't pass $context yet)
-    // working unchanged.
+    // Result only depends on the static block registrations, cached per $context after its first call - excludes non-pickable kinds (singleton blocks with their own dedicated admin entry, e.g. SocialBundle's "social_links": offering them here would let editors create duplicate, independently-filled instances instead of reusing the single site-wide one found via BlockRepository::findOneByKind()), and kinds restricted to other contexts (e.g. SiteBundle's "menu_link", declared with contexts: ['menu'] so it doesn't leak into a Page's block picker). A kind declared with no contexts at all is available everywhere, and passing no $context here skips the contexts filter entirely - both keep existing callers (that don't pass $context yet) working unchanged.
     public function groupedByCategory(?string $context = null): array
     {
         return $this->groupBy(fn (string $kind) => $this->getCategory($kind), $context, $this->groupedCache);
     }
 
-    // Same grouping/filtering as groupedByCategory(), but by originating bundle instead of functional
-    // category - used to build a showcase page per bundle (e.g. 975l.com's public block demo) instead
-    // of the kind-picker's functional grouping. Kinds with no derivable bundle group under ''.
+    // Same grouping/filtering as groupedByCategory(), but by originating bundle instead of functional category - used to build a showcase page per bundle (e.g. 975l.com's public block demo) instead of the kind-picker's functional grouping. Kinds with no derivable bundle group under ''.
     public function groupedByBundle(?string $context = null): array
     {
         return $this->groupBy(fn (string $kind, array $config) => $config['bundle'], $context, $this->groupedByBundleCache);
     }
 
-    // Shared by groupedByCategory()/groupedByBundle(): groups pickable, context-eligible kinds by
-    // whatever key $keyFn returns, then orders each group by priority (highest first, alphabetical
-    // tie-break) - only the grouping key and the target cache array differ between the two callers
+    // Shared by groupedByCategory()/groupedByBundle(): groups pickable, context-eligible kinds by whatever key $keyFn returns, then orders each group by priority (highest first, alphabetical tie-break) - only the grouping key and the target cache array differ between the two callers
     private function groupBy(callable $keyFn, ?string $context, array &$cache): array
     {
         $cacheKey = $context ?? '';
@@ -219,9 +202,7 @@ class BlockRegistry
         return $cache[$cacheKey] = $grouped;
     }
 
-    // Builds the "kind" choice label: name, plus a short description in parentheses when declared.
-    // Kept as plain text (no markup) so the "kind" field's <optgroup> categories stay intact -
-    // EasyAdmin's ea-autocomplete widget only preserves grouping on a plain native <select>.
+    // Builds the "kind" choice label: name, plus a short description in parentheses when declared. Kept as plain text (no markup) so the "kind" field's <optgroup> categories stay intact - EasyAdmin's ea-autocomplete widget only preserves grouping on a plain native <select>.
     private function getChoiceLabel(string $kind): string
     {
         $label = $this->getLabel($kind);

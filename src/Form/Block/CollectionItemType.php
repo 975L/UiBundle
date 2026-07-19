@@ -14,10 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-// The "collection_item" kind is never picked manually (see its "pickable: false" tag) - this form only
-// documents the data contract CollectionExtension::renderItems() actually fills: the 6 fields a
-// CollectionItem can carry, plus "detailUrl", the item's detail page link it computes from the item's
-// own slug (see CollectionItem.html.twig)
+// The "collection_item" kind is never picked manually (see its "pickable: false" tag) - this form only documents the data contract CollectionExtension::renderItems() actually fills: the 6 fields a CollectionItem can carry, plus "detailUrl", the item's detail page link it computes from the item's own slug (see CollectionItem.html.twig)
 class CollectionItemType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

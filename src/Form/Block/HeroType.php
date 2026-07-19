@@ -32,8 +32,7 @@ class HeroType extends AbstractType
                 'label' => 'label.badge',
                 'required' => false,
             ])
-            // TrixEditorType (not a plain TextType) so an editor can emphasize a word (<em>) the same
-            // way the reference design highlights it in red - see blocks/Hero.html.twig / _hero__title em
+            // TrixEditorType (not a plain TextType) so an editor can emphasize a word (<em>) the same way the reference design highlights it in red - see blocks/Hero.html.twig / _hero__title em
             ->add('title', TrixEditorType::class, [
                 'label' => 'label.title',
             ])

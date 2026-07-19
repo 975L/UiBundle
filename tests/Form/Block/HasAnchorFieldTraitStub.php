@@ -13,9 +13,7 @@ use c975L\UiBundle\Service\BlockAnchorSlugger;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-// Minimal HasAnchorFieldTrait consumer, standing in for a real "Page sections" FormType - its own
-// file (not inlined in the test class) since src/Tests classes are autoloadable by consuming apps,
-// whose attribute route loader recursively reflects every class under the bundle root
+// Minimal HasAnchorFieldTrait consumer, standing in for a real "Page sections" FormType - its own file (not inlined in the test class) since src/Tests classes are autoloadable by consuming apps, whose attribute route loader recursively reflects every class under the bundle root
 class HasAnchorFieldTraitStub extends AbstractType
 {
     use HasAnchorFieldTrait;

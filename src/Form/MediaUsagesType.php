@@ -16,11 +16,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-// Read-only "used in" summary shown on the Media edit form (list of blocks/pages/roles using this
-// Media, each linking back to where it's edited). Unmapped: EasyAdmin's own formatValue()+
-// setTemplatePath() mechanism only applies to Index/Detail rendering, never to New/Edit forms, so a
-// plain Field::new('id') there falls back to rendering the raw id as an editable number input -
-// this type replaces that with the real, non-editable content (see media_usages_theme.html.twig)
+// Read-only "used in" summary shown on the Media edit form (list of blocks/pages/roles using this Media, each linking back to where it's edited). Unmapped: EasyAdmin's own formatValue()+ setTemplatePath() mechanism only applies to Index/Detail rendering, never to New/Edit forms, so a plain Field::new('id') there falls back to rendering the raw id as an editable number input - this type replaces that with the real, non-editable content (see media_usages_theme.html.twig)
 class MediaUsagesType extends AbstractType
 {
     public function __construct(private readonly MediaUsageRegistry $mediaUsageRegistry)
@@ -37,9 +33,7 @@ class MediaUsagesType extends AbstractType
             : [];
     }
 
-    // Without a parent, this type gets none of FormType's base machinery (block-prefix fallback
-    // chain, "compound" default...) and renders nothing at all - same reason IconPickerType extends
-    // TextType instead of leaving getParent() as the AbstractType default (null)
+    // Without a parent, this type gets none of FormType's base machinery (block-prefix fallback chain, "compound" default...) and renders nothing at all - same reason IconPickerType extends TextType instead of leaving getParent() as the AbstractType default (null)
     public function getParent(): string
     {
         return TextType::class;

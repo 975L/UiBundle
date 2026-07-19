@@ -40,8 +40,7 @@ class CollectionItemTypeTest extends TestCase
         }
     }
 
-    // Every field is optional - CollectionExtension::renderItems() fills only whichever of them a
-    // given CollectionItem/source actually provides
+    // Every field is optional - CollectionExtension::renderItems() fills only whichever of them a given CollectionItem/source actually provides
     public function testEveryFieldIsOptional(): void
     {
         $added = $this->buildAddedFields();

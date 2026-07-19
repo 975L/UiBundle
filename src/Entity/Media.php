@@ -27,8 +27,7 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
 {
     private const IMAGE_WIDTH = 800;
 
-    // Site-wide graphics, not attached to a Block - fixed filename at the root of public/ (see getVichMediaPath),
-    // one row per role enforced at the application level (see isSingletonRole)
+    // Site-wide graphics, not attached to a Block - fixed filename at the root of public/ (see getVichMediaPath), one row per role enforced at the application level (see isSingletonRole)
     public const ROLE_FAVICON = 'favicon';
     public const ROLE_APPLE_TOUCH_ICON = 'apple-touch-icon';
     public const ROLE_OG_IMAGE = 'og-image';
@@ -44,16 +43,13 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
         self::ROLE_LOGO,
     ];
 
-    // Roles needing a fixed target size/format regardless of the uploaded file (see UiMediaNamer/VichImageResizeListener).
-    // Favicon stays .ico (48x48 is the historical browser/OS expectation), apple-touch-icon stays .png (iOS ignores other formats)
+    // Roles needing a fixed target size/format regardless of the uploaded file (see UiMediaNamer/VichImageResizeListener). Favicon stays .ico (48x48 is the historical browser/OS expectation), apple-touch-icon stays .png (iOS ignores other formats)
     private const FIXED_ICON_SPECS = [
         self::ROLE_FAVICON => ['width' => 48, 'height' => 48, 'format' => 'ico'],
         self::ROLE_APPLE_TOUCH_ICON => ['width' => 114, 'height' => 114, 'format' => 'png'],
     ];
 
-    // FIXED_ICON_SPECS roles go through GD (see VichImageResizeListener::processFixedIcon), which cannot
-    // rasterize SVG - an SVG upload there silently produces a broken icon (readable by lenient tools like
-    // GIMP/browsers, but rejected by gdk-pixbuf, breaking OS-level thumbnails e.g. in Nemo/Nautilus)
+    // FIXED_ICON_SPECS roles go through GD (see VichImageResizeListener::processFixedIcon), which cannot rasterize SVG - an SVG upload there silently produces a broken icon (readable by lenient tools like GIMP/browsers, but rejected by gdk-pixbuf, breaking OS-level thumbnails e.g. in Nemo/Nautilus)
     private const FIXED_ICON_ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
 
     // Roles resized to a max width (aspect ratio kept, unlike FIXED_ICON_SPECS) instead of the default IMAGE_WIDTH
@@ -61,10 +57,7 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
         self::ROLE_LOGO => 600,
     ];
 
-    // Block kinds needing a wider stored image than IMAGE_WIDTH (block medias all share role=null, so
-    // MAX_WIDTHS above can't key on them). Hero crops tightly via CSS object-fit:cover into a 4/3.2 box
-    // and can display up to 520px CSS-wide - on a retina/2x display that needs ~1040 native pixels, and
-    // the default 800 falls short, visibly pixelating once cover crops further into the image
+    // Block kinds needing a wider stored image than IMAGE_WIDTH (block medias all share role=null, so MAX_WIDTHS above can't key on them). Hero crops tightly via CSS object-fit:cover into a 4/3.2 box and can display up to 520px CSS-wide - on a retina/2x display that needs ~1040 native pixels, and the default 800 falls short, visibly pixelating once cover crops further into the image
     private const BLOCK_KIND_MAX_WIDTHS = [
         'hero' => 1200,
     ];
@@ -78,9 +71,7 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
     #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?Block $block = null;
 
-    // Block medias all share role=null. Singleton roles (favicon, logo...) are kept to one row each,
-    // enforced at the application level (see SiteGraphicCrudController) since repeatable roles (error-image)
-    // need several rows sharing the same role - no DB-level unique constraint here
+    // Block medias all share role=null. Singleton roles (favicon, logo...) are kept to one row each, enforced at the application level (see SiteGraphicCrudController) since repeatable roles (error-image) need several rows sharing the same role - no DB-level unique constraint here
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $role = null;
 
@@ -131,8 +122,7 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
     #[ORM\Column(options: ['default' => false])]
     private bool $rightsReserved = false;
 
-    // Per-media outbound link/caption pair, exposed by MediaUploadType's "portfolio_grid" context
-    // (see PortfolioGridType) - a project card's title reuses the existing $label field instead
+    // Per-media outbound link/caption pair, exposed by MediaUploadType's "portfolio_grid" context (see PortfolioGridType) - a project card's title reuses the existing $label field instead
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $url = null;
 
@@ -378,8 +368,7 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
 
     public function getImageWidth(): int
     {
-        // The site-wide default og-image - kept lighter than the 1200px social platforms often suggest,
-        // well above their minimum (~200px)
+        // The site-wide default og-image - kept lighter than the 1200px social platforms often suggest, well above their minimum (~200px)
         if ($this->isOgImage()) {
             return 600;
         }
@@ -413,11 +402,7 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
         }
     }
 
-    // True only for the site-wide default og-image (role=og-image). A Page's own og-image override and a
-    // library Media added via MediaCrudController's New action (see c975L\UiBundle\Controller\Management\
-    // MediaCrudController) share the exact same role=null/block=null state and are indistinguishable here -
-    // UiBundle has no visibility into a Page's own fields (see MediaUsageProviderInterface) - so neither
-    // gets the og-image-specific width override, only the true site-wide singleton does
+    // True only for the site-wide default og-image (role=og-image). A Page's own og-image override and a library Media added via MediaCrudController's New action (see MediaCrudController) share the exact same role=null/block=null state and are indistinguishable here - UiBundle has no visibility into a Page's own fields (see MediaUsageProviderInterface) - so neither gets the og-image-specific width override, only the true site-wide singleton does
     public function isOgImage(): bool
     {
         return self::ROLE_OG_IMAGE === $this->role;
@@ -427,6 +412,12 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
     public function isSingletonRole(): bool
     {
         return in_array($this->role, self::SINGLETON_ROLES, true);
+    }
+
+    // Public accessor for the fixed, small SINGLETON_ROLES list - lets MediaRepository::findBySingletonRoles() batch-fetch every site-wide singleton role (logo, favicon...) in one query instead of one query per role (see MediaExtension), without duplicating the list itself
+    public static function getSingletonRoles(): array
+    {
+        return self::SINGLETON_ROLES;
     }
 
     public function getVichMediaPath(): string

@@ -31,8 +31,7 @@ class MediaUsagesTypeTest extends TestCase
         return $form;
     }
 
-    // Media::$id has no public setter (Doctrine-generated) - set directly via reflection to exercise
-    // the real "id => usages" lookup instead of the edge case of an unpersisted (id-less) Media
+    // Media::$id has no public setter (Doctrine-generated) - set directly via reflection to exercise the real "id => usages" lookup instead of the edge case of an unpersisted (id-less) Media
     private function createMediaWithId(int $id): Media
     {
         $media = new Media();
