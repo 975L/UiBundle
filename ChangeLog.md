@@ -1,6 +1,6 @@
 # ChangeLog
 
-## v1.8
+## v1.8.1
 
 - Added `Form`/`FormField` entities (`site_form`/`site_form_field` tables) and `FormFieldType`, a shared sortable field-collection system (18/07/2026)
 - Added `Form::$action` and `FormActionInterface`/`FormActionRegistry` (18/07/2026)
