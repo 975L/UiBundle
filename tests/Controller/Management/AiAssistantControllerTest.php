@@ -16,6 +16,7 @@ use c975L\UiBundle\Contract\AiAssistantClientInterface;
 use c975L\UiBundle\Controller\Management\AiAssistantController;
 use c975L\UiBundle\Service\AiRephraseClient;
 use c975L\UiBundle\Service\AiUsageTracker;
+use c975L\UiBundle\Service\ConfigEditUrlResolver;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +41,7 @@ class AiAssistantControllerTest extends TestCase
             $this->createStub(AiUsageTracker::class),
             $configService,
             $this->createStub(ConfigRepository::class),
-            $this->createStub(AdminUrlGeneratorInterface::class),
+            $this->createStub(ConfigEditUrlResolver::class),
         );
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker($granted),
@@ -185,7 +186,7 @@ class AiAssistantControllerTest extends TestCase
             $this->createStub(AiUsageTracker::class),
             $this->createStub(ConfigServiceInterface::class),
             $configRepository,
-            $urlGenerator,
+            new ConfigEditUrlResolver($urlGenerator),
         );
 
         $links = $this->invokeConfigLinks($controller);
@@ -212,7 +213,7 @@ class AiAssistantControllerTest extends TestCase
             $this->createStub(AiUsageTracker::class),
             $configService,
             $this->createStub(ConfigRepository::class),
-            $this->createStub(AdminUrlGeneratorInterface::class),
+            $this->createStub(ConfigEditUrlResolver::class),
         );
 
         // "anthropic" doesn't need base-uri/model, and every other slug is filled in above
@@ -237,7 +238,7 @@ class AiAssistantControllerTest extends TestCase
             $this->createStub(AiUsageTracker::class),
             $configService,
             $this->createStub(ConfigRepository::class),
-            $this->createStub(AdminUrlGeneratorInterface::class),
+            $this->createStub(ConfigEditUrlResolver::class),
         );
 
         $this->assertSame(

@@ -8,15 +8,13 @@
  */
 namespace c975L\UiBundle\Controller\Management;
 
-use c975L\ConfigBundle\Controller\Management\ConfigCrudController;
 use c975L\ConfigBundle\Repository\ConfigRepository;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\UiBundle\Contract\AiAssistantClientInterface;
 use c975L\UiBundle\Service\AiRephraseClient;
 use c975L\UiBundle\Service\AiUsageTracker;
+use c975L\UiBundle\Service\ConfigEditUrlResolver;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,7 +48,7 @@ class AiAssistantController extends AbstractController
         private readonly AiUsageTracker $aiUsageTracker,
         private readonly ConfigServiceInterface $configService,
         private readonly ConfigRepository $configRepository,
-        private readonly AdminUrlGeneratorInterface $adminUrlGenerator,
+        private readonly ConfigEditUrlResolver $configEditUrlResolver,
     ) {
     }
 
@@ -74,11 +72,8 @@ class AiAssistantController extends AbstractController
         ]);
     }
 
-    // {slug: edit url}, one entry per LINKED_SLUGS - a slug not yet loaded (site never ran
-    // config:load-all) falls back to the plain Config list rather than a broken/nonexistent entity id.
-    // unsetAll() is called fresh inside the loop for each slug: AdminUrlGenerator::generateUrl() never
-    // resets its own internal route parameters, so reusing one builder instance across iterations would
-    // leak the previous slug's entityId into the next url
+    // {slug: edit url}, one entry per LINKED_SLUGS - batched in one query rather than one per slug, then
+    // resolved through ConfigEditUrlResolver (shared with Twig\ConfigLinkExtension's own single-slug case)
     private function configLinks(): array
     {
         $configsBySlug = [];
@@ -88,11 +83,7 @@ class AiAssistantController extends AbstractController
 
         $links = [];
         foreach (self::LINKED_SLUGS as $slug) {
-            $config = $configsBySlug[$slug] ?? null;
-            $urlGenerator = $this->adminUrlGenerator->unsetAll()->setController(ConfigCrudController::class);
-            $links[$slug] = $config
-                ? $urlGenerator->setAction(Action::EDIT)->setEntityId($config->getId())->generateUrl()
-                : $urlGenerator->setAction(Action::INDEX)->generateUrl();
+            $links[$slug] = $this->configEditUrlResolver->resolve($configsBySlug[$slug] ?? null);
         }
 
         return $links;

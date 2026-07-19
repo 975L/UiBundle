@@ -11,6 +11,7 @@ namespace c975L\UiBundle\Tests\Twig;
 
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Registry\BlockCacheTagRegistry;
+use c975L\UiBundle\Registry\BlockEditUrlRegistry;
 use c975L\UiBundle\Registry\BlockRegistry;
 use c975L\UiBundle\Service\BlockCacheInvalidator;
 use c975L\UiBundle\Twig\BlockExtension;
@@ -53,7 +54,7 @@ class BlockExtensionTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->never())->method('get');
 
-        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), new BlockCacheTagRegistry());
+        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), new BlockCacheTagRegistry(), new BlockEditUrlRegistry());
 
         $this->assertSame('<p>rendered</p>', $extension->renderBlock($block));
     }
@@ -76,7 +77,7 @@ class BlockExtensionTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->never())->method('get');
 
-        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), new BlockCacheTagRegistry());
+        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), new BlockCacheTagRegistry(), new BlockEditUrlRegistry());
 
         $this->assertSame('<article>fresh</article>', $extension->renderBlock($block));
     }
@@ -101,7 +102,7 @@ class BlockExtensionTest extends TestCase
 
         $cache = $this->createStub(TagAwareCacheInterface::class);
 
-        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), new BlockCacheTagRegistry());
+        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), new BlockCacheTagRegistry(), new BlockEditUrlRegistry());
 
         $this->assertSame('<section id="services-42"></section>', $extension->renderBlock($block));
     }
@@ -124,7 +125,7 @@ class BlockExtensionTest extends TestCase
 
         $cache = $this->createStub(TagAwareCacheInterface::class);
 
-        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), new BlockCacheTagRegistry());
+        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), new BlockCacheTagRegistry(), new BlockEditUrlRegistry());
 
         $this->assertSame('<section id="services-"></section>', $extension->renderBlock($block));
     }
@@ -157,7 +158,7 @@ class BlockExtensionTest extends TestCase
                 return $callback($item);
             });
 
-        $extension = new BlockExtension($registry, $twig, $cache, $requestStack, new BlockCacheTagRegistry());
+        $extension = new BlockExtension($registry, $twig, $cache, $requestStack, new BlockCacheTagRegistry(), new BlockEditUrlRegistry());
 
         $this->assertSame('<article>cached content</article>', $extension->renderBlock($block));
     }
@@ -189,7 +190,7 @@ class BlockExtensionTest extends TestCase
                 return $callback($item);
             });
 
-        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), $cacheTagRegistry);
+        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), $cacheTagRegistry, new BlockEditUrlRegistry());
 
         $extension->renderBlock($block);
     }
@@ -212,7 +213,7 @@ class BlockExtensionTest extends TestCase
             ->with('block_render_7_fr', $this->anything())
             ->willReturn('content');
 
-        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), new BlockCacheTagRegistry());
+        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), new BlockCacheTagRegistry(), new BlockEditUrlRegistry());
 
         $extension->renderBlock($block);
     }
@@ -224,12 +225,56 @@ class BlockExtensionTest extends TestCase
             $this->createStub(Environment::class),
             $this->createStub(TagAwareCacheInterface::class),
             new RequestStack(),
-            new BlockCacheTagRegistry()
+            new BlockCacheTagRegistry(),
+            new BlockEditUrlRegistry()
         );
         $functions = $extension->getFunctions();
 
-        $this->assertCount(1, $functions);
+        $this->assertCount(2, $functions);
         $this->assertSame('render_block', $functions[0]->getName());
         $this->assertSame(['html'], $functions[0]->getSafe(new \Twig\Node\TextNode('', 0)));
+        $this->assertSame('block_edit_urls', $functions[1]->getName());
+    }
+
+    // Resolved once for the whole collection, not once per block - avoids a query per block (see BlockEditUrlRegistry)
+    public function testGetBlockEditUrlsDelegatesToTheRegistryForTheWholeCollection(): void
+    {
+        $block = $this->createBlock('article', 5);
+
+        $registry = $this->createMock(BlockEditUrlRegistry::class);
+        $registry->expects($this->once())->method('getEditUrls')->with([$block])->willReturn([5 => '/admin/edit']);
+
+        $extension = new BlockExtension(
+            $this->createStub(BlockRegistry::class),
+            $this->createStub(Environment::class),
+            $this->createStub(TagAwareCacheInterface::class),
+            new RequestStack(),
+            new BlockCacheTagRegistry(),
+            $registry
+        );
+
+        $this->assertSame([5 => '/admin/edit'], $extension->getBlockEditUrls([$block]));
+    }
+
+    // Twig collections (Doctrine PersistentCollection/ArrayCollection) are iterable but not necessarily arrays
+    public function testGetBlockEditUrlsAcceptsAnyIterable(): void
+    {
+        $block = $this->createBlock('article', 6);
+
+        $registry = $this->createMock(BlockEditUrlRegistry::class);
+        $registry->expects($this->once())->method('getEditUrls')->with([$block])->willReturn([]);
+
+        $extension = new BlockExtension(
+            $this->createStub(BlockRegistry::class),
+            $this->createStub(Environment::class),
+            $this->createStub(TagAwareCacheInterface::class),
+            new RequestStack(),
+            new BlockCacheTagRegistry(),
+            $registry
+        );
+
+        $extension->getBlockEditUrls((function () use ($block) {
+            yield $block;
+        })());
     }
 }

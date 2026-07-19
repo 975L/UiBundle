@@ -23,12 +23,24 @@ class FormField
     public const TYPE_TEXTAREA = 'textarea';
     public const TYPE_EMAIL = 'email';
     public const TYPE_CHECKBOX = 'checkbox';
+    public const TYPE_PASSWORD = 'password';
+    public const TYPE_PASSWORD_REPEATED = 'password_repeated';
+    public const TYPE_URL = 'url';
+    public const TYPE_TEL = 'tel';
+    public const TYPE_NUMBER = 'number';
+    public const TYPE_DATE = 'date';
 
     public const TYPES = [
         self::TYPE_TEXT,
         self::TYPE_TEXTAREA,
         self::TYPE_EMAIL,
         self::TYPE_CHECKBOX,
+        self::TYPE_PASSWORD,
+        self::TYPE_PASSWORD_REPEATED,
+        self::TYPE_URL,
+        self::TYPE_TEL,
+        self::TYPE_NUMBER,
+        self::TYPE_DATE,
     ];
 
     #[ORM\Id]
@@ -52,6 +64,10 @@ class FormField
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $placeholder = null;
+
+    // Optional link shown next to the label (e.g. a checkbox field's "J'accepte les [CGU]" pointing at the real terms-of-use page) - see FormSubmissionType, which appends it to the label as a real <a> when set
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $url = null;
 
     #[ORM\Column]
     private bool $required = false;
@@ -129,6 +145,18 @@ class FormField
     public function setPlaceholder(?string $placeholder): static
     {
         $this->placeholder = $placeholder;
+
+        return $this;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(?string $url): static
+    {
+        $this->url = $url;
 
         return $this;
     }

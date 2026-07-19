@@ -15,15 +15,39 @@ use c975L\UiBundle\Repository\FormRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FormPickerTypeTest extends TestCase
 {
-    private function buildForm(string $name): Form
+    private function buildForm(string $name, bool $enabled = true): Form
     {
         $form = new Form();
-        $form->setName($name);
+        $form->setName($name)->setEnabled($enabled);
 
         return $form;
+    }
+
+    private function createTranslator(): TranslatorInterface
+    {
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturn(' (disabled)');
+
+        return $translator;
+    }
+
+    private function captureAddedFields(FormPickerType $type): array
+    {
+        $added = [];
+        $builder = $this->createStub(FormBuilderInterface::class);
+        $builder->method('add')->willReturnCallback(function (string $name, ?string $type = null, array $options = []) use (&$added, $builder) {
+            $added[$name] = ['type' => $type, 'options' => $options];
+
+            return $builder;
+        });
+
+        $type->buildForm($builder, []);
+
+        return $added;
     }
 
     public function testChoicesAreBuiltFromEveryFormName(): void
@@ -34,15 +58,7 @@ class FormPickerTypeTest extends TestCase
             $this->buildForm('newsletter'),
         ]);
 
-        $added = [];
-        $builder = $this->createStub(FormBuilderInterface::class);
-        $builder->method('add')->willReturnCallback(function (string $name, ?string $type = null, array $options = []) use (&$added, $builder) {
-            $added[$name] = ['type' => $type, 'options' => $options];
-
-            return $builder;
-        });
-
-        (new FormPickerType($repository))->buildForm($builder, []);
+        $added = $this->captureAddedFields(new FormPickerType($repository, $this->createTranslator()));
 
         $this->assertSame(ChoiceType::class, $added['name']['type']);
         $this->assertSame(['contact' => 'contact', 'newsletter' => 'newsletter'], $added['name']['options']['choices']);
@@ -53,16 +69,19 @@ class FormPickerTypeTest extends TestCase
         $repository = $this->createStub(FormRepository::class);
         $repository->method('findBy')->willReturn([]);
 
-        $added = [];
-        $builder = $this->createStub(FormBuilderInterface::class);
-        $builder->method('add')->willReturnCallback(function (string $name, ?string $type = null, array $options = []) use (&$added, $builder) {
-            $added[$name] = ['type' => $type, 'options' => $options];
-
-            return $builder;
-        });
-
-        (new FormPickerType($repository))->buildForm($builder, []);
+        $added = $this->captureAddedFields(new FormPickerType($repository, $this->createTranslator()));
 
         $this->assertSame([], $added['name']['options']['choices']);
+    }
+
+    // A disabled Form stays pickable (an editor may embed it ahead of re-enabling it) but its label is flagged, since FormController would otherwise silently show FormDisabled.html.twig
+    public function testDisabledFormLabelIsFlaggedButStillPickable(): void
+    {
+        $repository = $this->createStub(FormRepository::class);
+        $repository->method('findBy')->willReturn([$this->buildForm('newsletter', enabled: false)]);
+
+        $added = $this->captureAddedFields(new FormPickerType($repository, $this->createTranslator()));
+
+        $this->assertSame(['newsletter (disabled)' => 'newsletter'], $added['name']['options']['choices']);
     }
 }

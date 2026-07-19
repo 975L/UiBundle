@@ -10,18 +10,34 @@
 namespace c975L\UiBundle\Tests\Service;
 
 use c975L\UiBundle\Contract\DebugPreviewCapableInterface;
+use c975L\UiBundle\Entity\EmailTemplate;
 use c975L\UiBundle\Entity\Form;
 use c975L\UiBundle\Entity\FormField;
 use c975L\UiBundle\Model\EmailSendRequest;
+use c975L\UiBundle\Repository\EmailTemplateRepository;
 use c975L\UiBundle\Service\EmailService;
+use c975L\UiBundle\Service\EmailTemplateRenderer;
 use c975L\UiBundle\Service\SendEmailFormAction;
 use PHPUnit\Framework\TestCase;
 
 class SendEmailFormActionTest extends TestCase
 {
+    // Both new dependencies default to "no EmailTemplate found" stubs, so a test not concerned with the
+    // "emailTemplate" actionConfig key still exercises the legacy "template" path unchanged
+    private function createAction(
+        EmailService $emailService,
+        ?EmailTemplateRepository $emailTemplateRepository = null,
+        ?EmailTemplateRenderer $emailTemplateRenderer = null,
+    ): SendEmailFormAction {
+        $emailTemplateRepository ??= $this->createConfiguredStub(EmailTemplateRepository::class, ['findOneBy' => null]);
+        $emailTemplateRenderer ??= $this->createStub(EmailTemplateRenderer::class);
+
+        return new SendEmailFormAction($emailService, $emailTemplateRepository, $emailTemplateRenderer);
+    }
+
     public function testImplementsDebugPreviewCapableInterface(): void
     {
-        $this->assertInstanceOf(DebugPreviewCapableInterface::class, new SendEmailFormAction($this->createStub(EmailService::class)));
+        $this->assertInstanceOf(DebugPreviewCapableInterface::class, $this->createAction($this->createStub(EmailService::class)));
     }
 
     public function testConsumeDebugPreviewDelegatesToEmailService(): void
@@ -29,7 +45,7 @@ class SendEmailFormActionTest extends TestCase
         $emailService = $this->createStub(EmailService::class);
         $emailService->method('consumeDebugPreview')->willReturn('<html>preview</html>');
 
-        $action = new SendEmailFormAction($emailService);
+        $action = $this->createAction($emailService);
 
         $this->assertSame('<html>preview</html>', $action->consumeDebugPreview());
     }
@@ -51,7 +67,7 @@ class SendEmailFormActionTest extends TestCase
 
     public function testGetKeyReturnsSendEmail(): void
     {
-        $action = new SendEmailFormAction($this->createStub(EmailService::class));
+        $action = $this->createAction($this->createStub(EmailService::class));
 
         $this->assertSame('send_email', $action->getKey());
     }
@@ -67,13 +83,14 @@ class SendEmailFormActionTest extends TestCase
         });
 
         $form = $this->buildForm('newsletter', null, ['email' => 'Email']);
-        $action = new SendEmailFormAction($emailService);
+        $action = $this->createAction($emailService);
 
         $result = $action->handle($form, ['email' => 'visitor@example.com']);
 
         $this->assertTrue($result);
         $this->assertSame('New submission: newsletter', $captured->subject);
         $this->assertSame('@c975LUi/emails/form_submission.html.twig', $captured->template);
+        $this->assertNull($captured->html);
         $this->assertSame(['Email' => 'visitor@example.com'], $captured->context['fields']);
         $this->assertNull($captured->to);
         $this->assertNull($captured->copyToEmail);
@@ -92,7 +109,7 @@ class SendEmailFormActionTest extends TestCase
         });
 
         $form = $this->buildForm('contact', null, ['phone' => 'Phone', 'phone-2' => 'Phone']);
-        $action = new SendEmailFormAction($emailService);
+        $action = $this->createAction($emailService);
 
         $action->handle($form, ['phone' => '0600000000', 'phone-2' => '0700000000']);
 
@@ -120,7 +137,7 @@ class SendEmailFormActionTest extends TestCase
             'senderEmailField' => 'email',
             'offerReceiveCopy' => true,
         ], ['email' => 'Email']);
-        $action = new SendEmailFormAction($emailService);
+        $action = $this->createAction($emailService);
 
         // "receiveCopy" is the visitor's own checkbox answer (see FormSubmissionType), not a fixed admin choice
         $action->handle($form, ['email' => 'visitor@example.com', 'receiveCopy' => true]);
@@ -144,7 +161,7 @@ class SendEmailFormActionTest extends TestCase
         });
 
         $form = $this->buildForm('newsletter', ['senderEmailField' => 'email'], ['email' => 'Email']);
-        $action = new SendEmailFormAction($emailService);
+        $action = $this->createAction($emailService);
 
         $action->handle($form, ['email' => 'visitor@example.com']);
 
@@ -164,7 +181,7 @@ class SendEmailFormActionTest extends TestCase
         });
 
         $form = $this->buildForm('newsletter', ['senderEmailField' => 'email', 'offerReceiveCopy' => true], ['email' => 'Email']);
-        $action = new SendEmailFormAction($emailService);
+        $action = $this->createAction($emailService);
 
         $action->handle($form, ['email' => 'visitor@example.com', 'receiveCopy' => false]);
 
@@ -177,8 +194,71 @@ class SendEmailFormActionTest extends TestCase
         $emailService->method('send')->willReturn(false);
 
         $form = $this->buildForm('newsletter', null, []);
-        $action = new SendEmailFormAction($emailService);
+        $action = $this->createAction($emailService);
 
         $this->assertFalse($action->handle($form, []));
+    }
+
+    // When actionConfig's "emailTemplate" names an EmailTemplate that actually exists, the compiled EmailBuilder
+    // HTML is used instead of the legacy Twig "template" path (see EmailTemplateRenderer)
+    public function testHandleUsesEmailTemplateWhenConfiguredAndFound(): void
+    {
+        $captured = null;
+        $emailService = $this->createStub(EmailService::class);
+        $emailService->method('send')->willReturnCallback(function (EmailSendRequest $request) use (&$captured): bool {
+            $captured = $request;
+
+            return true;
+        });
+
+        $emailTemplate = new EmailTemplate();
+        $emailTemplate->setName('contact_notification');
+
+        $emailTemplateRepository = $this->createStub(EmailTemplateRepository::class);
+        $emailTemplateRepository->method('findOneBy')->willReturnCallback(
+            static fn (array $criteria) => ['name' => 'contact_notification'] === $criteria ? $emailTemplate : null
+        );
+
+        $capturedRenderArgs = null;
+        $emailTemplateRenderer = $this->createStub(EmailTemplateRenderer::class);
+        $emailTemplateRenderer->method('render')->willReturnCallback(
+            function (EmailTemplate $template, array $variables) use (&$capturedRenderArgs): string {
+                $capturedRenderArgs = [$template, $variables];
+
+                return '<p>Compiled</p>';
+            }
+        );
+
+        $form = $this->buildForm('contact', ['emailTemplate' => 'contact_notification'], ['email' => 'Email']);
+        $action = $this->createAction($emailService, $emailTemplateRepository, $emailTemplateRenderer);
+
+        $action->handle($form, ['email' => 'visitor@example.com']);
+
+        $this->assertNull($captured->template);
+        $this->assertSame('<p>Compiled</p>', $captured->html);
+        $this->assertSame([$emailTemplate, ['form_name' => 'contact', 'fields' => ['Email' => 'visitor@example.com']]], $capturedRenderArgs);
+    }
+
+    // A stale/typo'd "emailTemplate" name (no matching row) must not break the send - it silently falls back to
+    // the legacy "template" path exactly as if "emailTemplate" had never been set
+    public function testHandleFallsBackToLegacyTemplateWhenEmailTemplateNameNotFound(): void
+    {
+        $captured = null;
+        $emailService = $this->createStub(EmailService::class);
+        $emailService->method('send')->willReturnCallback(function (EmailSendRequest $request) use (&$captured): bool {
+            $captured = $request;
+
+            return true;
+        });
+
+        $emailTemplateRepository = $this->createConfiguredStub(EmailTemplateRepository::class, ['findOneBy' => null]);
+
+        $form = $this->buildForm('contact', ['emailTemplate' => 'does_not_exist'], ['email' => 'Email']);
+        $action = $this->createAction($emailService, $emailTemplateRepository);
+
+        $action->handle($form, ['email' => 'visitor@example.com']);
+
+        $this->assertSame('@c975LUi/emails/form_submission.html.twig', $captured->template);
+        $this->assertNull($captured->html);
     }
 }

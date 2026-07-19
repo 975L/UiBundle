@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Contracts\Translation\TranslatableInterface;
 
 class FormFieldTypeTest extends TestCase
 {
@@ -70,6 +71,13 @@ class FormFieldTypeTest extends TestCase
         $this->assertTrue($added['restricted']['options']['disabled']);
     }
 
+    public function testUrlFieldIsOptional(): void
+    {
+        $added = $this->buildStaticFields();
+
+        $this->assertFalse($added['url']['options']['required']);
+    }
+
     public function testTypeFieldIsEnabledForAnOrdinaryField(): void
     {
         $field = (new FormField())->setLabel('Phone')->setName('phone');
@@ -93,6 +101,23 @@ class FormFieldTypeTest extends TestCase
         $added = $this->firePreSetData(null);
 
         $this->assertFalse($added['type']['options']['disabled']);
+    }
+
+    // Shared with FormFieldTemplateCrudController's own "type" ChoiceField - every real FormField::TYPES value must have a translated choice, and nothing else
+    public function testTypeChoicesCoversEveryFormFieldType(): void
+    {
+        $this->assertSame(FormField::TYPES, array_values(FormFieldType::typeChoices()));
+    }
+
+    // Used by FormFieldTemplateCrudController's EasyAdmin ChoiceField via setTranslatableChoices() - its plain-string choices (typeChoices()) don't translate there since EasyAdmin's own CRUD-level domain isn't "ui" the way this form's own translation_domain is (see configureOptions())
+    public function testTranslatableTypeChoicesCoversTheSameTypesAsTypeChoices(): void
+    {
+        $translatable = FormFieldType::translatableTypeChoices();
+
+        $this->assertSame(FormField::TYPES, array_keys($translatable));
+        foreach ($translatable as $type => $label) {
+            $this->assertInstanceOf(TranslatableInterface::class, $label);
+        }
     }
 
     public function testIdFieldCarriesTheFieldId(): void

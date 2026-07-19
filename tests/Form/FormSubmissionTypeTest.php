@@ -13,22 +13,32 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\UiBundle\Entity\FormField;
 use c975L\UiBundle\Form\FormSubmissionType;
 use c975L\UiBundle\Service\FormBotProtection;
+use c975L\UiBundle\Validator\Constraints\DnsEmail;
 use Karser\Recaptcha3Bundle\Form\Recaptcha3Type;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FormSubmissionTypeTest extends TestCase
 {
-    private function buildField(string $name, string $type, bool $required, ?string $placeholder = null): FormField
+    private function buildField(string $name, string $type, bool $required, ?string $placeholder = null, ?string $url = null): FormField
     {
         $field = new FormField();
         $field->setName($name);
@@ -36,6 +46,7 @@ class FormSubmissionTypeTest extends TestCase
         $field->setType($type);
         $field->setRequired($required);
         $field->setPlaceholder($placeholder);
+        $field->setUrl($url);
 
         return $field;
     }
@@ -59,7 +70,10 @@ class FormSubmissionTypeTest extends TestCase
         $requestStack = new RequestStack();
         $requestStack->push($request);
 
-        return new FormSubmissionType(new FormBotProtection($configService), $configService, $requestStack);
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturn('read');
+
+        return new FormSubmissionType(new FormBotProtection($configService), $configService, $requestStack, $translator);
     }
 
     private function buildAddedFields(array $fields, bool $offerReceiveCopy = false, bool $gdpr = false, bool $recaptcha = false, array $prefill = []): array
@@ -84,21 +98,90 @@ class FormSubmissionTypeTest extends TestCase
             $this->buildField('message', FormField::TYPE_TEXTAREA, false),
             $this->buildField('email', FormField::TYPE_EMAIL, false),
             $this->buildField('newsletter', FormField::TYPE_CHECKBOX, false),
+            $this->buildField('secret', FormField::TYPE_PASSWORD, false),
+            $this->buildField('website', FormField::TYPE_URL, false),
+            $this->buildField('phone', FormField::TYPE_TEL, false),
+            $this->buildField('quantity', FormField::TYPE_NUMBER, false),
+            $this->buildField('birthdate', FormField::TYPE_DATE, false),
         ]);
 
         $this->assertSame(TextType::class, $added['name']['type']);
         $this->assertSame(TextareaType::class, $added['message']['type']);
         $this->assertSame(EmailType::class, $added['email']['type']);
         $this->assertSame(CheckboxType::class, $added['newsletter']['type']);
+        $this->assertSame(PasswordType::class, $added['secret']['type']);
+        $this->assertSame(UrlType::class, $added['website']['type']);
+        $this->assertSame(TelType::class, $added['phone']['type']);
+        $this->assertSame(NumberType::class, $added['quantity']['type']);
+        $this->assertSame(DateType::class, $added['birthdate']['type']);
+    }
+
+    // "single_text" so a date field renders as one HTML5 input, not Symfony's default 3-select widget
+    public function testDateFieldUsesSingleTextWidget(): void
+    {
+        $added = $this->buildAddedFields([$this->buildField('birthdate', FormField::TYPE_DATE, false)]);
+
+        $this->assertSame('single_text', $added['birthdate']['options']['widget']);
+    }
+
+    // RepeatedType wraps two password sub-fields, it doesn't take the same flat options as every other field type
+    public function testPasswordRepeatedFieldBuildsRepeatedType(): void
+    {
+        $added = $this->buildAddedFields([$this->buildField('plainPassword', FormField::TYPE_PASSWORD_REPEATED, true)]);
+
+        $this->assertSame(RepeatedType::class, $added['plainPassword']['type']);
+        $this->assertSame(PasswordType::class, $added['plainPassword']['options']['type']);
+        $this->assertSame('PlainPassword', $added['plainPassword']['options']['first_options']['label']);
+        $this->assertSame('label.password_confirm', $added['plainPassword']['options']['second_options']['label']);
+    }
+
+    // Without this, a browser's password manager treats the email+password pair as a login form and autofills the visitor's already-saved password for this site
+    public function testPasswordFieldGetsNewPasswordAutocomplete(): void
+    {
+        $added = $this->buildAddedFields([$this->buildField('secret', FormField::TYPE_PASSWORD, false)]);
+
+        $this->assertSame('new-password', $added['secret']['options']['attr']['autocomplete']);
+    }
+
+    public function testPasswordRepeatedFieldGetsNewPasswordAutocompleteOnBothSubFields(): void
+    {
+        $added = $this->buildAddedFields([$this->buildField('plainPassword', FormField::TYPE_PASSWORD_REPEATED, true)]);
+
+        $this->assertSame('new-password', $added['plainPassword']['options']['first_options']['attr']['autocomplete']);
+        $this->assertSame('new-password', $added['plainPassword']['options']['second_options']['attr']['autocomplete']);
     }
 
     public function testRequiredFieldGetsNotBlankConstraint(): void
     {
-        $added = $this->buildAddedFields([$this->buildField('email', FormField::TYPE_EMAIL, true)]);
+        $added = $this->buildAddedFields([$this->buildField('phone', FormField::TYPE_TEXT, true)]);
 
-        $this->assertTrue($added['email']['options']['required']);
-        $this->assertCount(1, $added['email']['options']['constraints']);
-        $this->assertInstanceOf(NotBlank::class, $added['email']['options']['constraints'][0]);
+        $this->assertTrue($added['phone']['options']['required']);
+        $this->assertCount(1, $added['phone']['options']['constraints']);
+        $this->assertInstanceOf(NotBlank::class, $added['phone']['options']['constraints'][0]);
+    }
+
+    // A required checkbox needs IsTrue, not NotBlank - an unchecked box submits "false", which NotBlank does not consider blank
+    public function testRequiredCheckboxFieldGetsIsTrueConstraint(): void
+    {
+        $added = $this->buildAddedFields([$this->buildField('newsletter', FormField::TYPE_CHECKBOX, true)]);
+
+        $this->assertCount(1, $added['newsletter']['options']['constraints']);
+        $this->assertInstanceOf(IsTrue::class, $added['newsletter']['options']['constraints'][0]);
+    }
+
+    // Every email field gets format + anti-bot DNS checks, required or not
+    public function testEmailFieldAlwaysGetsEmailAndDnsEmailConstraints(): void
+    {
+        $required = $this->buildAddedFields([$this->buildField('email', FormField::TYPE_EMAIL, true)]);
+        $this->assertCount(3, $required['email']['options']['constraints']);
+        $this->assertInstanceOf(NotBlank::class, $required['email']['options']['constraints'][0]);
+        $this->assertInstanceOf(Email::class, $required['email']['options']['constraints'][1]);
+        $this->assertInstanceOf(DnsEmail::class, $required['email']['options']['constraints'][2]);
+
+        $optional = $this->buildAddedFields([$this->buildField('email', FormField::TYPE_EMAIL, false)]);
+        $this->assertCount(2, $optional['email']['options']['constraints']);
+        $this->assertInstanceOf(Email::class, $optional['email']['options']['constraints'][0]);
+        $this->assertInstanceOf(DnsEmail::class, $optional['email']['options']['constraints'][1]);
     }
 
     public function testOptionalFieldGetsNoConstraint(): void
@@ -122,6 +205,24 @@ class FormSubmissionTypeTest extends TestCase
 
         $this->assertFalse($added['phone']['options']['translation_domain']);
         $this->assertSame('Phone', $added['phone']['options']['label']);
+        $this->assertFalse($added['phone']['options']['label_html']);
+    }
+
+    // A field carrying a "url" (e.g. a CGU checkbox) gets an escaped <a> appended to its label instead of plain text
+    public function testFieldWithUrlGetsHtmlLabelWithLink(): void
+    {
+        $added = $this->buildAddedFields([$this->buildField('cgu', FormField::TYPE_CHECKBOX, true, url: 'https://example.com/cgu')]);
+
+        $this->assertTrue($added['cgu']['options']['label_html']);
+        $this->assertSame('Cgu (<a href="https://example.com/cgu" target="_blank" rel="noopener">read</a>)', $added['cgu']['options']['label']);
+    }
+
+    // The label text itself is escaped before being embedded as raw HTML, so an admin-typed "<" in a label can't break out of it
+    public function testFieldWithUrlEscapesLabelAndUrl(): void
+    {
+        $added = $this->buildAddedFields([$this->buildField('cgu', FormField::TYPE_CHECKBOX, true, url: 'https://example.com/cgu?a=1&b=2')]);
+
+        $this->assertStringContainsString('href="https://example.com/cgu?a=1&amp;b=2"', $added['cgu']['options']['label']);
     }
 
     // Honeypot is unconditional - no config needed, same as contact/register/reset. With no fields/gdpr/recaptcha/receiveCopy, it's the only field added

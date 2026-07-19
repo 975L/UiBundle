@@ -820,7 +820,7 @@
             </trans-unit>
             <trans-unit id="207">
                 <source>label.block_collection_description</source>
-                <target>Muestra los elementos de una colección externa (libros, productos, proyectos...), gestionada por otro paquete</target>
+                <target>Elementos de una colección externa (libros, productos, proyectos...)</target>
             </trans-unit>
             <trans-unit id="208">
                 <source>label.source</source>
@@ -1122,6 +1122,14 @@
                 <source>label.fields</source>
                 <target>Campos</target>
             </trans-unit>
+            <trans-unit id="324">
+                <source>label.action</source>
+                <target>Acción</target>
+            </trans-unit>
+            <trans-unit id="325">
+                <source>label.restricted</source>
+                <target>Restringido</target>
+            </trans-unit>
             <trans-unit id="290">
                 <source>label.receive_copy</source>
                 <target>Recibir una copia</target>
@@ -1129,6 +1137,178 @@
             <trans-unit id="291">
                 <source>text.too_many_attempts</source>
                 <target>Demasiados intentos, inténtalo de nuevo más tarde.</target>
+            </trans-unit>
+            <trans-unit id="292">
+                <source>label.field_type_password</source>
+                <target>Contraseña</target>
+            </trans-unit>
+            <trans-unit id="293">
+                <source>label.field_type_password_repeated</source>
+                <target>Contraseña (con confirmación)</target>
+            </trans-unit>
+            <trans-unit id="294">
+                <source>label.field_type_url</source>
+                <target>URL</target>
+            </trans-unit>
+            <trans-unit id="295">
+                <source>label.field_type_tel</source>
+                <target>Teléfono</target>
+            </trans-unit>
+            <trans-unit id="296">
+                <source>label.field_type_number</source>
+                <target>Número</target>
+            </trans-unit>
+            <trans-unit id="297">
+                <source>label.field_type_date</source>
+                <target>Fecha</target>
+            </trans-unit>
+            <trans-unit id="298">
+                <source>label.password_confirm</source>
+                <target>Confirmación de la contraseña</target>
+            </trans-unit>
+            <trans-unit id="299">
+                <source>text.password_mismatch</source>
+                <target>Las contraseñas no coinciden</target>
+            </trans-unit>
+            <trans-unit id="300">
+                <source>label.email_templates</source>
+                <target>Plantillas de email</target>
+            </trans-unit>
+            <trans-unit id="301">
+                <source>label.email_blocks</source>
+                <target>Bloques</target>
+            </trans-unit>
+            <trans-unit id="302">
+                <source>label.email_block_type</source>
+                <target>Tipo de bloque</target>
+            </trans-unit>
+            <trans-unit id="303">
+                <source>label.email_block_type_heading</source>
+                <target>Título</target>
+            </trans-unit>
+            <trans-unit id="304">
+                <source>label.email_block_type_text</source>
+                <target>Texto</target>
+            </trans-unit>
+            <trans-unit id="305">
+                <source>label.email_block_type_button</source>
+                <target>Botón</target>
+            </trans-unit>
+            <trans-unit id="306">
+                <source>label.email_block_type_image</source>
+                <target>Imagen</target>
+            </trans-unit>
+            <trans-unit id="307">
+                <source>label.email_block_type_divider</source>
+                <target>Separador</target>
+            </trans-unit>
+            <trans-unit id="308">
+                <source>label.email_block_type_spacer</source>
+                <target>Espaciador</target>
+            </trans-unit>
+            <trans-unit id="309">
+                <source>label.email_block_type_fields_table</source>
+                <target>Tabla de campos enviados</target>
+            </trans-unit>
+            <trans-unit id="310">
+                <source>label.email_block_heading</source>
+                <target>Título</target>
+            </trans-unit>
+            <trans-unit id="311">
+                <source>label.email_block_heading_help</source>
+                <target>Usado por los bloques "Título"</target>
+            </trans-unit>
+            <trans-unit id="312">
+                <source>label.email_block_level</source>
+                <target>Tamaño del título</target>
+            </trans-unit>
+            <trans-unit id="313">
+                <source>label.email_block_content</source>
+                <target>Contenido</target>
+            </trans-unit>
+            <trans-unit id="314">
+                <source>label.email_block_content_help</source>
+                <target>Usado por los bloques "Texto" - texto plano, un párrafo por línea en blanco</target>
+            </trans-unit>
+            <trans-unit id="315">
+                <source>label.email_block_label</source>
+                <target>Etiqueta</target>
+            </trans-unit>
+            <trans-unit id="316">
+                <source>label.email_block_label_help</source>
+                <target>Usado por los bloques "Botón"</target>
+            </trans-unit>
+            <trans-unit id="317">
+                <source>label.email_block_url</source>
+                <target>URL</target>
+            </trans-unit>
+            <trans-unit id="318">
+                <source>label.email_block_url_help</source>
+                <target>Usado por los bloques "Botón" e "Imagen" - puede contener un marcador como {{ signed_url }}. Para una imagen alojada en este sitio, basta una ruta relativa (ej. /medias/logo.webp), el dominio se añade automáticamente desde la config "site-url"</target>
+            </trans-unit>
+            <trans-unit id="319">
+                <source>label.email_block_alt</source>
+                <target>Texto alternativo</target>
+            </trans-unit>
+            <trans-unit id="320">
+                <source>label.email_block_alt_help</source>
+                <target>Usado por los bloques "Imagen"</target>
+            </trans-unit>
+            <trans-unit id="321">
+                <source>label.email_block_height</source>
+                <target>Altura (px)</target>
+            </trans-unit>
+            <trans-unit id="322">
+                <source>label.email_block_height_help</source>
+                <target>Usado por los bloques "Espaciador"</target>
+            </trans-unit>
+            <trans-unit id="323">
+                <source>label.edit</source>
+                <target>Editar</target>
+            </trans-unit>
+            <trans-unit id="326">
+                <source>label.form_field_templates</source>
+                <target>Modelos de campos</target>
+            </trans-unit>
+            <trans-unit id="327">
+                <source>label.info_form_gdpr</source>
+                <target>Se añade automáticamente una casilla de consentimiento RGPD a todos los formularios, según %link_open%esta clave de configuración%link_close%.</target>
+            </trans-unit>
+            <trans-unit id="328">
+                <source>label.info_form_field_template</source>
+                <target>Campos ya listos que puede elegir al construir la lista de campos de un formulario. El nombre de una plantilla restringida no se puede cambiar ni eliminar, pero el resto de propiedades siguen siendo editables.</target>
+            </trans-unit>
+            <trans-unit id="500">
+                <source>label.form_disabled</source>
+                <target>Este formulario no está disponible en este momento.</target>
+            </trans-unit>
+            <trans-unit id="501">
+                <source>label.form_enabled</source>
+                <target>Activo</target>
+            </trans-unit>
+            <trans-unit id="502">
+                <source>label.field_required_default</source>
+                <target>Obligatorio por defecto</target>
+            </trans-unit>
+            <trans-unit id="503">
+                <source>label.field_required_default_help</source>
+                <target>Valor inicial copiado en el campo añadido a un formulario - luego se puede modificar por formulario, sin efecto retroactivo sobre esta plantilla</target>
+            </trans-unit>
+            <trans-unit id="504">
+                <source>label.form_picker_disabled_suffix</source>
+                <target> (deshabilitado)</target>
+            </trans-unit>
+            <trans-unit id="505">
+                <source>label.form_field_template_picker_placeholder</source>
+                <target>Añadir desde una plantilla…</target>
+            </trans-unit>
+            <trans-unit id="506">
+                <source>label.field_url</source>
+                <target>Enlace (opcional)</target>
+            </trans-unit>
+            <trans-unit id="507">
+                <source>label.field_url_link</source>
+                <target>leer</target>
             </trans-unit>
         </body>
     </file>

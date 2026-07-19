@@ -11,6 +11,7 @@ namespace c975L\UiBundle\Tests\Controller;
 
 use c975L\UiBundle\Contract\DebugPreviewCapableInterface;
 use c975L\UiBundle\Contract\FormActionInterface;
+use c975L\UiBundle\Contract\RequiresAnonymousInterface;
 use c975L\UiBundle\Controller\FormController;
 use c975L\UiBundle\Entity\Form;
 use c975L\UiBundle\Registry\FormActionRegistry;
@@ -20,12 +21,14 @@ use c975L\UiBundle\Service\FormPrefillHelper;
 use c975L\UiBundle\Service\RateLimiterGuard;
 use c975L\UiBundle\Tests\Controller\Management\ControllerContainerTestTrait;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
@@ -71,6 +74,15 @@ class FormControllerTest extends TestCase
         return $botProtection;
     }
 
+    // Defaults to an anonymous visitor (no user), the only case every pre-existing test scenario assumes
+    private function createSecurity(bool $authenticated = false): Security
+    {
+        $security = $this->createStub(Security::class);
+        $security->method('getUser')->willReturn($authenticated ? $this->createStub(UserInterface::class) : null);
+
+        return $security;
+    }
+
     private function createController(
         FormInterface $form,
         ?FormRepository $formRepository = null,
@@ -78,6 +90,8 @@ class FormControllerTest extends TestCase
         ?FormBotProtection $botProtection = null,
         ?RateLimiterGuard $rateLimiterGuard = null,
         ?FormPrefillHelper $prefillHelper = null,
+        ?Security $security = null,
+        ?Environment $twig = null,
     ): FormController {
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
@@ -94,10 +108,13 @@ class FormControllerTest extends TestCase
             $rateLimiter,
             $prefillHelper ?? $this->createStub(FormPrefillHelper::class),
             $translator,
+            $security ?? $this->createSecurity(),
         );
 
-        $twig = $this->createStub(Environment::class);
-        $twig->method('render')->willReturn('<form></form>');
+        if (null === $twig) {
+            $twig = $this->createStub(Environment::class);
+            $twig->method('render')->willReturn('<form></form>');
+        }
         $controller->setContainer($this->createContainer([
             'twig' => $twig,
             'form.factory' => $this->createFormFactory($form),
@@ -142,6 +159,149 @@ class FormControllerTest extends TestCase
     {
         $response = $this->createController($this->createSubmittedForm(false, false))
             ->fragment('contact', $this->createRequest());
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('<form></form>', $response->getContent());
+    }
+
+    // A disabled Form (see Form::$enabled - lets an admin pause it without unpublishing its Page or clearing "action") shows a notice instead of the form, on both the Block-embedded fragment and the bare submit route
+    public function testFragmentRendersDisabledNoticeWhenFormIsDisabled(): void
+    {
+        $repository = $this->createStub(FormRepository::class);
+        $repository->method('findOneBy')->willReturn((new Form())->setName('contact')->setAction('send_email')->setEnabled(false));
+
+        $response = $this->createController($this->createSubmittedForm(false, false), $repository)
+            ->fragment('contact', $this->createRequest());
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('<form></form>', $response->getContent());
+    }
+
+    // RegisterFormAction/ResetPasswordRequestFormAction (scaffold) implement RequiresAnonymousInterface - an already-authenticated visitor gets a notice instead of the form, on both routes
+    private function createRequiresAnonymousActionRegistry(string $key): FormActionRegistry
+    {
+        $action = new class($key) implements FormActionInterface, RequiresAnonymousInterface {
+            public function __construct(private readonly string $key)
+            {
+            }
+
+            public function getKey(): string
+            {
+                return $this->key;
+            }
+
+            public function handle(Form $form, array $submittedData): bool
+            {
+                return true;
+            }
+        };
+
+        $actionRegistry = $this->createStub(FormActionRegistry::class);
+        $actionRegistry->method('has')->willReturn(true);
+        $actionRegistry->method('get')->willReturn($action);
+
+        return $actionRegistry;
+    }
+
+    public function testFragmentRendersAlreadyAuthenticatedNoticeWhenActionRequiresAnonymousAndUserIsLoggedIn(): void
+    {
+        $repository = $this->createStub(FormRepository::class);
+        $repository->method('findOneBy')->willReturn((new Form())->setName('register')->setAction('register'));
+
+        $twig = $this->createMock(Environment::class);
+        $twig->expects($this->once())->method('render')
+            ->with('@c975LUi/components/Form/FormAlreadyAuthenticated.html.twig')
+            ->willReturn('<already-authenticated>');
+
+        $response = $this->createController(
+            $this->createSubmittedForm(false, false),
+            $repository,
+            actionRegistry: $this->createRequiresAnonymousActionRegistry('register'),
+            security: $this->createSecurity(true),
+            twig: $twig,
+        )->fragment('register', $this->createRequest());
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('<already-authenticated>', $response->getContent());
+    }
+
+    public function testSubmitRendersAlreadyAuthenticatedNoticeWithoutHandlingAnySubmissionWhenActionRequiresAnonymousAndUserIsLoggedIn(): void
+    {
+        $repository = $this->createStub(FormRepository::class);
+        $repository->method('findOneBy')->willReturn((new Form())->setName('register')->setAction('register'));
+
+        $twig = $this->createMock(Environment::class);
+        $twig->expects($this->once())->method('render')
+            ->with('@c975LUi/components/Form/FormAlreadyAuthenticated.html.twig')
+            ->willReturn('<already-authenticated>');
+
+        $response = $this->createController(
+            $this->createSubmittedForm(true, true),
+            $repository,
+            actionRegistry: $this->createRequiresAnonymousActionRegistry('register'),
+            security: $this->createSecurity(true),
+            twig: $twig,
+        )->submit('register', $this->createRequest('POST', 'http://localhost/page'));
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('<already-authenticated>', $response->getContent());
+    }
+
+    // An action not implementing RequiresAnonymousInterface (e.g. "contact") stays open to a logged-in visitor
+    public function testFragmentRendersTheFormFragmentEvenWhenAuthenticatedIfActionDoesNotRequireAnonymous(): void
+    {
+        $action = new class() implements FormActionInterface {
+            public function getKey(): string
+            {
+                return 'send_email';
+            }
+
+            public function handle(Form $form, array $submittedData): bool
+            {
+                return true;
+            }
+        };
+        $actionRegistry = $this->createStub(FormActionRegistry::class);
+        $actionRegistry->method('has')->willReturn(true);
+        $actionRegistry->method('get')->willReturn($action);
+
+        $response = $this->createController(
+            $this->createSubmittedForm(false, false),
+            actionRegistry: $actionRegistry,
+            security: $this->createSecurity(true),
+        )->fragment('contact', $this->createRequest());
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('<form></form>', $response->getContent());
+    }
+
+    public function testSubmitRendersDisabledNoticeWhenFormIsDisabledWithoutHandlingAnySubmission(): void
+    {
+        $repository = $this->createStub(FormRepository::class);
+        $repository->method('findOneBy')->willReturn((new Form())->setName('contact')->setAction('send_email')->setEnabled(false));
+        $actionRegistry = $this->createMock(FormActionRegistry::class);
+        $actionRegistry->expects($this->never())->method('get');
+
+        $response = $this->createController(
+            $this->createSubmittedForm(true, true),
+            $repository,
+            actionRegistry: $actionRegistry,
+        )->submit('contact', $this->createRequest('POST', 'http://localhost/page'));
+
+        $this->assertSame(200, $response->getStatusCode());
+    }
+
+    // Regression guard: a stale/unregistered action key (e.g. a typo, or a provider removed) must not break the GET display - only submitting it fails, same as before this capability existed
+    public function testFragmentRendersNormallyWhenActionKeyIsUnregisteredEvenWhenUserIsLoggedIn(): void
+    {
+        $actionRegistry = $this->createStub(FormActionRegistry::class);
+        $actionRegistry->method('has')->willReturn(false);
+
+        $response = $this->createController(
+            $this->createSubmittedForm(false, false),
+            actionRegistry: $actionRegistry,
+            security: $this->createSecurity(true),
+        )->fragment('contact', $this->createRequest());
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('<form></form>', $response->getContent());

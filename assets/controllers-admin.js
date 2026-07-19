@@ -6,6 +6,7 @@ import BlockCollectionController from './js/block-collection.js';
 import BlockDuplicateController from './js/block-duplicate.js';
 import BlockFocusController from './js/block-focus.js';
 import EaSortableController from './js/ea-sortable.js';
+import FormFieldTemplateController from './js/form-field-template.js';
 import './js/trix-editor.js';
 import './js/media-preview.js';
 import './js/icon-picker.js';
@@ -19,9 +20,10 @@ app.register('blockCollection', BlockCollectionController);
 app.register('blockDuplicate', BlockDuplicateController);
 app.register('blockFocus', BlockFocusController);
 app.register('eaSortable', EaSortableController);
+app.register('formFieldTemplate', FormFieldTemplateController);
 
-// Mount eaSortable, blockCollection, blockDuplicate and blockFocus on <body> automatically: EasyAdmin's layout never sets data-controller itself, so without this none of the drag-and-drop, new-block scroll/focus, duplicate-block or used-in-media-library scroll/focus behaviors would ever connect.
+// Mount eaSortable, blockCollection, blockDuplicate, blockFocus and formFieldTemplate on <body> automatically: EasyAdmin's layout never sets data-controller itself, so without this none of the drag-and-drop, new-block scroll/focus, duplicate-block, used-in-media-library scroll/focus or add-field-from-template behaviors would ever connect.
 document.body.setAttribute(
     'data-controller',
-    [document.body.dataset.controller, 'eaSortable', 'blockCollection', 'blockDuplicate', 'blockFocus'].filter(Boolean).join(' ')
+    [document.body.dataset.controller, 'eaSortable', 'blockCollection', 'blockDuplicate', 'blockFocus', 'formFieldTemplate'].filter(Boolean).join(' ')
 );

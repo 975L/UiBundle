@@ -42,6 +42,10 @@ class Form
     #[ORM\Column(options: ['default' => false])]
     private bool $restricted = false;
 
+    // Lets an admin pause a Form without unpublishing its Page or clearing "action" - checked by FormController before building/submitting, see FormDisabled.html.twig
+    #[ORM\Column(options: ['default' => true])]
+    private bool $enabled = true;
+
     #[ORM\OneToMany(mappedBy: 'form', targetEntity: FormField::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $fields;
@@ -125,6 +129,18 @@ class Form
     public function setRestricted(bool $restricted): self
     {
         $this->restricted = $restricted;
+
+        return $this;
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
+    }
+
+    public function setEnabled(bool $enabled): self
+    {
+        $this->enabled = $enabled;
 
         return $this;
     }

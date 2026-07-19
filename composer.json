@@ -21,6 +21,7 @@
         "c975l/config-bundle": "*",
         "doctrine/orm": "*",
         "easycorp/easyadmin-bundle": "*",
+        "egulias/email-validator": "*",
         "imagine/imagine": "*",
         "karser/karser-recaptcha3-bundle": "*",
         "sensiolabs/minify-bundle": "*",

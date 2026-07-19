@@ -9,6 +9,7 @@ namespace c975L\UiBundle\Twig;
 
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Registry\BlockCacheTagRegistry;
+use c975L\UiBundle\Registry\BlockEditUrlRegistry;
 use c975L\UiBundle\Registry\BlockRegistry;
 use c975L\UiBundle\Service\BlockCacheInvalidator;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -26,14 +27,22 @@ class BlockExtension extends AbstractExtension
         private Environment $twig,
         private TagAwareCacheInterface $cache,
         private RequestStack $requestStack,
-        private BlockCacheTagRegistry $cacheTagRegistry
+        private BlockCacheTagRegistry $cacheTagRegistry,
+        private BlockEditUrlRegistry $blockEditUrlRegistry
     ) {}
 
     public function getFunctions(): array
     {
         return [
             new TwigFunction('render_block', [$this, 'renderBlock'], ['is_safe' => ['html']]),
+            new TwigFunction('block_edit_urls', [$this, 'getBlockEditUrls']),
         ];
+    }
+
+    // Resolved once for the whole collection (not per block) to avoid a query per block - see BlockEditUrlRegistry
+    public function getBlockEditUrls(iterable $blocks): array
+    {
+        return $this->blockEditUrlRegistry->getEditUrls(is_array($blocks) ? $blocks : iterator_to_array($blocks));
     }
 
     public function renderBlock(Block $block): string

@@ -237,4 +237,56 @@ class EmailServiceTest extends TestCase
         $this->assertFalse($result);
         $this->assertSame('Missing email parameter(s)', $service->getLastError());
     }
+
+    // "html" (e.g. EmailTemplateRenderer output) is an alternative to "template" - see EmailSendRequest
+    public function testSendUsesRawHtmlBodyWhenHtmlGivenInsteadOfTemplate(): void
+    {
+        $mailer = $this->createRecordingMailer();
+        $service = $this->createService($mailer);
+
+        $request = new EmailSendRequest(
+            subject: 'Hello',
+            context: [],
+            html: '<p>Already rendered</p>',
+            from: 'from@example.com',
+            to: 'to@example.com',
+        );
+
+        $result = $service->send($request);
+
+        $this->assertTrue($result);
+        $this->assertSame('<p>Already rendered</p>', $mailer->sent[0]->getHtmlBody());
+    }
+
+    public function testSendReturnsFalseWhenNeitherTemplateNorHtmlGiven(): void
+    {
+        $service = $this->createService($this->createRecordingMailer());
+
+        $result = $service->send(new EmailSendRequest(subject: 'Hello', context: [], from: 'from@example.com', to: 'to@example.com'));
+
+        $this->assertFalse($result);
+        $this->assertSame('EmailSendRequest needs either "template" or "html"', $service->getLastError());
+    }
+
+    // The debug-preview path can't re-render via Twig when there's no template (see EmailService::send()) - it must
+    // use the html body directly instead
+    public function testSendStashesRawHtmlAsDebugPreviewWhenHtmlGivenInDebugMode(): void
+    {
+        $mailer = $this->createRecordingMailer();
+        $service = $this->createService($mailer, ['email-debug' => 'true'], isSuperAdmin: true);
+
+        $request = new EmailSendRequest(
+            subject: 'Hello',
+            context: [],
+            html: '<p>Already rendered</p>',
+            from: 'from@example.com',
+            to: 'to@example.com',
+        );
+
+        $result = $service->send($request);
+
+        $this->assertTrue($result);
+        $this->assertCount(0, $mailer->sent);
+        $this->assertStringContainsString('<p>Already rendered</p>', (string) $service->consumeDebugPreview());
+    }
 }

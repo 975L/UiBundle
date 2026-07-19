@@ -9,11 +9,24 @@
 
 namespace c975L\UiBundle\Form\Util;
 
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\FormInterface;
+
 // Symfony's by_reference:false adder/remover collection diffing is unreliable once nested dynamic sub-forms are involved (see BlockType/PageCrudController PRE_SUBMIT listeners): it can fail to detect that an item was removed when other items remain. This reconciles a Doctrine collection against a submitted collection-of-arrays form field by ID instead, removing whatever is no longer present.
 final class CollectionReconciler
 {
     public function __construct()
     {
+    }
+
+    // Unmapped "id" hidden field carrying a collection entry's own id, read back by pruneRemoved()/dropOrphaned() above to reconcile submitted entries against existing rows - shared by every entry FormType of a sortable collection (BlockType, FormFieldType, EmailBlockType). Must be added here, during PRE_SET_DATA, with "data" set directly: setting it via setData() after a static add() gets overwritten by the default mapper for unmapped fields, which falls back to the field's original (empty) "data" option.
+    public static function addIdField(FormInterface $form, ?int $id): void
+    {
+        $form->add('id', HiddenType::class, [
+            'mapped' => false,
+            'required' => false,
+            'data' => $id,
+        ]);
     }
 
     public static function pruneRemoved(iterable $existing, array $submittedEntries, callable $remove): void

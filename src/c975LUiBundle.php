@@ -10,6 +10,7 @@
 namespace c975L\UiBundle;
 
 use c975L\UiBundle\DependencyInjection\Compiler\BlockCacheTagProviderPass;
+use c975L\UiBundle\DependencyInjection\Compiler\BlockEditUrlProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\BlockFixtureProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\BlockRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\CollectionSourceProviderPass;
@@ -44,6 +45,7 @@ class c975LUiBundle extends AbstractBundle
         $container->addCompilerPass(new ScriptAdminRegistryPass());
         $container->addCompilerPass(new WhatsNewProviderPass());
         $container->addCompilerPass(new MediaUsageProviderPass());
+        $container->addCompilerPass(new BlockEditUrlProviderPass());
         $container->addCompilerPass(new FormThemeRegistryPass());
         $container->addCompilerPass(new FormActionProviderPass());
         $container->addCompilerPass(new RecaptchaPass());

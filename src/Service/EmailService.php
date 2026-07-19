@@ -71,7 +71,13 @@ class EmailService
             $email->replyTo($replyTo);
         }
 
-        $email->htmlTemplate($request->template);
+        if (null !== $request->html) {
+            $email->html($request->html);
+        } elseif (null !== $request->template) {
+            $email->htmlTemplate($request->template);
+        } else {
+            throw new \Exception('EmailSendRequest needs either "template" or "html"');
+        }
         $email->context($request->context);
 
         $emails = [$email];
@@ -94,7 +100,10 @@ class EmailService
         try {
             foreach ($this->buildEmails($request) as $email) {
                 if ($this->security->isGranted('ROLE_SUPER_ADMIN') && $this->configService->getBool($this->configService->get('email-debug'))) {
-                    $renderedEmail = $this->twig->render($email->getHtmlTemplate(), $email->getContext());
+                    // A request built with "html" (see EmailSendRequest) has no template to re-render - its body is already the rendered result
+                    $renderedEmail = null !== $email->getHtmlTemplate()
+                        ? $this->twig->render($email->getHtmlTemplate(), $email->getContext())
+                        : (string) $email->getHtmlBody();
                     $this->debugPreviews[] = $this->wrapDebugEmail($email, $renderedEmail);
                     continue;
                 }

@@ -11,6 +11,8 @@ namespace c975L\UiBundle\Tests\Form\Util;
 
 use c975L\UiBundle\Form\Util\CollectionReconciler;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\FormInterface;
 
 class CollectionReconcilerTest extends TestCase
 {
@@ -137,5 +139,39 @@ class CollectionReconcilerTest extends TestCase
 
         $this->assertSame([], $result);
         $this->assertFalse($called);
+    }
+
+    // Shared by every entry FormType of a sortable collection (BlockType, FormFieldType, EmailBlockType)
+    public function testAddIdFieldAddsAnUnmappedHiddenFieldCarryingTheGivenId(): void
+    {
+        $added = [];
+        $form = $this->createStub(FormInterface::class);
+        $form->method('add')->willReturnCallback(function (string $name, ?string $type = null, array $options = []) use (&$added, $form) {
+            $added[$name] = ['type' => $type, 'options' => $options];
+
+            return $form;
+        });
+
+        CollectionReconciler::addIdField($form, 42);
+
+        $this->assertSame(HiddenType::class, $added['id']['type']);
+        $this->assertFalse($added['id']['options']['mapped']);
+        $this->assertFalse($added['id']['options']['required']);
+        $this->assertSame(42, $added['id']['options']['data']);
+    }
+
+    public function testAddIdFieldCarriesNullWhenNoIdIsGiven(): void
+    {
+        $added = [];
+        $form = $this->createStub(FormInterface::class);
+        $form->method('add')->willReturnCallback(function (string $name, ?string $type = null, array $options = []) use (&$added, $form) {
+            $added[$name] = ['type' => $type, 'options' => $options];
+
+            return $form;
+        });
+
+        CollectionReconciler::addIdField($form, null);
+
+        $this->assertNull($added['id']['options']['data']);
     }
 }

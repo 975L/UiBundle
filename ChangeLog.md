@@ -1,6 +1,43 @@
 # ChangeLog
 
+## v1.9
+
+- Fixed `FormSubmissionType`'s password fields missing `autocomplete="new-password"`, letting browsers autofill an existing saved password onto e.g. the registration form (19/07/2026)
+- Fixed `FormController::submit()` running `DnsEmail`'s DNS/MX lookup before the honeypot/rate-limiter check - `FormBotProtection::isSuspicious()` now reads the honeypot straight off the request, before `handleRequest()` (19/07/2026)
+- Added `FormField::$url`, rendered as a link right after the field's label (e.g. a checkbox's "J'accepte les CGU (lire)") - see UPGRADE.md [DB-Migration] (19/07/2026)
+- Added `Contract\RequiresAnonymousInterface`, letting a `FormActionInterface` provider hide its Form from an already-authenticated visitor behind an "already logged in" notice (19/07/2026)
+- Added `Form::$enabled`, letting an admin pause a Form without unpublishing its Page - see UPGRADE.md [BC-Break] (19/07/2026)
+- Added an "Edit" hover button on rendered blocks for `ROLE_EDITOR` users (19/07/2026)
+- Added `Contract\BlockEditUrlProviderInterface`/`Registry\BlockEditUrlRegistry`, resolving a Block's edit URL across bundles (19/07/2026)
+- Added `password`/`password_repeated`/`url`/`tel`/`number`/`date` field types to Forms (19/07/2026)
+- Added `Validator\Constraints\DnsEmail`, checking a Form's email fields resolve to a real domain - see UPGRADE.md [BC-Break] (19/07/2026)
+- `FormSubmissionType` now validates email fields' format too (19/07/2026)
+- Fixed a required checkbox silently accepting an unchecked box (19/07/2026)
+- Fixed `FormFieldNamer` renaming a restricted field's stable key on relabel (19/07/2026)
+- Added `Entity/EmailTemplate`/`EmailBlock` and `Service/EmailTemplateRenderer`, an email-safe block-based email builder (19/07/2026)
+- Added `Controller/Management/EmailTemplateCrudController` (19/07/2026)
+- Added `EmailSendRequest::$html`/`EmailService` support for pre-rendered HTML bodies (19/07/2026)
+- Added `SendEmailFormAction`'s `emailTemplate` config key (19/07/2026)
+- Added `EmailTemplateRenderer::renderBody()`/`email_template_body()`, embedding an EmailTemplate in an app's own layout (19/07/2026)
+- `EmailTemplateRenderer` resolves relative `TYPE_IMAGE` urls against `site-url` (19/07/2026)
+- Added `Entity/FormFieldTemplate`/`Controller/Management/FormFieldTemplateCrudController`, a reusable field catalog (19/07/2026)
+- Added `c975l:ui:form-field-template:import-defaults` command (19/07/2026)
+- Fixed `FormFieldTemplateCrudController`'s "type" select showing untranslated keys (19/07/2026)
+- Added `Twig\ConfigLinkExtension`'s `config_edit_url()` and a GDPR note on Form/EmailTemplate CRUD pages (19/07/2026)
+- Added a toolbar link from `FormCrudController` to the FormFieldTemplate catalog (19/07/2026)
+- Fixed the field-template picker showing a template's internal key instead of its label (19/07/2026)
+- Fixed `EmailTemplateRenderer` mishandling protocol-relative image urls (19/07/2026)
+- Added a "(disabled)" suffix on a paused Form's label in the `form` block picker (19/07/2026)
+- Fixed a hardcoded French placeholder in the field-template picker, now translated (19/07/2026)
+- Suppressed `ConfigLinkExtension`/`AiAssistantController`'s duplicated config-edit-url logic, now shared via `Service/ConfigEditUrlResolver` (19/07/2026)
+- Suppressed `BlockType`/`FormFieldType`/`EmailBlockType`'s duplicated id-reconciliation listener, now shared via `CollectionReconciler::addIdField()` (19/07/2026)
+- Added `FormField::$url`, an optional link appended to a field's label (e.g. a checkbox's "Terms of use") (19/07/2026) [Needs db update]
+
 ## v1.8.1
+
+- Merged branch commit/push problem (19/07/2026)
+
+## v1.8.
 
 - Added `Form`/`FormField` entities (`site_form`/`site_form_field` tables) and `FormFieldType`, a shared sortable field-collection system (18/07/2026)
 - Added `Form::$action` and `FormActionInterface`/`FormActionRegistry` (18/07/2026)

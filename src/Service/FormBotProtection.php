@@ -10,7 +10,6 @@ namespace c975L\UiBundle\Service;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 // Shared honeypot + submission-timing anti-bot check, used by every public form that needs it (contact, registration, reset-password request...) so the heuristic lives in one place instead of being copy-pasted into each Form/Controller pair. Merges what used to be two separate implementations (c975L\SiteBundle\Service\FormBotProtection - fixed field name - and c975L\ContactFormBundle\Service\ContactFormService's own rotating honeypot) into one, keeping the rotating behavior.
@@ -109,14 +108,14 @@ class FormBotProtection
         }
     }
 
-    // Bot detection: honeypot field filled, or form submitted faster than a human could fill it (site-form-delay, in seconds). Call once per submission, after startTimer() populated the same $sessionKey and addHoneypotField() added the honeypot field to $form - the caller should silently redirect on true, with no hint to the bot
-    public function isSuspicious(Request $request, FormInterface $form, string $sessionKey): bool
+    // Bot detection: honeypot field filled, or form submitted faster than a human could fill it (site-form-delay, in seconds). Reads the honeypot straight off the raw request instead of a submitted/validated FormInterface, so the caller can check this before running the Symfony form through handleRequest() - and skip that validation (DnsEmail's DNS/MX lookup included) entirely for a suspicious submission. Call once per submission, after startTimer() populated the same $sessionKey and addHoneypotField() added the honeypot field to the form built under $formName - the caller should silently redirect on true, with no hint to the bot
+    public function isSuspicious(Request $request, string $formName, string $sessionKey): bool
     {
         $session = $request->getSession();
         $startedAt = (int) $session->get($sessionKey, 0);
         $session->remove($sessionKey);
 
-        $honeypotValue = $form->get($this->honeypotFieldName($request))->getData();
+        $honeypotValue = $request->request->all($formName)[$this->honeypotFieldName($request)] ?? null;
         $session->remove(self::SESSION_HONEYPOT_FIELD);
         $session->remove(self::SESSION_HONEYPOT_LABEL);
 

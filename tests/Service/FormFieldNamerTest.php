@@ -50,4 +50,38 @@ class FormFieldNamerTest extends TestCase
 
         $this->assertSame(['email', 'email-2', 'email-3'], $this->names($form));
     }
+
+    // A restricted field's name is a stable key other code looks it up by (e.g. SendEmailFormAction's "senderEmailField" config, or SiteBundle's register/reset-password-request forms reading "email"/"plainPassword" by name) - relabelling it (allowed) must not silently rename it
+    public function testNameFieldsPreservesAnAlreadyNamedRestrictedField(): void
+    {
+        $form = (new Form())
+            ->addField((new FormField())->setLabel('Adresse email')->setName('email')->setRestricted(true));
+
+        $this->createNamer()->nameFields($form);
+
+        $this->assertSame(['email'], $this->names($form));
+    }
+
+    // A freshly seeded restricted field (no name yet) still gets one derived from its label, same as any ordinary field
+    public function testNameFieldsNamesARestrictedFieldWithNoNameYet(): void
+    {
+        $form = (new Form())
+            ->addField((new FormField())->setLabel('Email')->setRestricted(true));
+
+        $this->createNamer()->nameFields($form);
+
+        $this->assertSame(['email'], $this->names($form));
+    }
+
+    // A restricted field's preserved name still counts toward collision avoidance for a regular field added alongside it
+    public function testNameFieldsAvoidsCollidingWithARestrictedFieldsName(): void
+    {
+        $form = (new Form())
+            ->addField((new FormField())->setLabel('Email')->setName('email')->setRestricted(true))
+            ->addField((new FormField())->setLabel('Email'));
+
+        $this->createNamer()->nameFields($form);
+
+        $this->assertSame(['email', 'email-2'], $this->names($form));
+    }
 }

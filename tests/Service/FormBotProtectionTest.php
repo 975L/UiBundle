@@ -13,7 +13,6 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\UiBundle\Service\FormBotProtection;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
@@ -29,15 +28,11 @@ class FormBotProtectionTest extends TestCase
         return $request;
     }
 
-    private function formWithHoneypotField(string $fieldName, string $value): FormInterface
+    // Simulates the honeypot's raw submitted value under $formName, the way isSuspicious() now reads it directly
+    // off the request instead of an already-submitted FormInterface
+    private function setHoneypotValue(Request $request, string $formName, string $fieldName, string $value): void
     {
-        $field = $this->createStub(FormInterface::class);
-        $field->method('getData')->willReturn($value);
-
-        $form = $this->createStub(FormInterface::class);
-        $form->method('get')->willReturnMap([[$fieldName, $field]]);
-
-        return $form;
+        $request->request->set($formName, [$fieldName => $value]);
     }
 
     public function testHoneypotFieldNameIsStableAcrossCalls(): void
@@ -130,14 +125,11 @@ class FormBotProtectionTest extends TestCase
         $request = $this->requestWithSession();
         $request->getSession()->set('test_started_at', time() - 60);
         $request->getSession()->set('ui_honeypot_field', 'website');
+        $this->setHoneypotValue($request, 'test_form', 'website', 'https://spam.example');
 
         $botProtection = new FormBotProtection($configService);
 
-        $this->assertTrue($botProtection->isSuspicious(
-            $request,
-            $this->formWithHoneypotField('website', 'https://spam.example'),
-            'test_started_at'
-        ));
+        $this->assertTrue($botProtection->isSuspicious($request, 'test_form', 'test_started_at'));
     }
 
     public function testIsSuspiciousWhenSubmittedFasterThanDelay(): void
@@ -148,14 +140,11 @@ class FormBotProtectionTest extends TestCase
         $request = $this->requestWithSession();
         $request->getSession()->set('test_started_at', time());
         $request->getSession()->set('ui_honeypot_field', 'website');
+        $this->setHoneypotValue($request, 'test_form', 'website', '');
 
         $botProtection = new FormBotProtection($configService);
 
-        $this->assertTrue($botProtection->isSuspicious(
-            $request,
-            $this->formWithHoneypotField('website', ''),
-            'test_started_at'
-        ));
+        $this->assertTrue($botProtection->isSuspicious($request, 'test_form', 'test_started_at'));
     }
 
     public function testIsSuspiciousFalseForLegitimateSubmission(): void
@@ -166,14 +155,11 @@ class FormBotProtectionTest extends TestCase
         $request = $this->requestWithSession();
         $request->getSession()->set('test_started_at', time() - 60);
         $request->getSession()->set('ui_honeypot_field', 'website');
+        $this->setHoneypotValue($request, 'test_form', 'website', '');
 
         $botProtection = new FormBotProtection($configService);
 
-        $this->assertFalse($botProtection->isSuspicious(
-            $request,
-            $this->formWithHoneypotField('website', ''),
-            'test_started_at'
-        ));
+        $this->assertFalse($botProtection->isSuspicious($request, 'test_form', 'test_started_at'));
     }
 
     // "site-form-delay" isn't seeded when c975l/config-bundle hasn't loaded it yet - falls back to 7s
@@ -185,14 +171,11 @@ class FormBotProtectionTest extends TestCase
         $request = $this->requestWithSession();
         $request->getSession()->set('test_started_at', time());
         $request->getSession()->set('ui_honeypot_field', 'website');
+        $this->setHoneypotValue($request, 'test_form', 'website', '');
 
         $botProtection = new FormBotProtection($configService);
 
-        $this->assertTrue($botProtection->isSuspicious(
-            $request,
-            $this->formWithHoneypotField('website', ''),
-            'test_started_at'
-        ));
+        $this->assertTrue($botProtection->isSuspicious($request, 'test_form', 'test_started_at'));
     }
 
     public function testIsSuspiciousRemovesTimestampAndHoneypotFromSession(): void
@@ -204,9 +187,10 @@ class FormBotProtectionTest extends TestCase
         $request->getSession()->set('test_started_at', time() - 60);
         $request->getSession()->set('ui_honeypot_field', 'website');
         $request->getSession()->set('ui_honeypot_label', 'Website');
+        $this->setHoneypotValue($request, 'test_form', 'website', '');
 
         $botProtection = new FormBotProtection($configService);
-        $botProtection->isSuspicious($request, $this->formWithHoneypotField('website', ''), 'test_started_at');
+        $botProtection->isSuspicious($request, 'test_form', 'test_started_at');
 
         $this->assertFalse($request->getSession()->has('test_started_at'));
         $this->assertFalse($request->getSession()->has('ui_honeypot_field'));

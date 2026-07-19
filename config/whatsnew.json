@@ -31,6 +31,46 @@
                 "en": "You'll now see a warning in the back office if an AI feature stops working, e.g. an expired key",
                 "fr": "Un avertissement s'affiche désormais dans le back office si une fonctionnalité IA cesse de fonctionner, par ex. une clé expirée",
                 "es": "Ahora verá una advertencia en el back office si una función de IA deja de funcionar, por ejemplo, una clave caducada"
+            },
+            {
+                "en": "You can now design your own email templates in the back office, block by block",
+                "fr": "Vous pouvez désormais concevoir vos propres modèles d'e-mail dans le back office, bloc par bloc",
+                "es": "Ahora puede diseñar sus propias plantillas de correo electrónico en el back office, bloque a bloque"
+            },
+            {
+                "en": "When building a form, you can now pick ready-made fields (email, phone, message...) instead of creating them from scratch",
+                "fr": "Lors de la création d'un formulaire, vous pouvez désormais choisir des champs prêts à l'emploi (e-mail, téléphone, message...) au lieu de les créer de zéro",
+                "es": "Al crear un formulario, ahora puede elegir campos ya preparados (correo electrónico, teléfono, mensaje...) en lugar de crearlos desde cero"
+            },
+            {
+                "en": "You can now temporarily disable a form without having to remove it from its page",
+                "fr": "Vous pouvez désormais désactiver temporairement un formulaire sans avoir à le retirer de sa page",
+                "es": "Ahora puede desactivar temporalmente un formulario sin tener que quitarlo de su página"
+            },
+            {
+                "en": "Forms can now include new field types: password, phone number, date, website address and number",
+                "fr": "Les formulaires peuvent désormais inclure de nouveaux types de champs : mot de passe, téléphone, date, adresse web et nombre",
+                "es": "Los formularios ahora pueden incluir nuevos tipos de campo: contraseña, teléfono, fecha, dirección web y número"
+            },
+            {
+                "en": "Editors now see an \"Edit\" button appear over a block, to jump straight to it",
+                "fr": "Les éditeurs voient désormais apparaître un bouton « Modifier » au survol d'un bloc, pour y accéder directement",
+                "es": "Los editores ahora ven aparecer un botón \"Editar\" sobre un bloque, para acceder directamente a él"
+            },
+            {
+                "en": "Fixed a required checkbox in a form silently accepting submission when left unchecked",
+                "fr": "Correction d'une case à cocher obligatoire d'un formulaire qui acceptait l'envoi même non cochée",
+                "es": "Corregido: una casilla obligatoria de un formulario aceptaba el envío incluso sin marcar"
+            },
+            {
+                "en": "Email addresses submitted through a form are now checked to make sure the domain really exists",
+                "fr": "Les adresses e-mail envoyées via un formulaire sont désormais vérifiées pour s'assurer que le domaine existe réellement",
+                "es": "Las direcciones de correo enviadas a través de un formulario ahora se verifican para confirmar que el dominio existe realmente"
+            },
+            {
+                "en": "You can now add a clickable link next to a form field's label, e.g. pointing to your terms of use",
+                "fr": "Vous pouvez désormais ajouter un lien cliquable à côté du libellé d'un champ de formulaire, par ex. vers vos conditions d'utilisation",
+                "es": "Ahora puede añadir un enlace en el que se puede hacer clic junto a la etiqueta de un campo de formulario, por ejemplo hacia sus condiciones de uso"
             }
         ]
     },

@@ -1,0 +1,82 @@
+/*
+ * (c) 2026: 975L <contact@975l.com>
+ * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
+// Same reasoning as .block-animation (see _animations-media.scss): stays transparent to the
+// parent's own grid/flex layout, only exists to host data-block-id/data-block-edit-url.
+.block-editable {
+    display: contents;
+}
+
+.block-edit-overlay-btn {
+    position: fixed;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background-color: var(--primary, #000);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    // Right-aligns onto the block's own right edge (see block-edit-overlay.js position()) regardless
+    // of the button's own width, which varies with its translated label.
+    transform: translateX(-100%);
+}
+
+.block-edit-overlay-btn.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+// SiteBundle's link styles (_links.scss: "a:hover, a:visited:hover { color: var(--link-color); ... }")
+// outrank a bare ".block-edit-overlay-btn" on specificity (element+pseudo-class beats a single class) -
+// repeated here as ".block-edit-overlay-btn:hover"/":visited" (class+pseudo-class) to stay white/unstyled.
+.block-edit-overlay-btn,
+.block-edit-overlay-btn:hover,
+.block-edit-overlay-btn:visited,
+.block-edit-overlay-btn:visited:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+.block-edit-overlay-btn:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+// SiteBundle's typography reset (`* { color: var(--text); }`) sets color on every element,
+// including the icon/label below - plain CSS inheritance from .block-edit-overlay-btn loses to
+// that explicit rule, so it's overridden back here for every descendant instead.
+.block-edit-overlay-btn * {
+    color: inherit;
+}
+
+.block-edit-overlay-btn svg {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .block-edit-overlay-btn {
+        transition: none;
+    }
+}
+
+@media print {
+    .block-edit-overlay-btn {
+        display: none;
+    }
+}

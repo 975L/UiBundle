@@ -1,0 +1,43 @@
+<?php
+/*
+ * (c) 2026: 975L <contact@975l.com>
+ * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
+namespace c975L\UiBundle\Twig;
+
+use c975L\UiBundle\Repository\EmailTemplateRepository;
+use c975L\UiBundle\Service\EmailTemplateRenderer;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
+
+// Lets an app/bundle's own email layout (e.g. SiteBundle's fullLayout.html.twig - Menu-driven header/footer,
+// site-wide emails.min.css/inline_css) embed a named EmailTemplate's compiled body inline, instead of hand-writing
+// markup in a scaffold-copied Twig template - see EmailTemplateRenderer::renderBody()
+class EmailTemplateExtension extends AbstractExtension
+{
+    public function __construct(
+        private readonly EmailTemplateRepository $emailTemplateRepository,
+        private readonly EmailTemplateRenderer $emailTemplateRenderer,
+    ) {
+    }
+
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction('email_template_body', [$this, 'renderEmailTemplateBody'], ['is_safe' => ['html']]),
+        ];
+    }
+
+    // Silently renders nothing when "$name" isn't found - a missing/renamed EmailTemplate must never break the
+    // email it's embedded into (account validation, password reset...), only leave that section blank
+    public function renderEmailTemplateBody(string $name, array $variables = []): string
+    {
+        $emailTemplate = $this->emailTemplateRepository->findOneBy(['name' => $name]);
+
+        return null !== $emailTemplate ? $this->emailTemplateRenderer->renderBody($emailTemplate, $variables) : '';
+    }
+}

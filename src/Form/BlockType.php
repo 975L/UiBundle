@@ -66,12 +66,7 @@ class BlockType extends AbstractType
             function (PreSetDataEvent $event): void {
                 $block = $event->getData();
 
-                // Unmapped, only used server-side to reconcile submitted entries against existing rows by ID (see PageCrudController::createEditFormBuilder) - positional/identity diffing is unreliable once nested dynamic sub-forms are involved. Must be added here with "data" set directly: setting it via setData() after a static add() gets overwritten by the default mapper for unmapped fields, which falls back to the field's original (empty) "data" option.
-                $event->getForm()->add('id', HiddenType::class, [
-                    'mapped' => false,
-                    'required' => false,
-                    'data' => $block instanceof Block ? $block->getId() : null,
-                ]);
+                CollectionReconciler::addIdField($event->getForm(), $block instanceof Block ? $block->getId() : null);
 
                 $kind = null;
                 if (null !== $block) {

@@ -31,9 +31,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+use function Symfony\Component\Translation\t;
 
 // Generic "manage any Form" admin screen - unlike a bundle owning its own dedicated CrudController scoped to one hardcoded name (e.g. ContactFormBundle's former ContactFormCrudController), this one lists/creates/edits every c975L\UiBundle\Entity\Form. A seeded, restricted Form (see Form::$restricted) keeps its "name" locked and can't be deleted from here - same spirit as FormField::$restricted for individual fields
 class FormCrudController extends AbstractCrudController
@@ -43,6 +47,8 @@ class FormCrudController extends AbstractCrudController
         private readonly FormFieldNamer $formFieldNamer,
         private readonly FormActionRegistry $actionRegistry,
         private readonly AdminContextProvider $adminContextProvider,
+        private readonly AdminUrlGeneratorInterface $adminUrlGenerator,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -114,25 +120,40 @@ class FormCrudController extends AbstractCrudController
             IdField::new('id')
                 ->hideOnForm(),
             TextField::new('name')
+                ->setLabel(t('label.name', [], 'ui'))
                 ->setFormTypeOption('disabled', $isRestricted),
             ChoiceField::new('action')
+                ->setLabel(t('label.action', [], 'ui'))
                 ->setChoices(array_combine($actionKeys, $actionKeys))
                 ->setFormTypeOption('required', false)
-                ->setHelp('label.action_help'),
+                ->setHelp(t('label.action_help', [], 'ui')),
             TextareaField::new('actionConfigJson')
-                ->setLabel('label.action_config')
+                ->setLabel(t('label.action_config', [], 'ui'))
                 ->setFormTypeOption('required', false)
-                ->setHelp('label.action_config_help')
+                ->setHelp(t('label.action_config_help', [], 'ui'))
                 ->hideOnIndex(),
+            BooleanField::new('enabled')
+                ->setLabel(t('label.form_enabled', [], 'ui'))
+                ->renderAsSwitch(true),
             BooleanField::new('restricted')
+                ->setLabel(t('label.restricted', [], 'ui'))
                 ->setFormTypeOption('disabled', true)
                 ->hideOnIndex(),
             CollectionField::new('fields')
-                ->setLabel('label.fields')
+                ->setLabel(t('label.fields', [], 'ui'))
                 ->setEntryType(FormFieldType::class)
                 ->allowAdd()
                 ->allowDelete()
                 ->setFormTypeOption('by_reference', false)
+                // Read by assets/js/form-field-template.js to fetch FormFieldTemplateCrudController::catalog() and offer a "pick a ready-made field" select next to this collection's own "+ Add" button - a plain form type option, not "attr", since only "row_attr" lands on the collection's own wrapping div (see EasyAdminBundle's collection_row Twig block), not the widget itself. The picker's own placeholder text is translated server-side here too, rather than hardcoded in JS - same reasoning as Blocks.html.twig's "data-edit-label"
+                ->setFormTypeOption('row_attr', [
+                    'data-form-field-template-catalog-url' => $this->adminUrlGenerator
+                        ->unsetAll()
+                        ->setController(FormFieldTemplateCrudController::class)
+                        ->setAction('catalog')
+                        ->generateUrl(),
+                    'data-form-field-template-picker-placeholder' => $this->translator->trans('label.form_field_template_picker_placeholder', [], 'ui'),
+                ])
                 ->hideOnIndex(),
         ];
     }
@@ -141,19 +162,23 @@ class FormCrudController extends AbstractCrudController
     {
         $role = $this->configService->get('site-role-admin');
 
+        // A plain toolbar button to FormFieldTemplateCrudController's own index, not a sidebar menu entry - same button as EmailTemplateCrudController's, this is where an admin actually uses the catalog (see the "fields" CollectionField above) so it belongs here too
+        $formFieldTemplatesAction = Action::new('formFieldTemplates', t('label.form_field_templates', [], 'ui'), 'fas fa-list-check')
+            ->linkToUrl($this->adminUrlGenerator->unsetAll()->setController(FormFieldTemplateCrudController::class)->generateUrl())
+            ->createAsGlobalAction();
+
         return $actions
-            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_INDEX, $formFieldTemplatesAction)
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => $action->setLabel(false)->setIcon('fas fa-pencil'))
             ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => $action
                 ->setLabel(false)
                 ->setIcon('fas fa-trash')
                 ->displayIf(static fn (Form $form): bool => !$form->isRestricted()))
-            ->update(Crud::PAGE_INDEX, Action::DETAIL, fn (Action $action) => $action->setLabel(false)->setIcon('fas fa-eye'))
             ->setPermission(Action::INDEX, $role)
             ->setPermission(Action::NEW, $role)
             ->setPermission(Action::EDIT, $role)
             ->setPermission(Action::DELETE, $role)
-            ->setPermission(Action::DETAIL, $role)
+            ->setPermission('formFieldTemplates', $role)
         ;
     }
 
@@ -162,6 +187,7 @@ class FormCrudController extends AbstractCrudController
         return $crud
             ->showEntityActionsInlined()
             ->setEntityPermission($this->configService->get('site-role-admin'))
+            ->overrideTemplate('crud/index', '@c975LUi/management/form_crud_index.html.twig')
         ;
     }
 }
