@@ -68,6 +68,7 @@ $page-section-bp-lg: 1025px;
 .section-btn--primary:hover {
     background: var(--button-background-primary-dark);
     color: var(--button-color);
+    text-decoration: none;
 }
 
 .section-btn--ghost {
@@ -77,10 +78,23 @@ $page-section-bp-lg: 1025px;
     padding-bottom: 3px;
 }
 
+// Without this, SiteBundle's global "a:hover" (sass/_links.scss) wins on hover and switches
+// the text to --link-color with an underline, since .section-btn--ghost has no :hover of its own
+.section-btn--ghost:hover {
+    color: var(--text);
+    text-decoration: none;
+}
+
 .section-btn--dark {
     background: var(--text);
     color: var(--button-color);
     padding: 11px 20px;
+}
+
+// Same reason as .section-btn--ghost:hover above - SiteBundle's global "a:hover" would otherwise win
+.section-btn--dark:hover {
+    color: var(--button-color);
+    text-decoration: none;
 }
 
 /* ---- hero ---- */
@@ -116,6 +130,12 @@ $page-section-bp-lg: 1025px;
     line-height: 1.03;
     margin: 0 0 24px;
     color: var(--text);
+}
+
+// TrixEditor always wraps its output in a <div>, even for a single line - unwrap it from the
+// box model so the div never needs its own styling to match the h1 (mirrors .block-editable)
+.hero__title > div {
+    display: contents;
 }
 
 .hero__title em {

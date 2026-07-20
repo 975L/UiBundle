@@ -158,6 +158,18 @@ class FormSubmissionTypeTest extends TestCase
         $this->assertSame('new-password', $added['secret']['options']['attr']['autocomplete']);
     }
 
+    // A textarea's default HTML "rows" is too short to be usable for a multi-line message field
+    public function testTextareaFieldGetsRowsAttribute(): void
+    {
+        $added = $this->buildAddedFields([
+            $this->buildField('message', FormField::TYPE_TEXTAREA, false),
+            $this->buildField('name', FormField::TYPE_TEXT, false),
+        ]);
+
+        $this->assertSame(10, $added['message']['options']['attr']['rows']);
+        $this->assertArrayNotHasKey('rows', $added['name']['options']['attr']);
+    }
+
     public function testPasswordRepeatedFieldGetsNewPasswordAutocompleteOnBothSubFields(): void
     {
         $added = $this->buildAddedFields([$this->buildField('plainPassword', FormField::TYPE_PASSWORD_REPEATED, true)]);

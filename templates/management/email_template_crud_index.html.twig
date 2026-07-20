@@ -6,6 +6,10 @@
         '%link_open%': '<a href="' ~ config_edit_url('site-form-gdpr') ~ '">',
         '%link_close%': '</a>',
     }, 'ui')|raw }}</p>
+    <p>{{ 'label.info_email_debug'|trans({
+        '%link_open%': '<a href="' ~ config_edit_url('email-debug') ~ '">',
+        '%link_close%': '</a>',
+    }, 'ui')|raw }}</p>
 
     {{ parent() }}
 {% endblock main %}

@@ -1,5 +1,21 @@
 # ChangeLog
 
+## v1.9.2
+
+- Constrained `easycorp/easyadmin-bundle` composer requirement to `^5.1` (20/07/2026)
+- Fixed `email-debug` config key missing its seed row, its debug-preview toggle had no way to be enabled from the Config UI (20/07/2026)
+- Added `Contract\EmailLayoutProviderInterface`/`Registry\EmailLayoutRegistry`, letting a bundle wrap `EmailTemplateRenderer::render()`'s output in its own branded email layout (20/07/2026)
+- Reworked email block templates to use CSS classes instead of hardcoded styling, so a registered `EmailLayoutProviderInterface` can apply real theme colors (20/07/2026)
+- Fixed email `<table>` blocks inheriting unwanted spacing from a wrapping layout's own generic `table`/`td` CSS rules (20/07/2026)
+- Added `DependencyInjection/Compiler/CspListenerPass`, fixing `FormSubmissionType`'s CSP nonce autowiring to null when `nelmio/security-bundle` is registered (20/07/2026)
+- Added a "* Required field" note under a Form's submit button when it has a required field (20/07/2026)
+- Fixed `.section-btn--primary`/`.section-btn--ghost`/`.section-btn--dark` hover state losing to the site's global link-hover rule (20/07/2026)
+- Fixed a Trix-wrapped `<div>` breaking `hero__title`'s box model (20/07/2026)
+- Removed sample placeholder text from `FormFieldTemplate` import defaults (20/07/2026)
+- Added a 10-row default height to `textarea` Form fields (20/07/2026)
+- Added real icon files to the `section_cards` block gallery fixture (20/07/2026)
+- Trimmed several EN/ES/FR translation strings for brevity (20/07/2026)
+
 ## v1.9.1
 
 - Fixed `FormSubmissionType`'s `password_repeated` fields only enforcing `NotBlank`, letting a Form (e.g. registration) accept an arbitrarily weak password - now also enforces `Length`/`PasswordStrength`/`NotCompromisedPassword`, same policy as `ChangePasswordFormType` (19/07/2026)

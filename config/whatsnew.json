@@ -1,5 +1,45 @@
 [
     {
+        "date": "2026-07-20",
+        "description": [
+            {
+                "en": "Admins can now enable an email debug mode to preview emails instead of sending them for real",
+                "fr": "Les administrateurs peuvent désormais activer un mode débogage email pour prévisualiser les e-mails au lieu de les envoyer réellement",
+                "es": "Los administradores ahora pueden activar un modo de depuración de correo para previsualizar los correos en lugar de enviarlos de verdad"
+            },
+            {
+                "en": "On sites with a branded email design, previews now show that same design instead of a plain layout",
+                "fr": "Sur les sites avec un habillage e-mail personnalisé, les aperçus affichent désormais ce même habillage au lieu d'une mise en page basique",
+                "es": "En los sitios con un diseño de correo personalizado, las vistas previas ahora muestran ese mismo diseño en lugar de un formato básico"
+            },
+            {
+                "en": "Fixed the anti-spam check sometimes blocking form submission on sites with a strict security policy",
+                "fr": "Correction de la vérification anti-spam qui pouvait bloquer l'envoi d'un formulaire sur les sites à politique de sécurité stricte",
+                "es": "Corregido: la verificación antispam podía bloquear el envío de un formulario en sitios con una política de seguridad estricta"
+            },
+            {
+                "en": "Forms now show a note indicating which fields are required",
+                "fr": "Les formulaires affichent désormais une note indiquant les champs obligatoires",
+                "es": "Los formularios ahora muestran una nota que indica qué campos son obligatorios"
+            },
+            {
+                "en": "Fixed some page buttons briefly changing style when hovered",
+                "fr": "Correction de certains boutons de page qui changeaient brièvement de style au survol",
+                "es": "Corregido: algunos botones de página cambiaban brevemente de estilo al pasar el cursor"
+            },
+            {
+                "en": "Fixed the header banner title sometimes displaying with the wrong size",
+                "fr": "Correction du titre de la bannière d'en-tête qui s'affichait parfois avec une mauvaise taille",
+                "es": "Corregido: el título del banner de cabecera a veces se mostraba con un tamaño incorrecto"
+            },
+            {
+                "en": "Multi-line text fields in forms are now taller and easier to fill in",
+                "fr": "Les champs de texte multiligne des formulaires sont désormais plus grands et plus faciles à remplir",
+                "es": "Los campos de texto multilínea de los formularios ahora son más altos y más fáciles de completar"
+            }
+        ]
+    },
+    {
         "date": "2026-07-19",
         "description": [
             {

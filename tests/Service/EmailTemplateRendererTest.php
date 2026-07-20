@@ -12,6 +12,7 @@ namespace c975L\UiBundle\Tests\Service;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\UiBundle\Entity\EmailBlock;
 use c975L\UiBundle\Entity\EmailTemplate;
+use c975L\UiBundle\Registry\EmailLayoutRegistry;
 use c975L\UiBundle\Service\EmailTemplateRenderer;
 use PHPUnit\Framework\TestCase;
 use Twig\Environment;
@@ -26,7 +27,8 @@ class EmailTemplateRendererTest extends TestCase
 
         $configService = $this->createConfiguredStub(ConfigServiceInterface::class, ['get' => $siteUrl]);
 
-        return new EmailTemplateRenderer(new Environment($loader), $configService);
+        // No EmailLayoutProviderInterface registered - render() falls back to the standalone _wrapper.html.twig
+        return new EmailTemplateRenderer(new Environment($loader), $configService, new EmailLayoutRegistry());
     }
 
     private function addBlock(EmailTemplate $emailTemplate, string $type): EmailBlock
@@ -210,5 +212,34 @@ class EmailTemplateRendererTest extends TestCase
         $html = $this->createRenderer()->renderBody($emailTemplate, ['reset_url' => 'https://example.test/reset/abc']);
 
         $this->assertStringContainsString('href="https://example.test/reset/abc"', $html);
+    }
+
+    // When a bundle (e.g. SiteBundle) registers an EmailLayoutProviderInterface, render() must delegate to it
+    // instead of its own standalone _wrapper.html.twig - so a preview and a real send both show the real branded
+    // header/footer layout
+    public function testRenderDelegatesToRegisteredEmailLayoutProvider(): void
+    {
+        $loader = new FilesystemLoader();
+        $loader->addPath(__DIR__ . '/../../templates', 'c975LUi');
+        $configService = $this->createConfiguredStub(ConfigServiceInterface::class, ['get' => 'https://example.test']);
+
+        $registry = new EmailLayoutRegistry();
+        $registry->addProvider(new class implements \c975L\UiBundle\Contract\EmailLayoutProviderInterface {
+            public function wrap(string $bodyHtml): string
+            {
+                return '<div id="branded-layout">' . $bodyHtml . '</div>';
+            }
+        });
+
+        $renderer = new EmailTemplateRenderer(new Environment($loader), $configService, $registry);
+
+        $emailTemplate = new EmailTemplate();
+        $this->addBlock($emailTemplate, EmailBlock::TYPE_HEADING)->setHeading('Hello');
+
+        $html = $renderer->render($emailTemplate);
+
+        $this->assertStringContainsString('id="branded-layout"', $html);
+        $this->assertStringContainsString('Hello', $html);
+        $this->assertStringNotContainsString('<!DOCTYPE', $html);
     }
 }

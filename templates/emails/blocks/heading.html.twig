@@ -1,9 +1,14 @@
+{# Color/font-family are deliberately NOT set inline here - once wrapped through EmailLayoutProviderInterface
+   (e.g. SiteBundle), the site's own "h1,h2..." typography rule (theme color/font) applies via inline_css;
+   the standalone _wrapper.html.twig fallback supplies its own defaults for these same tags - see its <style>.
+   "text-left" is required directly on the h1/h2 itself, not the wrapping <td> - the site's generic "h1,h2..."
+   rule centers headings by targeting the tag directly, which wins over a class inherited from an ancestor #}
 <tr>
-    <td style="padding:0 24px 16px;font-family:Arial,Helvetica,sans-serif;">
+    <td style="padding:0 24px 16px;">
         {% if 'h1' == level %}
-            <h1 style="margin:0;font-size:24px;line-height:32px;color:#1a1a1a;font-weight:bold;">{{ heading }}</h1>
+            <h1 class="text-left" style="margin:0;font-size:24px;line-height:32px;font-weight:bold;">{{ heading }}</h1>
         {% else %}
-            <h2 style="margin:0;font-size:20px;line-height:28px;color:#1a1a1a;font-weight:bold;">{{ heading }}</h2>
+            <h2 class="text-left" style="margin:0;font-size:20px;line-height:28px;font-weight:bold;">{{ heading }}</h2>
         {% endif %}
     </td>
 </tr>

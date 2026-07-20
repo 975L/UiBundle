@@ -616,6 +616,7 @@ img.white {
 .section-btn--primary:hover {
   background: var(--button-background-primary-dark);
   color: var(--button-color);
+  text-decoration: none;
 }
 
 .section-btn--ghost {
@@ -625,10 +626,20 @@ img.white {
   padding-bottom: 3px;
 }
 
+.section-btn--ghost:hover {
+  color: var(--text);
+  text-decoration: none;
+}
+
 .section-btn--dark {
   background: var(--text);
   color: var(--button-color);
   padding: 11px 20px;
+}
+
+.section-btn--dark:hover {
+  color: var(--button-color);
+  text-decoration: none;
 }
 
 /* ---- hero ---- */
@@ -664,6 +675,10 @@ img.white {
   line-height: 1.03;
   margin: 0 0 24px;
   color: var(--text);
+}
+
+.hero__title > div {
+  display: contents;
 }
 
 .hero__title em {

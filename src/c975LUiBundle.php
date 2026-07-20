@@ -14,6 +14,8 @@ use c975L\UiBundle\DependencyInjection\Compiler\BlockEditUrlProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\BlockFixtureProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\BlockRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\CollectionSourceProviderPass;
+use c975L\UiBundle\DependencyInjection\Compiler\CspListenerPass;
+use c975L\UiBundle\DependencyInjection\Compiler\EmailLayoutProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\FormActionProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\FormThemeRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\GalleryShowcaseProviderPass;
@@ -46,9 +48,11 @@ class c975LUiBundle extends AbstractBundle
         $container->addCompilerPass(new WhatsNewProviderPass());
         $container->addCompilerPass(new MediaUsageProviderPass());
         $container->addCompilerPass(new BlockEditUrlProviderPass());
+        $container->addCompilerPass(new EmailLayoutProviderPass());
         $container->addCompilerPass(new FormThemeRegistryPass());
         $container->addCompilerPass(new FormActionProviderPass());
         $container->addCompilerPass(new RecaptchaPass());
+        $container->addCompilerPass(new CspListenerPass());
     }
 
     public function prependExtension(ContainerConfigurator $configurator, ContainerBuilder $container): void

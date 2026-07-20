@@ -82,6 +82,7 @@ class FormSubmissionType extends AbstractType
                     'placeholder' => $field->getPlaceholder(),
                     'readonly' => $prefilled ?: null,
                     'autocomplete' => FormField::TYPE_PASSWORD === $field->getType() ? 'new-password' : null,
+                    'rows' => FormField::TYPE_TEXTAREA === $field->getType() ? 10 : null,
                 ]),
             ];
             if ($prefilled) {

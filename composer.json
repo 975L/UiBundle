@@ -20,7 +20,7 @@
         "php": ">=8.0",
         "c975l/config-bundle": "*",
         "doctrine/orm": "*",
-        "easycorp/easyadmin-bundle": "*",
+        "easycorp/easyadmin-bundle": "^5.1",
         "egulias/email-validator": "*",
         "imagine/imagine": "*",
         "karser/karser-recaptcha3-bundle": "*",
@@ -34,6 +34,7 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "*",
+        "nelmio/security-bundle": "*",
         "phpunit/phpunit": "^13.2",
         "symfony/browser-kit": "*",
         "symfony/css-selector": "*",

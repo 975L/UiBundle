@@ -204,9 +204,9 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
                     'eyebrow' => 'Ce que nous faisons',
                     'title' => "Des services taillés autour de votre projet, pas l'inverse.",
                     'cards' => [
-                        ['icon' => '', 'title' => 'Sites sur mesure', 'text' => '<p>Chaque site est conçu et développé pour vos besoins réels.</p>'],
-                        ['icon' => '', 'title' => 'Notre CMS maison', 'text' => '<p>Vous gérez votre contenu vous-même, simplement.</p>'],
-                        ['icon' => '', 'title' => 'Développement Symfony', 'text' => '<p>Un socle technique solide et durable.</p>'],
+                        ['icon' => 'bundles/c975lui/icons/pen-ruler.svg', 'title' => 'Sites sur mesure', 'text' => '<p>Chaque site est conçu et développé pour vos besoins réels.</p>'],
+                        ['icon' => 'bundles/c975lui/icons/layer-group.svg', 'title' => 'Notre CMS maison', 'text' => '<p>Vous gérez votre contenu vous-même, simplement.</p>'],
+                        ['icon' => 'bundles/c975lui/icons/code.svg', 'title' => 'Développement Symfony', 'text' => '<p>Un socle technique solide et durable.</p>'],
                     ],
                 ],
             ],

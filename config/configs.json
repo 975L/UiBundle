@@ -75,5 +75,16 @@
         "group": "ai",
         "severity": null,
         "description": "description.ai_assistant_rephrase_model"
+    },
+    {
+        "label": "label.email_debug",
+        "slug": "email-debug",
+        "sensitive": false,
+        "restricted": true,
+        "value": "false",
+        "kind": "bool",
+        "group": "email",
+        "severity": "warning",
+        "description": "description.email_debug"
     }
 ]

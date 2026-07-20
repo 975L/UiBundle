@@ -344,7 +344,7 @@
             </trans-unit>
             <trans-unit id="80">
                 <source>label.identifier_help</source>
-                <target>No spaces, no special characters, no accents, no capital letters</target>
+                <target>No spaces, accents, capitals or special characters</target>
             </trans-unit>
             <trans-unit id="81">
                 <source>label.image</source>
@@ -376,7 +376,7 @@
             </trans-unit>
             <trans-unit id="164">
                 <source>label.layout_help</source>
-                <target>Standard shows one slide at a time; Freeflow shows every slide side by side, overflowing past the screen edges</target>
+                <target>Standard: one slide at a time. Freeflow: all slides side by side, overflowing the screen.</target>
             </trans-unit>
             <trans-unit id="85">
                 <source>label.link</source>
@@ -400,7 +400,7 @@
             </trans-unit>
             <trans-unit id="88">
                 <source>label.media_help</source>
-                <target>In case of unique file (Image/Video/Audio) only the first one will be taken into account</target>
+                <target>For a single-file type (Image/Video/Audio), only the first one is used</target>
             </trans-unit>
             <trans-unit id="89">
                 <source>label.media_library</source>
@@ -504,7 +504,7 @@
             </trans-unit>
             <trans-unit id="112">
                 <source>label.ratio_help</source>
-                <target>Free keeps each image's natural ratio; a fixed ratio crops images to fit</target>
+                <target>Free keeps the image's natural ratio; a fixed ratio crops it to fit</target>
             </trans-unit>
             <trans-unit id="113">
                 <source>label.rights_reserved</source>
@@ -648,7 +648,7 @@
             </trans-unit>
             <trans-unit id="148">
                 <source>label.fixed_icon_invalid_format</source>
-                <target>SVG and other non-raster formats are not supported for this role - upload a PNG, JPG, GIF or WEBP image</target>
+                <target>SVG isn't supported for this role - upload a PNG, JPG, GIF or WEBP image</target>
             </trans-unit>
             <trans-unit id="149">
                 <source>label.block_clear_cache</source>
@@ -660,7 +660,7 @@
             </trans-unit>
             <trans-unit id="151">
                 <source>label.info_media</source>
-                <target>Library of all uploaded media, wherever they're used (pages, blocks, site graphics)</target>
+                <target>All uploaded media (pages, blocks, site graphics)</target>
             </trans-unit>
             <trans-unit id="167">
                 <source>label.category_sections</source>
@@ -780,7 +780,7 @@
             </trans-unit>
             <trans-unit id="196">
                 <source>label.block_portfolio_grid_description</source>
-                <target>Section title followed by a grid of illustrated projects linking out</target>
+                <target>Grid of illustrated projects with outbound links</target>
             </trans-unit>
             <trans-unit id="197">
                 <source>label.link_label</source>
@@ -856,7 +856,7 @@
             </trans-unit>
             <trans-unit id="220">
                 <source>label.detail_page_help</source>
-                <target>Slug of a Page that renders each item's detail view for this collection (e.g. "blocks-detail"). That Page can hold whichever blocks you want. Leave empty if items have no detail page.</target>
+                <target>Slug of the Page showing item details (e.g. "blocks-detail"). Empty if none.</target>
             </trans-unit>
             <trans-unit id="221">
                 <source>label.anchor</source>
@@ -864,7 +864,7 @@
             </trans-unit>
             <trans-unit id="222">
                 <source>label.anchor_help</source>
-                <target>Short id used to build a menu link pointing straight to this section (e.g. "services"). Leave empty to derive it from the title automatically.</target>
+                <target>Short id to link a menu entry to this section (e.g. "services"). Empty = derived from the title.</target>
             </trans-unit>
             <trans-unit id="223">
                 <source>label.variant</source>
@@ -872,7 +872,7 @@
             </trans-unit>
             <trans-unit id="224">
                 <source>label.variant_help</source>
-                <target>How each item is displayed. Applies to every item in this collection.</target>
+                <target>How items are displayed, applied to the whole collection.</target>
             </trans-unit>
             <trans-unit id="225">
                 <source>label.variant_card</source>
@@ -896,7 +896,7 @@
             </trans-unit>
             <trans-unit id="232">
                 <source>label.ai_rephrase_usage_this_month</source>
-                <target>AI rephrase usage this month: %input% input tokens, %output% output tokens.</target>
+                <target>AI rephrase this month: %input% input tokens, %output% output.</target>
             </trans-unit>
             <trans-unit id="233">
                 <source>label.ai_assistant_subtitle</source>
@@ -964,7 +964,7 @@
             </trans-unit>
             <trans-unit id="242">
                 <source>label.ai_assistant_setup_intro</source>
-                <target>Lets you ask questions about the block system. Not yet enabled on this site:</target>
+                <target>Ask questions about the block system. Not yet enabled:</target>
             </trans-unit>
             <trans-unit id="243">
                 <source>label.ai_assistant_setup_step_enabled</source>
@@ -984,7 +984,7 @@
             </trans-unit>
             <trans-unit id="248">
                 <source>label.ai_rephrase_setup_intro</source>
-                <target>Lets you rephrase text field content with your own AI key. Not yet enabled on this site:</target>
+                <target>Rephrase text fields with your own AI key. Not yet enabled:</target>
             </trans-unit>
             <trans-unit id="249">
                 <source>label.ai_rephrase_setup_step_provider</source>
@@ -996,7 +996,7 @@
             </trans-unit>
             <trans-unit id="251">
                 <source>label.ai_assistant_setup_credentials_help</source>
-                <target>The endpoint and token are provided by whoever operates your AI assistant backend, not by you - ask them for these values.</target>
+                <target>Endpoint and token come from your AI backend operator - ask them for these values.</target>
             </trans-unit>
             <trans-unit id="252">
                 <source>label.ai_rephrase_get_key_intro</source>
@@ -1012,11 +1012,11 @@
             </trans-unit>
             <trans-unit id="255">
                 <source>label.ai_rephrase_get_key_euria</source>
-                <target>"AI Tools" section → create a product → generate a token (1 million free credits the first month). Recommended model: mistralai/Mistral-Small-4-119B-2603</target>
+                <target>"AI Tools" section → create a product → generate a token (1M free credits the 1st month). Recommended model: mistralai/Mistral-Small-4-119B-2603</target>
             </trans-unit>
             <trans-unit id="256">
                 <source>label.ai_rephrase_freeform_intro</source>
-                <target>Rephrase any text with your own key, independent of any specific field.</target>
+                <target>Rephrase any text with your own AI key.</target>
             </trans-unit>
             <trans-unit id="257">
                 <source>label.ai_rephrase_setup_step_base_uri</source>
@@ -1032,7 +1032,7 @@
             </trans-unit>
             <trans-unit id="289">
                 <source>label.ai_rephrase_setup_step_model_required</source>
-                <target>set the model to use (mandatory for Euria - recommended: mistralai/Mistral-Small-4-119B-2603)</target>
+                <target>set the model (mandatory for Euria - recommended: mistralai/Mistral-Small-4-119B-2603)</target>
             </trans-unit>
             <trans-unit id="260">
                 <source>label.field_label</source>
@@ -1116,7 +1116,7 @@
             </trans-unit>
             <trans-unit id="287">
                 <source>label.action_config_help</source>
-                <target>Optional, depends on the chosen action - e.g. for "send_email": to, from, subject, template, senderEmailField, receiveCopy</target>
+                <target>Optional, depends on the action - e.g. "send_email": to, from, subject, template, senderEmailField, receiveCopy</target>
             </trans-unit>
             <trans-unit id="288">
                 <source>label.fields</source>
@@ -1228,7 +1228,7 @@
             </trans-unit>
             <trans-unit id="314">
                 <source>label.email_block_content_help</source>
-                <target>Used by "Text" blocks - plain text, one paragraph per blank line</target>
+                <target>"Text" block: plain text, one paragraph per blank line</target>
             </trans-unit>
             <trans-unit id="315">
                 <source>label.email_block_label</source>
@@ -1244,7 +1244,7 @@
             </trans-unit>
             <trans-unit id="318">
                 <source>label.email_block_url_help</source>
-                <target>Used by "Button" and "Image" blocks - may contain a placeholder such as {{ signed_url }}. For an image hosted on this site, a relative path is enough (e.g. /medias/logo.webp), the domain is added automatically from the "site-url" config</target>
+                <target>"Button"/"Image" blocks - accepts {{ signed_url }}, or a relative path (e.g. /medias/logo.webp) completed with the "site-url" config.</target>
             </trans-unit>
             <trans-unit id="319">
                 <source>label.email_block_alt</source>
@@ -1272,11 +1272,11 @@
             </trans-unit>
             <trans-unit id="327">
                 <source>label.info_form_gdpr</source>
-                <target>A GDPR consent checkbox is automatically added to every form, based on %link_open%this config key%link_close%.</target>
+                <target>GDPR checkbox auto-added to forms, controlled by %link_open%this key%link_close%.</target>
             </trans-unit>
             <trans-unit id="328">
                 <source>label.info_form_field_template</source>
-                <target>Ready-made fields you can pick from when building a form's field list. A restricted template's name can't be changed or deleted, but every other property stays editable.</target>
+                <target>Ready-made fields for building a form. A restricted template keeps its name fixed, everything else stays editable.</target>
             </trans-unit>
             <trans-unit id="500">
                 <source>label.form_disabled</source>
@@ -1292,7 +1292,7 @@
             </trans-unit>
             <trans-unit id="503">
                 <source>label.field_required_default_help</source>
-                <target>Starting value copied into the field added to a form - stays editable per form afterward, with no retroactive effect on this template</target>
+                <target>Starting value copied into the added field - editable per form afterward, with no retroactive effect on this template.</target>
             </trans-unit>
             <trans-unit id="504">
                 <source>label.form_picker_disabled_suffix</source>
@@ -1309,6 +1309,14 @@
             <trans-unit id="507">
                 <source>label.field_url_link</source>
                 <target>read</target>
+            </trans-unit>
+            <trans-unit id="508">
+                <source>text.form_required_note</source>
+                <target>* Required field</target>
+            </trans-unit>
+            <trans-unit id="509">
+                <source>label.info_email_debug</source>
+                <target>A ROLE_SUPER_ADMIN sees a preview instead of a real send while %link_open%this key%link_close% is enabled.</target>
             </trans-unit>
         </body>
     </file>

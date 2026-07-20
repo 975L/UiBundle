@@ -8,7 +8,7 @@
             </trans-unit>
             <trans-unit id="2">
                 <source>description.ai_assistant_dashboard_endpoint</source>
-                <target>URL of the AI assistant backend to forward dashboard questions to. This bundle ships no default backend - leave empty to keep the feature disabled.</target>
+                <target>URL of the AI backend receiving dashboard questions. Empty = disabled (no default backend shipped).</target>
             </trans-unit>
             <trans-unit id="3">
                 <source>description.ai_assistant_dashboard_token</source>
@@ -16,11 +16,11 @@
             </trans-unit>
             <trans-unit id="4">
                 <source>description.ai_assistant_rephrase_provider</source>
-                <target>AI provider used for the content rephrase button: anthropic, openai or euria</target>
+                <target>AI provider for the rephrase button: anthropic, openai or euria</target>
             </trans-unit>
             <trans-unit id="5">
                 <source>description.ai_assistant_rephrase_api_key</source>
-                <target>API key for the chosen rephrase provider, billed to whoever owns this key</target>
+                <target>API key for the chosen provider, billed to its owner</target>
             </trans-unit>
             <trans-unit id="6">
                 <source>description.ai_assistant_rephrase_base_uri</source>
@@ -28,7 +28,7 @@
             </trans-unit>
             <trans-unit id="7">
                 <source>description.ai_assistant_rephrase_model</source>
-                <target>Model id used for rephrasing - optional for Anthropic/OpenAI (defaults to a sensible model), required for Euria (no safe default, its catalog isn't static enough to hardcode one)</target>
+                <target>Rephrase model id - optional for Anthropic/OpenAI (sensible default), required for Euria (unstable catalog, no safe default)</target>
             </trans-unit>
             <trans-unit id="8">
                 <source>label.ui_ai_assistant_dashboard_enabled</source>
@@ -80,7 +80,15 @@
             </trans-unit>
             <trans-unit id="22">
                 <source>description.ai_rephrase_not_enabled</source>
-                <target>Set a provider and API key to activate the rephrase button</target>
+                <target>Set a provider and API key to enable rephrasing</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>label.email_debug</source>
+                <target>Email - Debug mode</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>description.email_debug</source>
+                <target>When enabled, a ROLE_SUPER_ADMIN sees a preview instead of a real send</target>
             </trans-unit>
         </body>
     </file>

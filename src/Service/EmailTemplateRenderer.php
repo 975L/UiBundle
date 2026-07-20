@@ -12,6 +12,7 @@ namespace c975L\UiBundle\Service;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\UiBundle\Entity\EmailBlock;
 use c975L\UiBundle\Entity\EmailTemplate;
+use c975L\UiBundle\Registry\EmailLayoutRegistry;
 
 // Compiles an EmailTemplate's blocks into one email-safe HTML document (table layout, inline CSS, no JS - see
 // templates/emails/blocks/*.html.twig) - kept separate from c975L\UiBundle\Twig\BlockExtension's render_block():
@@ -22,23 +23,32 @@ class EmailTemplateRenderer
     public function __construct(
         private readonly \Twig\Environment $twig,
         private readonly ConfigServiceInterface $configService,
+        private readonly EmailLayoutRegistry $emailLayoutRegistry,
     ) {
     }
 
     /**
+     * Full standalone document - used by EmailTemplateCrudController's preview and by real EmailTemplate-based
+     * sends (e.g. SendEmailFormAction). When an EmailLayoutProviderInterface is registered (e.g. SiteBundle,
+     * bringing its own branded header/footer), the body is wrapped through it, so a preview and the actual
+     * recipient's inbox render the same way; with none registered, falls back to a bare standalone document
+     * (_wrapper.html.twig) - see EmailLayoutRegistry
+     *
      * @param array<string, scalar> $variables see renderBody()
      */
     public function render(EmailTemplate $emailTemplate, array $variables = []): string
     {
-        return $this->twig->render('@c975LUi/emails/blocks/_wrapper.html.twig', ['blocksHtml' => $this->renderBlocks($emailTemplate, $variables)]);
+        $blocksHtml = $this->renderBlocks($emailTemplate, $variables);
+
+        return $this->emailLayoutRegistry->wrap($this->wrapBlocksInTable($blocksHtml))
+            ?? $this->twig->render('@c975LUi/emails/blocks/_wrapper.html.twig', ['blocksHtml' => $blocksHtml]);
     }
 
     /**
      * Just the compiled <tr> rows, wrapped in one <table> but with no surrounding <html>/<body> - meant to be
      * embedded inside an app/bundle's own email layout (e.g. SiteBundle's fullLayout.html.twig, which brings its
-     * own Menu-driven header/footer - see c975L\UiBundle\Twig\EmailTemplateExtension::emailTemplateBody()).
-     * render() above is the standalone equivalent (full document), used by EmailTemplateCrudController's preview
-     * and by callers with no such layout to embed into (e.g. SendEmailFormAction)
+     * own Menu-driven header/footer - see c975L\UiBundle\Twig\EmailTemplateExtension::emailTemplateBody() and
+     * EmailLayoutProviderInterface, its render()-time equivalent)
      *
      * @param array<string, scalar> $variables resolves "{{ key }}" placeholders found in heading/content/label/url/alt
      *                                          (see substitute() - literal replacement, not real Twig evaluation),
@@ -48,9 +58,15 @@ class EmailTemplateRenderer
      */
     public function renderBody(EmailTemplate $emailTemplate, array $variables = []): string
     {
+        return $this->wrapBlocksInTable($this->renderBlocks($emailTemplate, $variables));
+    }
+
+    /** @param string[] $blocksHtml */
+    private function wrapBlocksInTable(array $blocksHtml): string
+    {
         return sprintf(
             '<table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0"><tbody>%s</tbody></table>',
-            implode('', $this->renderBlocks($emailTemplate, $variables))
+            implode('', $blocksHtml)
         );
     }
 

@@ -344,7 +344,7 @@
             </trans-unit>
             <trans-unit id="80">
                 <source>label.identifier_help</source>
-                <target>Sin espacios, sin caracteres especiales, sin acentos, sin mayúsculas</target>
+                <target>Sin espacios, acentos, mayúsculas ni caracteres especiales</target>
             </trans-unit>
             <trans-unit id="81">
                 <source>label.image</source>
@@ -376,7 +376,7 @@
             </trans-unit>
             <trans-unit id="164">
                 <source>label.layout_help</source>
-                <target>Estándar muestra una diapositiva a la vez; Desbordamiento muestra todas las diapositivas una al lado de la otra, sobresaliendo de los bordes de la pantalla</target>
+                <target>Estándar: una diapositiva a la vez. Desbordamiento: todas una junto a otra, fuera de pantalla.</target>
             </trans-unit>
             <trans-unit id="85">
                 <source>label.link</source>
@@ -400,7 +400,7 @@
             </trans-unit>
             <trans-unit id="88">
                 <source>label.media_help</source>
-                <target>En caso de archivo único (Imagen/Video/Audio) solo se tendrá en cuenta el primero</target>
+                <target>Para un tipo de archivo único (Imagen/Video/Audio), solo se usa el primero</target>
             </trans-unit>
             <trans-unit id="89">
                 <source>label.media_library</source>
@@ -412,7 +412,7 @@
             </trans-unit>
             <trans-unit id="166">
                 <source>label.media_multi_upload_help</source>
-                <target>Seleccionar varios archivos a la vez para añadirlos todos de una vez</target>
+                <target>Seleccione varios archivos para añadirlos todos de una vez</target>
             </trans-unit>
             <trans-unit id="90">
                 <source>label.muted</source>
@@ -504,7 +504,7 @@
             </trans-unit>
             <trans-unit id="112">
                 <source>label.ratio_help</source>
-                <target>Libre conserva la proporción natural de cada imagen; una proporción fija recorta las imágenes para ajustarse</target>
+                <target>Libre conserva la proporción natural; la fija recorta para ajustar</target>
             </trans-unit>
             <trans-unit id="113">
                 <source>label.rights_reserved</source>
@@ -648,7 +648,7 @@
             </trans-unit>
             <trans-unit id="148">
                 <source>label.fixed_icon_invalid_format</source>
-                <target>SVG y otros formatos no rasterizados no son compatibles para este rol - suba una imagen PNG, JPG, GIF o WEBP</target>
+                <target>SVG no es compatible con este rol - suba una imagen PNG, JPG, GIF o WEBP</target>
             </trans-unit>
             <trans-unit id="149">
                 <source>label.block_clear_cache</source>
@@ -660,7 +660,7 @@
             </trans-unit>
             <trans-unit id="151">
                 <source>label.info_media</source>
-                <target>Biblioteca de todos los archivos multimedia subidos, sea cual sea su uso (páginas, bloques, gráficos del sitio)</target>
+                <target>Todos los archivos multimedia subidos (páginas, bloques, gráficos)</target>
             </trans-unit>
             <trans-unit id="167">
                 <source>label.category_sections</source>
@@ -780,7 +780,7 @@
             </trans-unit>
             <trans-unit id="196">
                 <source>label.block_portfolio_grid_description</source>
-                <target>Título de sección seguido de una cuadrícula de proyectos ilustrados con enlace externo</target>
+                <target>Cuadrícula de proyectos ilustrados con enlaces externos</target>
             </trans-unit>
             <trans-unit id="197">
                 <source>label.link_label</source>
@@ -856,7 +856,7 @@
             </trans-unit>
             <trans-unit id="220">
                 <source>label.detail_page_help</source>
-                <target>Slug de una Página que muestra el detalle de cada elemento de esta colección (ej. "blocks-detail"). Esa Página puede contener los bloques que quieras. Dejar vacío si los elementos no tienen página de detalle.</target>
+                <target>Slug de la Página de detalle de los items (ej. "blocks-detail"). Vacío si no hay.</target>
             </trans-unit>
             <trans-unit id="221">
                 <source>label.anchor</source>
@@ -864,7 +864,7 @@
             </trans-unit>
             <trans-unit id="222">
                 <source>label.anchor_help</source>
-                <target>Identificador corto usado para crear un enlace de menú que apunte directamente a esta sección (ej. "services"). Dejar vacío para deducirlo automáticamente del título.</target>
+                <target>Identificador corto para enlazar el menú a esta sección (ej. "services"). Vacío = deducido del título.</target>
             </trans-unit>
             <trans-unit id="223">
                 <source>label.variant</source>
@@ -872,7 +872,7 @@
             </trans-unit>
             <trans-unit id="224">
                 <source>label.variant_help</source>
-                <target>Cómo se muestra cada item. Se aplica a todos los items de esta colección.</target>
+                <target>Cómo se muestran los items, aplicado a toda la colección.</target>
             </trans-unit>
             <trans-unit id="225">
                 <source>label.variant_card</source>
@@ -896,7 +896,7 @@
             </trans-unit>
             <trans-unit id="232">
                 <source>label.ai_rephrase_usage_this_month</source>
-                <target>Uso de la reformulación IA este mes: %input% tokens de entrada, %output% tokens de salida.</target>
+                <target>Reformulación IA este mes: %input% tokens entrada, %output% salida.</target>
             </trans-unit>
             <trans-unit id="233">
                 <source>label.ai_assistant_subtitle</source>
@@ -964,7 +964,7 @@
             </trans-unit>
             <trans-unit id="242">
                 <source>label.ai_assistant_setup_intro</source>
-                <target>Permite hacer preguntas sobre el sistema de bloques. Aún no activado en este sitio:</target>
+                <target>Haga preguntas sobre el sistema de bloques. Aún no activado:</target>
             </trans-unit>
             <trans-unit id="243">
                 <source>label.ai_assistant_setup_step_enabled</source>
@@ -984,7 +984,7 @@
             </trans-unit>
             <trans-unit id="248">
                 <source>label.ai_rephrase_setup_intro</source>
-                <target>Permite reformular el contenido de los campos de texto con su propia clave IA. Aún no activado en este sitio:</target>
+                <target>Reformule campos de texto con su propia clave IA. Aún no activado:</target>
             </trans-unit>
             <trans-unit id="249">
                 <source>label.ai_rephrase_setup_step_provider</source>
@@ -996,7 +996,7 @@
             </trans-unit>
             <trans-unit id="251">
                 <source>label.ai_assistant_setup_credentials_help</source>
-                <target>El endpoint y el token los proporciona quien opera su backend de asistente IA, no usted - pídaselos.</target>
+                <target>El endpoint y el token los da el operador de su backend IA - pídaselos.</target>
             </trans-unit>
             <trans-unit id="252">
                 <source>label.ai_rephrase_get_key_intro</source>
@@ -1012,11 +1012,11 @@
             </trans-unit>
             <trans-unit id="255">
                 <source>label.ai_rephrase_get_key_euria</source>
-                <target>Sección «AI Tools» → crear un producto → generar un token (1 millón de créditos gratis el primer mes). Modelo recomendado: mistralai/Mistral-Small-4-119B-2603</target>
+                <target>«AI Tools» → crear un producto → generar un token (1M créditos gratis el 1er mes). Modelo recomendado: mistralai/Mistral-Small-4-119B-2603</target>
             </trans-unit>
             <trans-unit id="256">
                 <source>label.ai_rephrase_freeform_intro</source>
-                <target>Reformule cualquier texto con su propia clave, independientemente de un campo concreto.</target>
+                <target>Reformule cualquier texto con su propia clave IA.</target>
             </trans-unit>
             <trans-unit id="257">
                 <source>label.ai_rephrase_setup_step_base_uri</source>
@@ -1032,7 +1032,7 @@
             </trans-unit>
             <trans-unit id="289">
                 <source>label.ai_rephrase_setup_step_model_required</source>
-                <target>definir el modelo a usar (obligatorio para Euria - recomendado: mistralai/Mistral-Small-4-119B-2603)</target>
+                <target>definir el modelo (obligatorio para Euria - recomendado: mistralai/Mistral-Small-4-119B-2603)</target>
             </trans-unit>
             <trans-unit id="260">
                 <source>label.field_label</source>
@@ -1116,7 +1116,7 @@
             </trans-unit>
             <trans-unit id="287">
                 <source>label.action_config_help</source>
-                <target>Opcional, depende de la acción elegida - ej. para "send_email": to, from, subject, template, senderEmailField, receiveCopy</target>
+                <target>Opcional, según la acción - ej. "send_email": to, from, subject, template, senderEmailField, receiveCopy</target>
             </trans-unit>
             <trans-unit id="288">
                 <source>label.fields</source>
@@ -1228,7 +1228,7 @@
             </trans-unit>
             <trans-unit id="314">
                 <source>label.email_block_content_help</source>
-                <target>Usado por los bloques "Texto" - texto plano, un párrafo por línea en blanco</target>
+                <target>Bloque "Texto": texto plano, un párrafo por línea en blanco</target>
             </trans-unit>
             <trans-unit id="315">
                 <source>label.email_block_label</source>
@@ -1244,7 +1244,7 @@
             </trans-unit>
             <trans-unit id="318">
                 <source>label.email_block_url_help</source>
-                <target>Usado por los bloques "Botón" e "Imagen" - puede contener un marcador como {{ signed_url }}. Para una imagen alojada en este sitio, basta una ruta relativa (ej. /medias/logo.webp), el dominio se añade automáticamente desde la config "site-url"</target>
+                <target>Bloques "Botón"/"Imagen" - acepta {{ signed_url }}, o una ruta relativa (ej. /medias/logo.webp) completada con la config "site-url".</target>
             </trans-unit>
             <trans-unit id="319">
                 <source>label.email_block_alt</source>
@@ -1272,11 +1272,11 @@
             </trans-unit>
             <trans-unit id="327">
                 <source>label.info_form_gdpr</source>
-                <target>Se añade automáticamente una casilla de consentimiento RGPD a todos los formularios, según %link_open%esta clave de configuración%link_close%.</target>
+                <target>Casilla RGPD añadida automáticamente a los formularios, según %link_open%esta clave%link_close%.</target>
             </trans-unit>
             <trans-unit id="328">
                 <source>label.info_form_field_template</source>
-                <target>Campos ya listos que puede elegir al construir la lista de campos de un formulario. El nombre de una plantilla restringida no se puede cambiar ni eliminar, pero el resto de propiedades siguen siendo editables.</target>
+                <target>Campos ya listos para construir un formulario. Una plantilla restringida mantiene su nombre fijo, el resto es editable.</target>
             </trans-unit>
             <trans-unit id="500">
                 <source>label.form_disabled</source>
@@ -1292,7 +1292,7 @@
             </trans-unit>
             <trans-unit id="503">
                 <source>label.field_required_default_help</source>
-                <target>Valor inicial copiado en el campo añadido a un formulario - luego se puede modificar por formulario, sin efecto retroactivo sobre esta plantilla</target>
+                <target>Valor inicial copiado en el campo añadido - editable después por formulario, sin efecto retroactivo sobre esta plantilla.</target>
             </trans-unit>
             <trans-unit id="504">
                 <source>label.form_picker_disabled_suffix</source>
@@ -1309,6 +1309,14 @@
             <trans-unit id="507">
                 <source>label.field_url_link</source>
                 <target>leer</target>
+            </trans-unit>
+            <trans-unit id="508">
+                <source>text.form_required_note</source>
+                <target>* Campo obligatorio</target>
+            </trans-unit>
+            <trans-unit id="509">
+                <source>label.info_email_debug</source>
+                <target>Un ROLE_SUPER_ADMIN ve una vista previa en vez de un envío real mientras %link_open%esta clave%link_close% esté activada.</target>
             </trans-unit>
         </body>
     </file>

@@ -8,10 +8,23 @@
             <div class="alert alert-{{ label }}">{{ message|trans }}</div>
         {% endfor %}
     {% endfor %}
+    {# "hidden" excluded: a required-but-invisible field (e.g. Recaptcha3Type, which extends HiddenType and never
+       overrides its "required" default) must never trigger this note - the visitor never sees an asterisk for it #}
+    {% set hasRequired = false %}
+    {% for child in form %}
+        {% if child.vars.required and 'hidden' not in child.vars.block_prefixes %}
+            {% set hasRequired = true %}
+        {% endif %}
+    {% endfor %}
     {{ form_start(form, {'action': path('ui_form_submit', {'name': uiForm.name}), 'attr': {'data-turbo': 'false'}}) }}
         {{ form_widget(form) }}
         <div>
             <input type="submit" name="submit" title="{{ 'label.send'|trans }}" class="btn btn-primary" value="{{ 'label.send'|trans }}">
         </div>
+        {% if hasRequired %}
+            <p class="text-muted">
+                {{ 'text.form_required_note'|trans }}
+            </p>
+        {% endif %}
     {{ form_end(form) }}
 </section>

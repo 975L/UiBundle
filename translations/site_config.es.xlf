@@ -8,7 +8,7 @@
             </trans-unit>
             <trans-unit id="2">
                 <source>description.ai_assistant_dashboard_endpoint</source>
-                <target>URL del backend del asistente de IA al que se reenvían las preguntas del panel. Este bundle no incluye ningún backend por defecto - déjelo vacío para mantener la función desactivada.</target>
+                <target>URL del backend IA que recibe las preguntas del panel. Vacío = desactivado (sin backend por defecto).</target>
             </trans-unit>
             <trans-unit id="3">
                 <source>description.ai_assistant_dashboard_token</source>
@@ -16,11 +16,11 @@
             </trans-unit>
             <trans-unit id="4">
                 <source>description.ai_assistant_rephrase_provider</source>
-                <target>Proveedor de IA usado para el botón de reformulación: anthropic, openai o euria</target>
+                <target>Proveedor de IA del botón de reformulación: anthropic, openai o euria</target>
             </trans-unit>
             <trans-unit id="5">
                 <source>description.ai_assistant_rephrase_api_key</source>
-                <target>Clave API del proveedor de reformulación elegido, facturada al titular de esta clave</target>
+                <target>Clave API del proveedor elegido, facturada a su titular</target>
             </trans-unit>
             <trans-unit id="6">
                 <source>description.ai_assistant_rephrase_base_uri</source>
@@ -28,7 +28,7 @@
             </trans-unit>
             <trans-unit id="7">
                 <source>description.ai_assistant_rephrase_model</source>
-                <target>Identificador del modelo usado para reformular - opcional para Anthropic/OpenAI (modelo por defecto razonable), obligatorio para Euria (sin valor por defecto seguro, su catálogo no es lo bastante estable para fijar uno)</target>
+                <target>Modelo de reformulación - opcional para Anthropic/OpenAI (por defecto razonable), obligatorio para Euria (catálogo inestable, sin valor seguro)</target>
             </trans-unit>
             <trans-unit id="8">
                 <source>label.ui_ai_assistant_dashboard_enabled</source>
@@ -80,7 +80,15 @@
             </trans-unit>
             <trans-unit id="22">
                 <source>description.ai_rephrase_not_enabled</source>
-                <target>Configure un proveedor y una clave API para activar el botón de reformulación</target>
+                <target>Configure proveedor y clave API para activar la reformulación</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>label.email_debug</source>
+                <target>Email - Modo depuración</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>description.email_debug</source>
+                <target>Si activado, ROLE_SUPER_ADMIN ve una vista previa en vez de un envío real</target>
             </trans-unit>
         </body>
     </file>
