@@ -887,6 +887,14 @@
                 <source>label.hero_media_max</source>
                 <target>Une section hero peut contenir au maximum {{ limit }} images.</target>
             </trans-unit>
+            <trans-unit id="510">
+                <source>label.hero_background_image</source>
+                <target>Afficher l'image en fond, pleine largeur</target>
+            </trans-unit>
+            <trans-unit id="511">
+                <source>label.hero_background_image_help</source>
+                <target>Utilise la première image ajoutée en fond pleine largeur derrière le texte, au lieu de l'afficher à côté.</target>
+            </trans-unit>
             <trans-unit id="230">
                 <source>label.ai_assistant_question</source>
                 <target>Posez une question sur le système de blocks…</target>

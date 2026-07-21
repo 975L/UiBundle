@@ -11,6 +11,7 @@ namespace c975L\UiBundle\Form\Block;
 use c975L\UiBundle\Form\TrixEditorType;
 use c975L\UiBundle\Service\BlockAnchorSlugger;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -36,9 +37,16 @@ class HeroType extends AbstractType
             ->add('title', TrixEditorType::class, [
                 'label' => 'label.title',
             ])
-            ->add('subtitle', TextType::class, [
+            // TrixEditorType too, same reason as "title" above - a few words can be emphasized in the subtitle
+            ->add('subtitle', TrixEditorType::class, [
                 'label' => 'label.subtitle',
                 'required' => false,
+            ])
+            ->add('hasBackgroundImage', CheckboxType::class, [
+                'label' => 'label.hero_background_image',
+                'help' => 'label.hero_background_image_help',
+                'required' => false,
+                'label_attr' => ['class' => 'checkbox-switch'],
             ])
             ->add('primaryLabel', TextType::class, [
                 'label' => 'label.primary_label',

@@ -677,7 +677,8 @@ img.white {
   color: var(--text);
 }
 
-.hero__title > div {
+.hero__title > div,
+.hero__sub > div {
   display: contents;
 }
 
@@ -823,6 +824,60 @@ img.white {
   font-size: 13px;
   line-height: 1.3;
   color: var(--label-color);
+}
+
+.hero.hero--has-bg {
+  position: relative;
+  left: 50%;
+  right: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.hero.hero--has-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+}
+
+.hero.hero--has-bg .section-wrap {
+  position: relative;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  text-align: center;
+}
+
+.hero.hero--has-bg .hero__text {
+  max-width: 720px;
+}
+
+.hero.hero--has-bg .hero__badge {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.hero.hero--has-bg .hero__title,
+.hero.hero--has-bg .hero__sub {
+  color: #fff;
+}
+
+.hero.hero--has-bg .hero__sub {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero.hero--has-bg .hero__cta {
+  justify-content: center;
+}
+
+.hero.hero--has-bg .hero__stat {
+  position: static;
+  margin-top: 24px;
 }
 
 /* ---- feature_bar ---- */
@@ -1817,5 +1872,3 @@ img.white {
   font-style: italic;
   color: var(--primary);
 }
-
-/*# sourceMappingURL=styles.css.map */

@@ -16,6 +16,16 @@
                 "en": "Fixed slider caption links losing their white color",
                 "fr": "Correction des liens de légende du slider qui perdaient leur couleur blanche",
                 "es": "Corregido: los enlaces de la leyenda del slider perdían su color blanco"
+            },
+            {
+                "en": "The hero section can now show its image as a full-width background behind the text",
+                "fr": "La section hero peut désormais afficher son image en fond, pleine largeur, derrière le texte",
+                "es": "La sección hero ahora puede mostrar su imagen como fondo a todo lo ancho, detrás del texto"
+            },
+            {
+                "en": "The hero section's subtitle can now have parts of its text emphasized",
+                "fr": "Le sous-titre de la section hero permet désormais de mettre certains mots en valeur",
+                "es": "El subtítulo de la sección hero ahora permite resaltar partes del texto"
             }
         ]
     },

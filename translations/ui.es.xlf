@@ -886,6 +886,14 @@
                 <source>label.hero_media_max</source>
                 <target>Una sección hero puede tener como máximo {{ limit }} imágenes.</target>
             </trans-unit>
+            <trans-unit id="510">
+                <source>label.hero_background_image</source>
+                <target>Mostrar la imagen de fondo, a todo lo ancho</target>
+            </trans-unit>
+            <trans-unit id="511">
+                <source>label.hero_background_image_help</source>
+                <target>Usa la primera imagen añadida como fondo a todo lo ancho detrás del texto, en lugar de mostrarla al lado.</target>
+            </trans-unit>
             <trans-unit id="230">
                 <source>label.ai_assistant_question</source>
                 <target>Haga una pregunta sobre el sistema de bloques…</target>

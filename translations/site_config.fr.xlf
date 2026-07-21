@@ -32,15 +32,15 @@
             </trans-unit>
             <trans-unit id="8">
                 <source>label.ui_ai_assistant_dashboard_enabled</source>
-                <target>Donovan (Site) - Activé</target>
+                <target>Donovan (Q&amp;A) - Activé</target>
             </trans-unit>
             <trans-unit id="9">
                 <source>label.ui_ai_assistant_dashboard_endpoint</source>
-                <target>Donovan (Site) - Endpoint</target>
+                <target>Donovan (Q&amp;A) - Endpoint</target>
             </trans-unit>
             <trans-unit id="10">
                 <source>label.ui_ai_assistant_dashboard_token</source>
-                <target>Donovan (Site) - Jeton</target>
+                <target>Donovan (Q&amp;A) - Jeton</target>
             </trans-unit>
             <trans-unit id="11">
                 <source>label.ui_ai_assistant_rephrase_provider</source>

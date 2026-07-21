@@ -17,5 +17,6 @@
     src="{{ media ? vich_uploader_asset(media) : '' }}"
     alt="{{ media ? media.alt : '' }}"
     medias="{{ medias|length > 1 ? medias : [] }}"
+    hasBackgroundImage="{{ hasBackgroundImage|default(false) }}"
     id="{{ anchor_id }}"
 />

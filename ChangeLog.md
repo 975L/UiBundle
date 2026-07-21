@@ -1,5 +1,12 @@
 # ChangeLog
 
+## v1.9.5
+
+- Added a `hero` block toggle showing its attached image as a full-width background instead of beside the text (21/07/2026)
+- `hero` block's subtitle now goes through the Trix rich-text editor instead of a plain text field (21/07/2026)
+- Restricted the Donovan Q&A endpoint/token config keys (21/07/2026)
+- Relabeled Donovan config keys from "Donovan (Site)" to "Donovan (Q&A)" (21/07/2026)
+
 ## v1.9.4
 
 - Added `Doctrine\VectorType`, mapping a PHP `float[]` to MariaDB's native `VECTOR(n)` column (11.7+) - a shared building block for a semantic cache, not used by anything in this bundle itself (21/07/2026)

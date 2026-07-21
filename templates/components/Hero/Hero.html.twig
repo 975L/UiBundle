@@ -1,33 +1,43 @@
-{# Static usage: <twig:c975LUi:Hero:Hero title="..." primaryLabel="..." primaryUrl="..." [badge=""] [subtitle=""] [secondaryLabel=""] [secondaryUrl=""] [statValue=""] [statLabel=""] [src=""] [alt=""] [id=""] [medias=[]]/> #}
+{# Static usage: <twig:c975LUi:Hero:Hero title="..." primaryLabel="..." primaryUrl="..." [badge=""] [subtitle=""] [secondaryLabel=""] [secondaryUrl=""] [statValue=""] [statLabel=""] [src=""] [alt=""] [id=""] [medias=[]] [hasBackgroundImage=false]/> #}
 {# Dynamic usage (Block system): see templates/blocks/Hero.html.twig #}
 {% set medias = medias|default([]) %}
-<section class="hero"{% if id is defined and id %} id="{{ id }}"{% endif %}>
+{% set hasBackgroundImage = hasBackgroundImage|default(false)|to_bool %}
+{# Background mode always uses a single, static image (the first media attached) - the side-by-side
+   slideshow only makes sense next to the text, not full-bleed behind it #}
+{% set bgSrc = hasBackgroundImage ? (medias|length ? vich_uploader_asset(medias|first) : src) : '' %}
+{# Same absolute_url(asset()) double-wrap as Banner/Title.html.twig - needed so the CSS background-image
+   url resolves correctly under SiteBundle's sitewide <base href> #}
+{% set bgImgSrc = bgSrc ? absolute_url(asset(bgSrc)) : '' %}
+<section class="hero{{ bgImgSrc ? ' hero--has-bg' : '' }}"{% if id is defined and id %} id="{{ id }}"{% endif %}{% if bgImgSrc %} style="background-image:url('{{ bgImgSrc }}')"{% endif %}>
     <div class="section-wrap">
         <div class="hero__text">
             {% if badge %}<span class="hero__badge">{{ badge }}</span>{% endif %}
             <h1 class="hero__title">{{ title|raw }}</h1>
-            {% if subtitle %}<p class="hero__sub">{{ subtitle }}</p>{% endif %}
+            {% if subtitle %}<div class="hero__sub">{{ subtitle|raw }}</div>{% endif %}
             <div class="hero__cta">
                 <a class="section-btn section-btn--primary" href="{{ primaryUrl }}">{{ primaryLabel }}</a>
                 {% if secondaryLabel %}<a class="section-btn section-btn--ghost" href="{{ secondaryUrl }}">{{ secondaryLabel }}</a>{% endif %}
             </div>
+            {% if bgImgSrc and statValue %}<div class="hero__stat"><b>{{ statValue }}</b><span>{{ statLabel }}</span></div>{% endif %}
         </div>
-        {% if medias|length > 1 %}
-            {# Several media attached: cycle through all of them, pure CSS (.hero__media--slideshow in
-               _page-sections.scss), no next/prev/dots control - each <img> is alt="" (decorative: the
-               text carries the meaning, not which photo happens to be showing) and the crossfade is
-               disabled entirely under prefers-reduced-motion, freezing on the first image instead #}
-            <div class="hero__media hero__media--slideshow" data-count="{{ medias|length }}">
-                {% for m in medias %}
-                    <img src="{{ vich_uploader_asset(m) }}" alt="">
-                {% endfor %}
-                {% if statValue %}<div class="hero__stat"><b>{{ statValue }}</b><span>{{ statLabel }}</span></div>{% endif %}
-            </div>
-        {% elseif src %}
-            <div class="hero__media">
-                <img src="{{ src }}" alt="{{ alt }}">
-                {% if statValue %}<div class="hero__stat"><b>{{ statValue }}</b><span>{{ statLabel }}</span></div>{% endif %}
-            </div>
+        {% if not bgImgSrc %}
+            {% if medias|length > 1 %}
+                {# Several media attached: cycle through all of them, pure CSS (.hero__media--slideshow in
+                   _page-sections.scss), no next/prev/dots control - each <img> is alt="" (decorative: the
+                   text carries the meaning, not which photo happens to be showing) and the crossfade is
+                   disabled entirely under prefers-reduced-motion, freezing on the first image instead #}
+                <div class="hero__media hero__media--slideshow" data-count="{{ medias|length }}">
+                    {% for m in medias %}
+                        <img src="{{ vich_uploader_asset(m) }}" alt="">
+                    {% endfor %}
+                    {% if statValue %}<div class="hero__stat"><b>{{ statValue }}</b><span>{{ statLabel }}</span></div>{% endif %}
+                </div>
+            {% elseif src %}
+                <div class="hero__media">
+                    <img src="{{ src }}" alt="{{ alt }}">
+                    {% if statValue %}<div class="hero__stat"><b>{{ statValue }}</b><span>{{ statLabel }}</span></div>{% endif %}
+                </div>
+            {% endif %}
         {% endif %}
     </div>
 </section>

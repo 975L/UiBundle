@@ -772,6 +772,8 @@ UiBundle does **not** register a menu entry for it: `c975l/config-bundle` (which
 
 Attaching more than one `Media` to a `hero` block switches it from a single static image to a pure-CSS crossfade slideshow cycling through all of them (no JS, disabled under `prefers-reduced-motion`) - see `.hero__media--slideshow` in `sass/_page-sections.scss`. A single attached media keeps the plain static image.
 
+A `hero` block's "Show image as a full-width background" toggle (`HeroType::$hasBackgroundImage`) instead shows the first attached image full-bleed behind the centered text, dropping the side-by-side layout and slideshow - see `.hero--has-bg` in `sass/_page-sections.scss`.
+
 ### Declaring where a Media is used
 
 UiBundle only knows about `Media`/`Block`; it has no visibility into which entity of a consuming bundle owns that Block, or holds a direct reference to a Media (like a Page's og-image). Each bundle that knows this can contribute that information:
