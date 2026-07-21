@@ -19,14 +19,16 @@ use Symfony\Component\Console\Input\InputInterface;
 // Generates a self-hosted backend for UiBundle's dashboard assistant ("Donovan (Q&A)", see Readme "AI
 // Assistant" > "Self-hosting your own backend"): a controller, an LLM client, a block-context builder, and
 // a setup-guide Twig extension + template override (matching 975l.com's own reference implementation,
-// AiHelpController/AiHelpLlmClient/DonovanQaExtension, minus its multi-site answer caching - not needed
-// for a first self-hosted backend). Doesn't touch config/configs.json: creating/loading app-level config
-// entries is app-specific (see 975l.com's own 15-line AppConfigLoadCommand for a model), so the needed
-// entries are printed as a snippet to paste instead - same reasoning as MakeBlockCommand's services.yaml
-// snippet, never guess-merge into a file this maker doesn't own
+// AiHelpController/AiHelpLlmClient/DonovanQaExtension). Doesn't touch config/configs.json: creating/
+// loading app-level config entries is app-specific (see 975l.com's own 15-line AppConfigLoadCommand for a
+// model), so the needed entries are printed as a snippet to paste instead - same reasoning as
+// MakeBlockCommand's services.yaml snippet, never guess-merge into a file this maker doesn't own
 class MakeDonovanQaCommand extends AbstractMaker
 {
     private const SKELETON_DIR = __DIR__ . '/../Resources/skeleton/donovan_qa';
+
+    // Set by interact(), read by generate() - both run within the same command invocation
+    private bool $withSemanticCache = false;
 
     public static function getCommandName(): string
     {
@@ -46,6 +48,15 @@ class MakeDonovanQaCommand extends AbstractMaker
 
     public function interact(InputInterface $input, ConsoleStyle $io, Command $command): void
     {
+        // Defaults to no: an exact-hash-only backend answering every rephrasing fresh from the LLM is a
+        // perfectly valid first self-hosted backend (see Readme) - this is an opt-in on top of it, not a
+        // replacement, since it pulls in a new entity/migration/embedding-model dependency
+        $this->withSemanticCache = $io->confirm(
+            'Add a semantic cache (question embeddings, recognizing a rephrasing of an already-answered '
+                . 'question) on top of the exact-hash cache? Needs MariaDB 11.7+/MySQL 9+ and an '
+                . 'embedding-capable model separate from your chat one.',
+            false,
+        );
     }
 
     public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
@@ -60,12 +71,63 @@ class MakeDonovanQaCommand extends AbstractMaker
 
         $generator->generateClass($contextBuilderClass->getFullName(), self::SKELETON_DIR . '/ContextBuilder.tpl.php');
 
-        $generator->generateClass($controllerClass->getFullName(), self::SKELETON_DIR . '/Controller.tpl.php', [
-            'llm_client_full_name' => $llmClientClass->getFullName(),
-            'llm_client_short_name' => $llmClientClass->getShortName(),
-            'context_builder_full_name' => $contextBuilderClass->getFullName(),
-            'context_builder_short_name' => $contextBuilderClass->getShortName(),
-        ]);
+        if ($this->withSemanticCache) {
+            $entityClass = $generator->createClassNameDetails('DonovanQaAnswer', 'Entity\\');
+            $repositoryClass = $generator->createClassNameDetails('DonovanQaAnswer', 'Repository\\', 'Repository');
+            $embeddingClientClass = $generator->createClassNameDetails('DonovanQaEmbedding', 'Service\\', 'Client');
+            $serviceClass = $generator->createClassNameDetails('DonovanQa', 'Service\\', 'Service');
+            $embeddingClientTestClass = $generator->createClassNameDetails('DonovanQaEmbedding', 'Tests\\Service\\', 'ClientTest');
+            $serviceTestClass = $generator->createClassNameDetails('DonovanQa', 'Tests\\Service\\', 'ServiceTest');
+
+            $generator->generateClass($entityClass->getFullName(), self::SKELETON_DIR . '/Answer.tpl.php', [
+                'repository_full_name' => $repositoryClass->getFullName(),
+                'repository_short_name' => $repositoryClass->getShortName(),
+            ]);
+
+            $generator->generateClass($repositoryClass->getFullName(), self::SKELETON_DIR . '/AnswerRepository.tpl.php', [
+                'entity_full_name' => $entityClass->getFullName(),
+                'entity_short_name' => $entityClass->getShortName(),
+            ]);
+
+            $generator->generateClass($embeddingClientClass->getFullName(), self::SKELETON_DIR . '/EmbeddingClient.tpl.php');
+
+            $generator->generateClass($embeddingClientTestClass->getFullName(), self::SKELETON_DIR . '/EmbeddingClientTest.tpl.php', [
+                'embedding_client_full_name' => $embeddingClientClass->getFullName(),
+                'embedding_client_short_name' => $embeddingClientClass->getShortName(),
+            ]);
+
+            $serviceTemplateVars = [
+                'entity_full_name' => $entityClass->getFullName(),
+                'entity_short_name' => $entityClass->getShortName(),
+                'repository_full_name' => $repositoryClass->getFullName(),
+                'repository_short_name' => $repositoryClass->getShortName(),
+                'context_builder_full_name' => $contextBuilderClass->getFullName(),
+                'context_builder_short_name' => $contextBuilderClass->getShortName(),
+                'llm_client_full_name' => $llmClientClass->getFullName(),
+                'llm_client_short_name' => $llmClientClass->getShortName(),
+                'embedding_client_full_name' => $embeddingClientClass->getFullName(),
+                'embedding_client_short_name' => $embeddingClientClass->getShortName(),
+            ];
+
+            $generator->generateClass($serviceClass->getFullName(), self::SKELETON_DIR . '/Service.tpl.php', $serviceTemplateVars);
+
+            $generator->generateClass($serviceTestClass->getFullName(), self::SKELETON_DIR . '/ServiceTest.tpl.php', [
+                ...$serviceTemplateVars,
+                'service_full_name' => $serviceClass->getFullName(),
+            ]);
+
+            $generator->generateClass($controllerClass->getFullName(), self::SKELETON_DIR . '/ControllerWithCache.tpl.php', [
+                'service_full_name' => $serviceClass->getFullName(),
+                'service_short_name' => $serviceClass->getShortName(),
+            ]);
+        } else {
+            $generator->generateClass($controllerClass->getFullName(), self::SKELETON_DIR . '/Controller.tpl.php', [
+                'llm_client_full_name' => $llmClientClass->getFullName(),
+                'llm_client_short_name' => $llmClientClass->getShortName(),
+                'context_builder_full_name' => $contextBuilderClass->getFullName(),
+                'context_builder_short_name' => $contextBuilderClass->getShortName(),
+            ]);
+        }
 
         $generator->generateClass($twigExtensionClass->getFullName(), self::SKELETON_DIR . '/TwigExtension.tpl.php', [
             'llm_client_full_name' => $llmClientClass->getFullName(),
@@ -169,6 +231,66 @@ class MakeDonovanQaCommand extends AbstractMaker
             '   /api/donovan-qa/ask, and its "ui-ai-assistant-dashboard-token" at its own token above.',
             '',
         ]);
+
+        if ($this->withSemanticCache) {
+            $io->writeln([
+                'Semantic cache also needs:',
+                '',
+                '3. These 3 additional config/configs.json entries:',
+                '',
+                '    {',
+                '        "label": "label.donovan_qa_embedding_model",',
+                '        "slug": "donovan-qa-embedding-model",',
+                '        "sensitive": false,',
+                '        "restricted": false,',
+                '        "value": null,',
+                '        "kind": "text",',
+                '        "group": "ai",',
+                '        "severity": null,',
+                '        "description": "description.donovan_qa_embedding_model"',
+                '    },',
+                '    {',
+                '        "label": "label.donovan_qa_semantic_cache_enabled",',
+                '        "slug": "donovan-qa-semantic-cache-enabled",',
+                '        "sensitive": false,',
+                '        "restricted": false,',
+                '        "value": "false",',
+                '        "kind": "bool",',
+                '        "group": "ai",',
+                '        "severity": null,',
+                '        "description": "description.donovan_qa_semantic_cache_enabled"',
+                '    },',
+                '    {',
+                '        "label": "label.donovan_qa_semantic_cache_threshold",',
+                '        "slug": "donovan-qa-semantic-cache-threshold",',
+                '        "sensitive": false,',
+                '        "restricted": false,',
+                '        "value": "0.90",',
+                '        "kind": "text",',
+                '        "group": "ai",',
+                '        "severity": null,',
+                '        "description": "description.donovan_qa_semantic_cache_threshold"',
+                '    }',
+                '',
+                '4. In config/packages/doctrine.yaml, under doctrine.dbal:',
+                '',
+                '    types:',
+                '        vector: c975L\\UiBundle\\Doctrine\\VectorType',
+                '    mapping_types:',
+                '        vector: vector',
+                '',
+                '5. php bin/console make:migration - requires MariaDB 11.7+/MySQL 9+ for the native VECTOR',
+                '   column type the generated Answer entity uses. On an older version, see this bundle\'s',
+                '   Readme "AI Assistant" > "Self-hosting your own backend" for the JSON+cosine-similarity',
+                '   fallback shape instead (a different Answer/AnswerRepository, not generated here).',
+                '   Review the generated migration, then run it.',
+                '',
+                '6. Set "donovan-qa-embedding-model" to an embedding-capable model id (e.g.',
+                '   Qwen/Qwen3-Embedding-8B on Euria/Infomaniak) - a chat model is never usable as one -',
+                '   and flip "donovan-qa-semantic-cache-enabled" to true once you\'ve verified it responds.',
+                '',
+            ]);
+        }
     }
 
     public function configureDependencies(DependencyBuilder $dependencies): void

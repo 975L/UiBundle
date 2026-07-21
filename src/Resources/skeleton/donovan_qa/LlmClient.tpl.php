@@ -55,7 +55,7 @@ class <?= $class_name ?>
         return true;
     }
 
-    // @return array{answer: string, sourceKinds: string[]}|null
+    // @return array{answer: string, sourceKinds: string[], inputTokens: int, outputTokens: int}|null
     public function ask(string $question, string $context): ?array
     {
         if (!$this->isEnabled()) {
@@ -100,8 +100,14 @@ class <?= $class_name ?>
         ]);
 
         $data = $response->toArray();
+        $parsed = $this->parseSourcedAnswer((string) ($data['content'][0]['text'] ?? ''));
 
-        return $this->parseSourcedAnswer((string) ($data['content'][0]['text'] ?? ''));
+        return [
+            'answer' => $parsed['answer'],
+            'sourceKinds' => $parsed['sourceKinds'],
+            'inputTokens' => (int) ($data['usage']['input_tokens'] ?? 0),
+            'outputTokens' => (int) ($data['usage']['output_tokens'] ?? 0),
+        ];
     }
 
     // Euria (Infomaniak AI Tools) exposes an OpenAI-compatible chat completions API
@@ -124,8 +130,14 @@ class <?= $class_name ?>
         ]);
 
         $data = $response->toArray();
+        $parsed = $this->parseSourcedAnswer((string) ($data['choices'][0]['message']['content'] ?? ''));
 
-        return $this->parseSourcedAnswer((string) ($data['choices'][0]['message']['content'] ?? ''));
+        return [
+            'answer' => $parsed['answer'],
+            'sourceKinds' => $parsed['sourceKinds'],
+            'inputTokens' => (int) ($data['usage']['prompt_tokens'] ?? 0),
+            'outputTokens' => (int) ($data['usage']['completion_tokens'] ?? 0),
+        ];
     }
 
     private function systemPrompt(string $context): string

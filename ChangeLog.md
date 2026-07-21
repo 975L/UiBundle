@@ -1,5 +1,11 @@
 # ChangeLog
 
+## v1.9.4
+
+- Added `Doctrine\VectorType`, mapping a PHP `float[]` to MariaDB's native `VECTOR(n)` column (11.7+) - a shared building block for a semantic cache, not used by anything in this bundle itself (21/07/2026)
+- Added an interactive question to `c975l:ui:donovan-qa:create` ("add a semantic cache?", default no) - answering yes additionally generates an `Answer` entity/repository (exact-hash + `VEC_DISTANCE_COSINE()` semantic match), an `EmbeddingClient`, and a `Service` orchestrating cache-or-call, on top of the previously-generated exact-hash-free skeleton (21/07/2026)
+- Documented the two-tier (exact-hash + semantic/embeddings) caching pattern 975l.com's own Donovan Q&A backend now uses, as a reference for a self-hosted dashboard-assistant backend past a handful of questions (see Readme "AI Assistant" > "Self-hosting your own backend") (21/07/2026)
+
 ## v1.9.3
 
 - Added `Management\ProcedureProvider`, contributing this bundle's own admin procedures to ConfigBundle's `ProcedureBuilder` (21/07/2026)
