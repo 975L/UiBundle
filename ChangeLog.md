@@ -1,5 +1,10 @@
 # ChangeLog
 
+## v1.9.6
+
+- Added `Contract\FontProviderInterface`/`Registry\FontRegistry`/`Form\FontChoiceType`, letting a bundle offer its `@font-face` font-family names as a real `<select>` for ConfigBundle's `font`-kind configs (21/07/2026)
+- Fixed `hero` block's title/subtitle not reliably inheriting typography through `display: contents` on some engines (21/07/2026)
+
 ## v1.9.5
 
 - Added a `hero` block toggle showing its attached image as a full-width background instead of beside the text (21/07/2026)

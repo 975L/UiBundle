@@ -133,10 +133,15 @@ $page-section-bp-lg: 1025px;
 }
 
 // TrixEditor always wraps its output in a <div>, even for a single line - unwrap it from the
-// box model so the div never needs its own styling to match the h1 (mirrors .block-editable)
+// box model so the div never needs its own styling to match the h1 (mirrors .block-editable).
+// Some engines (older WebKit) don't inherit through display:contents reliably, so restate the
+// typography explicitly instead of trusting inheritance alone.
 .hero__title > div,
 .hero__sub > div {
     display: contents;
+    font: inherit;
+    letter-spacing: inherit;
+    color: inherit;
 }
 
 .hero__title em {

@@ -22,6 +22,7 @@ Symfony bundle providing a dynamic block system for pages and content entities, 
 - Extensible: register your own block kinds via a service tag
 - Automatic CSS injection: bundles declare their stylesheets via a service tag, rendered by `bundle_stylesheets()` in Twig
 - Reusable drag-and-drop sortable script for any EasyAdmin `CollectionField`
+- Font-family provider contract (`FontProviderInterface`/`FontRegistry`) plus a generic `FontChoiceType` select, reused by ConfigBundle's font-kind config fields
 
 ---
 
@@ -396,6 +397,12 @@ A generic, shared "form definition" system (`Entity\Form`/`Entity\FormField`, ta
 - **`Service\SendEmailFormAction`** (key `send_email`) is the built-in provider: it lets a form built purely through the admin still notify someone by email, configured via `actionConfig`'s `to`/`from`/`replyTo`/`subject`/`template`/`senderEmailField`/`offerReceiveCopy` (all optional - unset ones fall back to the site-wide `email-*` config keys/a default template), or `emailTemplate` (an `EmailTemplate` name, see "Email builder" below) to send a compiled `EmailTemplate` instead of `template`. It's backed by a generic **`Service\EmailService`** (`Model\EmailSendRequest` in, bool out, `getLastError()`/`consumeDebugPreview()` for the `ROLE_SUPER_ADMIN` + `email-debug` preview instead of a silent real send). Implement `Contract\DebugPreviewCapableInterface` on your own action to get the same debug-preview behavior.
 - **Protection**, shared with every other c975L public form (contact/register/reset): a rotating honeypot + submission-timing check (`Service\FormBotProtection`, merges what used to be separate SiteBundle/ContactFormBundle implementations), site-wide GDPR checkbox and reCAPTCHA v3 (`Service\ReCaptchaFactory`/`Form\Extension\Recaptcha3TypeExtension`, a no-op unless `karser/karser-recaptcha3-bundle` is registered), and an optional shared rate limiter (`Service\RateLimiterGuard`, configure `limiter.ui_form` in `config/packages/rate_limiter.yaml` to enable it - unconfigured, nothing is rate-limited). Every `email`-typed field also gets a live MX/A DNS check (`Validator\Constraints\DnsEmail`) on top of format/`Assert\Email` validation, and every required `checkbox`-typed field uses `IsTrue` (an unchecked box isn't `NotBlank`).
 - **`Service\FormPrefillHelper`** lets app code pre-fill (and lock) a `Form`'s field(s) from session right before redirecting a visitor to it (e.g. a listing page's "Contact us about this" link setting the `subject` field) - no query string needed, cleared automatically once the submission succeeds.
+
+---
+
+## Font picker
+
+**`Form\FontChoiceType`** is a generic font-family `<select>` (`getParent()` is `ChoiceType`), not tied to any other system here - any bundle/app form can `add('font', FontChoiceType::class)` to offer a select built from whatever **`Registry\FontRegistry`** knows about, instead of a plain text field. Implement `Contract\FontProviderInterface::getFonts(): array` (auto-discovered the same way as `BlockFixtureProviderInterface`, no tag needed - see `DependencyInjection\Compiler\FontProviderPass`) in a bundle/app declaring `@font-face` font-family names of its own (e.g. SiteBundle); only the first registered provider is used, and an empty array (no provider installed) is a valid fallback a caller can handle its own way. `c975l/config-bundle`'s `ConfigCrudController` is the first consumer: it uses `FontChoiceType` for its `font`-kind config rows (e.g. `theme-font-family-title`), merging in whatever raw value is already stored so a font removed from `@font-face` since stays selectable instead of silently disappearing.
 
 ---
 

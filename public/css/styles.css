@@ -680,6 +680,9 @@ img.white {
 .hero__title > div,
 .hero__sub > div {
   display: contents;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
 }
 
 .hero__title em {

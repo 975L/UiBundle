@@ -16,6 +16,7 @@ use c975L\UiBundle\DependencyInjection\Compiler\BlockRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\CollectionSourceProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\CspListenerPass;
 use c975L\UiBundle\DependencyInjection\Compiler\EmailLayoutProviderPass;
+use c975L\UiBundle\DependencyInjection\Compiler\FontProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\FormActionProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\FormThemeRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\GalleryShowcaseProviderPass;
@@ -49,6 +50,7 @@ class c975LUiBundle extends AbstractBundle
         $container->addCompilerPass(new MediaUsageProviderPass());
         $container->addCompilerPass(new BlockEditUrlProviderPass());
         $container->addCompilerPass(new EmailLayoutProviderPass());
+        $container->addCompilerPass(new FontProviderPass());
         $container->addCompilerPass(new FormThemeRegistryPass());
         $container->addCompilerPass(new FormActionProviderPass());
         $container->addCompilerPass(new RecaptchaPass());

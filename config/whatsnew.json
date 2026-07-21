@@ -26,6 +26,11 @@
                 "en": "The hero section's subtitle can now have parts of its text emphasized",
                 "fr": "Le sous-titre de la section hero permet désormais de mettre certains mots en valeur",
                 "es": "El subtítulo de la sección hero ahora permite resaltar partes del texto"
+            },
+            {
+                "en": "Fixed the hero section's title and subtitle sometimes not displaying with the correct font on some browsers",
+                "fr": "Correction du titre et du sous-titre de la section hero qui n'affichaient parfois pas la bonne police sur certains navigateurs",
+                "es": "Corregido: el título y el subtítulo de la sección hero a veces no mostraban la fuente correcta en algunos navegadores"
             }
         ]
     },
