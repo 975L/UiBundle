@@ -1519,7 +1519,10 @@ img.white {
 }
 
 .slider-title a,
-.slider-text a {
+.slider-title a strong,
+.slider-text a,
+.slider-text a strong {
+  color: #fff;
   text-decoration: none;
 }
 
@@ -1814,3 +1817,5 @@ img.white {
   font-style: italic;
   color: var(--primary);
 }
+
+/*# sourceMappingURL=styles.css.map */

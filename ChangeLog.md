@@ -1,5 +1,11 @@
 # ChangeLog
 
+## v1.9.3
+
+- Added `Management\ProcedureProvider`, contributing this bundle's own admin procedures to ConfigBundle's `ProcedureBuilder` (21/07/2026)
+- Added a "scrolled" navbar state, toggled on scroll for SiteBundle's `--navbar-*-scrolled`/`.menu.is-scrolled` (21/07/2026)
+- Fixed slider caption links losing their white color to the global link-color rule (21/07/2026)
+
 ## v1.9.2
 
 - Constrained `easycorp/easyadmin-bundle` composer requirement to `^5.1` (20/07/2026)

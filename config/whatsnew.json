@@ -1,5 +1,25 @@
 [
     {
+        "date": "2026-07-21",
+        "description": [
+            {
+                "en": "The AI assistant can now answer questions about creating forms, email templates, and reusable field templates",
+                "fr": "L'assistant IA peut désormais répondre aux questions sur la création de formulaires, de modèles d'email et de modèles de champs réutilisables",
+                "es": "El asistente de IA ahora puede responder preguntas sobre la creación de formularios, plantillas de email y plantillas de campos reutilizables"
+            },
+            {
+                "en": "The navigation menu now visually reacts when the page is scrolled",
+                "fr": "Le menu de navigation réagit désormais visuellement lors du défilement de la page",
+                "es": "El menú de navegación ahora reacciona visualmente al desplazarse por la página"
+            },
+            {
+                "en": "Fixed slider caption links losing their white color",
+                "fr": "Correction des liens de légende du slider qui perdaient leur couleur blanche",
+                "es": "Corregido: los enlaces de la leyenda del slider perdían su color blanco"
+            }
+        ]
+    },
+    {
         "date": "2026-07-20",
         "description": [
             {

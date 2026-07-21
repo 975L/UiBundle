@@ -180,8 +180,14 @@
     border-radius: 0 0 15px 15px;
 }
 
+// Explicit, not inherited: the global "* { color: var(--text) }" rule (see _general.scss) targets
+// the <a>/<strong> elements directly, which always wins over the inherited white from the caption
+// above regardless of selector specificity - same reasoning as SiteBundle's "footer a" rule
 .slider-title a,
-.slider-text a {
+.slider-title a strong,
+.slider-text a,
+.slider-text a strong {
+    color: #fff;
     text-decoration: none;
 }
 

@@ -25,17 +25,28 @@ export default class extends Controller {
         this.menuLinkElements.forEach((link) => {
             link.addEventListener("click", this.boundHandleMenuLinkClick);
         });
+
+        // Toggles the "scrolled" navbar state (see SiteBundle's --navbar-*-scrolled/.menu.is-scrolled) -
+        // called immediately too, since Turbo can restore a mid-page scroll position on navigation
+        this.boundHandleScroll = this.handleScroll.bind(this);
+        window.addEventListener("scroll", this.boundHandleScroll);
+        this.handleScroll();
     }
 
     disconnect() {
         document.removeEventListener("click", this.boundHandleClickOutside);
         document.removeEventListener("keydown", this.boundHandleEscape);
+        window.removeEventListener("scroll", this.boundHandleScroll);
         // Remove menu link click listeners
         if (this.menuLinkElements) {
             this.menuLinkElements.forEach((link) => {
                 link.removeEventListener("click", this.boundHandleMenuLinkClick);
             });
         }
+    }
+
+    handleScroll() {
+        this.element.classList.toggle("is-scrolled", window.scrollY > 50);
     }
 
     toggle(event) {
