@@ -1,5 +1,50 @@
 [
     {
+        "date": "2026-07-22",
+        "description": [
+            {
+                "en": "A new page section lets you lay several blocks out side by side, or stack them within a column",
+                "fr": "Une nouvelle section de page permet de disposer plusieurs blocs côte à côte, ou de les empiler dans une colonne",
+                "es": "Una nueva sección de página permite colocar varios bloques uno al lado del otro, o apilarlos dentro de una columna"
+            },
+            {
+                "en": "You can now duplicate a repeatable item (a step, a card, a slide...) inside a section in one click",
+                "fr": "Vous pouvez désormais dupliquer un élément répétable (une étape, une carte, une diapositive...) dans une section en un clic",
+                "es": "Ahora puede duplicar un elemento repetible (un paso, una tarjeta, una diapositiva...) dentro de una sección en un clic"
+            },
+            {
+                "en": "Fixed the reCAPTCHA settings not being available in the Security configuration",
+                "fr": "Correction des réglages reCAPTCHA qui n'étaient pas disponibles dans la configuration Sécurité",
+                "es": "Corregido: los ajustes de reCAPTCHA no estaban disponibles en la configuración de Seguridad"
+            },
+            {
+                "en": "The Forms, Form field templates, Email templates and Media library screens now explain what they're for and what to watch out for",
+                "fr": "Les écrans Formulaires, Modèles de champ de formulaire, Modèles d'e-mail et Bibliothèque de médias expliquent désormais à quoi ils servent et les précautions à prendre",
+                "es": "Las pantallas Formularios, Plantillas de campo de formulario, Plantillas de correo y Biblioteca de medios ahora explican para qué sirven y qué precauciones tomar"
+            },
+            {
+                "en": "Removed the separate view page on Forms, Form field templates and Email templates - edit now shows everything",
+                "fr": "Suppression de la page de consultation séparée sur les formulaires, modèles de champ et modèles d'e-mail : la page de modification affiche désormais tout",
+                "es": "Se eliminó la página de consulta independiente en formularios, plantillas de campo y plantillas de correo: la página de edición ahora lo muestra todo"
+            },
+            {
+                "en": "Added a Cancel button when creating or editing an entry across the back office",
+                "fr": "Ajout d'un bouton Annuler lors de la création ou de la modification d'une entrée dans tout le back-office",
+                "es": "Añadido un botón Cancelar al crear o modificar una entrada en todo el back-office"
+            },
+            {
+                "en": "Fixed a PDF's thumbnail not showing on the Media library index and edit screens",
+                "fr": "Correction de la miniature d'un PDF qui ne s'affichait pas sur les écrans d'index et de modification de la Bibliothèque de médias",
+                "es": "Corregido: la miniatura de un PDF no se mostraba en las pantallas de índice y edición de la Biblioteca de medios"
+            },
+            {
+                "en": "You can now give a PDF a name used to build its stored file name instead of a generic one",
+                "fr": "Vous pouvez désormais donner un nom à un PDF, utilisé pour construire son nom de fichier stocké au lieu d'un nom générique",
+                "es": "Ahora puede darle un nombre a un PDF, usado para construir su nombre de archivo almacenado en lugar de uno genérico"
+            }
+        ]
+    },
+    {
         "date": "2026-07-21",
         "description": [
             {

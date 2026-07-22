@@ -36,12 +36,14 @@ export default class extends Controller {
         this.collectionItems(field).forEach(item => this.addButtonFor(item));
     }
 
-    // A row is either a block (has its own kind selector) or a media entry (has a raw file input) - anything else is some unrelated EasyAdmin collection elsewhere in the admin and is left alone. Not keying off Vich's wrapper class: EasyAdmin renders its own Vich widget theme with classes like "ea-vich-image"/"ea-vich-file", not VichUploaderBundle's own default "vich-image"/"vich-file".
+    // A row is either a block (has its own kind selector), a media entry (has a raw file input), or - anywhere inside a block's own kind-specific data form - a plain nested collection item (a skill bar, a process step, a card...). Anything else is some unrelated EasyAdmin collection elsewhere in the admin (this controller is mounted on <body>, so it sees every collection in the whole admin) and is left alone. Not keying off Vich's wrapper class: EasyAdmin renders its own Vich widget theme with classes like "ea-vich-image"/"ea-vich-file", not VichUploaderBundle's own default "vich-image"/"vich-file".
     addButtonFor(item) {
         if (item.querySelector('[data-kind-row]')) {
             this.addButton(item, () => this.duplicateBlock(item));
         } else if (item.querySelector('input[type="file"]')) {
             this.addButton(item, () => this.duplicateMedia(item));
+        } else if (item.closest('.block-data-form')) {
+            this.addButton(item, () => this.duplicateItem(item));
         }
     }
 
@@ -115,6 +117,57 @@ export default class extends Controller {
 
         this.copyMediaValues(sourceItem, newItem);
         this.copyMediaFile(sourceItem, newItem);
+    }
+
+    // A plain nested collection item (e.g. one of SectionSkillsType's "skills", ProcessStepsType's "steps"...) - already fully rendered like a media row, so this is the same straight DOM-to-DOM copy, no server round-trip needed.
+    duplicateItem(sourceItem) {
+        const field = sourceItem.closest('[data-ea-collection-field]');
+        if (!field) return;
+
+        const addButton = this.ownAddButton(field);
+        if (!addButton) return;
+
+        addButton.click();
+
+        const items = this.collectionItems(field);
+        const newItem = items[items.length - 1];
+        if (!newItem || newItem === sourceItem) return;
+
+        sourceItem.after(newItem);
+        this.renumberPositions(field);
+        newItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        this.copyItemValues(sourceItem, newItem);
+        // Re-runs Trix setup for any not-yet-initialized textarea in the new row (e.g. a card's or step's rich-text field) now that its value has already been copied, so that copied value becomes the editor's initial content instead of an empty one.
+        document.dispatchEvent(new CustomEvent('c975l:block-data-loaded'));
+    }
+
+    // Matched by position rather than by field name: both rows come from the exact same entry form type, so they always carry the same fields in the same order - no name-parsing needed here (unlike copyMediaValues, which has to line up two rows that can legitimately differ, e.g. an existing media's Vich "delete" checkbox that a fresh row doesn't have yet).
+    copyItemValues(sourceItem, targetItem) {
+        const copyable = el => el.name && !el.disabled && el.type !== 'file';
+
+        const sourceFields = [...sourceItem.querySelectorAll('input, select, textarea')].filter(copyable);
+        const targetFields = [...targetItem.querySelectorAll('input, select, textarea')].filter(copyable);
+
+        sourceFields.forEach((source, i) => {
+            const target = targetFields[i];
+            if (target) this.copyFieldValue(source, target);
+        });
+    }
+
+    copyFieldValue(source, target) {
+        if (source.type === 'checkbox' || source.type === 'radio') {
+            target.checked = source.checked;
+            return;
+        }
+        if (source.multiple && target.multiple) {
+            [...target.options].forEach(opt => {
+                opt.selected = [...source.selectedOptions].some(sOpt => sOpt.value === opt.value);
+            });
+            return;
+        }
+        target.value = source.value;
+        target.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
     // Copies the source row's "data" field values (renamed to the plain "data[...]" shape BlockFormController::dataForm expects), so the freshly-injected sub-form comes back pre-filled - including arbitrarily nested fields (e.g. a repeatable field inside "data") since Symfony's own form rendering does that from bound data. Medias are deliberately NOT included here (see copyMediaFiles): MediaUploadType has `data_class: Media`, and Symfony's form component refuses to use a plain array as a data_class-bound form's data ("the form's view data is expected to be an instance of Media, but is an array") - that only works for "data" because those kind-specific form types have `data_class: null`.

@@ -8,6 +8,22 @@
     gap: 20px;
 }
 
+// A run of consecutive "card" blocks renders as a bare ".cards" row with no ".section"/".section-wrap"
+// around it (see Blocks.html.twig), unlike every other top-level block kind - so on its own it never
+// aligned with the page's own max-width/padding rhythm (sass/_page-sections.scss). Only constrain it
+// in that exact bare context: ".blocks" is ".blocks > .cards" here (not just ".cards") because ".cards"
+// is reused *inside* an existing ".section-wrap" by the collection block's default variant (see
+// Collection/Grid.html.twig) and must not double up there. Same "+2*padding" widening as
+// ".collection-grid .section-wrap" (sass/_page-sections.scss) and for the same reason: three
+// fixed-400px cards + two 20px gaps need 1240px, more than ".section-wrap"'s own 1184px measure.
+.blocks > .cards {
+    box-sizing: border-box;
+    max-width: calc(1312px + 2 * clamp(20px, 5vw, 64px));
+    margin: 0 auto;
+    padding-left: clamp(20px, 5vw, 64px);
+    padding-right: clamp(20px, 5vw, 64px);
+}
+
 .card {
     margin: 1em auto;
     width: clamp(300px, 400px, 90vw);

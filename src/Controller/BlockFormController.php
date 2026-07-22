@@ -8,6 +8,7 @@
  */
 namespace c975L\UiBundle\Controller;
 
+use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Form\MediaUploadType;
 use c975L\UiBundle\Registry\BlockRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -67,6 +68,20 @@ class BlockFormController extends AbstractController
                     'attr'     => array_filter(['accept' => $accept]),
                 ]);
             }
+        }
+
+        // Mirrors BlockType::addSlotsSubForm() - so picking a container kind (e.g. flex_columns) on a
+        // brand new block shows the "add a slot" collection right away, same as the medias case above
+        if ($this->registry->isContainer($kind)) {
+            $builder->add('slots', CollectionType::class, [
+                'label' => 'label.slots',
+                'entry_type' => BlockType::class,
+                'entry_options' => ['context' => $this->registry->getSlotContext($kind)],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'prototype' => true,
+            ]);
         }
 
         return $this->render('@c975LUi/form/block.html.twig', [

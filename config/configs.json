@@ -86,5 +86,38 @@
         "group": "email",
         "severity": "warning",
         "description": "description.email_debug"
+    },
+    {
+        "label": "label.recaptcha3_site_key",
+        "slug": "recaptcha3-site-key",
+        "sensitive": true,
+        "restricted": true,
+        "value": null,
+        "kind": "text",
+        "group": "security",
+        "severity": "warning",
+        "description": "description.recaptcha3_site_key"
+    },
+    {
+        "label": "label.recaptcha3_secret_key",
+        "slug": "recaptcha3-secret-key",
+        "sensitive": true,
+        "restricted": true,
+        "value": null,
+        "kind": "text",
+        "group": "security",
+        "severity": "warning",
+        "description": "description.recaptcha3_secret_key"
+    },
+    {
+        "label": "label.recaptcha3_score_threshold",
+        "slug": "recaptcha3-score-threshold",
+        "sensitive": false,
+        "restricted": true,
+        "value": "0.05",
+        "kind": "text",
+        "group": "security",
+        "severity": "warning",
+        "description": "description.recaptcha3_score_threshold"
     }
 ]

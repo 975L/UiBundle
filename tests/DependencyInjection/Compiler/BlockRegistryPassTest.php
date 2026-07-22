@@ -58,6 +58,8 @@ class BlockRegistryPassTest extends TestCase
                 false,
                 false,
                 '',
+                false,
+                BlockRegistry::SLOT_CONTEXT,
             ],
             $calls[0][1]
         );
@@ -194,6 +196,64 @@ class BlockRegistryPassTest extends TestCase
 
         $calls = $container->getDefinition(BlockRegistry::class)->getMethodCalls();
         $this->assertSame(['menu', 'sidebar'], $calls[0][1][11]);
+    }
+
+    // container defaults to false and can be explicitly enabled, same boolean-flag parsing as pickable/cacheable
+    public function testProcessParsesContainerFlag(): void
+    {
+        $container = new ContainerBuilder();
+        $container->register(BlockRegistry::class);
+        $container->register('block.flex_columns')->addTag('ui.block', [
+            'kind' => 'flex_columns',
+            'label' => 'label.flex_columns',
+            'form' => 'App\\Form\\FlexColumnsType',
+            'template' => 'flex_columns.html.twig',
+            'container' => 'true',
+        ]);
+
+        (new BlockRegistryPass())->process($container);
+
+        $calls = $container->getDefinition(BlockRegistry::class)->getMethodCalls();
+        $this->assertTrue($calls[0][1][15]);
+    }
+
+    // slot_context defaults to BlockRegistry::SLOT_CONTEXT when not declared
+    public function testProcessDefaultsSlotContextToSlotContextConstant(): void
+    {
+        $container = new ContainerBuilder();
+        $container->register(BlockRegistry::class);
+        $container->register('block.flex_columns')->addTag('ui.block', [
+            'kind' => 'flex_columns',
+            'label' => 'label.flex_columns',
+            'form' => 'App\\Form\\FlexColumnsType',
+            'template' => 'flex_columns.html.twig',
+            'container' => 'true',
+        ]);
+
+        (new BlockRegistryPass())->process($container);
+
+        $calls = $container->getDefinition(BlockRegistry::class)->getMethodCalls();
+        $this->assertSame(BlockRegistry::SLOT_CONTEXT, $calls[0][1][16]);
+    }
+
+    // A nested container (e.g. "flex_column") overrides slot_context so its own slots use a distinct context
+    public function testProcessParsesSlotContextAttribute(): void
+    {
+        $container = new ContainerBuilder();
+        $container->register(BlockRegistry::class);
+        $container->register('block.flex_column')->addTag('ui.block', [
+            'kind' => 'flex_column',
+            'label' => 'label.flex_column',
+            'form' => 'App\\Form\\FlexColumnType',
+            'template' => 'flex_column.html.twig',
+            'container' => 'true',
+            'slot_context' => BlockRegistry::NESTED_SLOT_CONTEXT,
+        ]);
+
+        (new BlockRegistryPass())->process($container);
+
+        $calls = $container->getDefinition(BlockRegistry::class)->getMethodCalls();
+        $this->assertSame(BlockRegistry::NESTED_SLOT_CONTEXT, $calls[0][1][16]);
     }
 
     public function testProcessThrowsWhenARequiredAttributeIsMissing(): void

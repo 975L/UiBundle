@@ -49,6 +49,14 @@ class BlockExtension extends AbstractExtension
     {
         $kind = $block->getKind();
 
+        // A kind-less block has nothing to render - e.g. a "flex_columns"/"flex_column" slot added via
+        // its "+" button but never given a kind before saving (CollectionType lets a new entry through
+        // without one; only Block::$kind itself is nullable, every other Block ever backed by a real
+        // "ui.block" service tag has a non-null kind by construction)
+        if (null === $kind) {
+            return '';
+        }
+
         // A never-persisted block (e.g. a block showcase's in-memory fixture previews, see BlockFixtureRegistry) has no id - caching it by id would collapse every such block onto the same "block_render_0_..." key, silently serving one block's rendered HTML for every other one
         if (null === $block->getId() || !$this->registry->isCacheable($kind)) {
             return $this->doRender($block);

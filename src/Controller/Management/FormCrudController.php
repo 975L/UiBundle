@@ -167,8 +167,15 @@ class FormCrudController extends AbstractCrudController
             ->linkToUrl($this->adminUrlGenerator->unsetAll()->setController(FormFieldTemplateCrudController::class)->generateUrl())
             ->createAsGlobalAction();
 
+        // Lets the admin back out of a create/edit without saving - mirrors EasyAdmin's own built-in actions (linkToCrudAction targeting INDEX, same as Action::INDEX itself)
+        $cancelAction = Action::new('cancel', $this->translator->trans('action.cancel', [], 'EasyAdminBundle'), 'fa fa-times')
+            ->linkToCrudAction(Action::INDEX)
+            ->addCssClass('btn btn-secondary');
+
         return $actions
             ->add(Crud::PAGE_INDEX, $formFieldTemplatesAction)
+            ->add(Crud::PAGE_NEW, $cancelAction)
+            ->add(Crud::PAGE_EDIT, $cancelAction)
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => $action->setLabel(false)->setIcon('fas fa-pencil'))
             ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => $action
                 ->setLabel(false)
@@ -179,6 +186,8 @@ class FormCrudController extends AbstractCrudController
             ->setPermission(Action::EDIT, $role)
             ->setPermission(Action::DELETE, $role)
             ->setPermission('formFieldTemplates', $role)
+            // Detail adds no information beyond what edit already shows
+            ->disable(Action::DETAIL)
         ;
     }
 
@@ -188,6 +197,8 @@ class FormCrudController extends AbstractCrudController
             ->showEntityActionsInlined()
             ->setEntityPermission($this->configService->get('site-role-admin'))
             ->overrideTemplate('crud/index', '@c975LUi/management/form_crud_index.html.twig')
+            ->overrideTemplate('crud/edit', '@c975LUi/management/form_crud_edit.html.twig')
+            ->overrideTemplate('crud/new', '@c975LUi/management/form_crud_new.html.twig')
         ;
     }
 }

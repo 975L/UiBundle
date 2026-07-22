@@ -11,6 +11,7 @@ namespace c975L\UiBundle\Tests\Form;
 
 use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Registry\BlockRegistry;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -184,5 +185,53 @@ class BlockTypeTest extends TestCase
         $added = $this->buildAddedMediaOptions($type, 'article');
 
         $this->assertSame([], $added['medias']['constraints']);
+    }
+
+    // A container kind's (e.g. "flex_columns") "slots" field is a CollectionType of BlockType itself,
+    // recursively, scoped to whatever BlockRegistry::getSlotContext($kind) declares for that kind - see
+    // addSlotsSubForm()
+    public function testAddSlotsSubFormAddsACollectionOfBlockTypeScopedToTheKindsOwnSlotContext(): void
+    {
+        $registry = $this->createMock(BlockRegistry::class);
+        $registry->expects($this->once())->method('getSlotContext')->with('flex_columns')->willReturn(BlockRegistry::SLOT_CONTEXT);
+        $type = new BlockType($registry, $this->createRouter());
+
+        $added = [];
+        $form = $this->createStub(FormInterface::class);
+        $form->method('add')->willReturnCallback(function (string $name, ?string $fieldType = null, array $fieldOptions = []) use (&$added, $form) {
+            $added[$name] = ['type' => $fieldType, 'options' => $fieldOptions];
+
+            return $form;
+        });
+
+        (new \ReflectionMethod($type, 'addSlotsSubForm'))->invoke($type, $form, 'flex_columns');
+
+        $this->assertSame(CollectionType::class, $added['slots']['type']);
+        $this->assertSame(BlockType::class, $added['slots']['options']['entry_type']);
+        $this->assertSame(BlockRegistry::SLOT_CONTEXT, $added['slots']['options']['entry_options']['context']);
+        $this->assertTrue($added['slots']['options']['allow_add']);
+        $this->assertTrue($added['slots']['options']['allow_delete']);
+    }
+
+    // "flex_column" (a nested container) declares its own slots with NESTED_SLOT_CONTEXT instead, so its
+    // own elements can't in turn offer another "flex_column" - addSlotsSubForm() must reflect whatever the
+    // registry says for the given kind, not a single hardcoded context
+    public function testAddSlotsSubFormUsesTheKindsDeclaredSlotContext(): void
+    {
+        $registry = $this->createMock(BlockRegistry::class);
+        $registry->expects($this->once())->method('getSlotContext')->with('flex_column')->willReturn(BlockRegistry::NESTED_SLOT_CONTEXT);
+        $type = new BlockType($registry, $this->createRouter());
+
+        $added = [];
+        $form = $this->createStub(FormInterface::class);
+        $form->method('add')->willReturnCallback(function (string $name, ?string $fieldType = null, array $fieldOptions = []) use (&$added, $form) {
+            $added[$name] = ['type' => $fieldType, 'options' => $fieldOptions];
+
+            return $form;
+        });
+
+        (new \ReflectionMethod($type, 'addSlotsSubForm'))->invoke($type, $form, 'flex_column');
+
+        $this->assertSame(BlockRegistry::NESTED_SLOT_CONTEXT, $added['slots']['options']['entry_options']['context']);
     }
 }

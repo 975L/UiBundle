@@ -660,7 +660,7 @@
             </trans-unit>
             <trans-unit id="151">
                 <source>label.info_media</source>
-                <target>All uploaded media (pages, blocks, site graphics)</target>
+                <target>All uploaded media (pages, blocks, site graphics). Edit a media's caption, alt text or credits; site-wide graphics (favicon, logo...) stay read-only here and are managed from Site graphics.</target>
             </trans-unit>
             <trans-unit id="167">
                 <source>label.category_sections</source>
@@ -1284,7 +1284,7 @@
             </trans-unit>
             <trans-unit id="328">
                 <source>label.info_form_field_template</source>
-                <target>Ready-made fields for building a form. A restricted template keeps its name fixed, everything else stays editable.</target>
+                <target>Ready-made fields for building a form. Create, edit or delete a template; a restricted template keeps its name fixed but stays editable and can never be deleted.</target>
             </trans-unit>
             <trans-unit id="500">
                 <source>label.form_disabled</source>
@@ -1325,6 +1325,42 @@
             <trans-unit id="509">
                 <source>label.info_email_debug</source>
                 <target>A ROLE_SUPER_ADMIN sees a preview instead of a real send while %link_open%this key%link_close% is enabled.</target>
+            </trans-unit>
+            <trans-unit id="512">
+                <source>label.block_flex_columns</source>
+                <target>Flexible columns</target>
+            </trans-unit>
+            <trans-unit id="513">
+                <source>label.block_flex_columns_description</source>
+                <target>Section title followed by flexible columns, each one an existing block of your choice</target>
+            </trans-unit>
+            <trans-unit id="514">
+                <source>label.slots</source>
+                <target>Columns</target>
+            </trans-unit>
+            <trans-unit id="515">
+                <source>label.info_form</source>
+                <target>The site's forms (contact, newsletter...), each with its own fields and submit action. Create, edit or delete a form; a restricted form keeps its name fixed and can't be deleted.</target>
+            </trans-unit>
+            <trans-unit id="516">
+                <source>label.info_email_template</source>
+                <target>The site's email templates, each built from content blocks. Create, edit or preview a template; a restricted template keeps its name fixed and can't be deleted.</target>
+            </trans-unit>
+            <trans-unit id="521">
+                <source>label.block_flex_column</source>
+                <target>Column</target>
+            </trans-unit>
+            <trans-unit id="522">
+                <source>label.block_flex_column_description</source>
+                <target>Groups several blocks in one column of a "Flexible columns" section</target>
+            </trans-unit>
+            <trans-unit id="519">
+                <source>label.file_name</source>
+                <target>File name</target>
+            </trans-unit>
+            <trans-unit id="520">
+                <source>label.file_name_help</source>
+                <target>Used to name the stored file.</target>
             </trans-unit>
         </body>
     </file>

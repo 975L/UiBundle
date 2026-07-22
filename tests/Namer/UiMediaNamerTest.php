@@ -15,6 +15,7 @@ use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Namer\UiMediaNamer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 use Vich\UploaderBundle\Mapping\PropertyMapping;
 
 class UiMediaNamerTest extends TestCase
@@ -61,7 +62,7 @@ class UiMediaNamerTest extends TestCase
 
     public function testThrowsWhenEntityDoesNotImplementVichMediaNamableInterface(): void
     {
-        $namer = new UiMediaNamer();
+        $namer = new UiMediaNamer(new AsciiSlugger());
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('must implement VichMediaNamableInterface');
@@ -70,7 +71,7 @@ class UiMediaNamerTest extends TestCase
 
     public function testThrowsWhenFileDoesNotExistOnDisk(): void
     {
-        $namer = new UiMediaNamer();
+        $namer = new UiMediaNamer(new AsciiSlugger());
         $media = new Media();
         $media->setFile(new File($this->sandboxDir . '/missing.png', false));
 
@@ -82,7 +83,7 @@ class UiMediaNamerTest extends TestCase
     // Favicon has a fixed spec (48x48 .ico) - the extension always comes from the spec, never from the upload
     public function testFaviconUsesFixedSpecFormatRegardlessOfUploadedMimeType(): void
     {
-        $namer = new UiMediaNamer();
+        $namer = new UiMediaNamer(new AsciiSlugger());
         $media = new Media();
         $media->setRole(Media::ROLE_FAVICON);
         $media->setFile($this->createFile('upload.png', $this->pngContent()));
@@ -93,7 +94,7 @@ class UiMediaNamerTest extends TestCase
     // Apple touch icon has a fixed spec (114x114 .png)
     public function testAppleTouchIconUsesFixedSpecFormat(): void
     {
-        $namer = new UiMediaNamer();
+        $namer = new UiMediaNamer(new AsciiSlugger());
         $media = new Media();
         $media->setRole(Media::ROLE_APPLE_TOUCH_ICON);
         $media->setFile($this->createFile('upload.png', $this->pngContent()));
@@ -104,7 +105,7 @@ class UiMediaNamerTest extends TestCase
     // og-image is a singleton role but has no fixed spec: extension is determined from the upload, and raster formats get converted to webp
     public function testOgImageSingletonConvertsRasterUploadToWebp(): void
     {
-        $namer = new UiMediaNamer();
+        $namer = new UiMediaNamer(new AsciiSlugger());
         $media = new Media();
         $media->setRole(Media::ROLE_OG_IMAGE);
         $media->setFile($this->createFile('upload.png', $this->pngContent()));
@@ -115,7 +116,7 @@ class UiMediaNamerTest extends TestCase
     // Non-singleton medias (block content) get a unique suffix appended, and raster uploads convert to webp
     public function testBlockMediaAppendsUniqueSuffixAndConvertsToWebp(): void
     {
-        $namer = new UiMediaNamer();
+        $namer = new UiMediaNamer(new AsciiSlugger());
         $block = new Block();
         $block->setKind('article');
 
@@ -128,10 +129,44 @@ class UiMediaNamerTest extends TestCase
         $this->assertMatchesRegularExpression('#^medias/site/block-article-[a-z0-9]+-[a-z0-9]+\.webp$#', $name);
     }
 
+    // An admin-typed name takes over the block-kind path entirely (kept dir, dropped kind/id), slugified for a readable, URL-safe filename
+    public function testNameOverridesBlockPathWithSlug(): void
+    {
+        $namer = new UiMediaNamer(new AsciiSlugger());
+        $block = new Block();
+        $block->setKind('document_download');
+
+        $media = new Media();
+        $media->setBlock($block);
+        $media->setName('Rapport annuel');
+        $media->setFile($this->createFile('upload.pdf', '%PDF-1.4' . str_repeat("\0", 20)));
+
+        $name = $namer->name($media, $this->createMapping());
+
+        $this->assertMatchesRegularExpression('#^medias/site/rapport-annuel-[a-z0-9]+\.pdf$#', $name);
+    }
+
+    // A blank/whitespace-only name is treated as not set - falls back to the usual block-kind path
+    public function testBlankNameFallsBackToBlockPath(): void
+    {
+        $namer = new UiMediaNamer(new AsciiSlugger());
+        $block = new Block();
+        $block->setKind('document_download');
+
+        $media = new Media();
+        $media->setBlock($block);
+        $media->setName('   ');
+        $media->setFile($this->createFile('upload.pdf', '%PDF-1.4' . str_repeat("\0", 20)));
+
+        $name = $namer->name($media, $this->createMapping());
+
+        $this->assertMatchesRegularExpression('#^medias/site/block-document_download-[a-z0-9]+-[a-z0-9]+\.pdf$#', $name);
+    }
+
     // SVG uploads are never converted to webp - kept as-is since Imagine/GD cannot rasterize them
     public function testSvgUploadKeepsItsOwnExtensionInsteadOfConvertingToWebp(): void
     {
-        $namer = new UiMediaNamer();
+        $namer = new UiMediaNamer(new AsciiSlugger());
         $media = new Media();
         $media->setRole(Media::ROLE_LOGO);
         $media->setFile($this->createFile(
@@ -145,7 +180,7 @@ class UiMediaNamerTest extends TestCase
     // Sanity check that VichMediaNamableInterface implementors other than Media skip the singleton branch entirely and always go through the generic "append uniqid" path
     public function testGenericVichMediaNamableEntitySkipsSingletonHandling(): void
     {
-        $namer = new UiMediaNamer();
+        $namer = new UiMediaNamer(new AsciiSlugger());
         $entity = new class ($this->createFile('upload.gif', 'GIF89a' . str_repeat("\0", 20))) implements VichMediaNamableInterface {
             public function __construct(private File $file)
             {

@@ -13,6 +13,7 @@ use RuntimeException;
 use c975L\UiBundle\Contract\VichMediaNamableInterface;
 use c975L\UiBundle\Entity\Media;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Vich\UploaderBundle\Naming\NamerInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\PropertyMapping;
@@ -21,8 +22,9 @@ class UiMediaNamer implements NamerInterface
 {
     private Filesystem $filesystem;
 
-    public function __construct()
-    {
+    public function __construct(
+        private readonly SluggerInterface $slugger,
+    ) {
         $this->filesystem = new Filesystem();
     }
 
@@ -49,8 +51,23 @@ class UiMediaNamer implements NamerInterface
         }
 
         $extension = $this->determineExtension($file);
+        $basePath = $entity instanceof Media ? $this->resolveBasePath($entity) : $entity->getVichMediaPath();
 
-        return $entity->getVichMediaPath() . '-' . uniqid() . '.' . $extension;
+        return $basePath . '-' . uniqid() . '.' . $extension;
+    }
+
+    // An admin-typed Media::$name (e.g. "Rapport annuel") always wins over the auto "block-{kind}-{id}" path, slugified so the stored/physical filename stays readable and URL-safe - falls back to getVichMediaPath() when no name was given
+    private function resolveBasePath(Media $entity): string
+    {
+        $name = trim((string) $entity->getName());
+        if ('' === $name) {
+            return $entity->getVichMediaPath();
+        }
+
+        $slug = strtolower($this->slugger->slug($name)->toString());
+        $dir = dirname($entity->getVichMediaPath());
+
+        return ('.' !== $dir ? $dir . '/' : '') . $slug;
     }
 
     private function determineExtension(File $file, bool $convertToWebp = true): string

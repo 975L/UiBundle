@@ -210,6 +210,10 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
                     ],
                 ],
             ],
+            // No 'flex_columns' entry here on purpose: unlike every other kind, its "slots" are a real
+            // Block relation, not part of this plain data array - showcasing it needs the consuming
+            // app's own fixture-to-Block builder (e.g. 975l.com's BlockShowcaseCollectionSourceProvider)
+            // to also call Block::addSlot(), which it doesn't yet.
             'expertise_banner' => [
                 '' => [
                     'eyebrow' => 'Notre expertise',

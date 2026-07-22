@@ -46,12 +46,22 @@ class Block
     #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $medias;
 
+    // Only set on a slot of a "container" kind (e.g. flex_columns) - see BlockRegistry::isContainer()
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'slots')]
+    private ?self $parentBlock = null;
+
+    // A container kind's own nested Block rows, each a full block (own kind/form/medias) - see BlockType::addSlotsSubForm()
+    #[ORM\OneToMany(mappedBy: 'parentBlock', targetEntity: self::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['position' => 'ASC'])]
+    private Collection $slots;
+
     // Translated label of the kind, resolved by BlockLabelListener on postLoad (not persisted)
     private ?string $label = null;
 
     public function __construct()
     {
         $this->medias = new ArrayCollection();
+        $this->slots = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -175,4 +185,44 @@ class Block
 
         return $this;
     }
+
+    public function getParentBlock(): ?self
+    {
+        return $this->parentBlock;
+    }
+
+    public function setParentBlock(?self $parentBlock): self
+    {
+        $this->parentBlock = $parentBlock;
+
+        return $this;
+    }
+
+    /** @return Collection<int, self> */
+    public function getSlots(): Collection
+    {
+        return $this->slots;
+    }
+
+    public function addSlot(self $slot): self
+    {
+        if (!$this->slots->contains($slot)) {
+            $this->slots->add($slot);
+            $slot->setParentBlock($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSlot(self $slot): self
+    {
+        if ($this->slots->removeElement($slot)) {
+            if ($slot->getParentBlock() === $this) {
+                $slot->setParentBlock(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

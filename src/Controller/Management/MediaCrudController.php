@@ -13,6 +13,7 @@ use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Form\ImageClassChoiceType;
 use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\UiBundle\Form\MediaUsagesType;
+use c975L\UiBundle\Listener\VichPdfThumbnailListener;
 use c975L\UiBundle\Registry\MediaUsageRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -22,6 +23,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Validator\Constraints\File as FileConstraint;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Form\Type\VichImageType;
@@ -40,6 +42,8 @@ class MediaCrudController extends AbstractCrudController
     public function __construct(
         private readonly MediaUsageRegistry $mediaUsageRegistry,
         private readonly TranslatorInterface $translator,
+        #[Autowire('%kernel.project_dir%')]
+        private readonly string $projectDir,
     ) {
     }
 
@@ -56,14 +60,23 @@ class MediaCrudController extends AbstractCrudController
             ->setEntityPermission(self::ROLE_NEEDED)
             ->setDefaultSort(['id' => 'DESC'])
             ->overrideTemplate('crud/index', '@c975LUi/management/media_index.html.twig')
+            ->overrideTemplate('crud/edit', '@c975LUi/management/media_crud_edit.html.twig')
+            ->overrideTemplate('crud/new', '@c975LUi/management/media_crud_new.html.twig')
         ;
     }
 
     public function configureActions(Actions $actions): Actions
     {
+        // Lets the admin back out of a create/edit without saving - mirrors EasyAdmin's own built-in actions (linkToCrudAction targeting INDEX, same as Action::INDEX itself)
+        $cancelAction = Action::new('cancel', t('action.cancel', domain: 'EasyAdminBundle'), 'fa fa-times')
+            ->linkToCrudAction(Action::INDEX)
+            ->addCssClass('btn btn-secondary');
+
         return $actions
-            // Detail isn't added to PAGE_INDEX by default - needed here as the fallback default action (entity.defaultActionUrl in media_index.html.twig) for role-set rows, since those hide Edit/Delete below and would otherwise have no action to link their gallery thumbnail to
+            // Detail isn't added to PAGE_INDEX by default - needed here as the fallback default action (entity.defaultActionUrl in media_index.html.twig) for role-set rows, since those hide Edit/Delete below and would otherwise have no action to link their gallery thumbnail to. Kept, unlike other CRUDs' redundant view page - it's the only click target a read-only role-set row has
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_NEW, $cancelAction)
+            ->add(Crud::PAGE_EDIT, $cancelAction)
             ->setPermission(Action::INDEX, self::ROLE_NEEDED)
             ->setPermission(Action::EDIT, self::ROLE_NEEDED)
             ->setPermission(Action::DELETE, self::ROLE_NEEDED)
@@ -107,6 +120,16 @@ class MediaCrudController extends AbstractCrudController
                     'allow_delete' => true,
                     'download_uri' => true,
                     'asset_helper' => true,
+                    // VichImageType defaults image_uri to the uploaded file itself, which is fine for actual images but renders a dead <img> for a PDF - swap it for the .webp thumbnail (see VichPdfThumbnailListener) when one exists, same convention already used by DocumentExtension::getThumbnailPath() for the public block rendering
+                    'image_uri' => function (Media $media, ?string $originalUri): ?string {
+                        if (null === $originalUri || 'application/pdf' !== $media->getMimeType()) {
+                            return $originalUri;
+                        }
+
+                        $webpPath = VichPdfThumbnailListener::toWebpPath($originalUri);
+
+                        return is_file($this->projectDir . '/public/' . $webpPath) ? $webpPath : $originalUri;
+                    },
                     // Without this, the "delete file" checkbox label falls back to whatever domain EasyAdmin resolves by default for nested form widgets, which doesn't carry this key here - same fix already applied in MediaUploadType for the Block forms
                     'delete_label_translation_domain' => 'messages',
                     'constraints' => [
@@ -117,6 +140,12 @@ class MediaCrudController extends AbstractCrudController
 
             TextField::new('alt')
                 ->setLabel(t('label.alt_text', [], 'ui'))
+                ->hideOnIndex(),
+
+            // Slugified by UiMediaNamer into the stored/physical filename (e.g. "cv-lilouan-xxx.pdf") instead of the default "block-{kind}-{id}" - only takes effect on the next upload, editing it here doesn't rename a file already on disk. Distinct from "label" below (a display caption, not filesystem-safe).
+            TextField::new('name')
+                ->setLabel(t('label.file_name', [], 'ui'))
+                ->setHelp(t('label.file_name_help', [], 'ui'))
                 ->hideOnIndex(),
 
             TextField::new('label')

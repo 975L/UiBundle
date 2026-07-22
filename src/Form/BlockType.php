@@ -76,6 +76,9 @@ class BlockType extends AbstractType
                         if ($this->registry->hasMediaTypes($kind)) {
                             $this->addMediaSubForm($event->getForm(), $kind);
                         }
+                        if ($this->registry->isContainer($kind)) {
+                            $this->addSlotsSubForm($event->getForm(), $kind);
+                        }
                     }
                 }
 
@@ -118,7 +121,25 @@ class BlockType extends AbstractType
                         $this->addMediaSubForm($event->getForm(), $kind);
                     }
 
-                    // "data" (and "medias") were just (re)added above - move "animation" back below them, in case this is a brand new collection entry whose PRE_SET_DATA fired with no kind yet (so "animation" was added there before "data" ever existed)
+                    if ($this->registry->isContainer($kind)) {
+                        $block = $event->getForm()->getData();
+                        if ($block instanceof Block) {
+                            CollectionReconciler::pruneRemoved(
+                                $block->getSlots(),
+                                $submitted['slots'] ?? [],
+                                static fn (Block $slot) => $block->removeSlot($slot)
+                            );
+                        }
+
+                        // Same reasoning as "medias" above: removing the last slot leaves the key entirely absent from the submission
+                        if (!isset($submitted['slots'])) {
+                            $submitted['slots'] = [];
+                            $event->setData($submitted);
+                        }
+                        $this->addSlotsSubForm($event->getForm(), $kind);
+                    }
+
+                    // "data" (and "medias"/"slots") were just (re)added above - move "animation" back below them, in case this is a brand new collection entry whose PRE_SET_DATA fired with no kind yet (so "animation" was added there before "data" ever existed)
                     $event->getForm()->remove('animation');
                     $this->addAnimationField($event->getForm());
                 }
@@ -172,6 +193,23 @@ class BlockType extends AbstractType
                 'attr' => array_filter(['accept' => $accept]),
             ]);
         }
+    }
+
+    // A container kind's (e.g. "flex_columns", "flex_column") nested Block rows - each entry goes through
+    // this very same BlockType, recursively, one kind-picker + data/media sub-form per slot.
+    // BlockRegistry::getSlotContext($kind) keeps a slot from picking a container kind back by default
+    // (bounding the recursion), except the one kind explicitly allowed to nest one level deeper.
+    private function addSlotsSubForm(FormInterface $form, string $kind): void
+    {
+        $form->add('slots', CollectionType::class, [
+            'label' => 'label.slots',
+            'entry_type' => self::class,
+            'entry_options' => ['context' => $this->registry->getSlotContext($kind)],
+            'allow_add' => true,
+            'allow_delete' => true,
+            'by_reference' => false,
+            'prototype' => true,
+        ]);
     }
 
     // Consumes the "mediaUpload" multi-file input (if any), splicing its files into "medias" - see MultiUploadMerger for the actual entry-building logic

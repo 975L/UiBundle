@@ -13,6 +13,22 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 // Check readme for use
 class BlockRegistry
 {
+    // Passed as the "context" of a top-level container kind's own nested "slots" collection (e.g.
+    // "flex_columns", see BlockType::addSlotsSubForm()/getSlotContext() below) - a slot picking a container
+    // kind back would let an editor nest containers indefinitely, which BlockType's recursive sub-form
+    // wiring has no depth guard against, so groupBy() excludes every container kind from this context by
+    // default. A container may opt back in to being offered here (and only here) via its own "contexts"
+    // - see "flex_column", opted into this one, so a "flex_columns" row's slots can be plain blocks or a
+    // "flex_column" wrapping several - but never another "flex_columns", and see NESTED_SLOT_CONTEXT for
+    // "flex_column"'s own slots, where nothing is opted in, so no third level is possible.
+    public const SLOT_CONTEXT = 'flex_slot';
+
+    // A second, distinct context string for a *nested* container's own slots (e.g. "flex_column", itself
+    // only reachable via SLOT_CONTEXT) - kept separate from SLOT_CONTEXT so a kind can opt into being
+    // offered at one nesting depth without automatically being offered at the other (see "flex_column"'s
+    // "contexts", which lists SLOT_CONTEXT but not this one).
+    public const NESTED_SLOT_CONTEXT = 'flex_slot_nested';
+
     private array $blocks = [];
     private array $labelCache = [];
     private array $descriptionCache = [];
@@ -39,7 +55,9 @@ class BlockRegistry
         array $contexts = [],
         bool $mediaRequired = false,
         bool $multiUpload = false,
-        string $bundle = ''
+        string $bundle = '',
+        bool $container = false,
+        string $slotContext = self::SLOT_CONTEXT
     ): void {
         $this->blocks[$kind] = [
             'label'         => $label,
@@ -56,6 +74,8 @@ class BlockRegistry
             'mediaRequired' => $mediaRequired,
             'multiUpload'   => $multiUpload,
             'bundle'        => $bundle,
+            'container'     => $container,
+            'slotContext'   => $slotContext,
         ];
     }
 
@@ -157,6 +177,21 @@ class BlockRegistry
         return $this->get($kind)['cacheable'];
     }
 
+    // True for kinds that embed their own nested Block rows as "slots" (e.g. "flex_columns", "flex_column")
+    // - BlockType uses this to decide whether to wire up the "slots" sub-form, and groupBy() uses it to keep
+    // such kinds out of a slot's own kind choices by default (see SLOT_CONTEXT/NESTED_SLOT_CONTEXT)
+    public function isContainer(string $kind): bool
+    {
+        return $this->get($kind)['container'];
+    }
+
+    // The context a container kind's own "slots" collection is built with (see BlockType::addSlotsSubForm())
+    // - defaults to SLOT_CONTEXT, only meaningful for a kind where isContainer() is true
+    public function getSlotContext(string $kind): string
+    {
+        return $this->get($kind)['slotContext'];
+    }
+
     // Result only depends on the static block registrations, cached per $context after its first call - excludes non-pickable kinds (singleton blocks with their own dedicated admin entry, e.g. SocialBundle's "social_links": offering them here would let editors create duplicate, independently-filled instances instead of reusing the single site-wide one found via BlockRepository::findOneByKind()), and kinds restricted to other contexts (e.g. SiteBundle's "menu_link", declared with contexts: ['menu'] so it doesn't leak into a Page's block picker). A kind declared with no contexts at all is available everywhere, and passing no $context here skips the contexts filter entirely - both keep existing callers (that don't pass $context yet) working unchanged.
     public function groupedByCategory(?string $context = null): array
     {
@@ -183,6 +218,19 @@ class BlockRegistry
                 continue;
             }
             if (null !== $context && !empty($config['contexts']) && !in_array($context, $config['contexts'], true)) {
+                continue;
+            }
+            // A container kind is excluded from any *slot* context by default (see SLOT_CONTEXT/
+            // NESTED_SLOT_CONTEXT) - it may opt back in to one specific slot context (and only that one)
+            // via its own "contexts", the same field ordinary contexts-restricted kinds (e.g. "menu_link")
+            // already use. Scoped to slot contexts only - a container with no "contexts" declared (e.g.
+            // "flex_columns") must still be pickable at the top level ('page'/null context); the check used
+            // to fire for every context, which silently dropped such a container from its own kind-choice
+            // list even though the block already had that very kind persisted (see BlockType's "kind"
+            // ChoiceType: a current value absent from "choices" just renders unselected), so any save of a
+            // page carrying one wiped its "kind" back to null the moment the form was submitted.
+            $isSlotContext = in_array($context, [self::SLOT_CONTEXT, self::NESTED_SLOT_CONTEXT], true);
+            if ($isSlotContext && $config['container'] && !in_array($context, $config['contexts'], true)) {
                 continue;
             }
             $grouped[$keyFn($kind, $config)][] = [

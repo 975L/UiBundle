@@ -104,6 +104,10 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $label = null;
 
+    // Admin-typed short name (e.g. "Rapport annuel"), slugified by UiMediaNamer into the stored/physical filename (e.g. "rapport-annuel-xxx.pdf") instead of the default "block-{kind}-{id}" - distinct from $label, which is display/caption text and isn't filesystem-safe (accents, punctuation, could contain markup)
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $name = null;
+
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $width = null;
 
@@ -218,6 +222,18 @@ class Media implements VichImageResizableInterface, VichMediaNamableInterface
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }

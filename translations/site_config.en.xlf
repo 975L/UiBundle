@@ -90,6 +90,30 @@
                 <source>description.email_debug</source>
                 <target>When enabled, a ROLE_SUPER_ADMIN sees a preview instead of a real send</target>
             </trans-unit>
+            <trans-unit id="25">
+                <source>label.recaptcha3_site_key</source>
+                <target>ReCaptcha - Site key</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>description.recaptcha3_site_key</source>
+                <target>Site key for ReCaptcha v3</target>
+            </trans-unit>
+            <trans-unit id="27">
+                <source>label.recaptcha3_secret_key</source>
+                <target>ReCaptcha - Secret key</target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>description.recaptcha3_secret_key</source>
+                <target>Secret key for ReCaptcha v3</target>
+            </trans-unit>
+            <trans-unit id="29">
+                <source>label.recaptcha3_score_threshold</source>
+                <target>ReCaptcha - Score threshold</target>
+            </trans-unit>
+            <trans-unit id="30">
+                <source>description.recaptcha3_score_threshold</source>
+                <target>Score threshold (between 0 and 1) below which ReCaptcha v3 considers the submission suspicious</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

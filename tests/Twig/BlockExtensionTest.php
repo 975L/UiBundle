@@ -59,6 +59,29 @@ class BlockExtensionTest extends TestCase
         $this->assertSame('<p>rendered</p>', $extension->renderBlock($block));
     }
 
+    // A slot added via a container's "+" button but saved before a kind was ever picked has no kind at
+    // all (Block::$kind is nullable) - must render as nothing instead of crashing on registry lookups
+    // that all assume a real, registered kind string
+    public function testRenderBlockReturnsEmptyStringWhenBlockHasNoKind(): void
+    {
+        $block = new Block();
+        (new \ReflectionProperty(Block::class, 'id'))->setValue($block, 1);
+
+        $registry = $this->createMock(BlockRegistry::class);
+        $registry->expects($this->never())->method('isCacheable');
+        $registry->expects($this->never())->method('getTemplate');
+
+        $twig = $this->createMock(Environment::class);
+        $twig->expects($this->never())->method('render');
+
+        $cache = $this->createMock(TagAwareCacheInterface::class);
+        $cache->expects($this->never())->method('get');
+
+        $extension = new BlockExtension($registry, $twig, $cache, new RequestStack(), new BlockCacheTagRegistry(), new BlockEditUrlRegistry());
+
+        $this->assertSame('', $extension->renderBlock($block));
+    }
+
     // A never-persisted block (e.g. a block showcase's in-memory fixture previews) has no id - caching it would collapse onto the same key as every other unpersisted block of a cacheable kind, silently serving one block's rendered HTML for every other one
     public function testRenderBlockRendersDirectlyWithoutCachingWhenBlockHasNoId(): void
     {

@@ -1,0 +1,21 @@
+{# Dynamic usage only (Block system): see templates/blocks/FlexColumns.html.twig - "slots" is a
+   collection of real Block entities (Entity/Block.php's "slots" relation), each rendered through the
+   normal render_block() pipeline (own kind, own cache, own media) - a "flex_column" slot renders its
+   own nested slots with no wrapper of its own (see blocks/FlexColumn.html.twig), so it stacks
+   naturally inside this same ".flex-columns__col" div - unlike this bundle's other Section/*
+   components there is no meaningful static/plain-array usage for this one. #}
+<section class="flex-columns-section"{% if id is defined and id %} id="{{ id }}"{% endif %}>
+    <div class="section-wrap">
+        {% if eyebrow or title %}
+            <div class="section-head">
+                {% if eyebrow %}<p class="section-eyebrow">{{ eyebrow }}</p>{% endif %}
+                {% if title %}<h2 class="section-title">{{ title }}</h2>{% endif %}
+            </div>
+        {% endif %}
+        <div class="flex-columns">
+            {% for slot in slots %}
+                <div class="flex-columns__col">{{ render_block(slot) }}</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

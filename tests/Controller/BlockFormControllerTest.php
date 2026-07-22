@@ -128,4 +128,38 @@ class BlockFormControllerTest extends TestCase
         $this->assertContains('medias', $added);
         $this->assertNotContains('mediaUpload', $added);
     }
+
+    // Mirrors BlockType::addSlotsSubForm() - picking a container kind (e.g. flex_columns) on a brand new block must show the "add a slot" collection right away, same as the medias case above
+    public function testDataFormAddsSlotsFieldWhenKindIsContainer(): void
+    {
+        $registry = $this->createStub(BlockRegistry::class);
+        $registry->method('has')->willReturn(true);
+        $registry->method('getFormClass')->willReturn(\Symfony\Component\Form\Extension\Core\Type\FormType::class);
+        $registry->method('hasMediaTypes')->willReturn(false);
+        $registry->method('isContainer')->willReturn(true);
+        $registry->method('getSlotContext')->willReturn('flex_slot');
+        $added = [];
+        $controller = new BlockFormController($registry, $this->createFormFactory($added));
+        $controller->setContainer($this->createContainerWithTwig());
+
+        $controller->dataForm(new Request(['k' => 'flex_columns']));
+
+        $this->assertContains('slots', $added);
+    }
+
+    public function testDataFormSkipsSlotsFieldWhenKindIsNotContainer(): void
+    {
+        $registry = $this->createStub(BlockRegistry::class);
+        $registry->method('has')->willReturn(true);
+        $registry->method('getFormClass')->willReturn(\Symfony\Component\Form\Extension\Core\Type\FormType::class);
+        $registry->method('hasMediaTypes')->willReturn(false);
+        $registry->method('isContainer')->willReturn(false);
+        $added = [];
+        $controller = new BlockFormController($registry, $this->createFormFactory($added));
+        $controller->setContainer($this->createContainerWithTwig());
+
+        $controller->dataForm(new Request(['k' => 'text_section']));
+
+        $this->assertNotContains('slots', $added);
+    }
 }

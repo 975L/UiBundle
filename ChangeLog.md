@@ -1,5 +1,16 @@
 # ChangeLog
 
+## v1.9.7
+
+- Added `flex_columns`/`flex_column` container blocks, laying other blocks side by side or stacked (22/07/2026)
+- Fixed the Media library index/edit screens not showing a PDF's `.webp` thumbnail (22/07/2026)
+- Added a `Media::$name` field, slugified into the stored PDF filename instead of the default `block-{kind}-{id}` (22/07/2026)
+- Expanded the explanatory text on the Form/Form field template/Email template/Media index and edit screens (22/07/2026)
+- Removed the detail/view page on Form, Form field template and Email template (22/07/2026)
+- Added a Cancel action on every create/edit screen (22/07/2026)
+- Added a duplicate button to any plain nested collection item inside a block's data form, not just top-level blocks/media (22/07/2026)
+- Fixed reCAPTCHA v3 config keys (site key, secret key, score threshold) missing their seed rows (22/07/2026)
+
 ## v1.9.6
 
 - Added `Contract\FontProviderInterface`/`Registry\FontRegistry`/`Form\FontChoiceType`, letting a bundle offer its `@font-face` font-family names as a real `<select>` for ConfigBundle's `font`-kind configs (21/07/2026)

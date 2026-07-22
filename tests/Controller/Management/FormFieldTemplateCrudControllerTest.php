@@ -53,7 +53,22 @@ class FormFieldTemplateCrudControllerTest extends TestCase
         $this->assertSame('ROLE_ADMIN', $permissions[Action::NEW]);
         $this->assertSame('ROLE_ADMIN', $permissions[Action::EDIT]);
         $this->assertSame('ROLE_ADMIN', $permissions[Action::DELETE]);
-        $this->assertSame('ROLE_ADMIN', $permissions[Action::DETAIL]);
+    }
+
+    // Detail adds no information beyond what edit already shows - disabled entirely, and a Cancel action lets the admin back out of a create/edit without saving
+    public function testConfigureActionsDisablesDetailAndAddsCancelOnNewAndEdit(): void
+    {
+        $controller = $this->createController();
+
+        $actions = $controller->configureActions(
+            Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::EDIT)
+                ->add(Crud::PAGE_INDEX, Action::DELETE)
+        );
+
+        $this->assertContains(Action::DETAIL, $actions->getAsDto(null)->getDisabledActions());
+        $this->assertNotNull($actions->getAsDto(Crud::PAGE_NEW)->getAction(Crud::PAGE_NEW, 'cancel'));
+        $this->assertNotNull($actions->getAsDto(Crud::PAGE_EDIT)->getAction(Crud::PAGE_EDIT, 'cancel'));
     }
 
     public function testConfigureActionsHidesDeleteForARestrictedTemplate(): void

@@ -10,7 +10,7 @@
    the "portfolio" variant reuses PortfolioGrid's own ".portfolio-grid__head" (eyebrow + "voir tout"
    link), eyebrow/linkLabel/linkUrl are otherwise ignored - the default variant only ever shows title. #}
 {% set isPortfolio = variant is defined and variant == 'portfolio' %}
-<section class="collection-grid"{% if id is defined and id %} id="{{ id }}"{% endif %}>
+<section class="collection-grid{{ isPortfolio ? ' collection-grid--portfolio' : '' }}"{% if id is defined and id %} id="{{ id }}"{% endif %}>
     <div class="section-wrap">
         {% if isPortfolio and (title or linkLabel) %}
             <div class="portfolio-grid__head">

@@ -117,9 +117,27 @@ class MediaUploadTypeTest extends TestCase
     {
         $added = $this->buildFieldNames('audio/*', null);
 
-        foreach (['cssClasses', 'alt', 'label', 'width', 'height', 'above', 'credits', 'rightsReserved'] as $field) {
+        foreach (['cssClasses', 'alt', 'label', 'width', 'height', 'above', 'credits', 'rightsReserved', 'name'] as $field) {
             $this->assertArrayNotHasKey($field, $added, "\"$field\" should not be added for a non-image upload");
         }
+    }
+
+    // A PDF (e.g. document_download) gets no image metadata at all, but does get "name" - an admin-typed value UiMediaNamer slugifies into the stored filename instead of the default "block-{kind}-{id}"
+    public function testBuildFormAddsNameFieldForPdfAcceptOnly(): void
+    {
+        $added = $this->buildFieldNames('application/pdf', null);
+
+        $this->assertArrayHasKey('name', $added);
+        foreach (['cssClasses', 'alt', 'label', 'width', 'height', 'above', 'credits', 'rightsReserved'] as $field) {
+            $this->assertArrayNotHasKey($field, $added, "\"$field\" should not be added for a PDF upload");
+        }
+    }
+
+    public function testBuildFormSkipsNameFieldForImageAccept(): void
+    {
+        $added = $this->buildFieldNames('image/*', null);
+
+        $this->assertArrayNotHasKey('name', $added);
     }
 
     // "card" context (the Card block's teaser image, see templates/blocks/Card.html.twig) only ever reads the file itself and its cssClasses - none of the other display metadata applies to it

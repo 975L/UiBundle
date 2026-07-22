@@ -21,7 +21,7 @@
     padding: 6px 12px;
     border-radius: 999px;
     background-color: var(--primary, #000);
-    color: #fff;
+    color: var(--button-color);
     font-size: 13px;
     font-weight: 500;
     line-height: 1;
@@ -42,12 +42,12 @@
 
 // SiteBundle's link styles (_links.scss: "a:hover, a:visited:hover { color: var(--link-color); ... }")
 // outrank a bare ".block-edit-overlay-btn" on specificity (element+pseudo-class beats a single class) -
-// repeated here as ".block-edit-overlay-btn:hover"/":visited" (class+pseudo-class) to stay white/unstyled.
+// repeated here as ".block-edit-overlay-btn:hover"/":visited" (class+pseudo-class) to stay on --button-color.
 .block-edit-overlay-btn,
 .block-edit-overlay-btn:hover,
 .block-edit-overlay-btn:visited,
 .block-edit-overlay-btn:visited:hover {
-    color: #fff;
+    color: var(--button-color);
     text-decoration: none;
 }
 

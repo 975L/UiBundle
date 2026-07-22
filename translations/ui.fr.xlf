@@ -661,7 +661,7 @@
             </trans-unit>
             <trans-unit id="151">
                 <source>label.info_media</source>
-                <target>Tous les médias téléversés (pages, blocks, graphismes du site)</target>
+                <target>Tous les médias téléversés (pages, blocks, graphismes du site). Modifiez la légende, le texte alternatif ou les crédits d'un média ; les graphiques globaux du site (favicon, logo...) restent en lecture seule ici et se gèrent depuis Graphiques du site.</target>
             </trans-unit>
             <trans-unit id="167">
                 <source>label.category_sections</source>
@@ -1285,7 +1285,7 @@
             </trans-unit>
             <trans-unit id="328">
                 <source>label.info_form_field_template</source>
-                <target>Champs prêts à l'emploi pour construire un formulaire. Un modèle restreint garde son nom fixe, le reste reste modifiable.</target>
+                <target>Champs prêts à l'emploi pour construire un formulaire. Créez, modifiez ou supprimez un modèle ; un modèle restreint garde son nom fixe mais reste modifiable et n'est jamais supprimable.</target>
             </trans-unit>
             <trans-unit id="500">
                 <source>label.form_disabled</source>
@@ -1326,6 +1326,42 @@
             <trans-unit id="509">
                 <source>label.info_email_debug</source>
                 <target>Un ROLE_SUPER_ADMIN voit un aperçu au lieu de l'envoi réel tant que %link_open%cette clé%link_close% est activée.</target>
+            </trans-unit>
+            <trans-unit id="512">
+                <source>label.block_flex_columns</source>
+                <target>Colonnes flexibles</target>
+            </trans-unit>
+            <trans-unit id="513">
+                <source>label.block_flex_columns_description</source>
+                <target>Titre de section suivi de colonnes flexibles, chacune un block existant au choix</target>
+            </trans-unit>
+            <trans-unit id="514">
+                <source>label.slots</source>
+                <target>Colonnes</target>
+            </trans-unit>
+            <trans-unit id="515">
+                <source>label.info_form</source>
+                <target>Formulaires du site (contact, newsletter...), chacun avec ses propres champs et son action d'envoi. Créez, modifiez ou supprimez un formulaire ; un formulaire restreint garde son nom fixe et ne peut pas être supprimé.</target>
+            </trans-unit>
+            <trans-unit id="516">
+                <source>label.info_email_template</source>
+                <target>Modèles d'e-mails du site, chacun composé de blocs de contenu. Créez, modifiez ou prévisualisez un modèle ; un modèle restreint garde son nom fixe et ne peut pas être supprimé.</target>
+            </trans-unit>
+            <trans-unit id="521">
+                <source>label.block_flex_column</source>
+                <target>Colonne</target>
+            </trans-unit>
+            <trans-unit id="522">
+                <source>label.block_flex_column_description</source>
+                <target>Regroupe plusieurs blocks dans une colonne d'une section "Colonnes flexibles"</target>
+            </trans-unit>
+            <trans-unit id="519">
+                <source>label.file_name</source>
+                <target>Nom du fichier</target>
+            </trans-unit>
+            <trans-unit id="520">
+                <source>label.file_name_help</source>
+                <target>Utilisé pour nommer le fichier stocké.</target>
             </trans-unit>
         </body>
     </file>

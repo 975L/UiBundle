@@ -8,8 +8,11 @@
     {# Reuses portfolio-grid's own classes (sass/_page-sections.scss) so a Collection can look
        exactly like a PortfolioGrid block without any app-level template override - see
        PortfolioGrid.html.twig/Portfolio/Grid.html.twig for the block this mirrors #}
-    {% set href = detailUrl|default(null) ?: url|default('#') %}
-    <a class="portfolio-grid__project" href="{{ href }}"{% if not detailUrl and url %} target="_blank" rel="noopener"{% endif %}>
+    {% set href = detailUrl|default(null) ?: url|default(null) %}
+    {# No detailPage configured and no "url" field on the item: nothing to link to, so this must not
+       render as an <a> at all - a href="#" would be a dead link that still looks clickable. #}
+    {% set tag = href ? 'a' : 'div' %}
+    <{{ tag }} class="portfolio-grid__project"{% if href %} href="{{ href }}"{% if not detailUrl and url %} target="_blank" rel="noopener"{% endif %}{% endif %}>
         {% if imageUrl %}
             <div class="portfolio-grid__project-img">
                 <img src="{{ imageUrl }}" alt="{{ title }}">
@@ -19,7 +22,7 @@
             <h3 class="portfolio-grid__project-title">{{ title }}</h3>
             {% if content %}<p class="portfolio-grid__project-text">{{ content }}</p>{% endif %}
         </div>
-    </a>
+    </{{ tag }}>
 {% else %}
     {% set resolvedImageUrl = imageUrl|default(null) %}
     {% if resolvedImageUrl or url %}

@@ -90,6 +90,30 @@
                 <source>description.email_debug</source>
                 <target>Si activé, un ROLE_SUPER_ADMIN voit un aperçu au lieu de l'envoi réel</target>
             </trans-unit>
+            <trans-unit id="25">
+                <source>label.recaptcha3_site_key</source>
+                <target>ReCaptcha - Clé de site</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>description.recaptcha3_site_key</source>
+                <target>Clé de site pour ReCaptcha v3</target>
+            </trans-unit>
+            <trans-unit id="27">
+                <source>label.recaptcha3_secret_key</source>
+                <target>ReCaptcha - Clé secrète</target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>description.recaptcha3_secret_key</source>
+                <target>Clé secrète pour ReCaptcha v3</target>
+            </trans-unit>
+            <trans-unit id="29">
+                <source>label.recaptcha3_score_threshold</source>
+                <target>ReCaptcha - Seuil de score</target>
+            </trans-unit>
+            <trans-unit id="30">
+                <source>description.recaptcha3_score_threshold</source>
+                <target>Seuil de score (entre 0 et 1) en dessous duquel ReCaptcha v3 considère la soumission comme suspecte</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

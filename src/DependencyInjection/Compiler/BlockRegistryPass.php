@@ -54,6 +54,8 @@ class BlockRegistryPass implements CompilerPassInterface
                     isset($tag['media_required']) && filter_var($tag['media_required'], FILTER_VALIDATE_BOOLEAN),
                     isset($tag['media_multi_upload']) && filter_var($tag['media_multi_upload'], FILTER_VALIDATE_BOOLEAN),
                     $this->bundleFromTemplate($tag['template']),
+                    isset($tag['container']) && filter_var($tag['container'], FILTER_VALIDATE_BOOLEAN),
+                    $tag['slot_context'] ?? BlockRegistry::SLOT_CONTEXT,
                 ]);
             }
         }

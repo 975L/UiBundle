@@ -34,6 +34,7 @@ class MediaUploadType extends AbstractType
         $isCards = 'card' === $options['context'];
         $isBannerTitle = 'banner_title' === $options['context'];
         $isPortfolioGrid = 'portfolio_grid' === $options['context'];
+        $isPdf = in_array('application/pdf', $acceptedTypes, true);
 
         // Placeholder type, always overridden in the PRE_SET_DATA listener below once the entry's real data (and mimetype, for an existing upload) is known - added here first only so "file" keeps rendering as the form's first field (re-adding a field under the same name replaces it in place rather than moving it to the end).
         $builder
@@ -52,6 +53,15 @@ class MediaUploadType extends AbstractType
         // cssClasses applies to a Card's teaser image too (see templates/blocks/Card.html.twig), so it stays out of the "!$isCards" group below
         if ($isImage) {
             $builder->add('cssClasses', ImageClassChoiceType::class);
+        }
+
+        // Lets the admin give a PDF a readable name (e.g. "Rapport annuel") - UiMediaNamer slugifies it into the stored/physical filename instead of the default "block-document_download-{id}". Distinct from "label" (a display caption, not filesystem-safe) - kept out of the $isImage block above since it has no meaning for those kinds.
+        if ($isPdf) {
+            $builder->add('name', TextType::class, [
+                'label' => 'label.file_name',
+                'help' => 'label.file_name_help',
+                'required' => false,
+            ]);
         }
 
         // Per-image display metadata, only relevant when the uploaded file is an image - none of the rest applies to a Card's teaser image: alt comes from the card's own title, there's no caption/sizing/rights markup for a card teaser Field order/set kept in parity with MediaCrudController (the Media library's own edit form)

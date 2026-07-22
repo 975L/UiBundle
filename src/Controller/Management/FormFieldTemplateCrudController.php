@@ -77,19 +77,25 @@ class FormFieldTemplateCrudController extends AbstractCrudController
     {
         $role = $this->configService->get('site-role-admin');
 
+        // Lets the admin back out of a create/edit without saving - mirrors EasyAdmin's own built-in actions (linkToCrudAction targeting INDEX, same as Action::INDEX itself)
+        $cancelAction = Action::new('cancel', t('action.cancel', domain: 'EasyAdminBundle'), 'fa fa-times')
+            ->linkToCrudAction(Action::INDEX)
+            ->addCssClass('btn btn-secondary');
+
         return $actions
-            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_NEW, $cancelAction)
+            ->add(Crud::PAGE_EDIT, $cancelAction)
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => $action->setLabel(false)->setIcon('fas fa-pencil'))
             ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => $action
                 ->setLabel(false)
                 ->setIcon('fas fa-trash')
                 ->displayIf(static fn (FormFieldTemplate $template): bool => !$template->isRestricted()))
-            ->update(Crud::PAGE_INDEX, Action::DETAIL, fn (Action $action) => $action->setLabel(false)->setIcon('fas fa-eye'))
             ->setPermission(Action::INDEX, $role)
             ->setPermission(Action::NEW, $role)
             ->setPermission(Action::EDIT, $role)
             ->setPermission(Action::DELETE, $role)
-            ->setPermission(Action::DETAIL, $role)
+            // Detail adds no information beyond what edit already shows
+            ->disable(Action::DETAIL)
         ;
     }
 
@@ -99,6 +105,8 @@ class FormFieldTemplateCrudController extends AbstractCrudController
             ->showEntityActionsInlined()
             ->setEntityPermission($this->configService->get('site-role-admin'))
             ->overrideTemplate('crud/index', '@c975LUi/management/form_field_template_crud_index.html.twig')
+            ->overrideTemplate('crud/edit', '@c975LUi/management/form_field_template_crud_edit.html.twig')
+            ->overrideTemplate('crud/new', '@c975LUi/management/form_field_template_crud_new.html.twig')
         ;
     }
 

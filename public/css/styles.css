@@ -87,7 +87,7 @@
   padding: 6px 12px;
   border-radius: 999px;
   background-color: var(--primary, #000);
-  color: #fff;
+  color: var(--button-color);
   font-size: 13px;
   font-weight: 500;
   line-height: 1;
@@ -108,7 +108,7 @@
 .block-edit-overlay-btn:hover,
 .block-edit-overlay-btn:visited,
 .block-edit-overlay-btn:visited:hover {
-  color: #fff;
+  color: var(--button-color);
   text-decoration: none;
 }
 
@@ -283,6 +283,14 @@ button.btn {
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
+}
+
+.blocks > .cards {
+  box-sizing: border-box;
+  max-width: calc(1312px + 2 * clamp(20px, 5vw, 64px));
+  margin: 0 auto;
+  padding-left: clamp(20px, 5vw, 64px);
+  padding-right: clamp(20px, 5vw, 64px);
 }
 
 .card {
@@ -586,7 +594,8 @@ img.white {
    top spacing so gaps stay consistent regardless of which kinds end up next to each other on a
    page. .hero and .cta-band aren't in this list: they already set their own top+bottom padding
    below, since they're the kinds most often placed first/last on a page. .feature-bar is
-   deliberately excluded too - it's a full-bleed border-only band, not a padded section. */
+   deliberately excluded too - it's a full-bleed border-only band, not a padded section.
+   .flex-columns-section is excluded as well: it has no page-level top spacing of its own to add. */
 .section-cards-section,
 .expertise-banner,
 .process-steps,
@@ -594,6 +603,32 @@ img.white {
 .collection-grid,
 .text-section {
   padding-top: clamp(48px, 8vw, 84px);
+}
+
+/* Any of the kinds above, used as a flex_columns slot instead of a top-level page block, must lose
+   that same top padding - it was sized for "first thing in its own vertical stack on the page", not
+   for sitting flush against a column's other slots, and would otherwise misalign the column against
+   its siblings (see Container kinds > flex_columns in the README). */
+.flex-columns__col > .section-cards-section,
+.flex-columns__col > .expertise-banner,
+.flex-columns__col > .process-steps,
+.flex-columns__col > .portfolio-grid,
+.flex-columns__col > .collection-grid,
+.flex-columns__col > .text-section {
+  padding-top: 0;
+}
+
+/* Same reasoning as the padding-top reset above, but for ".section-wrap" itself: the outer
+   ".flex-columns-section" already applies its own ".section-wrap" horizontal gutter once (see
+   Section/FlexColumns.html.twig) - any of the kinds above, slotted into a column, brings its own
+   nested ".section-wrap" too, which would otherwise add that same 20-64px gutter a second time
+   inside a column that's already much narrower than the page. Placed after every other
+   ".section-wrap"-related rule in this file (in particular ".collection-grid .section-wrap" below)
+   so it wins the cascade on equal specificity regardless of source order there. */
+.flex-columns__col .section-wrap {
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 /* Buttons for this block family only - kept out of sass/_buttons.scss's .btn/.btn-* on purpose */
@@ -950,6 +985,25 @@ img.white {
   margin: 0;
 }
 
+/* ---- flex_columns ----
+   Deliberately flex/wrap instead of a fixed 2- or 3-column grid: each slot is a full block of its
+   own (see Block::$slots), so column count follows whatever content editors actually put in, rather
+   than a rigid layout the block itself would have to pick a column-count for. */
+.flex-columns {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.flex-columns__col {
+  flex: 1 1 280px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 /* ---- expertise_banner ----
    Deliberately dark regardless of the site's light/dark mode - a contrast panel, not a themed
    surface - hence --surface-inverse/--text-on-inverse instead of --background/--text. */
@@ -1122,8 +1176,10 @@ img.white {
   line-height: 1.5;
 }
 
-/* ---- collection - items render as "card" blocks, reusing .cards/.card (sass/_cards.scss) ---- */
-.collection-grid .section-wrap {
+/* ---- collection - default variant's items render as "card" blocks, reusing .cards/.card
+   (sass/_cards.scss); the "portfolio" variant uses .portfolio-grid__grid's own fluid 1fr columns
+   instead (see CollectionItem.html.twig) ---- */
+.collection-grid:not(.collection-grid--portfolio) .section-wrap {
   max-width: calc(1312px + 2 * clamp(20px, 5vw, 64px));
 }
 
@@ -1875,3 +1931,5 @@ img.white {
   font-style: italic;
   color: var(--primary);
 }
+
+/*# sourceMappingURL=styles.css.map */

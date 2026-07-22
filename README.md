@@ -6,6 +6,12 @@ Symfony bundle providing a dynamic block system for pages and content entities, 
 [![Packagist Version](https://img.shields.io/packagist/v/c975l/ui-bundle)](https://packagist.org/packages/c975l/ui-bundle)
 [![PHP Version](https://img.shields.io/packagist/php-v/c975l/ui-bundle)](https://packagist.org/packages/c975l/ui-bundle)
 
+## Why UiBundle
+
+![UiBundle](.github/images/UiBundle.svg)
+
+The shared foundation every c975L satellite bundle builds on, alongside [ConfigBundle](https://github.com/975L/ConfigBundle): the Block system, media library, shared CSS/JS registries, Forms and Emails all live here so [SiteBundle](https://github.com/975L/SiteBundle), [ShopBundle](https://github.com/975L/ShopBundle), [BookBundle](https://github.com/975L/BookBundle), [GalleryBundle](https://github.com/975L/GalleryBundle) and [SocialBundle](https://github.com/975L/SocialBundle) don't each reinvent them. A satellite bundle adds its own block kind (`BlockRegistryPass`), stylesheet (`StylesheetRegistryPass`) or form action (`FormActionRegistry`) without ever touching UiBundle's code — just tag a service.
+
 ---
 
 ## Features
@@ -209,6 +215,8 @@ The bundle ships the following kinds out of the box (see `config/services.yaml` 
 | `process_steps` | Page sections | `ProcessStepsType` | `blocks/ProcessSteps.html.twig` |
 | `progress_bar` | Elements | `ProgressBarType` | `blocks/ProgressBar.html.twig` |
 | `rich_snippet` | SEO | `RichSnippetType` | `blocks/RichSnippet.html.twig` |
+| `flex_column` | Page sections | `FlexColumnType` | `blocks/FlexColumn.html.twig` |
+| `flex_columns` | Page sections | `FlexColumnsType` | `blocks/FlexColumns.html.twig` |
 | `section_cards` | Page sections | `SectionCardsType` | `blocks/SectionCards.html.twig` |
 | `slider` | Media | `SliderType` | `blocks/Slider.html.twig` |
 | `text_readmore` | Text | `ReadmoreType` | `blocks/TextReadmore.html.twig` |
@@ -220,9 +228,23 @@ The bundle ships the following kinds out of the box (see `config/services.yaml` 
 
 ---
 
+## Container kinds (blocks made of other blocks)
+
+`flex_columns` is a **container** kind: instead of holding plain data, its "slots" are real, independently-editable `Block` rows (`Block::$slots`, a self-referencing relation - `Block::$parentBlock` on the child side), each picked through the exact same kind-picker + form + media upload as any top-level block. Use it whenever a design lays several existing blocks (a paragraph, a `document_download` card, a `progress_bar`...) side by side, instead of inventing a one-off kind per layout.
+
+- Each of `flex_columns`' own slots becomes one visual column. A slot can be **any pickable kind directly** (a single-block column - e.g. just a `text_section` paragraph) **or `flex_column`**, itself a container whose own slots (added the same way, via its own "+ Add a slot" button) stack vertically inside that one column - e.g. two `document_download` cards one above the other, next to a `text_section` paragraph in the other column.
+- Nesting is bounded to exactly this: a `flex_columns` slot can't be another `flex_columns`, and a `flex_column` slot can't be another `flex_column` (or a `flex_columns`) - see `BlockRegistry::SLOT_CONTEXT`/`NESTED_SLOT_CONTEXT` and `getSlotContext()` below.
+- Not cacheable itself (`cacheable: false`, same for `flex_column`): each leaf slot still caches independently through its own `render_block()` call (see "Block render cache" below) - only the wrapper(s) are re-rendered every time, which is cheap.
+- To make your own kind a container, tag it `container: true` in its `ui.block` service tag, and mirror `FlexColumnsType`/`FlexColumns.html.twig` (or `FlexColumnType`/`FlexColumn.html.twig` for a chrome-less nested one) - the "slots" field itself is added automatically by `BlockType`, not by your kind's own form. By default its slots are offered every OTHER container kind's own choices too, minus containers (`BlockRegistry::SLOT_CONTEXT`); to let your container nest one level inside another specific container instead (like `flex_column` does inside `flex_columns`), declare `contexts: 'that_containers_slot_context'` and give your own slots a distinct `slot_context: 'something_else'` so nothing can nest inside *it* in turn.
+- A container kind stays technically pickable at the top level too (`contexts` can't hide a kind from a context-less picker) - harmless for `flex_column`, it just renders its slots with no wrapper when picked directly.
+
+Upgrading to a UiBundle version that introduces `flex_columns`/`flex_column` (or your own container kind) adds a new `parent_block_id` column to `site_block` - re-run "Run migrations" above after `composer update`.
+
+---
+
 ## Anchors (in-page navigation)
 
-Every "Page sections" kind above (`hero`, `feature_bar`, `section_cards`, `expertise_banner`, `process_steps`, `portfolio_grid`, `cta_band`, `collection`) has an optional **Anchor** field, letting an editor build a one-page nav (a `menu_link` block - see `c975L/SiteBundle`'s README - pointing straight at a section of the same page).
+Every "Page sections" kind above (`hero`, `feature_bar`, `section_cards`, `flex_columns`, `expertise_banner`, `process_steps`, `portfolio_grid`, `cta_band`, `collection`) has an optional **Anchor** field, letting an editor build a one-page nav (a `menu_link` block - see `c975L/SiteBundle`'s README - pointing straight at a section of the same page).
 
 - Typing an anchor (e.g. `Services`) slugifies it (`services`). Leaving it empty falls back to slugifying the block's own title.
 - The final HTML `id` rendered on the section is always `{slug}-{block.id}` (e.g. `services-42`) - the trailing block id is added at render time, not stored, so two blocks of the same kind on the same page (or the same title reused elsewhere) never collide.
@@ -740,6 +762,8 @@ When a `.pdf` file is uploaded through VichUploader on **any entity** (no interf
 - **Thumbnail width** defaults to `400px`, or reuses `getImageWidth()` if the entity also implements `VichImageResizableInterface`.
 
 No configuration needed — handled by `VichPdfThumbnailListener`, auto-registered like the rest of the bundle's services.
+
+By default an uploaded PDF is stored under an auto-generated name (`block-{kind}-{id}-{uniqid}.pdf`). Filling in the **File name** field (`Media::$name`, shown for `application/pdf` uploads) overrides this: `UiMediaNamer` slugifies it into the stored filename instead (e.g. "Rapport annuel" → `rapport-annuel-xxx.pdf`). It's distinct from **Caption** (`Media::$label`, a display string), which isn't filesystem-safe.
 
 ---
 

@@ -160,6 +160,108 @@ class BlockRegistryTest extends TestCase
         $this->assertFalse($registry->isCacheable('contact_form'));
     }
 
+    public function testIsContainerDefaultsToFalse(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('article', 'label.article', ArticleFormStub::class, 'article.html.twig');
+
+        $this->assertFalse($registry->isContainer('article'));
+    }
+
+    public function testIsContainerCanBeDeclaredTrue(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('flex_columns', 'label.flex_columns', ArticleFormStub::class, 'flex_columns.html.twig', container: true);
+
+        $this->assertTrue($registry->isContainer('flex_columns'));
+    }
+
+    // A container kind must not be offered as a choice for its own slots, or an editor could nest containers indefinitely - see BlockType::addSlotsSubForm()
+    public function testGroupedByCategoryExcludesContainerKindsFromSlotContext(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('flex_columns', 'label.flex_columns', ArticleFormStub::class, 'flex_columns.html.twig', container: true);
+        $registry->register('article', 'label.article', ArticleFormStub::class, 'article.html.twig');
+
+        $forSlot = array_merge(...array_values($registry->groupedByCategory(BlockRegistry::SLOT_CONTEXT)));
+
+        $this->assertArrayNotHasKey('label.flex_columns[ui]', $forSlot);
+        $this->assertArrayHasKey('label.article[ui]', $forSlot);
+    }
+
+    // Outside the slot context, a container kind is a perfectly normal pickable block like any other
+    public function testGroupedByCategoryIncludesContainerKindsInOrdinaryContexts(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('flex_columns', 'label.flex_columns', ArticleFormStub::class, 'flex_columns.html.twig', container: true);
+
+        $grouped = array_merge(...array_values($registry->groupedByCategory()));
+
+        $this->assertArrayHasKey('label.flex_columns[ui]', $grouped);
+    }
+
+    // "flex_columns" has no "contexts" restriction of its own, so it must stay pickable in a real, named,
+    // non-slot context too (e.g. SiteBundle's Page block picker calling groupedByCategory('page')) - not
+    // just when no context is passed at all
+    public function testGroupedByCategoryIncludesUnrestrictedContainerKindsInANamedOrdinaryContext(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('flex_columns', 'label.flex_columns', ArticleFormStub::class, 'flex_columns.html.twig', container: true);
+
+        $grouped = array_merge(...array_values($registry->groupedByCategory('page')));
+
+        $this->assertArrayHasKey('label.flex_columns[ui]', $grouped);
+    }
+
+    public function testGetSlotContextDefaultsToSlotContext(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('flex_columns', 'label.flex_columns', ArticleFormStub::class, 'flex_columns.html.twig', container: true);
+
+        $this->assertSame(BlockRegistry::SLOT_CONTEXT, $registry->getSlotContext('flex_columns'));
+    }
+
+    public function testGetSlotContextCanBeOverridden(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register(
+            'flex_column',
+            'label.flex_column',
+            ArticleFormStub::class,
+            'flex_column.html.twig',
+            container: true,
+            slotContext: BlockRegistry::NESTED_SLOT_CONTEXT
+        );
+
+        $this->assertSame(BlockRegistry::NESTED_SLOT_CONTEXT, $registry->getSlotContext('flex_column'));
+    }
+
+    // A container kind may opt back in to being offered inside one specific slot context (and only that
+    // one) via its own "contexts" - "flex_column" is meant to nest one level inside "flex_columns" (its
+    // own slots, picked with SLOT_CONTEXT), but must stay excluded from its own kind of slot picker
+    // (NESTED_SLOT_CONTEXT), same as any other container - no column-in-column
+    public function testGroupedByCategoryLetsAContainerOptIntoOneSpecificSlotContext(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('flex_columns', 'label.flex_columns', ArticleFormStub::class, 'flex_columns.html.twig', container: true);
+        $registry->register(
+            'flex_column',
+            'label.flex_column',
+            ArticleFormStub::class,
+            'flex_column.html.twig',
+            container: true,
+            contexts: [BlockRegistry::SLOT_CONTEXT],
+            slotContext: BlockRegistry::NESTED_SLOT_CONTEXT
+        );
+
+        $forRowSlot = array_merge(...array_values($registry->groupedByCategory(BlockRegistry::SLOT_CONTEXT)));
+        $forColumnSlot = array_merge(...array_values($registry->groupedByCategory(BlockRegistry::NESTED_SLOT_CONTEXT)));
+
+        $this->assertArrayHasKey('label.flex_column[ui]', $forRowSlot);
+        $this->assertArrayNotHasKey('label.flex_columns[ui]', $forRowSlot);
+        $this->assertArrayNotHasKey('label.flex_column[ui]', $forColumnSlot);
+    }
+
     public function testGetBundleReturnsRegisteredValue(): void
     {
         $registry = new BlockRegistry($this->createTranslator());

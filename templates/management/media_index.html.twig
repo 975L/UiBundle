@@ -10,9 +10,12 @@
         {% for entity in entities %}
             {% if entity.isAccessible %}
                 {% set media = entity.instance %}
+                {% set thumbnailPath = media.filename ? document_thumbnail_path(media) : null %}
                 <a href="{{ entity.defaultActionUrl }}" class="management-media-grid__item">
                     {% if media.filename and media.mimeType starts with 'image/' %}
                         <img src="{{ vich_uploader_asset(media) }}" alt="{{ media.alt }}" width="150" height="150" class="management-media-grid__thumb">
+                    {% elseif thumbnailPath %}
+                        <img src="{{ asset(thumbnailPath) }}" alt="{{ media.alt }}" width="150" height="150" class="management-media-grid__thumb">
                     {% else %}
                         <div class="management-media-grid__placeholder">
                             {{ media.filename }}

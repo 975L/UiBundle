@@ -324,6 +324,46 @@ services:
               pickable: true
               cacheable: true
 
+    # Slots are real nested Block rows (see Block::$slots), each picked/edited through the normal
+    # kind form - not cacheable itself: a slot's own cache invalidation doesn't propagate to this
+    # block's cache key, same reasoning as "collection" above. Each slot still caches independently.
+    ui.block.flex_columns:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: flex_columns
+              label: "label.block_flex_columns"
+              description: "label.block_flex_columns_description"
+              form: c975L\UiBundle\Form\Block\FlexColumnsType
+              template: '@c975LUi/blocks/FlexColumns.html.twig'
+              category: 'label.category_sections'
+              priority: 75
+              pickable: true
+              cacheable: false
+              container: true
+
+    # A single flex_columns column, itself grouping several other blocks (its own "slots") - only ever
+    # meant to be picked as a flex_columns row's own slot (contexts restricts it to BlockRegistry::SLOT_CONTEXT),
+    # though it stays technically pickable at the top level too since "contexts" can't hide a kind from
+    # a context-less picker (see BlockRegistry::groupedByCategory()) - harmless if it ever is, it just
+    # renders its slots with no wrapper of its own.
+    ui.block.flex_column:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: flex_column
+              label: "label.block_flex_column"
+              description: "label.block_flex_column_description"
+              form: c975L\UiBundle\Form\Block\FlexColumnType
+              template: '@c975LUi/blocks/FlexColumn.html.twig'
+              category: 'label.category_sections'
+              priority: 74
+              pickable: true
+              cacheable: false
+              container: true
+              contexts: 'flex_slot'
+              slot_context: 'flex_slot_nested'
+
     ui.block.expertise_banner:
         class: stdClass
         tags:
