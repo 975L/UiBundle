@@ -1361,7 +1361,11 @@
             </trans-unit>
             <trans-unit id="520">
                 <source>label.file_name_help</source>
-                <target>Utilisé pour nommer le fichier stocké.</target>
+                <target>Utilisé pour nommer le fichier stocké. Sert aussi de titre à la carte de téléchargement si plusieurs fichiers sont attachés.</target>
+            </trans-unit>
+            <trans-unit id="523">
+                <source>label.document_download_media_help</source>
+                <target>Un fichier = une carte de téléchargement. Attachez plusieurs fichiers pour proposer plusieurs documents ; donnez alors à chacun un "Nom du fichier" distinct, il servira de titre à sa carte.</target>
             </trans-unit>
         </body>
     </file>

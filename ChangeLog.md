@@ -1,5 +1,21 @@
 # ChangeLog
 
+## v1.9.8
+
+- Added `Entity\Trait\VichMediaTrait`, shared fields/methods for a satellite bundle's own Vich-uploaded media entity (23/07/2026)
+- Added `Listener\MediaFileRemoveListener`, deleting a media entity's underlying file on removal (23/07/2026)
+- Added `Service\PrivateFileResponseFactory`, building a download response for a private file (23/07/2026)
+- Fixed `ea.collection.item-added` dispatch missing `detail.newElement`, crashing EasyAdmin's own collection-item JS (23/07/2026)
+- Centered `.alert` with a max-width and readable text/link color (23/07/2026)
+- Enlarged `document_download`'s thumbnail to show actual page content instead of a cropped sliver (23/07/2026)
+- `document_download` now renders one card per attached PDF, opened in a new tab instead of forced download (23/07/2026)
+- Added a `document_download`-specific media help text distinguishing its one-card-per-file behaviour (23/07/2026)
+- Block kind picker's category optgroups now follow a fixed display order instead of alphabetical (23/07/2026)
+- Fixed `Collection/Grid`'s portfolio head not showing when only an eyebrow is set (23/07/2026)
+- Fixed ghost buttons in `Collection/Grid`, `Portfolio/Grid` and `Hero` linking to nothing when no URL is set (23/07/2026)
+- Fixed `Image/Link` and `Portfolio/Grid` project cards rendering a dead link instead of a plain tag when no URL is set (23/07/2026)
+- Added a Donovan Q&A card to ConfigBundle's dashboard home (23/07/2026)
+
 ## v1.9.7
 
 - Added `flex_columns`/`flex_column` container blocks, laying other blocks side by side or stacked (22/07/2026)

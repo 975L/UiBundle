@@ -12,13 +12,13 @@
 {% set isPortfolio = variant is defined and variant == 'portfolio' %}
 <section class="collection-grid{{ isPortfolio ? ' collection-grid--portfolio' : '' }}"{% if id is defined and id %} id="{{ id }}"{% endif %}>
     <div class="section-wrap">
-        {% if isPortfolio and (title or linkLabel) %}
+        {% if isPortfolio and (eyebrow or title or linkLabel) %}
             <div class="portfolio-grid__head">
                 <div>
                     {% if eyebrow %}<p class="section-eyebrow">{{ eyebrow }}</p>{% endif %}
                     {% if title %}<h2 class="section-title">{{ title }}</h2>{% endif %}
                 </div>
-                {% if linkLabel %}<a class="section-btn section-btn--ghost" href="{{ linkUrl }}">{{ linkLabel }}</a>{% endif %}
+                {% if linkLabel and linkUrl %}<a class="section-btn section-btn--ghost" href="{{ linkUrl }}">{{ linkLabel }}</a>{% endif %}
             </div>
         {% elseif title %}
             <div class="collection-grid__head">

@@ -9,11 +9,13 @@
                 {% if eyebrow %}<p class="section-eyebrow">{{ eyebrow }}</p>{% endif %}
                 {% if title %}<h2 class="section-title">{{ title }}</h2>{% endif %}
             </div>
-            {% if linkLabel %}<a class="section-btn section-btn--ghost" href="{{ linkUrl }}">{{ linkLabel }}</a>{% endif %}
+            {% if linkLabel and linkUrl %}<a class="section-btn section-btn--ghost" href="{{ linkUrl }}">{{ linkLabel }}</a>{% endif %}
         </div>
         <div class="portfolio-grid__grid">
             {% for m in media %}
-                <a class="portfolio-grid__project" href="{{ m.url|default('#') }}"{% if m.url %} target="_blank" rel="noopener"{% endif %}>
+                {# No "url" on this media: nothing to link to, so this must not render as an <a> at all - a href="#" would be a dead link that still looks clickable #}
+                {% set tag = m.url ? 'a' : 'div' %}
+                <{{ tag }} class="portfolio-grid__project"{% if m.url %} href="{{ m.url }}" target="_blank" rel="noopener"{% endif %}>
                     <div class="portfolio-grid__project-img">
                         <img src="{{ vich_uploader_asset(m) }}" alt="{{ m.alt|default(m.label) }}">
                     </div>
@@ -21,7 +23,7 @@
                         <h3 class="portfolio-grid__project-title">{{ m.label }}</h3>
                         {% if m.description %}<p class="portfolio-grid__project-text">{{ m.description }}</p>{% endif %}
                     </div>
-                </a>
+                </{{ tag }}>
             {% endfor %}
         </div>
     </div>

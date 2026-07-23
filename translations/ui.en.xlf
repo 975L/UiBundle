@@ -1360,7 +1360,11 @@
             </trans-unit>
             <trans-unit id="520">
                 <source>label.file_name_help</source>
-                <target>Used to name the stored file.</target>
+                <target>Used to name the stored file. Also used as the download card's title when several files are attached.</target>
+            </trans-unit>
+            <trans-unit id="523">
+                <source>label.document_download_media_help</source>
+                <target>One file = one download card. Attach several files to offer several documents - give each a distinct "File name" then, it becomes that card's own title.</target>
             </trans-unit>
         </body>
     </file>

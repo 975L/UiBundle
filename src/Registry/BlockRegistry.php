@@ -29,6 +29,20 @@ class BlockRegistry
     // "contexts", which lists SLOT_CONTEXT but not this one).
     public const NESTED_SLOT_CONTEXT = 'flex_slot_nested';
 
+    // Display order of the "kind" picker's optgroups (untranslated category keys, so it holds across locales) -
+    // a category not listed here (e.g. a future bundle's own) falls back after all of these, alphabetically
+    private const CATEGORY_ORDER = [
+        'label.category_sections',
+        'label.category_elements',
+        'label.category_text',
+        'label.category_media',
+        'label.category_forms',
+        'label.category_navigation',
+        'label.category_seo',
+        'label.category_legal',
+        'label.category_twig',
+    ];
+
     private array $blocks = [];
     private array $labelCache = [];
     private array $descriptionCache = [];
@@ -57,7 +71,8 @@ class BlockRegistry
         bool $multiUpload = false,
         string $bundle = '',
         bool $container = false,
-        string $slotContext = self::SLOT_CONTEXT
+        string $slotContext = self::SLOT_CONTEXT,
+        string $mediaHelp = ''
     ): void {
         $this->blocks[$kind] = [
             'label'         => $label,
@@ -76,6 +91,7 @@ class BlockRegistry
             'bundle'        => $bundle,
             'container'     => $container,
             'slotContext'   => $slotContext,
+            'mediaHelp'     => $mediaHelp,
         ];
     }
 
@@ -159,6 +175,14 @@ class BlockRegistry
         return !empty($this->get($kind)['mediaTypes']);
     }
 
+    // The "medias" field's help text - a kind-specific one when declared (e.g. "document_download"'s one-card-per-file behaviour), the generic one otherwise. Single source shared by BlockType and BlockFormController's AJAX-loaded preview, instead of each duplicating the same kind check.
+    public function getMediaHelp(string $kind): string
+    {
+        $help = $this->get($kind)['mediaHelp'];
+
+        return '' !== $help ? $help : 'label.media_help';
+    }
+
     // True for kinds that can't be saved without at least one attached media (e.g. "banner_title", whose background image isn't optional decoration but the whole point of the block) - enforced by RequiredMediaValidator on the Block entity itself
     public function isMediaRequired(string $kind): bool
     {
@@ -195,7 +219,12 @@ class BlockRegistry
     // Result only depends on the static block registrations, cached per $context after its first call - excludes non-pickable kinds (singleton blocks with their own dedicated admin entry, e.g. SocialBundle's "social_links": offering them here would let editors create duplicate, independently-filled instances instead of reusing the single site-wide one found via BlockRepository::findOneByKind()), and kinds restricted to other contexts (e.g. SiteBundle's "menu_link", declared with contexts: ['menu'] so it doesn't leak into a Page's block picker). A kind declared with no contexts at all is available everywhere, and passing no $context here skips the contexts filter entirely - both keep existing callers (that don't pass $context yet) working unchanged.
     public function groupedByCategory(?string $context = null): array
     {
-        return $this->groupBy(fn (string $kind) => $this->getCategory($kind), $context, $this->groupedCache);
+        return $this->groupBy(
+            fn (string $kind) => $this->getCategory($kind),
+            $context,
+            $this->groupedCache,
+            fn (string $kind, array $config) => $config['category']
+        );
     }
 
     // Same grouping/filtering as groupedByCategory(), but by originating bundle instead of functional category - used to build a showcase page per bundle (e.g. 975l.com's public block demo) instead of the kind-picker's functional grouping. Kinds with no derivable bundle group under ''.
@@ -204,8 +233,9 @@ class BlockRegistry
         return $this->groupBy(fn (string $kind, array $config) => $config['bundle'], $context, $this->groupedByBundleCache);
     }
 
-    // Shared by groupedByCategory()/groupedByBundle(): groups pickable, context-eligible kinds by whatever key $keyFn returns, then orders each group by priority (highest first, alphabetical tie-break) - only the grouping key and the target cache array differ between the two callers
-    private function groupBy(callable $keyFn, ?string $context, array &$cache): array
+    // Shared by groupedByCategory()/groupedByBundle(): groups pickable, context-eligible kinds by whatever key $keyFn returns, then orders each group by priority (highest first, alphabetical tie-break) - only the grouping key and the target cache array differ between the two callers.
+    // $orderKeyFn, when given (groupedByCategory() only), returns the raw untranslated key used to rank optgroups against CATEGORY_ORDER instead of the default alphabetical ksort() - kept separate from $keyFn since the latter returns the already-translated label used as the group's display key
+    private function groupBy(callable $keyFn, ?string $context, array &$cache, ?callable $orderKeyFn = null): array
     {
         $cacheKey = $context ?? '';
         if (isset($cache[$cacheKey])) {
@@ -213,6 +243,7 @@ class BlockRegistry
         }
 
         $grouped = [];
+        $orderKeys = [];
         foreach ($this->blocks as $kind => $config) {
             if (!$config['pickable']) {
                 continue;
@@ -233,14 +264,30 @@ class BlockRegistry
             if ($isSlotContext && $config['container'] && !in_array($context, $config['contexts'], true)) {
                 continue;
             }
-            $grouped[$keyFn($kind, $config)][] = [
+            $groupKey = $keyFn($kind, $config);
+            $grouped[$groupKey][] = [
                 'kind'     => $kind,
                 'label'    => $this->getChoiceLabel($kind),
                 'priority' => $config['priority'],
             ];
+            if (null !== $orderKeyFn && !isset($orderKeys[$groupKey])) {
+                $orderKeys[$groupKey] = $orderKeyFn($kind, $config);
+            }
         }
 
-        ksort($grouped, SORT_FLAG_CASE | SORT_STRING);
+        if (null !== $orderKeyFn) {
+            // Ranks each optgroup by its position in CATEGORY_ORDER, alphabetical tie-break for anything not listed there
+            uksort($grouped, function (string $a, string $b) use ($orderKeys) {
+                $posA = array_search($orderKeys[$a], self::CATEGORY_ORDER, true);
+                $posB = array_search($orderKeys[$b], self::CATEGORY_ORDER, true);
+                $posA = false === $posA ? count(self::CATEGORY_ORDER) : $posA;
+                $posB = false === $posB ? count(self::CATEGORY_ORDER) : $posB;
+
+                return $posA <=> $posB ?: strcasecmp($a, $b);
+            });
+        } else {
+            ksort($grouped, SORT_FLAG_CASE | SORT_STRING);
+        }
         // Highest priority first; alphabetical as tie-breaker so unranked (priority 0) blocks stay predictable
         foreach ($grouped as $key => $entries) {
             usort($entries, fn (array $a, array $b) => $b['priority'] <=> $a['priority'] ?: strcasecmp($a['label'], $b['label']));

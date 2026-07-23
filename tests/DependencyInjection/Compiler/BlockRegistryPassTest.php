@@ -60,6 +60,7 @@ class BlockRegistryPassTest extends TestCase
                 '',
                 false,
                 BlockRegistry::SLOT_CONTEXT,
+                '',
             ],
             $calls[0][1]
         );
@@ -254,6 +255,25 @@ class BlockRegistryPassTest extends TestCase
 
         $calls = $container->getDefinition(BlockRegistry::class)->getMethodCalls();
         $this->assertSame(BlockRegistry::NESTED_SLOT_CONTEXT, $calls[0][1][16]);
+    }
+
+    // media_help defaults to an empty string (BlockRegistry::getMediaHelp() falls back to the generic label itself) and can be explicitly declared, as "document_download" does
+    public function testProcessParsesMediaHelpAttribute(): void
+    {
+        $container = new ContainerBuilder();
+        $container->register(BlockRegistry::class);
+        $container->register('block.document_download')->addTag('ui.block', [
+            'kind' => 'document_download',
+            'label' => 'label.document_download',
+            'form' => 'App\\Form\\DocumentDownloadType',
+            'template' => 'document_download.html.twig',
+            'media_help' => 'label.document_download_media_help',
+        ]);
+
+        (new BlockRegistryPass())->process($container);
+
+        $calls = $container->getDefinition(BlockRegistry::class)->getMethodCalls();
+        $this->assertSame('label.document_download_media_help', $calls[0][1][17]);
     }
 
     public function testProcessThrowsWhenARequiredAttributeIsMissing(): void

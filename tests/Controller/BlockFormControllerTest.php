@@ -45,6 +45,26 @@ class BlockFormControllerTest extends TestCase
         return $formFactory;
     }
 
+    // Same as createFormFactory(), but records each builder->add() call's options too, so the "medias" field's "help" text can be asserted
+    private function createFormFactoryCapturingOptions(array &$added): FormFactoryInterface
+    {
+        $builder = $this->createStub(FormBuilderInterface::class);
+        $builder->method('add')->willReturnCallback(function (string $name, ?string $fieldType = null, array $fieldOptions = []) use (&$added, $builder) {
+            $added[$name] = $fieldOptions;
+
+            return $builder;
+        });
+
+        $form = $this->createStub(FormInterface::class);
+        $form->method('createView')->willReturn(new FormView());
+        $builder->method('getForm')->willReturn($form);
+
+        $formFactory = $this->createStub(FormFactoryInterface::class);
+        $formFactory->method('createNamedBuilder')->willReturn($builder);
+
+        return $formFactory;
+    }
+
     private function createContainerWithTwig(): \Symfony\Component\DependencyInjection\Container
     {
         $twig = $this->createStub(Environment::class);
@@ -161,5 +181,23 @@ class BlockFormControllerTest extends TestCase
         $controller->dataForm(new Request(['k' => 'text_section']));
 
         $this->assertNotContains('slots', $added);
+    }
+
+    // The "medias" field's help text is whatever BlockRegistry::getMediaHelp() declares for the kind (see BlockRegistryTest) - dataForm() just wires it through, same as BlockType::addMediaSubForm()
+    public function testDataFormUsesTheRegistrysDeclaredMediaHelpText(): void
+    {
+        $registry = $this->createStub(BlockRegistry::class);
+        $registry->method('has')->willReturn(true);
+        $registry->method('getFormClass')->willReturn(\Symfony\Component\Form\Extension\Core\Type\FormType::class);
+        $registry->method('hasMediaTypes')->willReturn(true);
+        $registry->method('getMediaTypes')->willReturn(['application/pdf']);
+        $registry->method('getMediaHelp')->willReturn('label.document_download_media_help');
+        $added = [];
+        $controller = new BlockFormController($registry, $this->createFormFactoryCapturingOptions($added));
+        $controller->setContainer($this->createContainerWithTwig());
+
+        $controller->dataForm(new Request(['k' => 'document_download']));
+
+        $this->assertSame('label.document_download_media_help', $added['medias']['help']);
     }
 }

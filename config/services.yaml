@@ -144,6 +144,7 @@ services:
               category: 'label.category_elements'
               media_types: 'application/pdf'
               media_required: true
+              media_help: 'label.document_download_media_help'
               priority: 50
               pickable: true
               cacheable: true

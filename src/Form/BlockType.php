@@ -172,7 +172,7 @@ class BlockType extends AbstractType
 
         $form->add('medias', CollectionType::class, [
             'label' => 'label.media',
-            'help' => 'label.media_help',
+            'help' => $this->registry->getMediaHelp($kind),
             'entry_type' => MediaUploadType::class,
             'entry_options' => ['accept' => $accept, 'context' => $kind],
             'allow_add'  => true,

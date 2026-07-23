@@ -1,5 +1,50 @@
 [
     {
+        "date": "2026-07-23",
+        "description": [
+            {
+                "en": "Fixed a crash when adding a new item to some collections in the back office",
+                "fr": "Correction d'un plantage lors de l'ajout d'un nouvel élément dans certaines collections du back-office",
+                "es": "Corregido: un fallo al añadir un nuevo elemento en algunas colecciones del back-office"
+            },
+            {
+                "en": "Alert messages (success, error, info) are now centered and easier to read",
+                "fr": "Les messages d'alerte (succès, erreur, info) sont désormais centrés et plus lisibles",
+                "es": "Los mensajes de alerta (éxito, error, info) ahora están centrados y son más legibles"
+            },
+            {
+                "en": "PDF preview thumbnails are now bigger and show the actual page instead of a tiny crop",
+                "fr": "Les miniatures d'aperçu des PDF sont désormais plus grandes et montrent la page réelle au lieu d'un recadrage minuscule",
+                "es": "Las miniaturas de vista previa de PDF ahora son más grandes y muestran la página real en lugar de un recorte diminuto"
+            },
+            {
+                "en": "Attaching several PDFs to a Document download block now shows one card per file, opening in a new tab instead of forcing a download",
+                "fr": "Le fait d'attacher plusieurs PDF à un bloc Téléchargement de document affiche désormais une carte par fichier, ouverte dans un nouvel onglet au lieu de forcer un téléchargement",
+                "es": "Adjuntar varios PDF a un bloque Descarga de documento ahora muestra una tarjeta por archivo, abierta en una nueva pestaña en lugar de forzar una descarga"
+            },
+            {
+                "en": "The block type picker's categories now follow a logical order instead of alphabetical",
+                "fr": "Les catégories du sélecteur de type de bloc suivent désormais un ordre logique au lieu de l'ordre alphabétique",
+                "es": "Las categorías del selector de tipo de bloque ahora siguen un orden lógico en lugar de alfabético"
+            },
+            {
+                "en": "Fixed the portfolio section's header not showing when only an intro label was set",
+                "fr": "Correction de l'en-tête de la section portfolio qui ne s'affichait pas quand seul le libellé d'introduction était renseigné",
+                "es": "Corregido: el encabezado de la sección de portfolio no se mostraba cuando solo se indicaba la etiqueta de introducción"
+            },
+            {
+                "en": "Fixed some links and buttons still appearing clickable when there was nothing to link to",
+                "fr": "Correction de certains liens et boutons qui restaient cliquables alors qu'ils ne menaient nulle part",
+                "es": "Corregido: algunos enlaces y botones seguían pareciendo clicables aunque no llevaban a ninguna parte"
+            },
+            {
+                "en": "The Donovan assistant now also has its own card directly on the dashboard home",
+                "fr": "L'assistant Donovan dispose désormais aussi de sa propre carte directement sur l'accueil du tableau de bord",
+                "es": "El asistente Donovan ahora también tiene su propia tarjeta directamente en el inicio del panel"
+            }
+        ]
+    },
+    {
         "date": "2026-07-22",
         "description": [
             {

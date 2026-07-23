@@ -29,6 +29,7 @@ The shared foundation every c975L satellite bundle builds on, alongside [ConfigB
 - Automatic CSS injection: bundles declare their stylesheets via a service tag, rendered by `bundle_stylesheets()` in Twig
 - Reusable drag-and-drop sortable script for any EasyAdmin `CollectionField`
 - Font-family provider contract (`FontProviderInterface`/`FontRegistry`) plus a generic `FontChoiceType` select, reused by ConfigBundle's font-kind config fields
+- Reusable building blocks for a satellite bundle's own Vich-uploaded media entity (`VichMediaTrait`, `MediaFileRemoveListener`) and for serving private downloads (`PrivateFileResponseFactory`)
 
 ---
 
@@ -451,6 +452,8 @@ The sidebar link reads `"Donovan (AI Agent)"` - the `"(AI Agent)"` half is trans
 
 A free-text question box (`AiAssistantController::index()`/`ask()`). **`ROLE_SUPER_ADMIN` only** - stricter than the rest of the page (`"site-role-admin"`, see below): this calls a backend that's typically a shared/mutualized resource paid for by whoever operates it (e.g. Laurent's own 975l.com, across every one of his client sites), so who can spend against it is deliberately kept narrow rather than opened to every editor, even though answering "which block should I use" would otherwise suit editors best. The dashboard section of the AI Assistant page is hidden entirely for a viewer without that role, not just disabled.
 
+The same question box also appears as a card directly on ConfigBundle's dashboard home (`Management\DonovanWidgetProvider`, implementing its `DashboardWidgetProviderInterface`) - under the exact same conditions as the page's own dashboard section above (`isEnabled()` + `ROLE_SUPER_ADMIN`), so it never shows a "not set up yet" state itself.
+
 | Config slug | Purpose |
 | --- | --- |
 | `ui-ai-assistant-dashboard-enabled` | Master switch - while `false`, the page's dashboard section shows setup steps and a link to Config instead of the question box |
@@ -764,6 +767,19 @@ When a `.pdf` file is uploaded through VichUploader on **any entity** (no interf
 No configuration needed — handled by `VichPdfThumbnailListener`, auto-registered like the rest of the bundle's services.
 
 By default an uploaded PDF is stored under an auto-generated name (`block-{kind}-{id}-{uniqid}.pdf`). Filling in the **File name** field (`Media::$name`, shown for `application/pdf` uploads) overrides this: `UiMediaNamer` slugifies it into the stored filename instead (e.g. "Rapport annuel" → `rapport-annuel-xxx.pdf`). It's distinct from **Caption** (`Media::$label`, a display string), which isn't filesystem-safe.
+
+---
+
+## Satellite media entities
+
+A satellite bundle needing its own Vich-uploaded media entity (e.g. ShopBundle's or CrowdfundingBundle's own `Media`) doesn't need to duplicate the usual id/position/name/size/file/updatedAt/user fields, nor relate to UiBundle's own `Media` entity: `Entity\Trait\VichMediaTrait` provides them as a plain trait, so each bundle keeps its own abstract class, its own `SINGLE_TABLE` inheritance and its own table, with no Doctrine relation - and therefore no composer dependency - between bundles that both need one.
+
+Implement `Contract\VichMediaNamableInterface::getVichMediaPath(): string` on that entity (the trait doesn't do this for you, since the path depends on your own storage layout) to get two things for free:
+
+- `UiMediaNamer` (Vich's naming strategy) already requires it for any entity going through it.
+- `Listener\MediaFileRemoveListener` deletes the underlying file from `public/` whenever such an entity is removed - a generic `preRemove` Doctrine listener, auto-registered, that needs no per-entity listener of your own.
+
+For a **private** download (e.g. a paid file in a shop) instead of a public one, also implement `Contract\VichPrivateFileInterface` (see [PDF thumbnails](#pdf-thumbnails) above) and use `Service\PrivateFileResponseFactory::createDownloadResponse(string $absoluteFilePath, string $downloadFilename): ?BinaryFileResponse` from your own controller to build the attachment response (`null` if the file is missing) - it only builds the response, access control (checking the current user actually purchased/owns the file) stays your controller's job.
 
 ---
 

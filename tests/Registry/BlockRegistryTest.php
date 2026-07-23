@@ -90,6 +90,29 @@ class BlockRegistryTest extends TestCase
         $this->assertTrue($registry->hasMediaTypes('video'));
     }
 
+    public function testGetMediaHelpDefaultsToGenericHelpWhenNoneDeclared(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('article', 'label.article', ArticleFormStub::class, 'article.html.twig');
+
+        $this->assertSame('label.media_help', $registry->getMediaHelp('article'));
+    }
+
+    // "document_download" declares its own, distinct from the generic one - see BlockType/BlockFormController, which both delegate to this single source instead of duplicating the kind check
+    public function testGetMediaHelpReturnsTheDeclaredKindSpecificValue(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register(
+            'document_download',
+            'label.document_download',
+            ArticleFormStub::class,
+            'document_download.html.twig',
+            mediaHelp: 'label.document_download_media_help'
+        );
+
+        $this->assertSame('label.document_download_media_help', $registry->getMediaHelp('document_download'));
+    }
+
     public function testHasMediaTypesIsFalseWhenNoneDeclared(): void
     {
         $registry = new BlockRegistry($this->createTranslator());
@@ -469,5 +492,30 @@ class BlockRegistryTest extends TestCase
         $forPage = array_merge(...array_values($registry->groupedByCategory('page')));
 
         $this->assertArrayNotHasKey('label.menu_link[ui]', $forPage);
+    }
+
+    // Optgroups follow CATEGORY_ORDER, not alphabetical - "media" registered first still ends up after
+    // "sections" since CATEGORY_ORDER ranks the latter first
+    public function testGroupedByCategoryOrdersCategoriesByCategoryOrderInsteadOfAlphabetically(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('slider', 'label.slider', ArticleFormStub::class, 'slider.html.twig', category: 'label.category_media');
+        $registry->register('hero', 'label.hero', ArticleFormStub::class, 'hero.html.twig', category: 'label.category_sections');
+
+        $grouped = $registry->groupedByCategory();
+
+        $this->assertSame(['label.category_sections[ui]', 'label.category_media[ui]'], array_keys($grouped));
+    }
+
+    // A category absent from CATEGORY_ORDER (e.g. a future bundle's own) falls back after every listed one
+    public function testGroupedByCategoryPlacesUnlistedCategoriesAfterKnownOnes(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('custom', 'label.custom', ArticleFormStub::class, 'custom.html.twig', category: 'label.category_custom');
+        $registry->register('legal_model', 'label.legal_model', ArticleFormStub::class, 'legal.html.twig', category: 'label.category_legal');
+
+        $grouped = $registry->groupedByCategory();
+
+        $this->assertSame(['label.category_legal[ui]', 'label.category_custom[ui]'], array_keys($grouped));
     }
 }

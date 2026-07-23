@@ -8,9 +8,18 @@
 /* ALERTS */
 .alert {
   padding: 1em;
-  margin: 1em;
+  margin: 1em auto;
+  max-width: 700px;
   border: 1px solid transparent;
   border-radius: 5px;
+  color: #000;
+}
+
+.alert a,
+.alert a:visited {
+  color: #000;
+  text-decoration: underline;
+  font-weight: bold;
 }
 
 .alert-success {
@@ -357,7 +366,7 @@ label[for=contact_form_username],
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
   margin: 0.5em 0;
   padding: 0.75em 1em;
   border: 1px solid var(--input-border-color);
@@ -368,9 +377,10 @@ label[for=contact_form_username],
 }
 
 .document-download__thumb {
-  width: 32px;
-  height: 32px;
+  width: 64px;
+  height: 90px;
   object-fit: cover;
+  object-position: top;
   border-radius: calc(var(--radius-card) / 2);
   flex-shrink: 0;
 }

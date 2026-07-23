@@ -56,6 +56,7 @@ class BlockRegistryPass implements CompilerPassInterface
                     $this->bundleFromTemplate($tag['template']),
                     isset($tag['container']) && filter_var($tag['container'], FILTER_VALIDATE_BOOLEAN),
                     $tag['slot_context'] ?? BlockRegistry::SLOT_CONTEXT,
+                    $tag['media_help'] ?? '',
                 ]);
             }
         }

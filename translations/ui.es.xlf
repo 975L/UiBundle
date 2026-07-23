@@ -1360,7 +1360,11 @@
             </trans-unit>
             <trans-unit id="520">
                 <source>label.file_name_help</source>
-                <target>Se usa para nombrar el archivo almacenado.</target>
+                <target>Se usa para nombrar el archivo almacenado. También sirve de título de la tarjeta de descarga si hay varios archivos adjuntos.</target>
+            </trans-unit>
+            <trans-unit id="523">
+                <source>label.document_download_media_help</source>
+                <target>Un archivo = una tarjeta de descarga. Adjunta varios archivos para ofrecer varios documentos; asigna entonces a cada uno un "Nombre del archivo" distinto, que servirá de título a su tarjeta.</target>
             </trans-unit>
         </body>
     </file>

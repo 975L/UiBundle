@@ -3,7 +3,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 16px;
     margin: 0.5em 0;
     padding: 0.75em 1em;
     border: 1px solid var(--input-border-color);
@@ -13,10 +13,15 @@
     text-decoration: none;
 }
 
+/* Sized to actually show the page's content (title, layout...) instead of a cropped sliver - the
+   source thumbnail is generated at 400px wide (see VichPdfThumbnailListener), plenty of room to scale
+   up from. Ratio close to A4 (portrait); object-position keeps the page's top (title area) in frame
+   rather than a centered crop. */
 .document-download__thumb {
-    width: 32px;
-    height: 32px;
+    width: 64px;
+    height: 90px;
     object-fit: cover;
+    object-position: top;
     border-radius: calc(var(--radius-card) / 2);
     flex-shrink: 0;
 }

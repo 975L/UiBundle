@@ -50,6 +50,7 @@ class BlockFormController extends AbstractController
 
             $builder->add('medias', CollectionType::class, [
                 'label'         => 'label.media',
+                'help'          => $this->registry->getMediaHelp($kind),
                 'entry_type'    => MediaUploadType::class,
                 'entry_options' => ['accept' => $accept, 'context' => $kind],
                 'allow_add'     => true,

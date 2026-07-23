@@ -1,0 +1,8 @@
+{#
+ # Donovan's dashboard-home card (see c975L\UiBundle\Management\DonovanWidgetProvider). The provider
+ # only returns this widget once isEnabled() and ROLE_SUPER_ADMIN both hold, exactly the same condition
+ # as the dedicated AI Assistant page - so this template never has to branch on a "not ready yet" state
+ # itself, it can go straight to the working question box.
+ #}
+<h2>{{ ai_assistant_name() }}</h2>
+{{ include('@c975LUi/management/_ai_assistant_widget.html.twig') }}

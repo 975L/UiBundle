@@ -187,6 +187,19 @@ class BlockTypeTest extends TestCase
         $this->assertSame([], $added['medias']['constraints']);
     }
 
+    // The "medias" field's help text is whatever BlockRegistry::getMediaHelp() declares for the kind (see BlockRegistryTest for the kind-specific-vs-generic logic itself) - addMediaSubForm() just wires it through
+    public function testAddMediaSubFormUsesTheRegistrysDeclaredMediaHelpText(): void
+    {
+        $registry = $this->createStub(BlockRegistry::class);
+        $registry->method('getMediaTypes')->willReturn(['application/pdf']);
+        $registry->method('getMediaHelp')->willReturn('label.document_download_media_help');
+        $type = new BlockType($registry, $this->createRouter());
+
+        $added = $this->buildAddedMediaOptions($type, 'document_download');
+
+        $this->assertSame('label.document_download_media_help', $added['medias']['help']);
+    }
+
     // A container kind's (e.g. "flex_columns") "slots" field is a CollectionType of BlockType itself,
     // recursively, scoped to whatever BlockRegistry::getSlotContext($kind) declares for that kind - see
     // addSlotsSubForm()
