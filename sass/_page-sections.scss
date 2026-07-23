@@ -385,35 +385,10 @@ $page-section-bp-lg: 1025px;
     gap: 24px;
 }
 
-.section-card {
-    background: var(--card-background);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-panel);
-    padding: 24px;
-}
-
-.section-card__icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 12px;
-    background: var(--surface-accent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-    font-size: 22px;
-}
-
-.section-card__title {
-    font-weight: 600;
-    font-size: 22px;
-    margin: 0 0 10px;
-    color: var(--text);
-}
-
-.section-card__text {
-    font-size: 15px;
-    color: var(--label-color);
+// Each item reuses the shared .card component (see Section/Cards.html.twig) - .card's own width/margin
+// are tuned for the flex ".cards" row it usually sits in, so override both to let it fill its grid cell
+.section-cards .card {
+    width: 100%;
     margin: 0;
 }
 
@@ -717,7 +692,6 @@ $page-section-bp-lg: 1025px;
         padding: 40px;
     }
 
-    .section-card,
     .portfolio-grid__project-body {
         padding: 32px;
     }

@@ -6,6 +6,7 @@
 {% set icon = icon | default("") %}
 {% set lang = lang | default("") %}
 {% set titleUrl = titleUrl | default("") %}
+{% set id = id | default("") %}
 <div class="card box-shadow {{ class|default("") }}" id="{{ id }}" data-animation="{{ dataAnimation|default("") }}" {% if lang %}lang="{{ lang|default("") }}"{% endif %}>
     {% if icon != "" %}
         <{{ level|default('h2') }} class="card-header"><twig:c975LUi:Image:Icon src="{{ icon[0] }}" class="{{ icon[1] }}" width="{{ icon[2] }}" height="{{ icon[3] }}"/> {% if titleUrl %}<a href="{{ titleUrl }}">{{ title }}</a>{% else %}{{ title }}{% endif %}</{{ level|default('h2') }}>

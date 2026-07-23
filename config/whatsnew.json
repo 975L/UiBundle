@@ -41,6 +41,21 @@
                 "en": "The Donovan assistant now also has its own card directly on the dashboard home",
                 "fr": "L'assistant Donovan dispose désormais aussi de sa propre carte directement sur l'accueil du tableau de bord",
                 "es": "El asistente Donovan ahora también tiene su propia tarjeta directamente en el inicio del panel"
+            },
+            {
+                "en": "You can now add a title and description to a video embed",
+                "fr": "Vous pouvez désormais ajouter un titre et une description à une vidéo intégrée",
+                "es": "Ahora puede añadir un título y una descripción a un vídeo incrustado"
+            },
+            {
+                "en": "Fixed the rich-text editor staying hidden when adding a new item to certain collections",
+                "fr": "Correction de l'éditeur de texte enrichi qui restait caché lors de l'ajout d'un nouvel élément dans certaines collections",
+                "es": "Corregido: el editor de texto enriquecido permanecía oculto al añadir un nuevo elemento en algunas colecciones"
+            },
+            {
+                "en": "The cache-clearing shortcut is now grouped under Maintenance",
+                "fr": "Le raccourci de vidage du cache est désormais classé dans la catégorie Maintenance",
+                "es": "El acceso directo para vaciar la caché ahora está clasificado en la categoría Mantenimiento"
             }
         ]
     },

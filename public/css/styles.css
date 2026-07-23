@@ -376,6 +376,10 @@ label[for=contact_form_username],
   text-decoration: none;
 }
 
+/* Sized to actually show the page's content (title, layout...) instead of a cropped sliver - the
+   source thumbnail is generated at 400px wide (see VichPdfThumbnailListener), plenty of room to scale
+   up from. Ratio close to A4 (portrait); object-position keeps the page's top (title area) in frame
+   rather than a centered crop. */
 .document-download__thumb {
   width: 64px;
   height: 90px;
@@ -567,6 +571,18 @@ img.white {
   padding: 1.5rem;
   background-color: var(--input-shadow-color);
   border-radius: var(--radius-btn);
+}
+
+.video-iframe-figure {
+  margin: 0;
+}
+
+.video-iframe-title {
+  margin-bottom: 0.5rem;
+}
+
+.video-iframe-description {
+  margin-top: 0.5rem;
 }
 
 /* PAGE SECTIONS */
@@ -963,35 +979,8 @@ img.white {
   gap: 24px;
 }
 
-.section-card {
-  background: var(--card-background);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-panel);
-  padding: 24px;
-}
-
-.section-card__icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
-  background: var(--surface-accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
-  font-size: 22px;
-}
-
-.section-card__title {
-  font-weight: 600;
-  font-size: 22px;
-  margin: 0 0 10px;
-  color: var(--text);
-}
-
-.section-card__text {
-  font-size: 15px;
-  color: var(--label-color);
+.section-cards .card {
+  width: 100%;
   margin: 0;
 }
 
@@ -1277,7 +1266,6 @@ img.white {
   .expertise-banner__inner {
     padding: 40px;
   }
-  .section-card,
   .portfolio-grid__project-body {
     padding: 32px;
   }
@@ -1941,5 +1929,3 @@ img.white {
   font-style: italic;
   color: var(--primary);
 }
-
-/*# sourceMappingURL=styles.css.map */

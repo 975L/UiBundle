@@ -10,6 +10,7 @@ namespace c975L\UiBundle\Form\Block;
 
 use Symfony\Component\Form\AbstractType;
 use c975L\UiBundle\Form\BlockClassChoiceType;
+use c975L\UiBundle\Form\TrixEditorType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -22,6 +23,14 @@ class VideoIframeType extends AbstractType
         $builder
             ->add('src', UrlType::class, [
                 'label' => 'label.video_url',
+            ])
+            ->add('title', TextType::class, [
+                'label'    => 'label.title',
+                'required' => false,
+            ])
+            ->add('description', TrixEditorType::class, [
+                'label'    => 'label.description',
+                'required' => false,
             ])
             ->add('width', TextType::class, [
                 'label'    => 'label.width',

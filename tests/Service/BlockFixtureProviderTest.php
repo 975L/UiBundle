@@ -47,6 +47,8 @@ class BlockFixtureProviderTest extends TestCase
         $fixtures = (new BlockFixtureProvider())->getFixtures();
 
         $this->assertSame('/' . BlockFixtureMediaAttacher::PLACEHOLDER_VIDEO_EMBED, $fixtures['video_iframe']['']['src']);
+        $this->assertNotEmpty($fixtures['video_iframe']['']['title']);
+        $this->assertNotEmpty($fixtures['video_iframe']['']['description']);
     }
 
     // alert has 4 style choices (info/success/warning/danger) - all shown side by side in the gallery

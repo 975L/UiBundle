@@ -1,5 +1,12 @@
 # ChangeLog
 
+## v1.9.9
+
+- Added optional `title`/`description` fields to `video_iframe` (23/07/2026)
+- Fixed Trix editors staying hidden on collection items added dynamically via EasyAdmin (23/07/2026)
+- `Section:Cards` now reuses the shared `Card:Card` component instead of bespoke CSS (23/07/2026)
+- Added a category to the clear cache shortcut (23/07/2026)
+
 ## v1.9.8
 
 - Added `Entity\Trait\VichMediaTrait`, shared fields/methods for a satellite bundle's own Vich-uploaded media entity (23/07/2026)

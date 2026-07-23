@@ -170,6 +170,8 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
                 '' => [
                     // Not PLACEHOLDER_VIDEO directly - a raw video file navigated to in an <iframe> plays with sound via the browser's own native player; this wraps it in a muted <video>. Leading "/" for the same reason as 'video' above - see its comment.
                     'src' => '/' . BlockFixtureMediaAttacher::PLACEHOLDER_VIDEO_EMBED,
+                    'title' => 'Product demo',
+                    'description' => 'A short walkthrough of the main features.',
                     'width' => '560',
                     'height' => '315',
                     'class' => [],

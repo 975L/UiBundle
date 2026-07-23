@@ -28,6 +28,7 @@ class UiShortcutProvider implements ShortcutProviderInterface
                 'route' => BlockShortcutController::CLEAR_CACHE_ROUTE,
                 'active' => false,
                 'role' => 'ROLE_SUPER_ADMIN',
+                'category' => ShortcutProviderInterface::CATEGORY_MAINTENANCE,
             ],
         ];
     }

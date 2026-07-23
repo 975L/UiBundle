@@ -10,7 +10,7 @@ import { Controller } from "@hotwired/stimulus";
 // Deliberately not coupled to any particular consent-banner implementation or bundle - reacts to an optional external contract instead: a `[data-controller~="cookieConsent"]` element present in the page, a `window.CookieConsent` global exposing vanilla-cookieconsent v3's API (https://cookieconsent.orestbida.com/), and its `cc:onConsent`/`cc:onChange` DOM events. c975l/site-bundle's `<twig:c975LSite:General:CookieConsent/>` is one such provider, but any consuming app's own banner satisfying the same contract works just as well - no composer dependency on it either way.
 export default class extends Controller {
     static targets = ["placeholder"];
-    static values = { src: String, width: String, height: String };
+    static values = { src: String, title: String, width: String, height: String };
 
     connect() {
         this.onConsent = this.onConsent.bind(this);
@@ -53,7 +53,7 @@ export default class extends Controller {
 
         const iframe = document.createElement("iframe");
         iframe.src = this.srcValue;
-        iframe.title = "Video player";
+        iframe.title = this.titleValue || "Video player";
         iframe.frameBorder = "0";
         iframe.allowFullscreen = true;
         iframe.loading = "lazy";

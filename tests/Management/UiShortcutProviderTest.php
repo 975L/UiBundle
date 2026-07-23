@@ -8,6 +8,7 @@
  */
 namespace c975L\UiBundle\Tests\Management;
 
+use c975L\ConfigBundle\Management\ShortcutProviderInterface;
 use c975L\UiBundle\Controller\Management\BlockShortcutController;
 use c975L\UiBundle\Management\UiShortcutProvider;
 use PHPUnit\Framework\TestCase;
@@ -35,5 +36,6 @@ class UiShortcutProviderTest extends TestCase
         $this->assertSame(BlockShortcutController::CLEAR_CACHE_ROUTE, $shortcuts[0]['route']);
         $this->assertFalse($shortcuts[0]['active']);
         $this->assertSame('ROLE_SUPER_ADMIN', $shortcuts[0]['role']);
+        $this->assertSame(ShortcutProviderInterface::CATEGORY_MAINTENANCE, $shortcuts[0]['category']);
     }
 }
