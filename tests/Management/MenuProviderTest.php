@@ -63,6 +63,7 @@ class MenuProviderTest extends TestCase
         $this->assertSame('ui', $links['block_showcase']['translation_domain']);
         $this->assertSame('https://975l.com/pages/blocks', $links['block_showcase']['url']);
         $this->assertSame('_blank', $links['block_showcase']['target']);
+        $this->assertSame('label.block_showcase_help', $links['block_showcase']['description']);
     }
 
     // 'role' matches AiAssistantController::index()'s own minimum bar ("site-role-admin") - a plain
@@ -77,5 +78,6 @@ class MenuProviderTest extends TestCase
         $this->assertSame('ui', $links['ai_assistant']['translation_domain']);
         $this->assertSame('management_ui_ai_assistant_index', $links['ai_assistant']['name']);
         $this->assertSame('ROLE_ADMIN', $links['ai_assistant']['role']);
+        $this->assertSame('label.ai_assistant_subtitle', $links['ai_assistant']['description']);
     }
 }

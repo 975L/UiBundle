@@ -44,6 +44,8 @@ class MenuProvider implements MenuProviderInterface
                 'icon' => 'fas fa-shapes',
                 'url' => 'https://975l.com/pages/blocks',
                 'target' => '_blank',
+                // No local page to reuse text from (external showcase site) - unlike every other description, this one has no crud/index override backing it, so it's its own dedicated key
+                'description' => 'label.block_showcase_help',
             ],
             'ai_assistant' => [
                 // Built here, not left as a translation key: the "Donovan" half is hardcoded (see
@@ -61,6 +63,8 @@ class MenuProvider implements MenuProviderInterface
                 // longer act on either section anyway (dashboard needs ROLE_SUPER_ADMIN, rephrase needs
                 // this same "site-role-admin")
                 'role' => $this->configService->get('site-role-admin'),
+                // Same key as _ai_assistant_base.html.twig's own subtitle, right under its <h1>
+                'description' => 'label.ai_assistant_subtitle',
             ],
         ];
     }

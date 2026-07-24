@@ -1391,6 +1391,10 @@
                 <source>label.slots_cards</source>
                 <target>Cartes</target>
             </trans-unit>
+            <trans-unit id="530">
+                <source>label.block_showcase_help</source>
+                <target>Une galerie de tous les types de blocks disponibles, avec un aperçu en direct de chacun - utile pour choisir lequel ajouter à une page</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

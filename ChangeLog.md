@@ -1,5 +1,9 @@
 # ChangeLog
 
+## v1.9.11
+
+- The dashboard guided tour's "Vitrine des blocks" and "Donovan" links now have a description (24/07/2026)
+
 ## v1.9.10
 
 - Added `BlockMoveController`/`BlockRelocator`, letting an editor drag an already-saved Block into a different collection (a container's slots, or back to top-level) instead of only reordering within one (23/07/2026)
