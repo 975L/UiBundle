@@ -1,5 +1,11 @@
 # ChangeLog
 
+## v1.9.12
+
+- Added `ImportmapProvider`, declaring `controllers-admin.js`/`controllers.js`'s importmap.php entries for ConfigBundle's `c975l:config:check-importmap` (24/07/2026)
+- Fixed README's Stimulus controller registration instructions, stale since `controllers.js` became self-starting (24/07/2026)
+- Fixed README referencing a nonexistent `admin.js` and misattributing `eaSortable`/the kind-switcher to `controllers.js` instead of `controllers-admin.js` (24/07/2026)
+
 ## v1.9.11
 
 - The dashboard guided tour's "Vitrine des blocks" and "Donovan" links now have a description (24/07/2026)

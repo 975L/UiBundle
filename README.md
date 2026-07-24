@@ -60,38 +60,13 @@ php bin/console doctrine:migrations:migrate
 
 ### Register Stimulus controllers
 
-**Add one entry to `importmap.php`** (one-time, at installation):
+`controllers.js` (front-end) and `controllers-admin.js` (back-office: `block`, `eaSortable`, Trix editor integration) each start their own Stimulus app and are loaded as their own `<script type="module">` tag — auto-discovered and injected into the layout/dashboard, nothing to wire by hand there.
 
-```php
-'@c975l/ui-bundle/controllers.js' => [
-    'path' => './vendor/c975l/ui-bundle/assets/controllers.js',
-],
-```
-
-**Add two lines to `assets/bootstrap.js`** (or `assets/stimulus_bootstrap.js`):
-
-```js
-import { startStimulusApp } from '@symfony/stimulus-bundle';
-import { register as registerc975lUi } from '@c975l/ui-bundle/controllers.js';
-
-const app = startStimulusApp();
-registerc975lUi(app);
-```
+Their `importmap.php` entries are added automatically the first time you `composer update` after installing UiBundle — see [Contributing importmap entries from other bundles](https://github.com/975L/ConfigBundle#contributing-importmap-entries-from-other-bundles) in ConfigBundle's README, nothing to add by hand.
 
 ### Making these controllers available in EasyAdmin (blocks editor, sortable, kind-switcher)
 
-Blocks are managed through EasyAdmin at `/management`, provided by `c975l/config-bundle`. Its dashboard does **not** load your site's main `app` AssetMapper entry — that would drag your front-end stylesheet (and unused front-end controllers) into the back-office and break EasyAdmin's own Bootstrap/AdminLTE styling. Instead, it loads a dedicated entry, `@c975l/ui-bundle/admin.js`.
-
-`block`, `eaSortable` and the Trix editor integration are back-office-only, so they live in `controllers-admin.js` (separate from `controllers.js`, which only holds front-end controllers). The bundle ships a ready-to-use entrypoint for them — no file to create in your app.
-
-**Add one entry to `importmap.php`** (one-time, at installation), pointing directly at the bundle's file:
-
-```php
-'@c975l/ui-bundle/admin.js' => [
-    'path' => './vendor/c975l/ui-bundle/assets/admin.js',
-    'entrypoint' => true,
-],
-```
+Blocks are managed through EasyAdmin at `/management`, provided by `c975l/config-bundle`. Its dashboard does **not** load your site's main `app` AssetMapper entry — that would drag your front-end stylesheet (and unused front-end controllers) into the back-office and break EasyAdmin's own Bootstrap/AdminLTE styling. Instead, it loads a dedicated entry, `@c975l/ui-bundle/controllers-admin.js` (same automatic `importmap.php` registration as above).
 
 That's it — `eaSortable`, `block`, and Trix are then available on every `/management` page.
 
@@ -156,7 +131,7 @@ When you call `$page->removeBlock($block)`, the trait queues the block in a `pen
 
 ## EasyAdmin integration
 
-Add a `CollectionField` using `BlockType` as entry type. The AJAX kind-switcher and drag-and-drop are handled automatically by the Stimulus controllers registered via `@c975l/ui-bundle/controllers.js` — no manual `configureAssets` call is needed:
+Add a `CollectionField` using `BlockType` as entry type. The AJAX kind-switcher and drag-and-drop are handled automatically by the Stimulus controllers registered via `@c975l/ui-bundle/controllers-admin.js` — no manual `configureAssets` call is needed:
 
 ```php
 use c975L\UiBundle\Form\BlockType;
@@ -183,7 +158,7 @@ class PageCrudController extends AbstractCrudController
 
 ## Drag-and-drop sortable for other collections
 
-Drag-and-drop reordering is handled automatically by the `eaSortable` Stimulus controller registered via `@c975l/ui-bundle/controllers.js`. No `configureAssets` call is needed.
+Drag-and-drop reordering is handled automatically by the `eaSortable` Stimulus controller registered via `@c975l/ui-bundle/controllers-admin.js`. No `configureAssets` call is needed.
 
 **Requirement:** each collection item must contain a hidden `position` field whose `name` ends with `[position]`. The script detects it automatically.
 
