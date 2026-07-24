@@ -6,6 +6,7 @@
  * with this source code in the file LICENSE.
  */
 import { Controller } from "@hotwired/stimulus";
+import { createNoncedStyleElement } from "./nonced-style-element.js";
 
 // Deliberately not coupled to any particular consent-banner implementation or bundle - reacts to an optional external contract instead: a `[data-controller~="cookieConsent"]` element present in the page, a `window.CookieConsent` global exposing vanilla-cookieconsent v3's API (https://cookieconsent.orestbida.com/), and its `cc:onConsent`/`cc:onChange` DOM events. c975l/site-bundle's `<twig:c975LSite:General:CookieConsent/>` is one such provider, but any consuming app's own banner satisfying the same contract works just as well - no composer dependency on it either way.
 export default class extends Controller {
@@ -34,6 +35,7 @@ export default class extends Controller {
     disconnect() {
         window.removeEventListener("cc:onConsent", this.onConsent);
         window.removeEventListener("cc:onChange", this.onConsent);
+        this.sizingStyleEl?.remove();
     }
 
     accept() {
@@ -51,18 +53,42 @@ export default class extends Controller {
         window.removeEventListener("cc:onConsent", this.onConsent);
         window.removeEventListener("cc:onChange", this.onConsent);
 
+        // Same 16/9 assumption as the pre-consent placeholder's CSS aspect-ratio (sass/_images.scss)
+        // - only one side is ever configured in practice, so the other is derived to keep it from
+        // falling back to the iframe's native 300x150 default and looking squashed/stretched
+        const RATIO = 16 / 9;
+        let width = this.widthValue ? parseInt(this.widthValue, 10) : null;
+        let height = this.heightValue ? parseInt(this.heightValue, 10) : null;
+        if (width && !height) {
+            height = Math.round(width / RATIO);
+        } else if (height && !width) {
+            width = Math.round(height * RATIO);
+        }
+
+        // c975l/site-bundle's generic "iframe { width; aspect-ratio }" (sass/_iframe.scss) targets every
+        // bare <iframe> site-wide - any CSS declaration (even "auto"/"revert") outranks the HTML width/
+        // height *attributes* regardless of specificity (they're a lower-priority presentational hint,
+        // not a normal cascade value), so setting iframe.width/.height here would still lose to it. A
+        // per-instance id-scoped rule with real px values is the only thing specific enough to win outright.
+        // Can't use iframe.style.width either - under this site's nonce-based CSP, a nonce never covers an
+        // inline style *attribute* set from JS, only a real <style> element (see nonced-style-element.js).
+        if (width && height) {
+            if (!this.element.id) {
+                this.element.id = `video-iframe-${Math.random().toString(36).slice(2)}`;
+            }
+            // height stays "auto" + aspect-ratio (not a fixed px value) so a narrow viewport, which
+            // shrinks the width via .video-iframe-consent iframe's "max-width: 100%" (sass/_images.scss),
+            // scales the height down proportionally instead of leaving it fixed and squashing the video
+            this.sizingStyleEl = createNoncedStyleElement();
+            this.sizingStyleEl.textContent = `#${CSS.escape(this.element.id)} iframe { width: ${width}px; height: auto; aspect-ratio: ${width} / ${height}; }`;
+        }
+
         const iframe = document.createElement("iframe");
         iframe.src = this.srcValue;
         iframe.title = this.titleValue || "Video player";
         iframe.frameBorder = "0";
         iframe.allowFullscreen = true;
         iframe.loading = "lazy";
-        if (this.widthValue) {
-            iframe.width = this.widthValue;
-        }
-        if (this.heightValue) {
-            iframe.height = this.heightValue;
-        }
         this.element.replaceChildren(iframe);
     }
 }

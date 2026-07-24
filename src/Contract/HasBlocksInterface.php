@@ -17,4 +17,8 @@ interface HasBlocksInterface
     public function getBlocks(): Collection;
     public function addBlock(Block $block): static;
     public function removeBlock(Block $block): static;
+
+    // Same as removeBlock(), but never queues the block for deletion (see BlockRemovalListener) -
+    // for relocating an existing block elsewhere (see BlockRelocator), not deleting it
+    public function detachBlock(Block $block): static;
 }

@@ -1,8 +1,12 @@
-{# <twig:c975LUi:Progress:Bar progressPercent="{{ progressPercent }}" [label="Skill"] [text="true"]/> #}
+{# <twig:c975LUi:Progress:Bar progressPercent="{{ progressPercent }}" [label="Skill"] [text="true"] [id=""]/> #}
 {# "??" not the "default" filter: "default" also substitutes on an explicit false (an editor
    unchecking "show percent"), which would silently turn it back on - "??" only ever falls back
    when "text" is genuinely undefined (legacy blocks saved before this field existed) #}
 {% set text = text ?? true %}
+{# "id" is optional - callers embedding several bars on one page (e.g. CrowdfundingBundle's
+   AmountAchieved + Dates) can pass a stable one, otherwise a per-render one is generated. Either
+   way it only needs to be unique for the page it renders on, to scope the <style> block below #}
+{% set barId = id|default('progress-bar-' ~ random(999999)) %}
 {% if label %}
     <div class="progress-header">
         <span class="progress-label">{{ label }}</span>
@@ -10,9 +14,15 @@
     </div>
 {% endif %}
 <div class="progress-container">
-    <div class="progress-bar" style="width: {{ progressPercent }}%">
+    {# A CSP nonce never covers an inline style *attribute* (only <style>/<link> *elements*), so the
+       server-computed width goes through a real, nonce'd <style> element instead - see
+       ImageCompare's nonced-style-element.js for the same constraint on the JS-driven side #}
+    <div class="progress-bar" id="{{ barId }}">
         {% if "true" == text and not label %}
             <span class="progress-text">{{ progressPercent }}%</span>
         {% endif %}
     </div>
 </div>
+<style nonce="{{ csp_nonce('style') }}">
+    #{{ barId }} { width: {{ progressPercent }}%; }
+</style>

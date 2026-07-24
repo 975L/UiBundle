@@ -1,7 +1,7 @@
 {
     "name": "c975l/ui-bundle",
     "type": "symfony-bundle",
-    "description": "Symfony bundle providing a dynamic block system for pages and content entities, managed through EasyAdmin with drag-and-drop reordering.",
+    "description": "Symfony bundle providing the c975L ecosystem's shared front-end foundation — dynamic blocks, media library, and reusable CSS/JS/font/form registries used by every satellite bundle.",
     "keywords": ["symfony", "bundle", "ui"],
     "license": "MIT",
     "authors": [

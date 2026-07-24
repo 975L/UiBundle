@@ -9,11 +9,9 @@
 
 namespace c975L\UiBundle\Tests\Form\Block;
 
-use c975L\UiBundle\Form\Block\SectionCardItemType;
 use c975L\UiBundle\Form\Block\SectionCardsType;
 use c975L\UiBundle\Service\BlockAnchorSlugger;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\String\Slugger\AsciiSlugger;
@@ -35,21 +33,22 @@ class SectionCardsTypeTest extends TestCase
         return $added;
     }
 
-    public function testBuildFormAddsEyebrowTitleCardsAndAnchorFields(): void
+    public function testBuildFormAddsEyebrowTitleAndAnchorFields(): void
     {
         $added = $this->buildAddedFields();
 
-        foreach (['eyebrow', 'title', 'cards', 'anchor'] as $field) {
+        foreach (['eyebrow', 'title', 'anchor'] as $field) {
             $this->assertArrayHasKey($field, $added, "\"$field\" should be added to the SectionCards form");
         }
     }
 
-    public function testCardsFieldIsACollectionOfSectionCardItemType(): void
+    // "slots" is deliberately not part of this form: it's the real Block relation added by
+    // BlockType::addSlotsSubForm() (see BlockTypeTest), not plain data on this kind's own form
+    public function testBuildFormDoesNotAddASlotsField(): void
     {
         $added = $this->buildAddedFields();
 
-        $this->assertSame(CollectionType::class, $added['cards']['type']);
-        $this->assertSame(SectionCardItemType::class, $added['cards']['options']['entry_type']);
+        $this->assertArrayNotHasKey('slots', $added);
     }
 
     public function testConfigureOptionsDefaultsToNullDataClassAndUiTranslationDomain(): void

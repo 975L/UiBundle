@@ -13,20 +13,21 @@
 // aligned with the page's own max-width/padding rhythm (sass/_page-sections.scss). Only constrain it
 // in that exact bare context: ".blocks" is ".blocks > .cards" here (not just ".cards") because ".cards"
 // is reused *inside* an existing ".section-wrap" by the collection block's default variant (see
-// Collection/Grid.html.twig) and must not double up there. Same "+2*padding" widening as
-// ".collection-grid .section-wrap" (sass/_page-sections.scss) and for the same reason: three
-// fixed-400px cards + two 20px gaps need 1240px, more than ".section-wrap"'s own 1184px measure.
+// Collection/Grid.html.twig) and must not double up there.
 .blocks > .cards {
     box-sizing: border-box;
-    max-width: calc(1312px + 2 * clamp(20px, 5vw, 64px));
+    max-width: 1312px;
     margin: 0 auto;
     padding-left: clamp(20px, 5vw, 64px);
     padding-right: clamp(20px, 5vw, 64px);
 }
 
+// 380px (not 400px): three cards + two 20px gaps (1180px) need to fit inside ".section-wrap"'s own
+// 1184px content measure (sass/_page-sections.scss) so a row of three cards lines up with every
+// other section on the page instead of needing its container widened past the page's own rhythm.
 .card {
     margin: 1em auto;
-    width: clamp(300px, 400px, 90vw);
+    width: clamp(300px, 380px, 90vw);
     border: 1px solid var(--input-border-color);
     border-radius: var(--radius-card);
     background-color: var(--card-background);

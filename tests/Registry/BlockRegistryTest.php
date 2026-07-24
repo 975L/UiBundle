@@ -285,6 +285,47 @@ class BlockRegistryTest extends TestCase
         $this->assertArrayNotHasKey('label.flex_column[ui]', $forColumnSlot);
     }
 
+    // isAllowedInContext() backs BlockMoveController's own validation - same rules as groupedByCategory()'s
+    // filtering, exercised directly instead of through the translated/grouped picker list
+    public function testIsAllowedInContextAllowsAnOrdinaryKindInAnySlotContext(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('card', 'label.card', ArticleFormStub::class, 'card.html.twig');
+
+        $this->assertTrue($registry->isAllowedInContext('card', BlockRegistry::SLOT_CONTEXT));
+    }
+
+    public function testIsAllowedInContextRejectsAContainerNotOptedIntoThatSlotContext(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('section_cards', 'label.section_cards', ArticleFormStub::class, 'section_cards.html.twig', container: true);
+
+        $this->assertFalse($registry->isAllowedInContext('section_cards', BlockRegistry::SLOT_CONTEXT));
+    }
+
+    public function testIsAllowedInContextAllowsAContainerThatOptedIntoThatSpecificSlotContext(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register(
+            'flex_column',
+            'label.flex_column',
+            ArticleFormStub::class,
+            'flex_column.html.twig',
+            container: true,
+            contexts: [BlockRegistry::SLOT_CONTEXT]
+        );
+
+        $this->assertTrue($registry->isAllowedInContext('flex_column', BlockRegistry::SLOT_CONTEXT));
+    }
+
+    public function testIsAllowedInContextRejectsANonPickableKindEvenOutsideAnySlotContext(): void
+    {
+        $registry = new BlockRegistry($this->createTranslator());
+        $registry->register('social_links', 'label.social_links', ArticleFormStub::class, 'social_links.html.twig', pickable: false);
+
+        $this->assertFalse($registry->isAllowedInContext('social_links', null));
+    }
+
     public function testGetBundleReturnsRegisteredValue(): void
     {
         $registry = new BlockRegistry($this->createTranslator());

@@ -311,15 +311,15 @@ services:
               pickable: true
               cacheable: true
 
-    ui.block.section_cards:
+    ui.block.section_features:
         class: stdClass
         tags:
             - name: ui.block
-              kind: section_cards
-              label: "label.block_section_cards"
-              description: "label.block_section_cards_description"
-              form: c975L\UiBundle\Form\Block\SectionCardsType
-              template: '@c975LUi/blocks/SectionCards.html.twig'
+              kind: section_features
+              label: "label.block_section_features"
+              description: "label.block_section_features_description"
+              form: c975L\UiBundle\Form\Block\SectionFeaturesType
+              template: '@c975LUi/blocks/SectionFeatures.html.twig'
               category: 'label.category_sections'
               priority: 80
               pickable: true
@@ -364,6 +364,26 @@ services:
               container: true
               contexts: 'flex_slot'
               slot_context: 'flex_slot_nested'
+
+    # A stack of full "card" blocks (or any other kind) with a section-level eyebrow/title/anchor - same
+    # container mechanism as flex_columns above, but its slots render inside ".cards" (see
+    # components/Section/Cards.html.twig), the same fixed-width flex row used when "card" blocks are placed
+    # bare and consecutively in the page flow (see Blocks.html.twig) - giving that exact look plus an anchor
+    # and section head, which bare consecutive "card" blocks can't have on their own.
+    ui.block.section_cards:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: section_cards
+              label: "label.block_section_cards"
+              description: "label.block_section_cards_description"
+              form: c975L\UiBundle\Form\Block\SectionCardsType
+              template: '@c975LUi/blocks/SectionCards.html.twig'
+              category: 'label.category_sections'
+              priority: 79
+              pickable: true
+              cacheable: false
+              container: true
 
     ui.block.expertise_banner:
         class: stdClass

@@ -9,55 +9,52 @@
 
 namespace c975L\UiBundle\Tests\Form\Block;
 
-use c975L\UiBundle\Form\Block\VideoIframeType;
+use c975L\UiBundle\Form\Block\SectionFeatureItemType;
+use c975L\UiBundle\Form\Block\SectionFeaturesType;
+use c975L\UiBundle\Service\BlockAnchorSlugger;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
-class VideoIframeTypeTest extends TestCase
+class SectionFeaturesTypeTest extends TestCase
 {
     private function buildAddedFields(): array
     {
         $added = [];
         $builder = $this->createStub(FormBuilderInterface::class);
         $builder->method('add')->willReturnCallback(function (string $name, ?string $type = null, array $options = []) use (&$added, $builder) {
-            $added[$name] = $options;
+            $added[$name] = ['type' => $type, 'options' => $options];
 
             return $builder;
         });
 
-        (new VideoIframeType())->buildForm($builder, []);
+        (new SectionFeaturesType(new BlockAnchorSlugger(new AsciiSlugger())))->buildForm($builder, []);
 
         return $added;
     }
 
-    public function testBuildFormAddsExpectedFields(): void
+    public function testBuildFormAddsEyebrowTitleCardsAndAnchorFields(): void
     {
         $added = $this->buildAddedFields();
 
-        foreach (['src', 'noCookie', 'title', 'description', 'width', 'height', 'class'] as $field) {
-            $this->assertArrayHasKey($field, $added, "\"$field\" should be added to the VideoIframe form");
+        foreach (['eyebrow', 'title', 'cards', 'anchor'] as $field) {
+            $this->assertArrayHasKey($field, $added, "\"$field\" should be added to the SectionFeatures form");
         }
     }
 
-    public function testTitleAndDescriptionAreOptional(): void
+    public function testCardsFieldIsACollectionOfSectionFeatureItemType(): void
     {
         $added = $this->buildAddedFields();
 
-        $this->assertFalse($added['title']['required']);
-        $this->assertFalse($added['description']['required']);
-    }
-
-    public function testNoCookieIsOptional(): void
-    {
-        $added = $this->buildAddedFields();
-
-        $this->assertFalse($added['noCookie']['required']);
+        $this->assertSame(CollectionType::class, $added['cards']['type']);
+        $this->assertSame(SectionFeatureItemType::class, $added['cards']['options']['entry_type']);
     }
 
     public function testConfigureOptionsDefaultsToNullDataClassAndUiTranslationDomain(): void
     {
-        $type = new VideoIframeType();
+        $type = new SectionFeaturesType(new BlockAnchorSlugger(new AsciiSlugger()));
         $resolver = new OptionsResolver();
         $type->configureOptions($resolver);
 

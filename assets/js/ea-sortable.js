@@ -20,6 +20,14 @@ const UI_MOVE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
 
 export default class extends Controller {
     connect() {
+        // Shared across every field's own listeners (not a per-field closure var) so a drag started in
+        // one field can be recognized by another field's own dragover/dragend - needed for the
+        // cross-collection Block move below (see moveAcrossFields())
+        this.dragging = null;
+        this.dragOriginField = null;
+        this.dragOriginContainer = null;
+        this.dragOriginNextSibling = null;
+
         this.element.querySelectorAll('[data-ea-collection-field]').forEach(field => this.initField(field));
 
         this.boundOnItemAdded = this.onItemAdded.bind(this);
@@ -42,42 +50,101 @@ export default class extends Controller {
             this.applyRestriction(item);
         });
 
-        let dragging = null;
-
         container.addEventListener('dragstart', e => {
             const item = e.target.closest('.field-collection-item');
             if (!item) { e.preventDefault(); return; }
             if (item.closest('[data-ea-collection-field]') !== field) return;
-            dragging = item;
+
+            this.dragging = item;
+            this.dragOriginField = field;
+            this.dragOriginContainer = item.parentElement;
+            this.dragOriginNextSibling = item.nextElementSibling;
             requestAnimationFrame(() => {
                 item.classList.add('ui-dragging');
                 item.style.opacity = '0.4';
                 item.style.boxShadow = '0 0 0 2px var(--bs-primary,#0d6efd)';
             });
+
+            if (this.isBlockCollectionField(field)) this.highlightDropTargets(field);
         });
 
         container.addEventListener('dragend', () => {
-            if (!dragging) return;
-            dragging.classList.remove('ui-dragging');
-            dragging.style.opacity = '';
-            dragging.style.boxShadow = '';
-            dragging.removeAttribute('draggable');
-            this.updatePositions(field);
-            dragging = null;
+            if (!this.dragging) return;
+            const item = this.dragging;
+            const originField = this.dragOriginField;
+            const originContainer = this.dragOriginContainer;
+            const originNextSibling = this.dragOriginNextSibling;
+
+            item.classList.remove('ui-dragging');
+            item.style.opacity = '';
+            item.style.boxShadow = '';
+            item.removeAttribute('draggable');
+
+            const finalField = item.closest('[data-ea-collection-field]');
+            if (finalField === originField) {
+                this.updatePositions(finalField);
+            } else {
+                this.moveAcrossFields(item, finalField, originContainer, originNextSibling);
+            }
+
+            this.dragging = null;
+            this.dragOriginField = null;
+            this.dragOriginContainer = null;
+            this.dragOriginNextSibling = null;
+            this.clearDropTargetHighlights();
         });
 
         container.addEventListener('dragover', e => {
+            if (!this.dragging) return;
+
+            // Reordering within the same field always works (unchanged from before); moving into a
+            // *different* field is only ever offered between two fields both marked as a Block
+            // collection (the page/menu's own top-level "blocks", or a container's own "slots") - every
+            // other sortable collection in this bundle (medias, form fields, email blocks...) keeps its
+            // original single-field-only behaviour untouched.
+            const sameField = field === this.dragOriginField;
+            if (!sameField && !(this.isBlockCollectionField(field) && this.isBlockCollectionField(this.dragOriginField))) {
+                return;
+            }
+
+            // A container's own "slots" field is nested inside the page/menu's top-level "blocks" field
+            // in the DOM (the container is itself one of its items) - without this, a dragover fired while
+            // hovering the inner (slots) field would also bubble up and re-trigger the outer (blocks)
+            // field's own listener right after, which would reparent the dragged row straight back out to
+            // top-level on every single mouse move. Stopping it here lets only the innermost matching
+            // field (the one the event actually targets) act.
+            e.stopPropagation();
             e.preventDefault();
-            if (!dragging) return;
             const after = this.dragAfter(field, e.clientY);
-            if (!after) dragging.parentElement.appendChild(dragging);
-            else after.parentElement.insertBefore(dragging, after);
+            if (!after) container.appendChild(this.dragging);
+            else after.parentElement.insertBefore(this.dragging, after);
         });
     }
 
     isSortable(field) {
         return (field.dataset.prototype || '').includes('[position]')
             || !!field.querySelector('[name$="[position]"]');
+    }
+
+    isBlockCollectionField(field) {
+        return !!(field && field.dataset.blockCollection === '1');
+    }
+
+    // A container's own "slots" often start out empty (nothing rendered yet but EasyAdmin's own
+    // "no items"/add-button placeholder, see empty_collection in EasyAdmin's form theme) - with no row
+    // of its own, that empty items area has no visible size to aim for. Highlighting every OTHER eligible
+    // Block-collection field's own items area the moment a compatible drag starts (sass/management/
+    // _block-collection.scss gives it a dashed-border "drop zone" look) makes it obvious, empty or not.
+    highlightDropTargets(originField) {
+        this.element.querySelectorAll('[data-ea-collection-field]').forEach(field => {
+            if (field === originField || !this.isBlockCollectionField(field)) return;
+            const container = this.itemsContainer(field);
+            if (container) container.classList.add('ui-drop-target');
+        });
+    }
+
+    clearDropTargetHighlights() {
+        this.element.querySelectorAll('.ui-drop-target').forEach(el => el.classList.remove('ui-drop-target'));
     }
 
     itemsContainer(field) {
@@ -142,6 +209,63 @@ export default class extends Controller {
                 const pos = item.querySelector('[name$="[position]"]');
                 if (pos) pos.value = i;
             });
+    }
+
+    // Fires only when a row was dropped into a *different* Block-collection field than it started in
+    // (see the dragover guard above) - persists the move immediately server-side (see
+    // BlockMoveController/Readme for why this can't just be a renamed form field like an ordinary
+    // same-field reorder: a Block dragged across collections keeps its own database id, a plain form
+    // resubmit would instead delete the original and create an empty new one, losing any attached media).
+    // "ownerType"/"ownerId"/the CSRF token are carried by the outermost Block-collection field on the
+    // page (the page/menu's own top-level "blocks") - read via the nearest [data-block-owner-type]
+    // ancestor-or-self, since a container's own "slots" field (nested inside it) doesn't repeat them.
+    moveAcrossFields(item, finalField, originContainer, originNextSibling) {
+        const root = finalField.closest('[data-block-owner-type]');
+        const blockIdInput = item.querySelector('[name$="[id]"]');
+        const blockId = blockIdInput ? blockIdInput.value : '';
+
+        // A block that isn't saved yet (still being drafted in this same open form) has no id to
+        // relocate against - stays out of this mechanism, same as a container with no id (see
+        // BlockType::addSlotsSubForm(), which then never marks that field as a Block collection at all)
+        if (!blockId || !root) {
+            this.revertToOrigin(item, originContainer, originNextSibling);
+            return;
+        }
+
+        const body = new URLSearchParams({
+            blockId,
+            ownerType: root.dataset.blockOwnerType || '',
+            ownerId: root.dataset.blockOwnerId || '',
+            targetBlockId: finalField.dataset.blockContainerId || '',
+        });
+
+        fetch(root.dataset.blockMoveUrl, {
+            method: 'POST',
+            headers: { 'X-CSRF-Token': root.dataset.blockMoveCsrfToken || '' },
+            body,
+        }).then(response => {
+            if (response.ok) {
+                // Reloads rather than leaving the moved row where it was dropped: the rest of this same
+                // edit form was built against the pre-move entity graph (fixed indices) - saving it as-is
+                // afterward could misalign against the now-changed collection it left behind. The
+                // success flash set by BlockMoveController survives the reload like it would a redirect.
+                window.location.reload();
+            } else {
+                this.revertToOrigin(item, originContainer, originNextSibling);
+                window.alert(root.dataset.blockMoveFailedLabel || '');
+            }
+        }).catch(() => {
+            this.revertToOrigin(item, originContainer, originNextSibling);
+            window.alert(root.dataset.blockMoveFailedLabel || '');
+        });
+    }
+
+    revertToOrigin(item, originContainer, originNextSibling) {
+        if (originNextSibling && originNextSibling.parentElement === originContainer) {
+            originContainer.insertBefore(item, originNextSibling);
+        } else {
+            originContainer.appendChild(item);
+        }
     }
 
     onItemAdded(e) {

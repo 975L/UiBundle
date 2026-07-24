@@ -1,5 +1,9 @@
-{# Static usage: <twig:c975LUi:Section:Cards cards="{{ [{icon: '', title: '...', text: '...'}] }}" [eyebrow=""] [title=""] [id=""]/> #}
-{# Dynamic usage (Block system): see templates/blocks/SectionCards.html.twig #}
+{# Dynamic usage only (Block system): see templates/blocks/SectionCards.html.twig - "slots" is a
+   collection of real Block entities (Entity/Block.php's "slots" relation), each rendered through the
+   normal render_block() pipeline (own kind, own cache, own media). Wrapped in ".cards" (see
+   sass/_cards.scss) instead of a dedicated grid, the same fixed-width flex row bare consecutive "card"
+   blocks already get in the page flow (see Blocks.html.twig) - so a slot renders identically whether
+   it sits here or bare in the page, this section only adds the eyebrow/title/anchor around it. #}
 <section class="section-cards-section"{% if id is defined and id %} id="{{ id }}"{% endif %}>
     <div class="section-wrap">
         {% if eyebrow or title %}
@@ -8,9 +12,9 @@
                 {% if title %}<h2 class="section-title">{{ title }}</h2>{% endif %}
             </div>
         {% endif %}
-        <div class="section-cards">
-            {% for c in cards %}
-                <twig:c975LUi:Card:Card title="{{ c.title }}" level="h3" icon="{{ c.icon ? [c.icon, '', 22, 22] : [] }}" content="{{ c.text }}"/>
+        <div class="cards">
+            {% for slot in slots %}
+                {{ render_block(slot) }}
             {% endfor %}
         </div>
     </div>

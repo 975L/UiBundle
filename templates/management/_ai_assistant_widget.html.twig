@@ -5,22 +5,26 @@
  # gating (see AiAssistantController::index() and DonovanWidgetProvider) - this partial assumes both
  # are already true.
  #}
+{# Stimulus derives value/target attribute names from the controller identifier as registered
+   ("aiAssistant" in assets/controllers.js), not a dasherized form of it - only each value's
+   own name gets dasherized. So these must read "aiassistant-*", not "ai-assistant-*", or
+   every value silently falls back to its type default ("") #}
 <div class="ai-assistant"
      data-controller="aiAssistant"
-     data-ai-assistant-ask-url-value="{{ path('management_ui_ai_assistant_ask') }}"
-     data-ai-assistant-csrf-token-value="{{ csrf_token('management_ui_ai_assistant_ask') }}"
+     data-aiassistant-ask-url-value="{{ path('management_ui_ai_assistant_ask') }}"
+     data-aiassistant-csrf-token-value="{{ csrf_token('management_ui_ai_assistant_ask') }}"
 >
-    <div class="ai-assistant__log" data-ai-assistant-target="log"></div>
+    <div class="ai-assistant__log" data-aiassistant-target="log"></div>
 
     <form data-action="aiAssistant#ask">
         <div class="input-group">
             <input type="text"
                    class="form-control"
-                   data-ai-assistant-target="input"
+                   data-aiassistant-target="input"
                    placeholder="{{ 'label.ai_assistant_question'|trans({}, 'ui') }}"
                    required
             >
-            <button type="submit" class="btn btn-primary" data-ai-assistant-target="submit">
+            <button type="submit" class="btn btn-primary" data-aiassistant-target="submit">
                 {{ 'label.ai_assistant_ask'|trans({}, 'ui') }}
             </button>
         </div>

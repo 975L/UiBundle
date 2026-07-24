@@ -77,7 +77,7 @@ class BlockType extends AbstractType
                             $this->addMediaSubForm($event->getForm(), $kind);
                         }
                         if ($this->registry->isContainer($kind)) {
-                            $this->addSlotsSubForm($event->getForm(), $kind);
+                            $this->addSlotsSubForm($event->getForm(), $kind, $block instanceof Block ? $block : null);
                         }
                     }
                 }
@@ -136,7 +136,7 @@ class BlockType extends AbstractType
                             $submitted['slots'] = [];
                             $event->setData($submitted);
                         }
-                        $this->addSlotsSubForm($event->getForm(), $kind);
+                        $this->addSlotsSubForm($event->getForm(), $kind, $block instanceof Block ? $block : null);
                     }
 
                     // "data" (and "medias"/"slots") were just (re)added above - move "animation" back below them, in case this is a brand new collection entry whose PRE_SET_DATA fired with no kind yet (so "animation" was added there before "data" ever existed)
@@ -199,16 +199,30 @@ class BlockType extends AbstractType
     // this very same BlockType, recursively, one kind-picker + data/media sub-form per slot.
     // BlockRegistry::getSlotContext($kind) keeps a slot from picking a container kind back by default
     // (bounding the recursion), except the one kind explicitly allowed to nest one level deeper.
-    private function addSlotsSubForm(FormInterface $form, string $kind): void
+    // $container is passed in explicitly (never fetched via $form->getData() in here) because this is
+    // also called from BlockType's own PRE_SET_DATA listener on this very form - calling getData() on a
+    // form from within its own PRE_SET_DATA listener throws "A cycle was detected" (Symfony requires
+    // reading the event's own data instead while that event is still being processed)
+    private function addSlotsSubForm(FormInterface $form, string $kind, ?Block $container): void
     {
+        // "data-block-container-id" (this container Block's own id) is what lets ea-sortable.js/
+        // BlockMoveController tell one container's slots apart from another's, or from the page's own
+        // top-level "blocks" field - only set once this container is itself already persisted (a slot
+        // can't be dragged into a container that doesn't exist in the DB yet to relocate it against)
+        $containerId = $container?->getId();
+
         $form->add('slots', CollectionType::class, [
-            'label' => 'label.slots',
+            'label' => 'section_cards' === $kind ? 'label.slots_cards' : 'label.slots',
             'entry_type' => self::class,
             'entry_options' => ['context' => $this->registry->getSlotContext($kind)],
             'allow_add' => true,
             'allow_delete' => true,
             'by_reference' => false,
             'prototype' => true,
+            'row_attr' => null !== $containerId ? [
+                'data-block-collection' => '1',
+                'data-block-container-id' => $containerId,
+            ] : [],
         ]);
     }
 

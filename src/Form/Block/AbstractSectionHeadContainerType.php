@@ -8,29 +8,35 @@
  */
 namespace c975L\UiBundle\Form\Block;
 
-use c975L\UiBundle\Form\IconPickerType;
-use c975L\UiBundle\Form\TrixEditorType;
+use c975L\UiBundle\Service\BlockAnchorSlugger;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-// One entry of SectionCardsType's "cards" collection
-class SectionCardItemType extends AbstractType
+// Shared "data" sub-form (eyebrow/title/anchor) for container kinds that only differ in how their
+// slots are wrapped at render time - see FlexColumnsType/SectionCardsType. The slots themselves are
+// a real Block relation added by BlockType::addSlotsSubForm(), not part of this form
+abstract class AbstractSectionHeadContainerType extends AbstractType
 {
+    use HasAnchorFieldTrait;
+
+    public function __construct(private readonly BlockAnchorSlugger $anchorSlugger)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $this->addAnchorField($builder, $this->anchorSlugger);
+
         $builder
-            // Reuses the existing icon picker (see ButtonType) instead of a per-card media upload - keeps this kind free of the block-level media wiring entirely
-            ->add('icon', IconPickerType::class, [
-                'label' => 'label.icon',
+            ->add('eyebrow', TextType::class, [
+                'label' => 'label.eyebrow',
                 'required' => false,
             ])
             ->add('title', TextType::class, [
                 'label' => 'label.title',
-            ])
-            ->add('text', TrixEditorType::class, [
-                'label' => 'label.text',
+                'required' => false,
             ]);
     }
 

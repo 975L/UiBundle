@@ -1,2 +1,5 @@
-{# Adapter for the dynamic Block system — maps Block data to the Section:Cards component #}
-<twig:c975LUi:Section:Cards eyebrow="{{ eyebrow|default('') }}" title="{{ title|default('') }}" cards="{{ cards|default([]) }}" id="{{ anchor_id }}"/>
+{# Adapter for the dynamic Block system — maps Block data to the Section:Cards component.
+   "slots" isn't part of Block::$data like the other fields here: it's the real nested-Block relation
+   (see Entity/Block.php), read straight off "block" instead - see blocks/FlexColumns.html.twig, the
+   same pattern for a different container. #}
+<twig:c975LUi:Section:Cards eyebrow="{{ eyebrow|default('') }}" title="{{ title|default('') }}" slots="{{ block.slots }}" id="{{ anchor_id }}"/>

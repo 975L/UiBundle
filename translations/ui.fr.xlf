@@ -591,6 +591,10 @@
                 <source>label.video_url</source>
                 <target>URL de la vidéo (YouTube, Vimeo...)</target>
             </trans-unit>
+            <trans-unit id="524">
+                <source>label.video_no_cookie</source>
+                <target>Utiliser la version sans cookie (YouTube uniquement)</target>
+            </trans-unit>
             <trans-unit id="134">
                 <source>label.warning</source>
                 <target>Avertissement</target>
@@ -684,12 +688,12 @@
                 <target>Rangée d'arguments courts (titre + légende)</target>
             </trans-unit>
             <trans-unit id="172">
-                <source>label.block_section_cards</source>
-                <target>Grille de cartes</target>
+                <source>label.block_section_features</source>
+                <target>Grille d'atouts</target>
             </trans-unit>
             <trans-unit id="173">
-                <source>label.block_section_cards_description</source>
-                <target>Titre de section suivi d'une grille de cartes (icône, titre, texte)</target>
+                <source>label.block_section_features_description</source>
+                <target>Titre de section suivi d'une grille d'atouts (icône, titre, texte)</target>
             </trans-unit>
             <trans-unit id="174">
                 <source>label.block_expertise_banner</source>
@@ -1366,6 +1370,26 @@
             <trans-unit id="523">
                 <source>label.document_download_media_help</source>
                 <target>Un fichier = une carte de téléchargement. Attachez plusieurs fichiers pour proposer plusieurs documents ; donnez alors à chacun un "Nom du fichier" distinct, il servira de titre à sa carte.</target>
+            </trans-unit>
+            <trans-unit id="525">
+                <source>label.block_section_cards</source>
+                <target>Grille de cartes</target>
+            </trans-unit>
+            <trans-unit id="526">
+                <source>label.block_section_cards_description</source>
+                <target>Titre de section suivi d'un empilement de blocs Carte complets (image, lien, bouton...)</target>
+            </trans-unit>
+            <trans-unit id="527">
+                <source>flash.block_moved</source>
+                <target>Bloc déplacé</target>
+            </trans-unit>
+            <trans-unit id="528">
+                <source>flash.block_move_failed</source>
+                <target>Le déplacement du bloc a échoué</target>
+            </trans-unit>
+            <trans-unit id="529">
+                <source>label.slots_cards</source>
+                <target>Cartes</target>
             </trans-unit>
         </body>
     </file>

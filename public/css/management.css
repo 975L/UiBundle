@@ -169,3 +169,22 @@
 .ai-rephrase__error {
   flex-basis: 100%;
 }
+
+/*
+ * (c) 2026: 975L <contact@975l.com>
+ * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+[data-block-collection] .ea-form-collection-items {
+  min-height: 56px;
+  border: 1px dashed transparent;
+  border-radius: 6px;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.ui-drop-target {
+  border-color: var(--bs-primary, #0d6efd) !important;
+  background-color: rgba(13, 110, 253, 0.06);
+}

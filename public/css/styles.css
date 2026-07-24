@@ -296,7 +296,7 @@ button.btn {
 
 .blocks > .cards {
   box-sizing: border-box;
-  max-width: calc(1312px + 2 * clamp(20px, 5vw, 64px));
+  max-width: 1312px;
   margin: 0 auto;
   padding-left: clamp(20px, 5vw, 64px);
   padding-right: clamp(20px, 5vw, 64px);
@@ -304,7 +304,7 @@ button.btn {
 
 .card {
   margin: 1em auto;
-  width: clamp(300px, 400px, 90vw);
+  width: clamp(300px, 380px, 90vw);
   border: 1px solid var(--input-border-color);
   border-radius: var(--radius-card);
   background-color: var(--card-background);
@@ -560,6 +560,14 @@ img.white {
   filter: invert(99%) sepia(16%) saturate(3%) hue-rotate(50deg) brightness(103%) contrast(100%);
 }
 
+.video-iframe-consent {
+  text-align: center;
+}
+
+.video-iframe-consent iframe {
+  max-width: 100%;
+}
+
 .video-iframe-placeholder {
   display: flex;
   flex-direction: column;
@@ -622,6 +630,7 @@ img.white {
    below, since they're the kinds most often placed first/last on a page. .feature-bar is
    deliberately excluded too - it's a full-bleed border-only band, not a padded section.
    .flex-columns-section is excluded as well: it has no page-level top spacing of its own to add. */
+.section-features-section,
 .section-cards-section,
 .expertise-banner,
 .process-steps,
@@ -635,6 +644,7 @@ img.white {
    that same top padding - it was sized for "first thing in its own vertical stack on the page", not
    for sitting flush against a column's other slots, and would otherwise misalign the column against
    its siblings (see Container kinds > flex_columns in the README). */
+.flex-columns__col > .section-features-section,
 .flex-columns__col > .section-cards-section,
 .flex-columns__col > .expertise-banner,
 .flex-columns__col > .process-steps,
@@ -707,6 +717,8 @@ img.white {
 .hero .section-wrap {
   display: grid;
   grid-template-columns: 1fr;
+  justify-items: center;
+  text-align: center;
   gap: 56px;
   align-items: center;
   padding-top: clamp(48px, 8vw, 84px);
@@ -762,6 +774,7 @@ img.white {
   display: flex;
   gap: 16px;
   align-items: center;
+  justify-content: center;
   flex-wrap: wrap;
 }
 
@@ -972,18 +985,24 @@ img.white {
   margin-bottom: 3px;
 }
 
-/* ---- section_cards ---- */
-.section-cards {
+/* ---- section_features ---- */
+.section-features {
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
 }
 
-.section-cards .card {
+.section-features .card {
   width: 100%;
   margin: 0;
 }
 
+/* ---- section_cards ----
+   A stack of full "card" blocks (see Form/Block/SectionCardsType) - unlike section_features above,
+   this reuses ".cards" as-is (sass/_cards.scss), the same fixed-width flex row bare consecutive "card"
+   blocks already get in the page flow, so no grid rules of its own are needed here. Cards are sized
+   (sass/_cards.scss) to fit three per row inside the plain ".section-wrap" measure, so no widening
+   is needed here either - it stays aligned with every other section on the page. */
 /* ---- flex_columns ----
    Deliberately flex/wrap instead of a fixed 2- or 3-column grid: each slot is a full block of its
    own (see Block::$slots), so column count follows whatever content editors actually put in, rather
@@ -1177,11 +1196,8 @@ img.white {
 
 /* ---- collection - default variant's items render as "card" blocks, reusing .cards/.card
    (sass/_cards.scss); the "portfolio" variant uses .portfolio-grid__grid's own fluid 1fr columns
-   instead (see CollectionItem.html.twig) ---- */
-.collection-grid:not(.collection-grid--portfolio) .section-wrap {
-  max-width: calc(1312px + 2 * clamp(20px, 5vw, 64px));
-}
-
+   instead (see CollectionItem.html.twig). Cards are sized (sass/_cards.scss) to fit three per row
+   inside the plain ".section-wrap" measure, so it stays aligned with every other section. ---- */
 .collection-grid__head {
   margin-bottom: 36px;
 }
@@ -1255,7 +1271,7 @@ img.white {
   .feature-bar__item:nth-child(n+4) {
     border-top: 1px solid var(--border-color);
   }
-  .section-cards,
+  .section-features,
   .section-steps,
   .portfolio-grid__grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1279,7 +1295,12 @@ img.white {
 @media (min-width: 861px) {
   .hero .section-wrap {
     grid-template-columns: 1.15fr 0.85fr;
+    justify-items: normal;
+    text-align: left;
     gap: 48px;
+  }
+  .hero__cta {
+    justify-content: flex-start;
   }
   .hero__media {
     max-width: none;
@@ -1300,7 +1321,7 @@ img.white {
   .feature-bar__item:nth-child(n+4) {
     border-top: none;
   }
-  .section-cards,
+  .section-features,
   .portfolio-grid__grid {
     grid-template-columns: repeat(3, 1fr);
   }

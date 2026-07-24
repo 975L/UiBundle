@@ -225,4 +225,12 @@ class Block
         return $this;
     }
 
+    public function reorderSlots(): void
+    {
+        $position = 0;
+        foreach ($this->slots as $slot) {
+            $slot->setPosition($position++);
+        }
+    }
+
 }

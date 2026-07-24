@@ -9,13 +9,13 @@
 
 namespace c975L\UiBundle\Tests\Form\Block;
 
-use c975L\UiBundle\Form\Block\SectionCardItemType;
+use c975L\UiBundle\Form\Block\SectionFeatureItemType;
 use c975L\UiBundle\Form\IconPickerType;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SectionCardItemTypeTest extends TestCase
+class SectionFeatureItemTypeTest extends TestCase
 {
     private function buildAddedFields(): array
     {
@@ -27,7 +27,7 @@ class SectionCardItemTypeTest extends TestCase
             return $builder;
         });
 
-        (new SectionCardItemType())->buildForm($builder, []);
+        (new SectionFeatureItemType())->buildForm($builder, []);
 
         return $added;
     }
@@ -37,7 +37,7 @@ class SectionCardItemTypeTest extends TestCase
         $added = $this->buildAddedFields();
 
         foreach (['icon', 'title', 'text'] as $field) {
-            $this->assertArrayHasKey($field, $added, "\"$field\" should be added to the SectionCardItem form");
+            $this->assertArrayHasKey($field, $added, "\"$field\" should be added to the SectionFeatureItem form");
         }
     }
 
@@ -52,7 +52,7 @@ class SectionCardItemTypeTest extends TestCase
 
     public function testConfigureOptionsDefaultsToNullDataClassAndUiTranslationDomain(): void
     {
-        $type = new SectionCardItemType();
+        $type = new SectionFeatureItemType();
         $resolver = new OptionsResolver();
         $type->configureOptions($resolver);
 

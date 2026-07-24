@@ -216,6 +216,27 @@ class BlockRegistry
         return $this->get($kind)['slotContext'];
     }
 
+    // Same eligibility rules groupBy() applies to every kind it lists under a given $context (a
+    // non-pickable kind is never offered anywhere; a container is excluded from any slot context unless it
+    // explicitly opted into that one - see SLOT_CONTEXT/NESTED_SLOT_CONTEXT) - exposed standalone so
+    // BlockMoveController can check "may this already-existing block legally sit in that container's
+    // slots" without going through the translated, category-grouped picker list
+    public function isAllowedInContext(string $kind, ?string $context): bool
+    {
+        $config = $this->get($kind);
+
+        if (!$config['pickable']) {
+            return false;
+        }
+        if (null !== $context && !empty($config['contexts']) && !in_array($context, $config['contexts'], true)) {
+            return false;
+        }
+
+        $isSlotContext = in_array($context, [self::SLOT_CONTEXT, self::NESTED_SLOT_CONTEXT], true);
+
+        return !($isSlotContext && $config['container'] && !in_array($context, $config['contexts'], true));
+    }
+
     // Result only depends on the static block registrations, cached per $context after its first call - excludes non-pickable kinds (singleton blocks with their own dedicated admin entry, e.g. SocialBundle's "social_links": offering them here would let editors create duplicate, independently-filled instances instead of reusing the single site-wide one found via BlockRepository::findOneByKind()), and kinds restricted to other contexts (e.g. SiteBundle's "menu_link", declared with contexts: ['menu'] so it doesn't leak into a Page's block picker). A kind declared with no contexts at all is available everywhere, and passing no $context here skips the contexts filter entirely - both keep existing callers (that don't pass $context yet) working unchanged.
     public function groupedByCategory(?string $context = null): array
     {
@@ -245,23 +266,14 @@ class BlockRegistry
         $grouped = [];
         $orderKeys = [];
         foreach ($this->blocks as $kind => $config) {
-            if (!$config['pickable']) {
-                continue;
-            }
-            if (null !== $context && !empty($config['contexts']) && !in_array($context, $config['contexts'], true)) {
-                continue;
-            }
-            // A container kind is excluded from any *slot* context by default (see SLOT_CONTEXT/
-            // NESTED_SLOT_CONTEXT) - it may opt back in to one specific slot context (and only that one)
-            // via its own "contexts", the same field ordinary contexts-restricted kinds (e.g. "menu_link")
-            // already use. Scoped to slot contexts only - a container with no "contexts" declared (e.g.
-            // "flex_columns") must still be pickable at the top level ('page'/null context); the check used
-            // to fire for every context, which silently dropped such a container from its own kind-choice
-            // list even though the block already had that very kind persisted (see BlockType's "kind"
-            // ChoiceType: a current value absent from "choices" just renders unselected), so any save of a
-            // page carrying one wiped its "kind" back to null the moment the form was submitted.
-            $isSlotContext = in_array($context, [self::SLOT_CONTEXT, self::NESTED_SLOT_CONTEXT], true);
-            if ($isSlotContext && $config['container'] && !in_array($context, $config['contexts'], true)) {
+            // See isAllowedInContext() for the exact rules (pickable, contexts, container-in-slot-context)
+            // - a container with no "contexts" declared (e.g. "flex_columns") must still be pickable at the
+            // top level ('page'/null context); the check used to fire for every context, which silently
+            // dropped such a container from its own kind-choice list even though the block already had
+            // that very kind persisted (see BlockType's "kind" ChoiceType: a current value absent from
+            // "choices" just renders unselected), so any save of a page carrying one wiped its "kind" back
+            // to null the moment the form was submitted.
+            if (!$this->isAllowedInContext($kind, $context)) {
                 continue;
             }
             $groupKey = $keyFn($kind, $config);

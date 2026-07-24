@@ -9,6 +9,7 @@
 
 namespace c975L\UiBundle\Tests\Form;
 
+use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Registry\BlockRegistry;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -217,13 +218,83 @@ class BlockTypeTest extends TestCase
             return $form;
         });
 
-        (new \ReflectionMethod($type, 'addSlotsSubForm'))->invoke($type, $form, 'flex_columns');
+        (new \ReflectionMethod($type, 'addSlotsSubForm'))->invoke($type, $form, 'flex_columns', null);
 
         $this->assertSame(CollectionType::class, $added['slots']['type']);
         $this->assertSame(BlockType::class, $added['slots']['options']['entry_type']);
         $this->assertSame(BlockRegistry::SLOT_CONTEXT, $added['slots']['options']['entry_options']['context']);
         $this->assertTrue($added['slots']['options']['allow_add']);
         $this->assertTrue($added['slots']['options']['allow_delete']);
+        $this->assertSame('label.slots', $added['slots']['options']['label']);
+    }
+
+    // "section_cards" gets its own "Cards" label instead of the generic "flex_columns" one, since the
+    // two containers share the same addSlotsSubForm() mechanism but not the same slots field wording
+    public function testAddSlotsSubFormUsesADedicatedLabelForSectionCards(): void
+    {
+        $registry = $this->createStub(BlockRegistry::class);
+        $registry->method('getSlotContext')->willReturn(BlockRegistry::SLOT_CONTEXT);
+        $type = new BlockType($registry, $this->createRouter());
+
+        $added = [];
+        $form = $this->createStub(FormInterface::class);
+        $form->method('add')->willReturnCallback(function (string $name, ?string $fieldType = null, array $fieldOptions = []) use (&$added, $form) {
+            $added[$name] = ['type' => $fieldType, 'options' => $fieldOptions];
+
+            return $form;
+        });
+
+        (new \ReflectionMethod($type, 'addSlotsSubForm'))->invoke($type, $form, 'section_cards', null);
+
+        $this->assertSame('label.slots_cards', $added['slots']['options']['label']);
+    }
+
+    // No container Block passed in (a brand new, not-yet-persisted one) - the "slots" field must not be
+    // marked as a Block collection at all, since there's no container id yet to relocate anything against
+    // (see BlockMoveController) - and this method must never call $form->getData() itself to find out,
+    // that would throw Symfony's "cycle detected" error when called from BlockType's own PRE_SET_DATA
+    public function testAddSlotsSubFormOmitsRowAttrWhenTheContainerIsNotYetPersisted(): void
+    {
+        $registry = $this->createStub(BlockRegistry::class);
+        $registry->method('getSlotContext')->willReturn(BlockRegistry::SLOT_CONTEXT);
+        $type = new BlockType($registry, $this->createRouter());
+
+        $added = [];
+        $form = $this->createStub(FormInterface::class);
+        $form->method('add')->willReturnCallback(function (string $name, ?string $fieldType = null, array $fieldOptions = []) use (&$added, $form) {
+            $added[$name] = ['type' => $fieldType, 'options' => $fieldOptions];
+
+            return $form;
+        });
+
+        (new \ReflectionMethod($type, 'addSlotsSubForm'))->invoke($type, $form, 'flex_columns', null);
+
+        $this->assertSame([], $added['slots']['options']['row_attr']);
+    }
+
+    // A real, already-persisted container - "slots" gets marked as a Block collection, carrying this
+    // container's own id, for ea-sortable.js/BlockMoveController to relocate a block into it
+    public function testAddSlotsSubFormAddsRowAttrWithTheContainersOwnIdWhenPersisted(): void
+    {
+        $registry = $this->createStub(BlockRegistry::class);
+        $registry->method('getSlotContext')->willReturn(BlockRegistry::SLOT_CONTEXT);
+        $type = new BlockType($registry, $this->createRouter());
+
+        $container = new Block();
+        (new \ReflectionProperty(Block::class, 'id'))->setValue($container, 42);
+
+        $added = [];
+        $form = $this->createStub(FormInterface::class);
+        $form->method('add')->willReturnCallback(function (string $name, ?string $fieldType = null, array $fieldOptions = []) use (&$added, $form) {
+            $added[$name] = ['type' => $fieldType, 'options' => $fieldOptions];
+
+            return $form;
+        });
+
+        (new \ReflectionMethod($type, 'addSlotsSubForm'))->invoke($type, $form, 'flex_columns', $container);
+
+        $this->assertSame('1', $added['slots']['options']['row_attr']['data-block-collection']);
+        $this->assertSame(42, $added['slots']['options']['row_attr']['data-block-container-id']);
     }
 
     // "flex_column" (a nested container) declares its own slots with NESTED_SLOT_CONTEXT instead, so its
@@ -243,7 +314,7 @@ class BlockTypeTest extends TestCase
             return $form;
         });
 
-        (new \ReflectionMethod($type, 'addSlotsSubForm'))->invoke($type, $form, 'flex_column');
+        (new \ReflectionMethod($type, 'addSlotsSubForm'))->invoke($type, $form, 'flex_column', null);
 
         $this->assertSame(BlockRegistry::NESTED_SLOT_CONTEXT, $added['slots']['options']['entry_options']['context']);
     }

@@ -1,6 +1,6 @@
 # UiBundle
 
-Symfony bundle providing a dynamic block system for pages and content entities, managed through EasyAdmin with drag-and-drop reordering.
+Symfony bundle providing the c975L ecosystem's shared front-end foundation — dynamic blocks, media library, and reusable CSS/JS/font/form registries used by every satellite bundle.
 
 [![GitHub](https://img.shields.io/github/license/975L/UiBundle)](https://github.com/975L/UiBundle/blob/master/LICENSE)
 [![Packagist Version](https://img.shields.io/packagist/v/c975l/ui-bundle)](https://packagist.org/packages/c975l/ui-bundle)
@@ -219,6 +219,7 @@ The bundle ships the following kinds out of the box (see `config/services.yaml` 
 | `flex_column` | Page sections | `FlexColumnType` | `blocks/FlexColumn.html.twig` |
 | `flex_columns` | Page sections | `FlexColumnsType` | `blocks/FlexColumns.html.twig` |
 | `section_cards` | Page sections | `SectionCardsType` | `blocks/SectionCards.html.twig` |
+| `section_features` | Page sections | `SectionFeaturesType` | `blocks/SectionFeatures.html.twig` |
 | `slider` | Media | `SliderType` | `blocks/Slider.html.twig` |
 | `text_readmore` | Text | `ReadmoreType` | `blocks/TextReadmore.html.twig` |
 | `text_section` | Text | `TextSectionType` | `blocks/TextSection.html.twig` |
@@ -239,13 +240,27 @@ The bundle ships the following kinds out of the box (see `config/services.yaml` 
 - To make your own kind a container, tag it `container: true` in its `ui.block` service tag, and mirror `FlexColumnsType`/`FlexColumns.html.twig` (or `FlexColumnType`/`FlexColumn.html.twig` for a chrome-less nested one) - the "slots" field itself is added automatically by `BlockType`, not by your kind's own form. By default its slots are offered every OTHER container kind's own choices too, minus containers (`BlockRegistry::SLOT_CONTEXT`); to let your container nest one level inside another specific container instead (like `flex_column` does inside `flex_columns`), declare `contexts: 'that_containers_slot_context'` and give your own slots a distinct `slot_context: 'something_else'` so nothing can nest inside *it* in turn.
 - A container kind stays technically pickable at the top level too (`contexts` can't hide a kind from a context-less picker) - harmless for `flex_column`, it just renders its slots with no wrapper when picked directly.
 
-Upgrading to a UiBundle version that introduces `flex_columns`/`flex_column` (or your own container kind) adds a new `parent_block_id` column to `site_block` - re-run "Run migrations" above after `composer update`.
+`section_cards` is a second, simpler container built the exact same way: eyebrow/title/anchor + slots, no `contexts`/`slot_context` override (its slots stay open to every pickable kind, same default as `flex_columns`). Its slots are meant to be `card` blocks - each keeping its own full schema (image, link, button...) - but the difference from just using `flex_columns` for that isn't enforcement, it's rendering: `section_cards` wraps its slots in `.cards` (`sass/_cards.scss`), the same fixed-width flex row bare consecutive `card` blocks already get in the page flow (see `Blocks.html.twig`), instead of `flex_columns`' own generic flexible-width `.flex-columns__col` layout. Use it whenever a design calls for that exact "row of cards" look but with a section eyebrow/title/anchor around it, which bare consecutive `card` blocks can't have on their own.
+
+Upgrading to a UiBundle version that introduces `flex_columns`/`flex_column`/`section_cards` (or your own container kind) adds a new `parent_block_id` column to `site_block` - re-run "Run migrations" above after `composer update`.
+
+---
+
+## Moving a Block between collections
+
+Reordering (drag-and-drop, `assets/js/ea-sortable.js`) only ever rearranges rows *within one collection* (a page/menu's own top-level `blocks`, or one container's own `slots`) - a plain form resubmit has no way to reparent an existing row into a *different* collection: `CollectionType` recognizes an existing entity by its position in the form as originally built, not by an id, so a row moved to an index outside its original collection is treated as brand new (the real one gets deleted, a fresh one created with none of its media - see `BlockMoveController`'s own doc comment).
+
+Dragging an already-saved Block onto a *different* Block-collection field (another container's slots, or back out to top-level) instead persists the move immediately, via `BlockMoveController`/`BlockRelocator`, bypassing the open edit form entirely:
+
+- Both fields (the drag's origin and destination) must carry `row_attr`'s `data-block-collection: '1'` marker for the cross-field drop to be offered at all - every other sortable collection in this bundle (medias, form fields, email blocks...) is untouched. `BlockType::addSlotsSubForm()` already marks a container's own `slots` field this way (only once the container itself has an id - a not-yet-saved container can't be a move destination yet).
+- Your own `HasBlocksInterface` owner's top-level `blocks` field needs the same marker plus `data-block-owner-type`/`data-block-owner-id` (a short type string of your choosing, e.g. `"page"`) and a `BlockOwnerResolverInterface` implementation resolving that type back to your entity - see `c975L\SiteBundle\Management\SiteBlockOwnerResolver`/`Controller\Management\PageCrudController`'s own "blocks" field for a full example, auto-discovered the same way as `MediaUsageProviderInterface` (no tag needed, see `BlockOwnerResolverPass`).
+- The move itself never crosses two different owners (a Page's blocks can only move within that same Page) - `BlockMoveController` re-verifies ownership server-side regardless of what the client sends.
 
 ---
 
 ## Anchors (in-page navigation)
 
-Every "Page sections" kind above (`hero`, `feature_bar`, `section_cards`, `flex_columns`, `expertise_banner`, `process_steps`, `portfolio_grid`, `cta_band`, `collection`) has an optional **Anchor** field, letting an editor build a one-page nav (a `menu_link` block - see `c975L/SiteBundle`'s README - pointing straight at a section of the same page).
+Every "Page sections" kind above (`hero`, `feature_bar`, `section_features`, `flex_columns`, `section_cards`, `expertise_banner`, `process_steps`, `portfolio_grid`, `cta_band`, `collection`) has an optional **Anchor** field, letting an editor build a one-page nav (a `menu_link` block - see `c975L/SiteBundle`'s README - pointing straight at a section of the same page).
 
 - Typing an anchor (e.g. `Services`) slugifies it (`services`). Leaving it empty falls back to slugifying the block's own title.
 - The final HTML `id` rendered on the section is always `{slug}-{block.id}` (e.g. `services-42`) - the trailing block id is added at render time, not stored, so two blocks of the same kind on the same page (or the same title reused elsewhere) never collide.
@@ -591,7 +606,8 @@ Block templates are thin adapters around a set of Symfony UX Twig components liv
 | `<twig:c975LUi:Portfolio:Grid>` | Grid of project cards sourced from a block's own medias |
 | `<twig:c975LUi:Process:Steps>` | Section title followed by numbered steps |
 | `<twig:c975LUi:Progress:Bar>` | Progress bar |
-| `<twig:c975LUi:Section:Cards>` | Section title followed by a grid of cards (icon/title/text) |
+| `<twig:c975LUi:Section:Cards>` | Section title followed by a stack of full Card blocks (`.cards` row) |
+| `<twig:c975LUi:Section:Features>` | Section title followed by a grid of features (icon/title/text) |
 | `<twig:c975LUi:Slider:Slider>` | Image/media slider |
 | `<twig:c975LUi:Text:Readmore>` | Collapsible "read more" text block |
 | `<twig:c975LUi:Text:Section>` | Text section with optional image |
@@ -736,9 +752,10 @@ as plain text, same as today.
 
 ### Video:Iframe: consent-gated third-party embeds
 
-`<twig:c975LUi:Video:Iframe>` (the `video_iframe` block) auto-rewrites YouTube URLs to
-`youtube-nocookie.com`, and defers creating the real `<iframe>` client-side until cookie consent
-is given — the block's own HTML never changes with consent state, so it stays cacheable.
+`<twig:c975LUi:Video:Iframe>` (the `video_iframe` block) can rewrite a YouTube URL to
+`youtube-nocookie.com` (opt-in per block, via its "Use no-cookie version" checkbox), and defers
+creating the real `<iframe>` client-side until cookie consent is given — the block's own HTML
+never changes with consent state, so it stays cacheable.
 
 It has **no composer dependency on any consent-banner bundle**. Instead it reacts to an optional,
 documented contract, checked at connect time:

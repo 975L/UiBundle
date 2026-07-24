@@ -590,6 +590,10 @@
                 <source>label.video_url</source>
                 <target>Video URL (YouTube, Vimeo...)</target>
             </trans-unit>
+            <trans-unit id="524">
+                <source>label.video_no_cookie</source>
+                <target>Use no-cookie version (YouTube only)</target>
+            </trans-unit>
             <trans-unit id="134">
                 <source>label.warning</source>
                 <target>Warning</target>
@@ -683,12 +687,12 @@
                 <target>Row of short arguments (title + caption)</target>
             </trans-unit>
             <trans-unit id="172">
-                <source>label.block_section_cards</source>
-                <target>Card grid</target>
+                <source>label.block_section_features</source>
+                <target>Feature grid</target>
             </trans-unit>
             <trans-unit id="173">
-                <source>label.block_section_cards_description</source>
-                <target>Section title followed by a grid of cards (icon, title, text)</target>
+                <source>label.block_section_features_description</source>
+                <target>Section title followed by a grid of features (icon, title, text)</target>
             </trans-unit>
             <trans-unit id="174">
                 <source>label.block_expertise_banner</source>
@@ -1365,6 +1369,26 @@
             <trans-unit id="523">
                 <source>label.document_download_media_help</source>
                 <target>One file = one download card. Attach several files to offer several documents - give each a distinct "File name" then, it becomes that card's own title.</target>
+            </trans-unit>
+            <trans-unit id="525">
+                <source>label.block_section_cards</source>
+                <target>Card grid</target>
+            </trans-unit>
+            <trans-unit id="526">
+                <source>label.block_section_cards_description</source>
+                <target>Section title followed by a stack of full Card blocks (image, link, button...)</target>
+            </trans-unit>
+            <trans-unit id="527">
+                <source>flash.block_moved</source>
+                <target>Block moved</target>
+            </trans-unit>
+            <trans-unit id="528">
+                <source>flash.block_move_failed</source>
+                <target>Failed to move the block</target>
+            </trans-unit>
+            <trans-unit id="529">
+                <source>label.slots_cards</source>
+                <target>Cards</target>
             </trans-unit>
         </body>
     </file>

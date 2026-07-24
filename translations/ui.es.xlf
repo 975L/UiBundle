@@ -590,6 +590,10 @@
                 <source>label.video_url</source>
                 <target>URL del vídeo (YouTube, Vimeo...)</target>
             </trans-unit>
+            <trans-unit id="524">
+                <source>label.video_no_cookie</source>
+                <target>Usar la versión sin cookies (solo YouTube)</target>
+            </trans-unit>
             <trans-unit id="134">
                 <source>label.warning</source>
                 <target>Advertencia</target>
@@ -683,12 +687,12 @@
                 <target>Fila de argumentos breves (título + leyenda)</target>
             </trans-unit>
             <trans-unit id="172">
-                <source>label.block_section_cards</source>
-                <target>Cuadrícula de tarjetas</target>
+                <source>label.block_section_features</source>
+                <target>Cuadrícula de características</target>
             </trans-unit>
             <trans-unit id="173">
-                <source>label.block_section_cards_description</source>
-                <target>Título de sección seguido de una cuadrícula de tarjetas (icono, título, texto)</target>
+                <source>label.block_section_features_description</source>
+                <target>Título de sección seguido de una cuadrícula de características (icono, título, texto)</target>
             </trans-unit>
             <trans-unit id="174">
                 <source>label.block_expertise_banner</source>
@@ -1365,6 +1369,26 @@
             <trans-unit id="523">
                 <source>label.document_download_media_help</source>
                 <target>Un archivo = una tarjeta de descarga. Adjunta varios archivos para ofrecer varios documentos; asigna entonces a cada uno un "Nombre del archivo" distinto, que servirá de título a su tarjeta.</target>
+            </trans-unit>
+            <trans-unit id="525">
+                <source>label.block_section_cards</source>
+                <target>Cuadrícula de tarjetas</target>
+            </trans-unit>
+            <trans-unit id="526">
+                <source>label.block_section_cards_description</source>
+                <target>Título de sección seguido de una pila de bloques Tarjeta completos (imagen, enlace, botón...)</target>
+            </trans-unit>
+            <trans-unit id="527">
+                <source>flash.block_moved</source>
+                <target>Bloque movido</target>
+            </trans-unit>
+            <trans-unit id="528">
+                <source>flash.block_move_failed</source>
+                <target>Error al mover el bloque</target>
+            </trans-unit>
+            <trans-unit id="529">
+                <source>label.slots_cards</source>
+                <target>Tarjetas</target>
             </trans-unit>
         </body>
     </file>

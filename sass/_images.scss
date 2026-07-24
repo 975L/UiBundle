@@ -53,6 +53,21 @@ img.white {
     filter: invert(99%) sepia(16%) saturate(3%) hue-rotate(50deg) brightness(103%) contrast(100%);
 }
 
+// The iframe itself stays a plain inline replaced element (no width/height forced on it, see
+// video-iframe.js) - without this, it hugs the container's left edge like any inline content
+// instead of centering, since display:block alone (from .img-responsive) doesn't center inline children
+.video-iframe-consent {
+    text-align: center;
+}
+
+// Responsive cap only - the actual per-instance width/height come from a real px value set by
+// video-iframe.js via a higher-specificity #id-scoped rule (see createNoncedStyleElement() there),
+// which is what actually overrides c975l/site-bundle's generic "iframe { width; aspect-ratio }"
+// (sass/_iframe.scss, applies to every bare <iframe> site-wide)
+.video-iframe-consent iframe {
+    max-width: 100%;
+}
+
 .video-iframe-placeholder {
     display: flex;
     flex-direction: column;

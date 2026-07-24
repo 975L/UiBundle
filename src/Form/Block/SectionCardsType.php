@@ -8,49 +8,7 @@
  */
 namespace c975L\UiBundle\Form\Block;
 
-use c975L\UiBundle\Service\BlockAnchorSlugger;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-class SectionCardsType extends AbstractType
+// The "data" sub-form of the "section_cards" container kind - see AbstractSectionHeadContainerType
+class SectionCardsType extends AbstractSectionHeadContainerType
 {
-    use HasAnchorFieldTrait;
-
-    public function __construct(private readonly BlockAnchorSlugger $anchorSlugger)
-    {
-    }
-
-    public function buildForm(FormBuilderInterface $builder, array $options): void
-    {
-        $this->addAnchorField($builder, $this->anchorSlugger);
-
-        $builder
-            ->add('eyebrow', TextType::class, [
-                'label' => 'label.eyebrow',
-                'required' => false,
-            ])
-            ->add('title', TextType::class, [
-                'label' => 'label.title',
-                'required' => false,
-            ])
-            ->add('cards', CollectionType::class, [
-                'label' => 'label.cards',
-                'entry_type' => SectionCardItemType::class,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'by_reference' => false,
-                'prototype' => true,
-            ]);
-    }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'data_class'         => null,
-            'translation_domain' => 'ui',
-        ]);
-    }
 }

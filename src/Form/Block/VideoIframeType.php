@@ -11,6 +11,7 @@ namespace c975L\UiBundle\Form\Block;
 use Symfony\Component\Form\AbstractType;
 use c975L\UiBundle\Form\BlockClassChoiceType;
 use c975L\UiBundle\Form\TrixEditorType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,6 +24,11 @@ class VideoIframeType extends AbstractType
         $builder
             ->add('src', UrlType::class, [
                 'label' => 'label.video_url',
+            ])
+            // Only rewrites the URL for a recognized YouTube host - see BlockVideoNoCookieListener, which performs the actual rewrite once on save, so the stored src (and the render template) never need to know about this checkbox
+            ->add('noCookie', CheckboxType::class, [
+                'label'    => 'label.video_no_cookie',
+                'required' => false,
             ])
             ->add('title', TextType::class, [
                 'label'    => 'label.title',

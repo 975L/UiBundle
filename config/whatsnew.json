@@ -1,5 +1,35 @@
 [
     {
+        "date": "2026-07-24",
+        "description": [
+            {
+                "en": "Fixed the AI rephrase and AI assistant panels not responding to clicks",
+                "fr": "Correction des encarts de reformulation IA et d'assistant IA qui ne répondaient plus aux clics",
+                "es": "Corregidos los paneles de reformulación IA y asistente IA que no respondían a los clics"
+            },
+            {
+                "en": "Fixed video embeds staying blank after accepting cookies",
+                "fr": "Correction des vidéos intégrées qui restaient vides après acceptation des cookies",
+                "es": "Corregidos los vídeos incrustados que permanecían en blanco tras aceptar las cookies"
+            },
+            {
+                "en": "Fixed video embeds ignoring their configured width/height and displaying at the wrong size",
+                "fr": "Correction des vidéos intégrées qui ignoraient la largeur/hauteur configurée et s'affichaient à la mauvaise taille",
+                "es": "Corregidos los vídeos incrustados que ignoraban el ancho/alto configurado y se mostraban con un tamaño incorrecto"
+            },
+            {
+                "en": "Fixed the header banner's text and image not centering on mobile",
+                "fr": "Correction du texte et de l'image de la bannière d'en-tête qui ne se centraient pas sur mobile",
+                "es": "Corregidos el texto y la imagen del banner de cabecera que no se centraban en móvil"
+            },
+            {
+                "en": "Fixed the progress bar not showing any fill",
+                "fr": "Correction de la barre de progression qui n'affichait aucun remplissage",
+                "es": "Corregida la barra de progreso, que no mostraba ningún relleno"
+            }
+        ]
+    },
+    {
         "date": "2026-07-23",
         "description": [
             {
@@ -43,6 +73,11 @@
                 "es": "El asistente Donovan ahora también tiene su propia tarjeta directamente en el inicio del panel"
             },
             {
+                "en": "You can now ask a YouTube video embed to use the no-cookie version",
+                "fr": "Vous pouvez désormais demander à une vidéo YouTube intégrée d'utiliser la version sans cookie",
+                "es": "Ahora puede pedir que un vídeo de YouTube incrustado use la versión sin cookies"
+            },
+            {
                 "en": "You can now add a title and description to a video embed",
                 "fr": "Vous pouvez désormais ajouter un titre et une description à une vidéo intégrée",
                 "es": "Ahora puede añadir un título y una descripción a un vídeo incrustado"
@@ -56,6 +91,21 @@
                 "en": "The cache-clearing shortcut is now grouped under Maintenance",
                 "fr": "Le raccourci de vidage du cache est désormais classé dans la catégorie Maintenance",
                 "es": "El acceso directo para vaciar la caché ahora está clasificado en la categoría Mantenimiento"
+            },
+            {
+                "en": "Added a new \"Card grid\" section, stacking several full Card blocks (image, link, button...) with their own title and anchor",
+                "fr": "Ajout d'une nouvelle section \"Grille de cartes\", empilant plusieurs blocs Carte complets (image, lien, bouton...) avec leur propre titre et ancre",
+                "es": "Añadida una nueva sección \"Cuadrícula de tarjetas\", que apila varios bloques Tarjeta completos (imagen, enlace, botón...) con su propio título y ancla"
+            },
+            {
+                "en": "You can now drag an already-saved block into a different section (or back out to the page's main list), not just reorder it within the same one",
+                "fr": "Vous pouvez désormais glisser un bloc déjà enregistré vers une autre section (ou le faire ressortir vers la liste principale de la page), pas seulement le réordonner au sein de la même section",
+                "es": "Ahora puede arrastrar un bloque ya guardado a otra sección (o devolverlo a la lista principal de la página), no solo reordenarlo dentro de la misma sección"
+            },
+            {
+                "en": "The simple icon/title/text grid section is now called \"Feature grid\" to avoid confusion with the new Card grid",
+                "fr": "La section grille icône/titre/texte simple s'appelle désormais \"Grille d'atouts\" pour éviter la confusion avec la nouvelle Grille de cartes",
+                "es": "La sección de cuadrícula simple icono/título/texto ahora se llama \"Cuadrícula de características\" para evitar confusión con la nueva Cuadrícula de tarjetas"
             }
         ]
     },

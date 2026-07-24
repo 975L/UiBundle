@@ -40,6 +40,7 @@ $page-section-bp-lg: 1025px;
    below, since they're the kinds most often placed first/last on a page. .feature-bar is
    deliberately excluded too - it's a full-bleed border-only band, not a padded section.
    .flex-columns-section is excluded as well: it has no page-level top spacing of its own to add. */
+.section-features-section,
 .section-cards-section,
 .expertise-banner,
 .process-steps,
@@ -53,6 +54,7 @@ $page-section-bp-lg: 1025px;
    that same top padding - it was sized for "first thing in its own vertical stack on the page", not
    for sitting flush against a column's other slots, and would otherwise misalign the column against
    its siblings (see Container kinds > flex_columns in the README). */
+.flex-columns__col > .section-features-section,
 .flex-columns__col > .section-cards-section,
 .flex-columns__col > .expertise-banner,
 .flex-columns__col > .process-steps,
@@ -125,9 +127,15 @@ $page-section-bp-lg: 1025px;
 }
 
 /* ---- hero ---- */
+// justify-items/text-align: center is the stacked (single-column) default - .hero__media's
+// max-width and the text content don't fill the track's stretch width, so without it they'd
+// hug the left edge instead of centering under one another. Reset to normal/left once the
+// $page-section-bp-md query below puts text and media back side by side in two columns.
 .hero .section-wrap {
     display: grid;
     grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
     gap: 56px;
     align-items: center;
     padding-top: clamp(48px, 8vw, 84px);
@@ -187,6 +195,7 @@ $page-section-bp-lg: 1025px;
     display: flex;
     gap: 16px;
     align-items: center;
+    justify-content: center;
     flex-wrap: wrap;
 }
 
@@ -378,19 +387,26 @@ $page-section-bp-lg: 1025px;
     margin-bottom: 3px;
 }
 
-/* ---- section_cards ---- */
-.section-cards {
+/* ---- section_features ---- */
+.section-features {
     display: grid;
     grid-template-columns: 1fr;
     gap: 24px;
 }
 
-// Each item reuses the shared .card component (see Section/Cards.html.twig) - .card's own width/margin
+// Each item reuses the shared .card component (see Section/Features.html.twig) - .card's own width/margin
 // are tuned for the flex ".cards" row it usually sits in, so override both to let it fill its grid cell
-.section-cards .card {
+.section-features .card {
     width: 100%;
     margin: 0;
 }
+
+/* ---- section_cards ----
+   A stack of full "card" blocks (see Form/Block/SectionCardsType) - unlike section_features above,
+   this reuses ".cards" as-is (sass/_cards.scss), the same fixed-width flex row bare consecutive "card"
+   blocks already get in the page flow, so no grid rules of its own are needed here. Cards are sized
+   (sass/_cards.scss) to fit three per row inside the plain ".section-wrap" measure, so no widening
+   is needed here either - it stays aligned with every other section on the page. */
 
 /* ---- flex_columns ----
    Deliberately flex/wrap instead of a fixed 2- or 3-column grid: each slot is a full block of its
@@ -588,17 +604,8 @@ $page-section-bp-lg: 1025px;
 
 /* ---- collection - default variant's items render as "card" blocks, reusing .cards/.card
    (sass/_cards.scss); the "portfolio" variant uses .portfolio-grid__grid's own fluid 1fr columns
-   instead (see CollectionItem.html.twig) ---- */
-// ".section-wrap" caps content at 1312px but is border-box, so its own horizontal padding (up to
-// 64px each side) eats into that measure instead of sitting outside it - 1312 - 128 = 1184px was too
-// narrow to fit three fixed 400px cards + two 20px gaps (1240px), always wrapping to two per row.
-// Only the default variant needs that extra room to fit three across - scoped away from
-// ".collection-grid--portfolio" (see Collection/Grid.html.twig) because .portfolio-grid__grid's
-// fluid columns already fit the normal 1184px measure, and widening it there would only misalign
-// it against every other ".section-wrap" section on the page.
-.collection-grid:not(.collection-grid--portfolio) .section-wrap {
-    max-width: calc(1312px + 2 * clamp(20px, 5vw, 64px));
-}
+   instead (see CollectionItem.html.twig). Cards are sized (sass/_cards.scss) to fit three per row
+   inside the plain ".section-wrap" measure, so it stays aligned with every other section. ---- */
 
 .collection-grid__head {
     margin-bottom: 36px;
@@ -678,7 +685,7 @@ $page-section-bp-lg: 1025px;
         border-top: 1px solid var(--border-color);
     }
 
-    .section-cards,
+    .section-features,
     .section-steps,
     .portfolio-grid__grid {
         grid-template-columns: repeat(2, 1fr);
@@ -708,7 +715,13 @@ $page-section-bp-lg: 1025px;
 @media (min-width: $page-section-bp-md) {
     .hero .section-wrap {
         grid-template-columns: 1.15fr .85fr;
+        justify-items: normal;
+        text-align: left;
         gap: 48px;
+    }
+
+    .hero__cta {
+        justify-content: flex-start;
     }
 
     .hero__media {
@@ -735,7 +748,7 @@ $page-section-bp-lg: 1025px;
         border-top: none;
     }
 
-    .section-cards,
+    .section-features,
     .portfolio-grid__grid {
         grid-template-columns: repeat(3, 1fr);
     }

@@ -1,5 +1,25 @@
 # ChangeLog
 
+## v1.9.10
+
+- Added `BlockMoveController`/`BlockRelocator`, letting an editor drag an already-saved Block into a different collection (a container's slots, or back to top-level) instead of only reordering within one (23/07/2026)
+- Added `HasBlocksInterface::detachBlock()`, breaking for direct implementers not using `HasBlocksTrait`, and `BlockOwnerResolverInterface`/`BlockOwnerRegistry`, supporting the above (23/07/2026)
+- Renamed the `section_cards` block kind to `section_features` (23/07/2026)
+- Added a `section_cards` container kind, stacking full `card` blocks with an eyebrow/title/anchor (23/07/2026)
+- Added a "no-cookie" checkbox to `video_iframe`, rewriting the URL to `youtube-nocookie.com` on save (23/07/2026)
+- Fixed `BlockRelocator` leaving position gaps in the source collection, risking a duplicate `position` on a later relocation into the same container (24/07/2026)
+- `FlexColumnsType`/`SectionCardsType` now share `AbstractSectionHeadContainerType` instead of duplicating the same fields (24/07/2026)
+- Fixed `video_iframe`'s width/height of `"0"` being silently reinterpreted as unset (24/07/2026)
+- `BlockOwnerRegistry::find()` now throws instead of silently picking the first resolver when several claim the same owner type (24/07/2026)
+- `section_cards`' slots field now has its own "Cards" label instead of sharing `flex_columns`' "Columns" one (24/07/2026)
+- Fixed `video_iframe`'s per-instance sizing `<style>` element never being removed on disconnect (24/07/2026)
+- Fixed `videoIframe`/`aiRephrase`/`aiAssistant` Stimulus controllers' `data-*` attributes not matching their camelCase identifiers, breaking every value/target binding (24/07/2026)
+- `video_iframe`'s width/height now applied via a per-instance nonce'd `<style>` rule, since HTML attributes lose to the site's global `iframe` CSS rule (24/07/2026)
+- `video_iframe`'s iframe now centers in its container instead of hugging the left edge (24/07/2026)
+- Fixed `hero`'s stacked (mobile) layout not centering its text/media/CTA (24/07/2026)
+- `Progress:Bar`'s width now renders through a nonce'd `<style>` element instead of an inline style stripped by CSP (24/07/2026)
+- `Progress:Bar` now accepts an optional `id` for embedding several bars on one page (24/07/2026)
+
 ## v1.9.9
 
 - Added optional `title`/`description` fields to `video_iframe` (23/07/2026)

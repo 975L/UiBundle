@@ -36,4 +36,18 @@ class BlockTest extends TestCase
         $this->assertFalse($container->getSlots()->contains($slot));
         $this->assertNull($slot->getParentBlock());
     }
+
+    public function testReorderSlotsAssignsSequentialZeroBasedPositions(): void
+    {
+        $container = new Block();
+        $first = new Block();
+        $second = new Block();
+        $container->addSlot($first);
+        $container->addSlot($second);
+
+        $container->reorderSlots();
+
+        $this->assertSame(0, $first->getPosition());
+        $this->assertSame(1, $second->getPosition());
+    }
 }

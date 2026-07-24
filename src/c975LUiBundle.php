@@ -12,6 +12,7 @@ namespace c975L\UiBundle;
 use c975L\UiBundle\DependencyInjection\Compiler\BlockCacheTagProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\BlockEditUrlProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\BlockFixtureProviderPass;
+use c975L\UiBundle\DependencyInjection\Compiler\BlockOwnerResolverPass;
 use c975L\UiBundle\DependencyInjection\Compiler\BlockRegistryPass;
 use c975L\UiBundle\DependencyInjection\Compiler\CollectionSourceProviderPass;
 use c975L\UiBundle\DependencyInjection\Compiler\CspListenerPass;
@@ -39,6 +40,7 @@ class c975LUiBundle extends AbstractBundle
     {
         $container->addCompilerPass(new BlockRegistryPass());
         $container->addCompilerPass(new BlockFixtureProviderPass());
+        $container->addCompilerPass(new BlockOwnerResolverPass());
         $container->addCompilerPass(new BlockCacheTagProviderPass());
         $container->addCompilerPass(new CollectionSourceProviderPass());
         $container->addCompilerPass(new GalleryShowcaseProviderPass());

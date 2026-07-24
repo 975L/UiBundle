@@ -201,7 +201,7 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
                     ],
                 ],
             ],
-            'section_cards' => [
+            'section_features' => [
                 '' => [
                     'eyebrow' => 'Ce que nous faisons',
                     'title' => "Des services taillés autour de votre projet, pas l'inverse.",
@@ -212,10 +212,10 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
                     ],
                 ],
             ],
-            // No 'flex_columns' entry here on purpose: unlike every other kind, its "slots" are a real
-            // Block relation, not part of this plain data array - showcasing it needs the consuming
-            // app's own fixture-to-Block builder (e.g. 975l.com's BlockShowcaseCollectionSourceProvider)
-            // to also call Block::addSlot(), which it doesn't yet.
+            // No 'flex_columns'/'section_cards' entry here on purpose: unlike every other kind, their
+            // "slots" are a real Block relation, not part of this plain data array - showcasing them needs
+            // the consuming app's own fixture-to-Block builder (e.g. 975l.com's
+            // BlockShowcaseCollectionSourceProvider) to also call Block::addSlot(), which it doesn't yet.
             'expertise_banner' => [
                 '' => [
                     'eyebrow' => 'Notre expertise',
