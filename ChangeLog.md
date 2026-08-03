@@ -1,6 +1,9 @@
 # ChangeLog
 
-## v1.18.0
+> This bundle's own versioning stopped at `v1.17.0`. It now ships inside `c975l/core-bundle`, whose
+> version numbers apply from here on — the entries below were never published as a `v1.18.0`.
+
+## Unreleased
 
 Fonts, generic Twig helpers and this bundle's own menu entries
 

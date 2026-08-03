@@ -1,5 +1,15 @@
 # UiBundle
 
+> ### ⚠️ This package has moved
+>
+> UiBundle now ships inside **[c975l/core-bundle](https://github.com/975L/CoreBundle)**, together with ConfigBundle — two bundles, one package. **The bundle itself is unchanged**: same `c975L\UiBundle\` namespace, same services, same templates, same `bundles.php` entry.
+>
+> ```bash
+> composer require c975l/core-bundle
+> ```
+>
+> Versions up to `v1.17.0` remain installable from this package, forever. This repository is kept for reference only and receives no further releases.
+
 Symfony bundle providing the c975L ecosystem's shared front-end foundation — dynamic blocks, media library, and reusable CSS/JS/font/form registries used by every satellite bundle.
 
 [![GitHub](https://img.shields.io/github/license/975L/UiBundle)](https://github.com/975L/UiBundle/blob/master/LICENSE)
